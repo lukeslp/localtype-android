@@ -1,0 +1,2798 @@
+{
+  "sourceCommit": "89fd8ac170444789ac48cbd9cffa3ec76941255d",
+  "files": [
+    {
+      "path": "LICENSE",
+      "sourceSha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "transformed": false
+    },
+    {
+      "path": "NOTICE",
+      "sourceSha256": "c7c77044b8b19c49666c334e989cf8a4903f0c39b3d1808fdee10e9e7d2e5f6a",
+      "sha256": "c7c77044b8b19c49666c334e989cf8a4903f0c39b3d1808fdee10e9e7d2e5f6a",
+      "transformed": false
+    },
+    {
+      "path": "app/build.gradle.kts",
+      "sourceSha256": "a930c3300cc7ed5529f0944d3b93afd3cd675801bca13f18fa6e95b0d19d8047",
+      "sha256": "51307bce38cd647c7897f11b768c01073c5ec01d6b514938512de3e367bcd34d",
+      "transformed": true
+    },
+    {
+      "path": "app/gradle.lockfile",
+      "sourceSha256": "7966b6edd96d41e834fc2884c46c31fe4f4b98c78121509a5f78bc5ec0325b9e",
+      "sha256": "7966b6edd96d41e834fc2884c46c31fe4f4b98c78121509a5f78bc5ec0325b9e",
+      "transformed": false
+    },
+    {
+      "path": "app/src/fdroid/AndroidManifest.xml",
+      "sourceSha256": "6004fe2e8cf95959107116719047d5aa625184f52df13cf147dbea1fe8e4fc69",
+      "sha256": "6004fe2e8cf95959107116719047d5aa625184f52df13cf147dbea1fe8e4fc69",
+      "transformed": false
+    },
+    {
+      "path": "app/src/fdroid/java/dev/localtype/keyboard/AiCoreCompletionProvider.kt",
+      "sourceSha256": "20b4413bb99146f4ed463661d0fabdd9c2fe8b9c65cc67d985b9c417ac01b6bb",
+      "sha256": "20b4413bb99146f4ed463661d0fabdd9c2fe8b9c65cc67d985b9c417ac01b6bb",
+      "transformed": false
+    },
+    {
+      "path": "app/src/fdroid/java/dev/localtype/keyboard/FoundationModelProviderFactory.kt",
+      "sourceSha256": "1a60e9df861f83c2dd0ca0c2e11ca52474d92e2865fc081f001ae0e435aa2ed5",
+      "sha256": "1a60e9df861f83c2dd0ca0c2e11ca52474d92e2865fc081f001ae0e435aa2ed5",
+      "transformed": false
+    },
+    {
+      "path": "app/src/fdroid/java/dev/localtype/keyboard/ModelKitBridge.kt",
+      "sourceSha256": "28c09d05f9d593b9c4d26ab59c85ab6948504f449ecb3351dfe9d84cc60a4c51",
+      "sha256": "28c09d05f9d593b9c4d26ab59c85ab6948504f449ecb3351dfe9d84cc60a4c51",
+      "transformed": false
+    },
+    {
+      "path": "app/src/fdroid/res/values-es/strings.xml",
+      "sourceSha256": "5bc4e0270b556c3104ba1029a324af5026f1f29b8593e85e92f7da15d3bf526d",
+      "sha256": "5bc4e0270b556c3104ba1029a324af5026f1f29b8593e85e92f7da15d3bf526d",
+      "transformed": false
+    },
+    {
+      "path": "app/src/fdroid/res/values-pt/strings.xml",
+      "sourceSha256": "aa67de793caadff35871afcd9e78318f400e15cfff2d62ce63bc16c60aec095e",
+      "sha256": "aa67de793caadff35871afcd9e78318f400e15cfff2d62ce63bc16c60aec095e",
+      "transformed": false
+    },
+    {
+      "path": "app/src/fdroid/res/values/strings.xml",
+      "sourceSha256": "62838b51bc602e51ba58cffe18345fe7e41c210336d82de52545ef1084785cb9",
+      "sha256": "62838b51bc602e51ba58cffe18345fe7e41c210336d82de52545ef1084785cb9",
+      "transformed": false
+    },
+    {
+      "path": "app/src/full/AndroidManifest.xml",
+      "sourceSha256": "b931dcc82ed3d1071141b111c23ad9fb1461f0aceeeab273d62d1856ee610ac3",
+      "sha256": "b931dcc82ed3d1071141b111c23ad9fb1461f0aceeeab273d62d1856ee610ac3",
+      "transformed": false
+    },
+    {
+      "path": "app/src/full/java/dev/localtype/keyboard/AiCoreCompletionProvider.kt",
+      "sourceSha256": "0c643c0a7511a142b6c0a44dcf910a08193319ae734f212f9525f01927406c24",
+      "sha256": "0c643c0a7511a142b6c0a44dcf910a08193319ae734f212f9525f01927406c24",
+      "transformed": false
+    },
+    {
+      "path": "app/src/full/java/dev/localtype/keyboard/FoundationModelProviderFactory.kt",
+      "sourceSha256": "0bd6975d4a8a3dca9bc80f7ec6f7ef85d21fada43577badd34dc88c58c8919ec",
+      "sha256": "0bd6975d4a8a3dca9bc80f7ec6f7ef85d21fada43577badd34dc88c58c8919ec",
+      "transformed": false
+    },
+    {
+      "path": "app/src/full/java/dev/localtype/keyboard/KeyboardGemma.kt",
+      "sourceSha256": "8af4cf0b5618998862d117fdc52e765658e3f128c78adbdda1545dfa11d06765",
+      "sha256": "8af4cf0b5618998862d117fdc52e765658e3f128c78adbdda1545dfa11d06765",
+      "transformed": false
+    },
+    {
+      "path": "app/src/full/java/dev/localtype/keyboard/LiteRtGemmaCompletionProvider.kt",
+      "sourceSha256": "05b8a0857d3ba0de0f206872eafcfaa767286d65727c3b28c968b3c435b09115",
+      "sha256": "05b8a0857d3ba0de0f206872eafcfaa767286d65727c3b28c968b3c435b09115",
+      "transformed": false
+    },
+    {
+      "path": "app/src/full/java/dev/localtype/keyboard/ModelInferenceService.kt",
+      "sourceSha256": "5d3ec87359398af03cea4711fcf668dd21a895966800ac3e7a1b61c1977a6fec",
+      "sha256": "5d3ec87359398af03cea4711fcf668dd21a895966800ac3e7a1b61c1977a6fec",
+      "transformed": false
+    },
+    {
+      "path": "app/src/full/java/dev/localtype/keyboard/ModelKitBridge.kt",
+      "sourceSha256": "f54a8e8404b4d398c9f693f88df1846662c5e26729e6192e2ca264714cb4e5f3",
+      "sha256": "f54a8e8404b4d398c9f693f88df1846662c5e26729e6192e2ca264714cb4e5f3",
+      "transformed": false
+    },
+    {
+      "path": "app/src/full/java/dev/localtype/keyboard/RemoteModelClient.kt",
+      "sourceSha256": "6ecac686abf50e4c2351206107046d0ef03554f2ea71ebc3b8a2768d4072bae4",
+      "sha256": "6ecac686abf50e4c2351206107046d0ef03554f2ea71ebc3b8a2768d4072bae4",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/AndroidManifest.xml",
+      "sourceSha256": "38f3659c169099b30864bbb7a3bed7eeda1e3d0fd92037d65857b634582f4fca",
+      "sha256": "38f3659c169099b30864bbb7a3bed7eeda1e3d0fd92037d65857b634582f4fca",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/cifg_int8.bin",
+      "sourceSha256": "3255dbeaf6e7fc0922afdca42ef751a22e3ad28903ab4acc9eb0022b9a704318",
+      "sha256": "3255dbeaf6e7fc0922afdca42ef751a22e3ad28903ab4acc9eb0022b9a704318",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/corpus_prior.bin",
+      "sourceSha256": "5ea7038a8c99e8fdeb6813bcb57db019933261c8e3e8298b7aff62048c6f4825",
+      "sha256": "5ea7038a8c99e8fdeb6813bcb57db019933261c8e3e8298b7aff62048c6f4825",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/corpus_prior_es.bin",
+      "sourceSha256": "fc267ff44fc9657eebc75eb1a3f61804712a3fa3837640dc5e4f45a82fb02f3d",
+      "sha256": "fc267ff44fc9657eebc75eb1a3f61804712a3fa3837640dc5e4f45a82fb02f3d",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/corpus_prior_pt.bin",
+      "sourceSha256": "024814ee3c8ac34cd5d8b027878c5a9fa9b90d971d59ad0519fac5db625522a7",
+      "sha256": "024814ee3c8ac34cd5d8b027878c5a9fa9b90d971d59ad0519fac5db625522a7",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/current_words.txt",
+      "sourceSha256": "505dd3be2a5d5aebefaa5892269eed7e55848c718ae24d3ae45425adfb20fd0d",
+      "sha256": "b5954b222680e4467c5c69d740b5c9dbd3b6f8692518d7717c6bfd5ba9105350",
+      "transformed": true
+    },
+    {
+      "path": "app/src/main/assets/emoji_en.txt",
+      "sourceSha256": "89056fda23a7ee22cbcb69d6ce281acda29993143c5052b2a840f40a2ded11ad",
+      "sha256": "89056fda23a7ee22cbcb69d6ce281acda29993143c5052b2a840f40a2ded11ad",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/emoji_inventory.txt",
+      "sourceSha256": "d74b1a29fb9ce37278826b4cd521e1fa6a9f5168740d441b1dc43232a8edc8f7",
+      "sha256": "d74b1a29fb9ce37278826b4cd521e1fa6a9f5168740d441b1dc43232a8edc8f7",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/licenses/Apache-2.0.txt",
+      "sourceSha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/licenses/CC-BY-4.0.txt",
+      "sourceSha256": "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411",
+      "sha256": "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/licenses/CC-BY-SA-4.0.txt",
+      "sourceSha256": "28a9529c7d0bb4dc51f4bf5c116a3d16ef247a052f7591466768ddf563fd1cf5",
+      "sha256": "28a9529c7d0bb4dc51f4bf5c116a3d16ef247a052f7591466768ddf563fd1cf5",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/licenses/MPL-2.0.txt",
+      "sourceSha256": "3f3d9e0024b1921b067d6f7f88deb4a60cbe7a78e76c64e3f1d7fc3b779b9d04",
+      "sha256": "3f3d9e0024b1921b067d6f7f88deb4a60cbe7a78e76c64e3f1d7fc3b779b9d04",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/licenses/SCOWL-Copyright.txt",
+      "sourceSha256": "283326a422e29c510e2ba6805518c418ce3c35ed1fadc3eec83d2da4f6c5a055",
+      "sha256": "283326a422e29c510e2ba6805518c418ce3c35ed1fadc3eec83d2da4f6c5a055",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/licenses/Unicode-LICENSE.txt",
+      "sourceSha256": "1d35186ded7c1b5f18f6cf488f92ae7d127719d970c3c612279da2420515102e",
+      "sha256": "1d35186ded7c1b5f18f6cf488f92ae7d127719d970c3c612279da2420515102e",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/licenses/VarCon-Copyright.txt",
+      "sourceSha256": "8d14639d8e048f6dbb6e6a75065c2656cac7876de88f123e064bfaa6f640c987",
+      "sha256": "8d14639d8e048f6dbb6e6a75065c2656cac7876de88f123e064bfaa6f640c987",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/licenses/cifg-NOTICE.txt",
+      "sourceSha256": "05d12516850775b237fffe47231dcc60390a45fbf52adedb6e9a1139f8ba3288",
+      "sha256": "05d12516850775b237fffe47231dcc60390a45fbf52adedb6e9a1139f8ba3288",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/licenses/corpus-prior-NOTICE.txt",
+      "sourceSha256": "f76fae680a37354f0468c1395a8f6dab6cfde91e121feddd968b853f6da3ea7b",
+      "sha256": "f76fae680a37354f0468c1395a8f6dab6cfde91e121feddd968b853f6da3ea7b",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/licenses/corpus-prior-es-NOTICE.txt",
+      "sourceSha256": "3285e75884bebf6634382db7e3d5561b70c65388d149a3e32a454971bd76782b",
+      "sha256": "3285e75884bebf6634382db7e3d5561b70c65388d149a3e32a454971bd76782b",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/licenses/corpus-prior-pt-NOTICE.txt",
+      "sourceSha256": "0530e3b37c202dfcb3b72ebfca1a5669be805b3e4955afe5605466946a1024e1",
+      "sha256": "0530e3b37c202dfcb3b72ebfca1a5669be805b3e4955afe5605466946a1024e1",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/licenses/swipe-NOTICE.txt",
+      "sourceSha256": "038c7467fe11b917776532d8c67256b42d7e62b3cf44d435c4f56d5637ce604c",
+      "sha256": "038c7467fe11b917776532d8c67256b42d7e62b3cf44d435c4f56d5637ce604c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/licenses/tlds-NOTICE.txt",
+      "sourceSha256": "a2e048fa896c5601e880c7f75355418541e83532ccab469f2538274ee33d094d",
+      "sha256": "a2e048fa896c5601e880c7f75355418541e83532ccab469f2538274ee33d094d",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/licenses/wordlists-NOTICE.txt",
+      "sourceSha256": "20362d5d0f39135385a6c3fed4a983a70dd273b7d8fba00e8bc6a255f438eccb",
+      "sha256": "20362d5d0f39135385a6c3fed4a983a70dd273b7d8fba00e8bc6a255f438eccb",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/spellings_en_gb.txt",
+      "sourceSha256": "8e1b80ad5fd196bcb878a922063fab3cfceb8e83b474a89b2d607ea9e3b70c2b",
+      "sha256": "8e1b80ad5fd196bcb878a922063fab3cfceb8e83b474a89b2d607ea9e3b70c2b",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/swipe_en.bin",
+      "sourceSha256": "665f2879a6294dddfa4487e25ac4504eeea21934645a542addd0f134e6b563e0",
+      "sha256": "665f2879a6294dddfa4487e25ac4504eeea21934645a542addd0f134e6b563e0",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/tlds.txt",
+      "sourceSha256": "aff01a9047269d5f718a18faab1cc3bcb7127cd28cb11ad25b33bb0bee6212f4",
+      "sha256": "aff01a9047269d5f718a18faab1cc3bcb7127cd28cb11ad25b33bb0bee6212f4",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_cy.txt",
+      "sourceSha256": "1e7c71f2ea4cddab57b5f536068987ff14f84cc92bb34b0fb3429347c10f42d0",
+      "sha256": "1e7c71f2ea4cddab57b5f536068987ff14f84cc92bb34b0fb3429347c10f42d0",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_cy_profanity.txt",
+      "sourceSha256": "26f9e3bc6246df51adaa65628be06a1abaef2f2003e44fd4481b6a75ac9ed53c",
+      "sha256": "26f9e3bc6246df51adaa65628be06a1abaef2f2003e44fd4481b6a75ac9ed53c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_en.txt",
+      "sourceSha256": "43774d3fca49f207eb6f70710fecbbe9914e5b2798739b4b96b7ea39bf051f00",
+      "sha256": "43774d3fca49f207eb6f70710fecbbe9914e5b2798739b4b96b7ea39bf051f00",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_en_modern.txt",
+      "sourceSha256": "d52f9191813146649548c57200c390b4568baddff394a31ba7a0553088057461",
+      "sha256": "d52f9191813146649548c57200c390b4568baddff394a31ba7a0553088057461",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_en_profanity.txt",
+      "sourceSha256": "7ff9e84f1ef96f35a492d0973be0d9b59dd8f51f71b034910fd9cd99d44518b3",
+      "sha256": "7ff9e84f1ef96f35a492d0973be0d9b59dd8f51f71b034910fd9cd99d44518b3",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_es.txt",
+      "sourceSha256": "fc40e7ebe4c51d30ddf8aba420794bf1e8bc3f25a1c9f7661c1a120d97040bce",
+      "sha256": "fc40e7ebe4c51d30ddf8aba420794bf1e8bc3f25a1c9f7661c1a120d97040bce",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_es_profanity.txt",
+      "sourceSha256": "aee4c6d0ce1edcd581948c2794bfc4a3de9ff591add9f1897e6e36de18673b99",
+      "sha256": "aee4c6d0ce1edcd581948c2794bfc4a3de9ff591add9f1897e6e36de18673b99",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_ga.txt",
+      "sourceSha256": "7fb76ff740ffb1ed7d991fd2a84d3e8aed2c5a20e285c9d5cf2a4f3f1b9686b4",
+      "sha256": "7fb76ff740ffb1ed7d991fd2a84d3e8aed2c5a20e285c9d5cf2a4f3f1b9686b4",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_ga_profanity.txt",
+      "sourceSha256": "136d314fe2b88ae4470766c3d685e87a473b307cc341c9f3ef31c3334d6fe834",
+      "sha256": "136d314fe2b88ae4470766c3d685e87a473b307cc341c9f3ef31c3334d6fe834",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_haw.txt",
+      "sourceSha256": "f7ca3b29964a592b888374342c841c4c96fdbe8593e05dc6446a6ad1cfc94779",
+      "sha256": "f7ca3b29964a592b888374342c841c4c96fdbe8593e05dc6446a6ad1cfc94779",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_haw_profanity.txt",
+      "sourceSha256": "02930992356622d74057fc2355001c6a24b7e4a5788ef1cbcd0651fa814f87e4",
+      "sha256": "02930992356622d74057fc2355001c6a24b7e4a5788ef1cbcd0651fa814f87e4",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_he.txt",
+      "sourceSha256": "94c488c8234355c3ecb9506d626ed0667b8fc4e4080763413778731617f248c9",
+      "sha256": "94c488c8234355c3ecb9506d626ed0667b8fc4e4080763413778731617f248c9",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_he_profanity.txt",
+      "sourceSha256": "fdb9e0b67a96e32ea2c80a122ed5cbfbceed93c5f04d1a87b8dbe3a17d988c34",
+      "sha256": "fdb9e0b67a96e32ea2c80a122ed5cbfbceed93c5f04d1a87b8dbe3a17d988c34",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_known.txt",
+      "sourceSha256": "39e4784d9a257b8ba8c0464db7f2a177a4c31c598ea2287547a201690a31a0a3",
+      "sha256": "39e4784d9a257b8ba8c0464db7f2a177a4c31c598ea2287547a201690a31a0a3",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_known_cy.txt",
+      "sourceSha256": "deb627513af8e5fc3c154c8d53fcf20ceccde510bf1b678c7403a70701644efa",
+      "sha256": "deb627513af8e5fc3c154c8d53fcf20ceccde510bf1b678c7403a70701644efa",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_known_es.txt",
+      "sourceSha256": "a5d3c1b50366a0b15f1ffc5706b41d514d7711357cb4e44dbd6d63b1fdaa9ca2",
+      "sha256": "a5d3c1b50366a0b15f1ffc5706b41d514d7711357cb4e44dbd6d63b1fdaa9ca2",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_known_ga.txt",
+      "sourceSha256": "adb858cc30a7bc906bbb3b5bcb97437b7838f16b3d3686b080b714cc9cd1f272",
+      "sha256": "adb858cc30a7bc906bbb3b5bcb97437b7838f16b3d3686b080b714cc9cd1f272",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_known_haw.txt",
+      "sourceSha256": "c3cb9206e0dcf4de07d467760359b2851c2d6f9f1afbeea33ea13f077655cd79",
+      "sha256": "c3cb9206e0dcf4de07d467760359b2851c2d6f9f1afbeea33ea13f077655cd79",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_known_he.txt",
+      "sourceSha256": "61e25335508a89f946cb14d23b263b528ce3edefd7836047167fa489b093bc4c",
+      "sha256": "61e25335508a89f946cb14d23b263b528ce3edefd7836047167fa489b093bc4c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_known_mi.txt",
+      "sourceSha256": "adf6734c135ab119923c9d3be55ccf349c47f6a3350e9e05114306c82feb81ba",
+      "sha256": "adf6734c135ab119923c9d3be55ccf349c47f6a3350e9e05114306c82feb81ba",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_known_pt.txt",
+      "sourceSha256": "15d3bb57b439459637472faecd1f3b0db38fd7f4d191afd42a3a100d65a8f95d",
+      "sha256": "15d3bb57b439459637472faecd1f3b0db38fd7f4d191afd42a3a100d65a8f95d",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_mi.txt",
+      "sourceSha256": "62a7f85975dcab19eb936bb0684a523401ae1a713757a655a4856ee6bf53f4c9",
+      "sha256": "62a7f85975dcab19eb936bb0684a523401ae1a713757a655a4856ee6bf53f4c9",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_mi_profanity.txt",
+      "sourceSha256": "606719469f9565f067ac9fc9ee3814052e8bb8c8f8468fb66aa8f0efd2dc8a2f",
+      "sha256": "606719469f9565f067ac9fc9ee3814052e8bb8c8f8468fb66aa8f0efd2dc8a2f",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_pt.txt",
+      "sourceSha256": "120f4083dd09a6167de304c3914988a4d0e51cfdbe7d52515478d36f775aa5fb",
+      "sha256": "120f4083dd09a6167de304c3914988a4d0e51cfdbe7d52515478d36f775aa5fb",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/assets/words_pt_profanity.txt",
+      "sourceSha256": "093b0bb1b4a15d414d90557ec6c5ecf258196369086f335218cd75941620fb0d",
+      "sha256": "093b0bb1b4a15d414d90557ec6c5ecf258196369086f335218cd75941620fb0d",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/AppendLedger.kt",
+      "sourceSha256": "18a13ddf9d51b9ca2ee53aab295c276618a91fbadf33feeaf71283ca5f9e3bf3",
+      "sha256": "18a13ddf9d51b9ca2ee53aab295c276618a91fbadf33feeaf71283ca5f9e3bf3",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/ArrowPad.kt",
+      "sourceSha256": "8c1c20040786c8bb7c06768ffaf44ed24853dc267309a87b571ededb03ffe5cc",
+      "sha256": "8c1c20040786c8bb7c06768ffaf44ed24853dc267309a87b571ededb03ffe5cc",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/ArrowPadPanel.kt",
+      "sourceSha256": "73c0812da1567768d505c0f1f236c0cf5056d0690cdd27a6d26d9f0e2fe1a46f",
+      "sha256": "73c0812da1567768d505c0f1f236c0cf5056d0690cdd27a6d26d9f0e2fe1a46f",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/ContactBook.kt",
+      "sourceSha256": "30955d554098554b905ed199fa420cf4d3c031c40b2d5c92dd44ed23c1049f61",
+      "sha256": "30955d554098554b905ed199fa420cf4d3c031c40b2d5c92dd44ed23c1049f61",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/ContactsPanel.kt",
+      "sourceSha256": "a6442c3c8ee953c2868c108966380cbbde1851d97210899619ad9881f8559bfe",
+      "sha256": "a6442c3c8ee953c2868c108966380cbbde1851d97210899619ad9881f8559bfe",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/ContactsPermissionActivity.kt",
+      "sourceSha256": "cba097d962dd950cc63cc4b741092c0403f643a9882882a32d1899152ea849ad",
+      "sha256": "cba097d962dd950cc63cc4b741092c0403f643a9882882a32d1899152ea849ad",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/ContactsReader.kt",
+      "sourceSha256": "29e45d7f264fa790f98b67830ee2edb35fe6b865bcae02a47c46b1e2e74b3d56",
+      "sha256": "29e45d7f264fa790f98b67830ee2edb35fe6b865bcae02a47c46b1e2e74b3d56",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/CorrectionDiagnostics.kt",
+      "sourceSha256": "cbfc214b349e58e1211e65a4b4c7dc5eb320c74b0c9603cb0470cc5a2560e600",
+      "sha256": "cbfc214b349e58e1211e65a4b4c7dc5eb320c74b0c9603cb0470cc5a2560e600",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/CorrectionTextContext.kt",
+      "sourceSha256": "c0c425dae43e8e1558be3627f07af03fc8c6e02f49ddff533283d26d27ff9a22",
+      "sha256": "c0c425dae43e8e1558be3627f07af03fc8c6e02f49ddff533283d26d27ff9a22",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/CursorGestures.kt",
+      "sourceSha256": "e0bb9a0a1cda574ee080fbf4f17583b50d743eb38c37d8bb55bcd7fdcedec19e",
+      "sha256": "e0bb9a0a1cda574ee080fbf4f17583b50d743eb38c37d8bb55bcd7fdcedec19e",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/DomainStore.kt",
+      "sourceSha256": "a1f9f2ca066b67a974eb12faf379cb79a79b6912a24ea7396ed222900792f79a",
+      "sha256": "a1f9f2ca066b67a974eb12faf379cb79a79b6912a24ea7396ed222900792f79a",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/EditorProfiles.kt",
+      "sourceSha256": "ca61b8c324fe439ab8a1d09d85e019b6506e8dcb01530a39a2b15dbada9bdba6",
+      "sha256": "ca61b8c324fe439ab8a1d09d85e019b6506e8dcb01530a39a2b15dbada9bdba6",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/EditorRangeTransaction.kt",
+      "sourceSha256": "2a5606526bc97c8a3f9095a2a3fd44f38d60bba911b627f600ecbd71e03d6ff4",
+      "sha256": "2a5606526bc97c8a3f9095a2a3fd44f38d60bba911b627f600ecbd71e03d6ff4",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/EmojiChoices.kt",
+      "sourceSha256": "6a46d6c724b4050575d10d0d882b00bc148e57b2d2dbc9da477d857e2472860d",
+      "sha256": "6a46d6c724b4050575d10d0d882b00bc148e57b2d2dbc9da477d857e2472860d",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/EmojiInventory.kt",
+      "sourceSha256": "3cccdddc70449c8219b1cb2c8eacfc864dd6e4d18276f374fa7d06ef26b211ca",
+      "sha256": "3cccdddc70449c8219b1cb2c8eacfc864dd6e4d18276f374fa7d06ef26b211ca",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/EmojiPanel.kt",
+      "sourceSha256": "56985a05a2a0e6236e60e26b514bd5fbd9778ff5b185684bf57c09f863f0fb3e",
+      "sha256": "56985a05a2a0e6236e60e26b514bd5fbd9778ff5b185684bf57c09f863f0fb3e",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/EmojiPanelLayout.kt",
+      "sourceSha256": "553a083dd35281df6101f7b2cc77aa8e86a4ae3d5c7190f331fecfdaf52dfcbe",
+      "sha256": "553a083dd35281df6101f7b2cc77aa8e86a4ae3d5c7190f331fecfdaf52dfcbe",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/EmojiSearch.kt",
+      "sourceSha256": "e88ed70f51ffa35b6969ec5f2308dd10b0faf726c42b9f69f8993ef1ce61e862",
+      "sha256": "e88ed70f51ffa35b6969ec5f2308dd10b0faf726c42b9f69f8993ef1ce61e862",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/Expansions.kt",
+      "sourceSha256": "de635c88e3267b425f1fddf9e84baeb4b8015f3df602badfe8c5e81e9165a365",
+      "sha256": "de635c88e3267b425f1fddf9e84baeb4b8015f3df602badfe8c5e81e9165a365",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/FoundationModelProvider.kt",
+      "sourceSha256": "a6fba35e53388155845eda61397cfc4617d9ad957c1371d9cea20bb74363a5ac",
+      "sha256": "a6fba35e53388155845eda61397cfc4617d9ad957c1371d9cea20bb74363a5ac",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/GestureActions.kt",
+      "sourceSha256": "2a1c1ac0e17860a6acf98fe6326842f8f9f1e3eb322271e4efc4779c5e15a201",
+      "sha256": "2a1c1ac0e17860a6acf98fe6326842f8f9f1e3eb322271e4efc4779c5e15a201",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/GestureDecoder.kt",
+      "sourceSha256": "5ac8365219009f3c3111446b047e2f0cbb0e477abf89ee0803496d98c695d30f",
+      "sha256": "5ac8365219009f3c3111446b047e2f0cbb0e477abf89ee0803496d98c695d30f",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/InlineAutofill.kt",
+      "sourceSha256": "8df1579867c10f69cd5cc0388319779c06a6af64d878391327638b63d3283e45",
+      "sha256": "8df1579867c10f69cd5cc0388319779c06a6af64d878391327638b63d3283e45",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/InlineRowRules.kt",
+      "sourceSha256": "63538fa820d993c07c3d44e1357287c70164e4b14b328718bb2431666415f168",
+      "sha256": "63538fa820d993c07c3d44e1357287c70164e4b14b328718bb2431666415f168",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/JournalLearningStore.kt",
+      "sourceSha256": "c669be9e7f97bb08491418dced873baa128bab0e7a213a26153f9c2b6a65aefc",
+      "sha256": "c669be9e7f97bb08491418dced873baa128bab0e7a213a26153f9c2b6a65aefc",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/KeyHaptics.kt",
+      "sourceSha256": "5c9e537754edbc2137f6447f41d5d3334c807ab69612a08d8c7f9a3cf34ac112",
+      "sha256": "5c9e537754edbc2137f6447f41d5d3334c807ab69612a08d8c7f9a3cf34ac112",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/KeyboardCurrency.kt",
+      "sourceSha256": "2fb5800fafc1da062c1db547f5dacaeb0d2324b43d60954702310d38d0400db7",
+      "sha256": "2fb5800fafc1da062c1db547f5dacaeb0d2324b43d60954702310d38d0400db7",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/KeyboardLayout.kt",
+      "sourceSha256": "c04770e7fb8a357c2552d721e60c7b69469c54f6b2b610e0a9efd15c3a5e5e45",
+      "sha256": "c04770e7fb8a357c2552d721e60c7b69469c54f6b2b610e0a9efd15c3a5e5e45",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/KeyboardPanel.kt",
+      "sourceSha256": "1d6ce86e34dec6e45e66dbd7cb869b29df1fb0999aaf04ff9fe1076f5f31d8c2",
+      "sha256": "1d6ce86e34dec6e45e66dbd7cb869b29df1fb0999aaf04ff9fe1076f5f31d8c2",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/KeyboardSettings.kt",
+      "sourceSha256": "f3a81697addb1bae22612bf8cfa257564b32782901bc361a0aa9b2bc5e4ffaa9",
+      "sha256": "f3a81697addb1bae22612bf8cfa257564b32782901bc361a0aa9b2bc5e4ffaa9",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/KeyboardTheme.kt",
+      "sourceSha256": "51bf2620b64169469b6b8e9f83bb91d8859740d9ce8aa30b23aff799112ffe64",
+      "sha256": "51bf2620b64169469b6b8e9f83bb91d8859740d9ce8aa30b23aff799112ffe64",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/KeyboardView.kt",
+      "sourceSha256": "e4ea1bea73a1a0dab3f5aed31df53cbf72e5adaad748af30ef1ad77d9d20ddc0",
+      "sha256": "e4ea1bea73a1a0dab3f5aed31df53cbf72e5adaad748af30ef1ad77d9d20ddc0",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/LanguageChoice.kt",
+      "sourceSha256": "42c7d98328a6f9a71a929b43b0827107feaf99c9011a216de7ae28d23fc03065",
+      "sha256": "42c7d98328a6f9a71a929b43b0827107feaf99c9011a216de7ae28d23fc03065",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/LearnedPairJournalFile.kt",
+      "sourceSha256": "1b6b4a654f542562d8bdf37d0a87ce4b582fc217881fa3382c9576b319740cb0",
+      "sha256": "1b6b4a654f542562d8bdf37d0a87ce4b582fc217881fa3382c9576b319740cb0",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/LinkCleaner.kt",
+      "sourceSha256": "746b51540892059faa64686a1797c1714d865412b73d8e5497868a7b7ef32b1c",
+      "sha256": "746b51540892059faa64686a1797c1714d865412b73d8e5497868a7b7ef32b1c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/LocalTypeInputMethodService.kt",
+      "sourceSha256": "a554fbe880eb3a51926a49664029c2c49e09c2bb2c7380539e760851d2370b0b",
+      "sha256": "a554fbe880eb3a51926a49664029c2c49e09c2bb2c7380539e760851d2370b0b",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/LoggedFieldGate.kt",
+      "sourceSha256": "30db3789336b70e0772b68c51c3fd6b6e5e178597bc272eb12c0f363f518435b",
+      "sha256": "30db3789336b70e0772b68c51c3fd6b6e5e178597bc272eb12c0f363f518435b",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/ModelBudget.kt",
+      "sourceSha256": "8b06a7d01ee11760a45d431451577dd3052edf51cb86c2ad0ad4e2bc0e95ddd4",
+      "sha256": "8b06a7d01ee11760a45d431451577dd3052edf51cb86c2ad0ad4e2bc0e95ddd4",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/ModelChat.kt",
+      "sourceSha256": "be9a5d51bc6df2b969225a1b609a1a90e3ff644fa4708441ec5b09ab92c0f1ec",
+      "sha256": "be9a5d51bc6df2b969225a1b609a1a90e3ff644fa4708441ec5b09ab92c0f1ec",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/ModelChatActivity.kt",
+      "sourceSha256": "f8a3eb36f201fe866bff4745dc2d3b66642ab918f899d5aaa8fda80b0c4c3900",
+      "sha256": "f8a3eb36f201fe866bff4745dc2d3b66642ab918f899d5aaa8fda80b0c4c3900",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/ModelSuggestionCache.kt",
+      "sourceSha256": "43b78c465eaf825898c53dbef4b2c27aa9d482797acc0a8dcc608936a2242cfd",
+      "sha256": "43b78c465eaf825898c53dbef4b2c27aa9d482797acc0a8dcc608936a2242cfd",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/MotorAccess.kt",
+      "sourceSha256": "361677dff9de4851fd117203da3b636859ae603d398f1173cbee7d224be70c1c",
+      "sha256": "361677dff9de4851fd117203da3b636859ae603d398f1173cbee7d224be70c1c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/NeuralAsset.kt",
+      "sourceSha256": "053e7b133ac1a2dc7a53118cde230dfe02ecab9d4f19efb66736472b3f56554c",
+      "sha256": "053e7b133ac1a2dc7a53118cde230dfe02ecab9d4f19efb66736472b3f56554c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/NeuralCursorState.kt",
+      "sourceSha256": "6faa9356cec3701c7b8b1d83df0d93774de10107a1568eb7fe821dcf7012fac6",
+      "sha256": "6faa9356cec3701c7b8b1d83df0d93774de10107a1568eb7fe821dcf7012fac6",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/NeuralPredictionWorker.kt",
+      "sourceSha256": "c27b2ed33791aa7c9d30cd020aae376ef681b5f69f04c266aee4c6f17664bd88",
+      "sha256": "c27b2ed33791aa7c9d30cd020aae376ef681b5f69f04c266aee4c6f17664bd88",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/NeuralRequestState.kt",
+      "sourceSha256": "86044c711b6647c123f264f569240f60d20c796ff6ee7465f42af5a4c6d5e4a6",
+      "sha256": "86044c711b6647c123f264f569240f60d20c796ff6ee7465f42af5a4c6d5e4a6",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/NoticeRules.kt",
+      "sourceSha256": "d92247db20b27d04a893f4c6bd19abd2be92a138aa665d20e75c5c961dff66db",
+      "sha256": "d92247db20b27d04a893f4c6bd19abd2be92a138aa665d20e75c5c961dff66db",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/OneHanded.kt",
+      "sourceSha256": "8b304578ffc791c372ac85ea4679012268816f187d3a4776ca47341fd8814d3e",
+      "sha256": "8b304578ffc791c372ac85ea4679012268816f187d3a4776ca47341fd8814d3e",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/PageLanguage.kt",
+      "sourceSha256": "04dc1599254ca3b09ef7b43be5c83751a7fc1f603020edbc3d372a2c37d71f33",
+      "sha256": "04dc1599254ca3b09ef7b43be5c83751a7fc1f603020edbc3d372a2c37d71f33",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/PendingKeys.kt",
+      "sourceSha256": "fa59c04f2522a753cba164db00b39213cc4bc29b31ae54072825f2dd3a0201e7",
+      "sha256": "fa59c04f2522a753cba164db00b39213cc4bc29b31ae54072825f2dd3a0201e7",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/PersonalLearningStore.kt",
+      "sourceSha256": "47458acc9f954dc61edd2b44ef699f205078baabc08a397c5dfdcf3a8e0f9c50",
+      "sha256": "47458acc9f954dc61edd2b44ef699f205078baabc08a397c5dfdcf3a8e0f9c50",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/PopupGeometry.kt",
+      "sourceSha256": "0e187f9962bf74092f1de25a98aeb9464bd5bffeaf9e6368c6c4b7bf497bf935",
+      "sha256": "0e187f9962bf74092f1de25a98aeb9464bd5bffeaf9e6368c6c4b7bf497bf935",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/PredictionLog.kt",
+      "sourceSha256": "aab0c15d0bae51ef26ca9c50feb4a7bb310047b7710723d917c8059fc147f07c",
+      "sha256": "aab0c15d0bae51ef26ca9c50feb4a7bb310047b7710723d917c8059fc147f07c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/PredictionLogCodec.kt",
+      "sourceSha256": "934e102a6fbe832bf256bec38f8e035c98c2c6ed0ac0e069ab8433ba2aa991e0",
+      "sha256": "934e102a6fbe832bf256bec38f8e035c98c2c6ed0ac0e069ab8433ba2aa991e0",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/PredictionLogSession.kt",
+      "sourceSha256": "45b36330cfdeecfff6e05aa32d32be12595e83074579b8e45e96d546539c3036",
+      "sha256": "45b36330cfdeecfff6e05aa32d32be12595e83074579b8e45e96d546539c3036",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/PreferenceEmojiStore.kt",
+      "sourceSha256": "3221157be1787b74d66ca36032ac60c3296df8d9a86471a4f8d73f7b167ce1e4",
+      "sha256": "3221157be1787b74d66ca36032ac60c3296df8d9a86471a4f8d73f7b167ce1e4",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/PreferenceModelCacheStore.kt",
+      "sourceSha256": "a3fd642cb0fd94004f2c52cbe79f389147e851a52f346dcb6009798c53a9fb9e",
+      "sha256": "a3fd642cb0fd94004f2c52cbe79f389147e851a52f346dcb6009798c53a9fb9e",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/ProofreadRequest.kt",
+      "sourceSha256": "e0d7c5728e76e6c68ee35169fd3bb6600f14c4e208c52289cd1c37f35835fbeb",
+      "sha256": "e0d7c5728e76e6c68ee35169fd3bb6600f14c4e208c52289cd1c37f35835fbeb",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/ProofreadSpaceGesture.kt",
+      "sourceSha256": "949ae6782b7354dd0e620ae07952320d981e6e42dc104fb2b78a65a6e09de972",
+      "sha256": "949ae6782b7354dd0e620ae07952320d981e6e42dc104fb2b78a65a6e09de972",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/ReadAloud.kt",
+      "sourceSha256": "2d08f00120e03ad6f6403781001414c45bf379a0822e0e69cd0a6c3f3b812cb5",
+      "sha256": "2d08f00120e03ad6f6403781001414c45bf379a0822e0e69cd0a6c3f3b812cb5",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/RecentCopies.kt",
+      "sourceSha256": "b4d3b3a4dd105ef9ff50ec8447df120c0d2327050c1914dc515e9c38cf893b39",
+      "sha256": "b4d3b3a4dd105ef9ff50ec8447df120c0d2327050c1914dc515e9c38cf893b39",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/ReleaseInfo.kt",
+      "sourceSha256": "038bb207e6baf78d53585431256e0ae71be7d1f8abe5621adad05096c1f10d4a",
+      "sha256": "038bb207e6baf78d53585431256e0ae71be7d1f8abe5621adad05096c1f10d4a",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/RememberedDomains.kt",
+      "sourceSha256": "d420ee1c4bb390cc6d01dbc2d3ecda728468a576be94d9a505f49dcc6eb91dfb",
+      "sha256": "d420ee1c4bb390cc6d01dbc2d3ecda728468a576be94d9a505f49dcc6eb91dfb",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/SavedTextPanel.kt",
+      "sourceSha256": "af000283d263f2008cf888a888a850a2c988ea47478ce67c5309244abf37e306",
+      "sha256": "af000283d263f2008cf888a888a850a2c988ea47478ce67c5309244abf37e306",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/SavedTextStore.kt",
+      "sourceSha256": "86c6fb929f75aeb36aaeee0dd7568811330a8c70ed96fc76a36c57b5da31fb95",
+      "sha256": "86c6fb929f75aeb36aaeee0dd7568811330a8c70ed96fc76a36c57b5da31fb95",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/SavedTexts.kt",
+      "sourceSha256": "a5a9221e217b413f61e91defedd945a0bcc3f3e803298f166595618384182db4",
+      "sha256": "a5a9221e217b413f61e91defedd945a0bcc3f3e803298f166595618384182db4",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/SettingsActivity.kt",
+      "sourceSha256": "18dfb4e228d1ef17890d61e9c2ad5b97c48360ea9dd06787c9acbaac9bd10654",
+      "sha256": "18dfb4e228d1ef17890d61e9c2ad5b97c48360ea9dd06787c9acbaac9bd10654",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/SettingsLocale.kt",
+      "sourceSha256": "94b0881f5b24b68c5576a51012b2e7b7e97b4149fdc5a50300cc19e72dfa0879",
+      "sha256": "94b0881f5b24b68c5576a51012b2e7b7e97b4149fdc5a50300cc19e72dfa0879",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/SetupActivity.kt",
+      "sourceSha256": "5504706dc94af8486c7a5785d49784e97849c7c742acf42d54d8467a88614f1c",
+      "sha256": "5504706dc94af8486c7a5785d49784e97849c7c742acf42d54d8467a88614f1c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/SetupFlow.kt",
+      "sourceSha256": "a39dba6874a4f26e24bbbd1773c7e5fa1000440664b066a54ebdb9b6756be209",
+      "sha256": "a39dba6874a4f26e24bbbd1773c7e5fa1000440664b066a54ebdb9b6756be209",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/StripHeight.kt",
+      "sourceSha256": "523053d94d0f1bf594d05365240a3e6b835ae60957cf649d63288172f96e396e",
+      "sha256": "523053d94d0f1bf594d05365240a3e6b835ae60957cf649d63288172f96e396e",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/StripTools.kt",
+      "sourceSha256": "489ec15fd2c8ebd1a2432bdcb7d3a4223a9281415d4cd53f14f48d1a7e6911f7",
+      "sha256": "489ec15fd2c8ebd1a2432bdcb7d3a4223a9281415d4cd53f14f48d1a7e6911f7",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/SuggestionPopup.kt",
+      "sourceSha256": "3b983b73dc9c4729cfb3ccd217553fc9eb04fc71138ac9c96e22dadb50ada16b",
+      "sha256": "3b983b73dc9c4729cfb3ccd217553fc9eb04fc71138ac9c96e22dadb50ada16b",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/SwipeGesture.kt",
+      "sourceSha256": "51c17337ec06a83a5741aa2723510559d2a5b24ff22a3a2db2256a12ebcbd9b4",
+      "sha256": "51c17337ec06a83a5741aa2723510559d2a5b24ff22a3a2db2256a12ebcbd9b4",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/SwipeInsertion.kt",
+      "sourceSha256": "a216f004ac5ac87450aad175bf73df84f426cc18e21cc294f3235da7abd0b73c",
+      "sha256": "a216f004ac5ac87450aad175bf73df84f426cc18e21cc294f3235da7abd0b73c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/SwipeModel.kt",
+      "sourceSha256": "4a4c9ae07867d3818a8159c40acfd7edd7e74ea1be2e87cab4fa93677cd1ec74",
+      "sha256": "4a4c9ae07867d3818a8159c40acfd7edd7e74ea1be2e87cab4fa93677cd1ec74",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/SwipeStart.kt",
+      "sourceSha256": "d33ace597068d355bb06080f385285982c2cdd653c7d4d5b9ffcb581b09d2e3a",
+      "sha256": "d33ace597068d355bb06080f385285982c2cdd653c7d4d5b9ffcb581b09d2e3a",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/SwipeWorker.kt",
+      "sourceSha256": "24e936b4698f9663319cb64254b6741ba3d7d3d550a3007a0b9703664d4fc089",
+      "sha256": "24e936b4698f9663319cb64254b6741ba3d7d3d550a3007a0b9703664d4fc089",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/TalkBackFocus.kt",
+      "sourceSha256": "0f719a777cd829bfce6106ad5ee40fa644e45f78c88b6d49ac798708982dffa2",
+      "sha256": "0f719a777cd829bfce6106ad5ee40fa644e45f78c88b6d49ac798708982dffa2",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/ToolText.kt",
+      "sourceSha256": "eae1e25c2c670ff091b612291b9d896da51310add0556baad04b25e3ab658253",
+      "sha256": "eae1e25c2c670ff091b612291b9d896da51310add0556baad04b25e3ab658253",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/ToolsPanel.kt",
+      "sourceSha256": "7916be61c99826e58eddb513dc3bd7d1dcc0434f587191f718a2454fa01767fa",
+      "sha256": "7916be61c99826e58eddb513dc3bd7d1dcc0434f587191f718a2454fa01767fa",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/TouchOffsetStore.kt",
+      "sourceSha256": "6cd7772980089c4590216425c5267f3aab60bd0fb265fcb61f7427384d432588",
+      "sha256": "6cd7772980089c4590216425c5267f3aab60bd0fb265fcb61f7427384d432588",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/TwoFingerGestures.kt",
+      "sourceSha256": "b85caa5ee8067ae7f71cbd1d307b70ecdea231efb2deee32a12e764e513396ff",
+      "sha256": "b85caa5ee8067ae7f71cbd1d307b70ecdea231efb2deee32a12e764e513396ff",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/TypedRun.kt",
+      "sourceSha256": "183265ce8b235cddfadde54e96db1f6b5f8f37454f5b729b4faffbe927b5fbbc",
+      "sha256": "183265ce8b235cddfadde54e96db1f6b5f8f37454f5b729b4faffbe927b5fbbc",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/TypingRules.kt",
+      "sourceSha256": "ea93ae903f01798636efc5cd933c1b6ad8a4fee09315516b3b8ab5bfe3d530a8",
+      "sha256": "ea93ae903f01798636efc5cd933c1b6ad8a4fee09315516b3b8ab5bfe3d530a8",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/UpdateBanner.kt",
+      "sourceSha256": "4b9209519c7321cf0391e745ef11513cc7e2b91692f8043a0b5b473e4805bc32",
+      "sha256": "4b9209519c7321cf0391e745ef11513cc7e2b91692f8043a0b5b473e4805bc32",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/UpdateChecker.kt",
+      "sourceSha256": "1d80708e80809af16dc076632fb6baef8a3ac91570dc2771618221e9fd772913",
+      "sha256": "1d80708e80809af16dc076632fb6baef8a3ac91570dc2771618221e9fd772913",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/VoiceDictation.kt",
+      "sourceSha256": "72ff07af981d7a132f25a61983f55c244f4db4c7a3cb3d71397881286e5ee6ef",
+      "sha256": "72ff07af981d7a132f25a61983f55c244f4db4c7a3cb3d71397881286e5ee6ef",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/VoiceInput.kt",
+      "sourceSha256": "b3e6a96739f0bd4e0cafb5c43a77b105fa90a2dfad00ae3639946f054533b491",
+      "sha256": "b3e6a96739f0bd4e0cafb5c43a77b105fa90a2dfad00ae3639946f054533b491",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/VoicePermissionActivity.kt",
+      "sourceSha256": "afb4f0e58d9e4e45af21f89f1f369488626f4dbd16ba19716a01f96535b0bc5f",
+      "sha256": "afb4f0e58d9e4e45af21f89f1f369488626f4dbd16ba19716a01f96535b0bc5f",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/WordSpellingStore.kt",
+      "sourceSha256": "4e10417062f7d5d58d21d703c572d3dc0d66c78ecd11eac4ec31ff58332c014d",
+      "sha256": "4e10417062f7d5d58d21d703c572d3dc0d66c78ecd11eac4ec31ff58332c014d",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/java/dev/localtype/keyboard/WordTrace.kt",
+      "sourceSha256": "1d8921152b3f0e54c5cfa0e7c67e70bc92522fe4a41e8c7bdec2a8bf9c1903a6",
+      "sha256": "1d8921152b3f0e54c5cfa0e7c67e70bc92522fe4a41e8c7bdec2a8bf9c1903a6",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/candidate_background.xml",
+      "sourceSha256": "6c893ed4b5ca7b651d4b280167ce1985663e9482efe873220913811acc001b71",
+      "sha256": "6c893ed4b5ca7b651d4b280167ce1985663e9482efe873220913811acc001b71",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_apply.xml",
+      "sourceSha256": "0054b2e957b512698c7a7a9d72467814125165eb8e50f80a9fc5b43ce8917236",
+      "sha256": "0054b2e957b512698c7a7a9d72467814125165eb8e50f80a9fc5b43ce8917236",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_arrows.xml",
+      "sourceSha256": "4931b4fd3ba17281660c5555155c95b0619bf7a3322ad7c0b16a9b2b7ec2fa43",
+      "sha256": "4931b4fd3ba17281660c5555155c95b0619bf7a3322ad7c0b16a9b2b7ec2fa43",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_backspace.xml",
+      "sourceSha256": "0f052409c63cf7005c6928140442917b16aa2f81fb54d62a93aef39df26dc60a",
+      "sha256": "0f052409c63cf7005c6928140442917b16aa2f81fb54d62a93aef39df26dc60a",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_bookmark.xml",
+      "sourceSha256": "1053abaeb64f6799a630b74ba1d20652016850eae46b0edaed4af9a070c65f40",
+      "sha256": "1053abaeb64f6799a630b74ba1d20652016850eae46b0edaed4af9a070c65f40",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_contacts.xml",
+      "sourceSha256": "97f284796efce781bf646108a704391d2fecd3559aa988e5d1e1a750fdd2a9d2",
+      "sha256": "97f284796efce781bf646108a704391d2fecd3559aa988e5d1e1a750fdd2a9d2",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_count.xml",
+      "sourceSha256": "9c944555c2150714ee71efbe5800f6734eef54d0eabcc1aa0142247bda728073",
+      "sha256": "9c944555c2150714ee71efbe5800f6734eef54d0eabcc1aa0142247bda728073",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_cursor_end.xml",
+      "sourceSha256": "05388589c1dc930a21667f2dd79f4bf4d087efabe8f2386ebbc393ec97e22857",
+      "sha256": "05388589c1dc930a21667f2dd79f4bf4d087efabe8f2386ebbc393ec97e22857",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_cursor_start.xml",
+      "sourceSha256": "e721f726cf97b2bb47a0642d08b97b4890256f33e19624dd6b30914f527a8202",
+      "sha256": "e721f726cf97b2bb47a0642d08b97b4890256f33e19624dd6b30914f527a8202",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_delete.xml",
+      "sourceSha256": "6a095a042ef626dc97dc1ebd2c8cdc9d10e40bac54fe7a83f4344396a788be49",
+      "sha256": "6a095a042ef626dc97dc1ebd2c8cdc9d10e40bac54fe7a83f4344396a788be49",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_dismiss.xml",
+      "sourceSha256": "e5a45ec9a1d4b103f1b4a649799d51de1e6cd3eda504aa239f0c5502b5288b8f",
+      "sha256": "e5a45ec9a1d4b103f1b4a649799d51de1e6cd3eda504aa239f0c5502b5288b8f",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_emoji.xml",
+      "sourceSha256": "3ca1590ac14cb3e2069491347633f2b9b113a3ff971e8cb31e3f5b6192c47168",
+      "sha256": "3ca1590ac14cb3e2069491347633f2b9b113a3ff971e8cb31e3f5b6192c47168",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_full_width.xml",
+      "sourceSha256": "4f05dcc1331dcf6c8a037bfb6b528514ac68bf9b31748acb0e1f0d16edc4cd2a",
+      "sha256": "4f05dcc1331dcf6c8a037bfb6b528514ac68bf9b31748acb0e1f0d16edc4cd2a",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_generating.xml",
+      "sourceSha256": "dc234881aa67cfd4b23842b07acc2a9dbcfc4d6d1ad644f8b051ee143af739d9",
+      "sha256": "dc234881aa67cfd4b23842b07acc2a9dbcfc4d6d1ad644f8b051ee143af739d9",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_hide_keyboard.xml",
+      "sourceSha256": "297681314d682fc81a924be7b4d8cabcea93867ba21aa937c5b70290ee463e40",
+      "sha256": "297681314d682fc81a924be7b4d8cabcea93867ba21aa937c5b70290ee463e40",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_info.xml",
+      "sourceSha256": "8c2d1afd158b7159ff456940b1b8759557cfecf609e261b6297c757338be7ad6",
+      "sha256": "8c2d1afd158b7159ff456940b1b8759557cfecf609e261b6297c757338be7ad6",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_launcher_background.xml",
+      "sourceSha256": "f868c89ec59898cdd54b373ee049610b7a3c6f83fffd99ed7b846f64870d87c5",
+      "sha256": "f868c89ec59898cdd54b373ee049610b7a3c6f83fffd99ed7b846f64870d87c5",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_launcher_foreground.xml",
+      "sourceSha256": "4c3cd40947773806a9157b0c6292d749b0f2c07269155db745ea6be26b1b65ea",
+      "sha256": "4c3cd40947773806a9157b0c6292d749b0f2c07269155db745ea6be26b1b65ea",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_launcher_monochrome.xml",
+      "sourceSha256": "b16716d9b756d3dec11e448b14d178ce3a5c437bde3577880be4742df8416e64",
+      "sha256": "b16716d9b756d3dec11e448b14d178ce3a5c437bde3577880be4742df8416e64",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_link.xml",
+      "sourceSha256": "3561d526e425ea4d9fe6fda71c16f99b8b183b19d1377eb80aba2bdefbfefbf9",
+      "sha256": "3561d526e425ea4d9fe6fda71c16f99b8b183b19d1377eb80aba2bdefbfefbf9",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_mic.xml",
+      "sourceSha256": "ffc3edd8be31faa701b969832c3ffb350d64e63354cdf5188620570fee74ebe4",
+      "sha256": "ffc3edd8be31faa701b969832c3ffb350d64e63354cdf5188620570fee74ebe4",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_one_handed.xml",
+      "sourceSha256": "29fa7af737399ddb85c15dfb4d4f2a01ec6d0c732a6d280449e22cb4b096fb93",
+      "sha256": "29fa7af737399ddb85c15dfb4d4f2a01ec6d0c732a6d280449e22cb4b096fb93",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_paste.xml",
+      "sourceSha256": "78aa130e4f35198e2fb2124f2bca1acb1a3d987f34760967d5bcc99a8d684a24",
+      "sha256": "78aa130e4f35198e2fb2124f2bca1acb1a3d987f34760967d5bcc99a8d684a24",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_pin.xml",
+      "sourceSha256": "80330fcf427788e54a9f9b65de4160e3435a3c6a8fd6336408a25452c548c621",
+      "sha256": "80330fcf427788e54a9f9b65de4160e3435a3c6a8fd6336408a25452c548c621",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_predict.xml",
+      "sourceSha256": "2e5606a9f869a16539b54fd457457ea882162178c4d04e9110a6baf61e45193c",
+      "sha256": "2e5606a9f869a16539b54fd457457ea882162178c4d04e9110a6baf61e45193c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_private.xml",
+      "sourceSha256": "06963665c0e1b8fc0763a9fb63f6938d9b3728fce66adff137037d73f0f96386",
+      "sha256": "06963665c0e1b8fc0763a9fb63f6938d9b3728fce66adff137037d73f0f96386",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_read_aloud.xml",
+      "sourceSha256": "bb6a1307f1f3bcd752ea535c8fa2f98dc479d1199ce41ed6478cf92579560381",
+      "sha256": "bb6a1307f1f3bcd752ea535c8fa2f98dc479d1199ce41ed6478cf92579560381",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_redo.xml",
+      "sourceSha256": "e55f39d90e7188f1028b4c714d8994a40c6c2e75d5b24a28b67f4aaa08921760",
+      "sha256": "e55f39d90e7188f1028b4c714d8994a40c6c2e75d5b24a28b67f4aaa08921760",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_regenerate.xml",
+      "sourceSha256": "0759178230e94f9b6ea77041b540cd353518867d981671724e71d8672b54bfd7",
+      "sha256": "0759178230e94f9b6ea77041b540cd353518867d981671724e71d8672b54bfd7",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_rewrite_formal.xml",
+      "sourceSha256": "03b5c390168d5e61dd7c21429e616726c269dc1d913107a9a82a59f80b4509ba",
+      "sha256": "03b5c390168d5e61dd7c21429e616726c269dc1d913107a9a82a59f80b4509ba",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_rewrite_friendly.xml",
+      "sourceSha256": "2bf4f31843cd5131335e9c0a182fd057010db9cfbce0ca9235cff7897c13ded1",
+      "sha256": "2bf4f31843cd5131335e9c0a182fd057010db9cfbce0ca9235cff7897c13ded1",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_rewrite_shorter.xml",
+      "sourceSha256": "e7c1fdc47ba20bd00c71962aef4e3bdad2148cde237216de8dfa26f8bf569a81",
+      "sha256": "e7c1fdc47ba20bd00c71962aef4e3bdad2148cde237216de8dfa26f8bf569a81",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_search.xml",
+      "sourceSha256": "72dc92b5225238fc88947d0868b1633034b71085404a44b93d832f0729f9dcc2",
+      "sha256": "72dc92b5225238fc88947d0868b1633034b71085404a44b93d832f0729f9dcc2",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_select_all.xml",
+      "sourceSha256": "3fad2a9d4e13d9f446bc65ec87a96afddaec21769356f480e24e00928c97b569",
+      "sha256": "3fad2a9d4e13d9f446bc65ec87a96afddaec21769356f480e24e00928c97b569",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_send.xml",
+      "sourceSha256": "d7b8abbfea02a6ec1cde4d9931633ff656cf9007c8317afc675d46ee17b8b246",
+      "sha256": "d7b8abbfea02a6ec1cde4d9931633ff656cf9007c8317afc675d46ee17b8b246",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_settings.xml",
+      "sourceSha256": "4ab9316561ad9787a7fa6d7ef38d04243b0a1fc9edf63d0d1b796d2fa621246d",
+      "sha256": "4ab9316561ad9787a7fa6d7ef38d04243b0a1fc9edf63d0d1b796d2fa621246d",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_swap_side.xml",
+      "sourceSha256": "e30002ec9c7d2f1510a13b1019cccc63cb7b509efed950009c2ddda81c810f37",
+      "sha256": "e30002ec9c7d2f1510a13b1019cccc63cb7b509efed950009c2ddda81c810f37",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_text_case.xml",
+      "sourceSha256": "1cb3aa72d401572c2c62855f0a595952cb2e07a25d332b4def7be4758bfce216",
+      "sha256": "1cb3aa72d401572c2c62855f0a595952cb2e07a25d332b4def7be4758bfce216",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_time.xml",
+      "sourceSha256": "22a05f47f1ee5df8bd8b2fed4e52521e9135ba2d9729a6b884b8f90022da7c11",
+      "sha256": "22a05f47f1ee5df8bd8b2fed4e52521e9135ba2d9729a6b884b8f90022da7c11",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_today.xml",
+      "sourceSha256": "6e7ff7d4d17fdeb44647a316c88dfbeea92d60c48572abe1908ab8353d8a4098",
+      "sha256": "6e7ff7d4d17fdeb44647a316c88dfbeea92d60c48572abe1908ab8353d8a4098",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_tools.xml",
+      "sourceSha256": "539d474c2c104c07c7eeb0e53aff8737b9fdfd327c1e0cfaf16f7043c5ddf2a8",
+      "sha256": "539d474c2c104c07c7eeb0e53aff8737b9fdfd327c1e0cfaf16f7043c5ddf2a8",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_tools_more.xml",
+      "sourceSha256": "d93264e791bc355574879cf4a6275a2de97e78a055ac10c49b74212a3a4236ab",
+      "sha256": "d93264e791bc355574879cf4a6275a2de97e78a055ac10c49b74212a3a4236ab",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_undo.xml",
+      "sourceSha256": "21566add0481a498782bb2687b7c5ea0dd16e34e2c5c17d4141fb259bc4ee6fa",
+      "sha256": "21566add0481a498782bb2687b7c5ea0dd16e34e2c5c17d4141fb259bc4ee6fa",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/inline_chip_dark.xml",
+      "sourceSha256": "01de03f6f6293ebae18683f420cb4169aa3423d84d33c916e81145cd9ec039d9",
+      "sha256": "01de03f6f6293ebae18683f420cb4169aa3423d84d33c916e81145cd9ec039d9",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/inline_chip_light.xml",
+      "sourceSha256": "1a6ef841e33ec5c4ff40058f5a111b71b7bf5ede366acc9213a633da6aad17dd",
+      "sha256": "1a6ef841e33ec5c4ff40058f5a111b71b7bf5ede366acc9213a633da6aad17dd",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/panel_key_background.xml",
+      "sourceSha256": "f0387277cf39757796fe15e64b70c6c0e65597a809ae7b52d70feee667baafdb",
+      "sha256": "f0387277cf39757796fe15e64b70c6c0e65597a809ae7b52d70feee667baafdb",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/panel_modifier_background.xml",
+      "sourceSha256": "c9b9c1d75a2977b0f71df8aaf5e4513441bc21cb15437aefc4c1113a966f758b",
+      "sha256": "c9b9c1d75a2977b0f71df8aaf5e4513441bc21cb15437aefc4c1113a966f758b",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/panel_tab_background.xml",
+      "sourceSha256": "0e7723563c7972d13c55bf678ab51c83898a5e5133074edccadbaadb6e11da09",
+      "sha256": "0e7723563c7972d13c55bf678ab51c83898a5e5133074edccadbaadb6e11da09",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/drawable/popup_background.xml",
+      "sourceSha256": "cfe069919d10057f1cd995c167d0ec1528c12e05bf1bbccf33e8d77541118698",
+      "sha256": "cfe069919d10057f1cd995c167d0ec1528c12e05bf1bbccf33e8d77541118698",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/mipmap-anydpi/ic_launcher.xml",
+      "sourceSha256": "ada31da9e23f4520f3753e71ca23799a107431473daa3774b6cecac26847260c",
+      "sha256": "ada31da9e23f4520f3753e71ca23799a107431473daa3774b6cecac26847260c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/mipmap-hdpi/ic_launcher.png",
+      "sourceSha256": "bcfc84c771b95639b069468bb5066006b52c6f6866f1168c0bcfcbd4acad3ef8",
+      "sha256": "bcfc84c771b95639b069468bb5066006b52c6f6866f1168c0bcfcbd4acad3ef8",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/mipmap-mdpi/ic_launcher.png",
+      "sourceSha256": "d57c5f00d9cdc9b4cab674f01406f81c307f09fb222ef29fc837ad02c0a10fbb",
+      "sha256": "d57c5f00d9cdc9b4cab674f01406f81c307f09fb222ef29fc837ad02c0a10fbb",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+      "sourceSha256": "17a79922377a95d6d54e21892509b5114e8bef3fbb6bcd5eea1830e9538d3f35",
+      "sha256": "17a79922377a95d6d54e21892509b5114e8bef3fbb6bcd5eea1830e9538d3f35",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+      "sourceSha256": "a07a1048b4d55a7bad22d054a499fb68638747bb42792b57587f739e4a7411a5",
+      "sha256": "a07a1048b4d55a7bad22d054a499fb68638747bb42792b57587f739e4a7411a5",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+      "sourceSha256": "5cbedb615db952b51f666922ec1e36c7c07ee3fcbbd3eedcb25770fb1336549e",
+      "sha256": "5cbedb615db952b51f666922ec1e36c7c07ee3fcbbd3eedcb25770fb1336549e",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/values-es/strings.xml",
+      "sourceSha256": "f5e0db36b2392f75cc96145f75c69bb9a881f5b087db09266fa429aa2c0304e4",
+      "sha256": "f5e0db36b2392f75cc96145f75c69bb9a881f5b087db09266fa429aa2c0304e4",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/values-night-v31/colors.xml",
+      "sourceSha256": "21f931f2e5a2f9a4413f495d07761ef7e77247cc8e83b241f8da7d04283fa0ba",
+      "sha256": "21f931f2e5a2f9a4413f495d07761ef7e77247cc8e83b241f8da7d04283fa0ba",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/values-night/colors.xml",
+      "sourceSha256": "a356bd23fa153d970214538efffd8870d8537ab82f26354eabc95718d4795d06",
+      "sha256": "a356bd23fa153d970214538efffd8870d8537ab82f26354eabc95718d4795d06",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/values-night/styles.xml",
+      "sourceSha256": "0c6fb02d8c4eb99895054cfc75e6c7d71e6d1ac21d2ed1610cc0c4a8e6a22e76",
+      "sha256": "0c6fb02d8c4eb99895054cfc75e6c7d71e6d1ac21d2ed1610cc0c4a8e6a22e76",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/values-pt/strings.xml",
+      "sourceSha256": "132d686f097b3a1b1a810f3c55c1d06ee689a185d7c0ec471d7969af7688ed07",
+      "sha256": "132d686f097b3a1b1a810f3c55c1d06ee689a185d7c0ec471d7969af7688ed07",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/values-v27/styles.xml",
+      "sourceSha256": "e3dc1af7c8f9d250e76465be00c250d8feea11090ff9630a9fefa208aa6c002c",
+      "sha256": "e3dc1af7c8f9d250e76465be00c250d8feea11090ff9630a9fefa208aa6c002c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/values-v31/colors.xml",
+      "sourceSha256": "5fe9403c033ba5849322b88a417af9b67abceb663ace6248246422677dd12c30",
+      "sha256": "5fe9403c033ba5849322b88a417af9b67abceb663ace6248246422677dd12c30",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/values/asset_statements.xml",
+      "sourceSha256": "68a1ee6e39dfd5ac4af0a727b2d4cfae492881f1de18cc11dd0faad9899e6a8e",
+      "sha256": "68a1ee6e39dfd5ac4af0a727b2d4cfae492881f1de18cc11dd0faad9899e6a8e",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/values/colors.xml",
+      "sourceSha256": "f488916fc817e1ffc89d4ba607257a8a501ff4812936e3bbc8b3db3863bbaf54",
+      "sha256": "f488916fc817e1ffc89d4ba607257a8a501ff4812936e3bbc8b3db3863bbaf54",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/values/ids.xml",
+      "sourceSha256": "f33d56642308a6db7cb8811b65b0a088f45c2764e664fb50f5ce1bbddbb8cabd",
+      "sha256": "f33d56642308a6db7cb8811b65b0a088f45c2764e664fb50f5ce1bbddbb8cabd",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/values/model_sharing.xml",
+      "sourceSha256": "cd5024f1c60e999f6ded8c2e2115fef2cd9c4ea0e0e22af7a5446d5dd6772d17",
+      "sha256": "cd5024f1c60e999f6ded8c2e2115fef2cd9c4ea0e0e22af7a5446d5dd6772d17",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/values/strings.xml",
+      "sourceSha256": "0ee9b6c55d3c24ae4e2bedf7c90417be29cb50258700ba8997bba6180ecd0b41",
+      "sha256": "0ee9b6c55d3c24ae4e2bedf7c90417be29cb50258700ba8997bba6180ecd0b41",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/values/styles.xml",
+      "sourceSha256": "607918fa6a89f086d34939f98ad8eca371cbb24ad1b219c3f2e50194f7718686",
+      "sha256": "607918fa6a89f086d34939f98ad8eca371cbb24ad1b219c3f2e50194f7718686",
+      "transformed": false
+    },
+    {
+      "path": "app/src/main/res/xml/method.xml",
+      "sourceSha256": "c9a7cc261e1e5dba6e4a34bfb0c449381d803520663369da00943ebeaa52ca52",
+      "sha256": "c9a7cc261e1e5dba6e4a34bfb0c449381d803520663369da00943ebeaa52ca52",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/fixtures/cifg_tiny.bin",
+      "sourceSha256": "f47f9dfe11074f29666a5b986510f872f0b3f212292b08678b865f50109daf11",
+      "sha256": "f47f9dfe11074f29666a5b986510f872f0b3f212292b08678b865f50109daf11",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/fixtures/cifg_tiny_golden.tsv",
+      "sourceSha256": "0605d78e549e264f6e8348d49467a46163255a3f034f11927c3ea1fbd98664cf",
+      "sha256": "0605d78e549e264f6e8348d49467a46163255a3f034f11927c3ea1fbd98664cf",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/fixtures/cifg_tokenizer_cases.tsv",
+      "sourceSha256": "0862495cbf3481ace98389a3d881e6e38b5431a6017e10ed1e765d79246c384a",
+      "sha256": "0862495cbf3481ace98389a3d881e6e38b5431a6017e10ed1e765d79246c384a",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/fixtures/corpus-prior/manifest.json",
+      "sourceSha256": "fd7237f0e1e316404d0d3d578fb26b257cd1c704b3daa28ef870adb6e82f43ae",
+      "sha256": "fd7237f0e1e316404d0d3d578fb26b257cd1c704b3daa28ef870adb6e82f43ae",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/fixtures/corpus-prior/train.sources.txt",
+      "sourceSha256": "514a54ad84b85771808ad1feed93320b15aa41fd6e8720f884deae3d8fbfc846",
+      "sha256": "514a54ad84b85771808ad1feed93320b15aa41fd6e8720f884deae3d8fbfc846",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/fixtures/corpus-prior/train.txt",
+      "sourceSha256": "1099318318f449a3c9beb8d8f71161a9da74a8a26f8bee683df470c3613baa86",
+      "sha256": "1099318318f449a3c9beb8d8f71161a9da74a8a26f8bee683df470c3613baa86",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/fixtures/corpus-prior/words_en.txt",
+      "sourceSha256": "6ba19b76dac3687a7febcd31dfe2607cc42ff5c241420e75122b610a938fe095",
+      "sha256": "6ba19b76dac3687a7febcd31dfe2607cc42ff5c241420e75122b610a938fe095",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/fixtures/corpus-prior/words_en_modern.txt",
+      "sourceSha256": "969d5acaf88b64221736566b2290a58afb7e7a7760f8ab06215ad3e95bca8574",
+      "sha256": "969d5acaf88b64221736566b2290a58afb7e7a7760f8ab06215ad3e95bca8574",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/fixtures/corpus-prior/words_en_profanity.txt",
+      "sourceSha256": "ef3e5bee3b06de4fefba6997b4e7aa21e7615b8091512b8adc61e8c98f3bdd87",
+      "sha256": "ef3e5bee3b06de4fefba6997b4e7aa21e7615b8091512b8adc61e8c98f3bdd87",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/fixtures/corpus_prior_tiny.bin",
+      "sourceSha256": "5ec8d3b429b567b2cc0a43c99db762ad009ed357d0cb46d0b17f8bb702c88967",
+      "sha256": "5ec8d3b429b567b2cc0a43c99db762ad009ed357d0cb46d0b17f8bb702c88967",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/fixtures/ngram_scores_without_prior.txt",
+      "sourceSha256": "5e3dbcb93c85f4fccafec6c13f606a696e784c530e0cf9a4359fb093c5d7fc53",
+      "sha256": "5e3dbcb93c85f4fccafec6c13f606a696e784c530e0cf9a4359fb093c5d7fc53",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/fixtures/prediction_log_sample.tsv",
+      "sourceSha256": "e7d2023ea11c34e6ffb975e30c612e3ca17bcf4347749ef353b92008e1a109cb",
+      "sha256": "e7d2023ea11c34e6ffb975e30c612e3ca17bcf4347749ef353b92008e1a109cb",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/fixtures/swipe_en.golden.tsv",
+      "sourceSha256": "9cbe4209c7e39f72c9ee4ae2e0cd277de334819575b8059d7251901cf05b35b1",
+      "sha256": "9cbe4209c7e39f72c9ee4ae2e0cd277de334819575b8059d7251901cf05b35b1",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/fixtures/swipe_resample_cases.tsv",
+      "sourceSha256": "d89271841520e5a429bcc768659b9abb510a615e80b4d08c44c7c20b721b1e37",
+      "sha256": "d89271841520e5a429bcc768659b9abb510a615e80b4d08c44c7c20b721b1e37",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/fixtures/swipe_tiny.bin",
+      "sourceSha256": "ed905379f0b9d1b8caa5e884f75fa5ca478ac3c1da780ccc359c4aa0d495551d",
+      "sha256": "ed905379f0b9d1b8caa5e884f75fa5ca478ac3c1da780ccc359c4aa0d495551d",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/fixtures/swipe_tiny.golden.tsv",
+      "sourceSha256": "ae443a5b59dd5babcff89339508df0daf3a641895542ea5d503d9421f68d034d",
+      "sha256": "ae443a5b59dd5babcff89339508df0daf3a641895542ea5d503d9421f68d034d",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/AdaptiveNgramModelTest.kt",
+      "sourceSha256": "0e5bd4941dc289d966bdc757b8a8b97c8cc493088b6bb57f439f64671e039719",
+      "sha256": "0e5bd4941dc289d966bdc757b8a8b97c8cc493088b6bb57f439f64671e039719",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/AddedWordsTest.kt",
+      "sourceSha256": "4b73cc6175f7fe2d980809aa500377784d37fbe5e95d7e254304fb82c86e3cbc",
+      "sha256": "4b73cc6175f7fe2d980809aa500377784d37fbe5e95d7e254304fb82c86e3cbc",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/AppendLedgerTest.kt",
+      "sourceSha256": "88c7113955dad1b2136e93c400abd593610a39d99325e8a98d2b794299ed6ef9",
+      "sha256": "88c7113955dad1b2136e93c400abd593610a39d99325e8a98d2b794299ed6ef9",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/BritishSpellingTest.kt",
+      "sourceSha256": "026502d5749e9651895b12cf9d56b1c45576bb8488534b5810b58db9c1f5e87e",
+      "sha256": "026502d5749e9651895b12cf9d56b1c45576bb8488534b5810b58db9c1f5e87e",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/BundledWordListsTest.kt",
+      "sourceSha256": "fbce8d45b3b9ce62bdae5b86ed1737a5318112cc449b8085cb9a1bc6f6ed824f",
+      "sha256": "fbce8d45b3b9ce62bdae5b86ed1737a5318112cc449b8085cb9a1bc6f6ed824f",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CifgBench.kt",
+      "sourceSha256": "2b3cd7a09b27f0e06b13c98046540593501d53f6141c50916da7a1258555b235",
+      "sha256": "2b3cd7a09b27f0e06b13c98046540593501d53f6141c50916da7a1258555b235",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CifgModelTest.kt",
+      "sourceSha256": "6231334fdd8355baefe433e8c15771398d32b1ef1f757ca970e2727c421576e5",
+      "sha256": "3609fd4060d010dc5e050cce616244797188138d92103739d7359381d09012bf",
+      "transformed": true
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CleanLinkTest.kt",
+      "sourceSha256": "d361f379c608a68aef7ed919fcc78c25475fabb7223de22347cf706b320bdef2",
+      "sha256": "d361f379c608a68aef7ed919fcc78c25475fabb7223de22347cf706b320bdef2",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CommonSymbolHoldsTest.kt",
+      "sourceSha256": "d158a01732fbf012009c325e6ef6f5fd00cbc50d6d6c4ef0449fa10f521ca1de",
+      "sha256": "d158a01732fbf012009c325e6ef6f5fd00cbc50d6d6c4ef0449fa10f521ca1de",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/ContactsTest.kt",
+      "sourceSha256": "050bb7e5c9a016fbb061c4c500c88211c6f6ace132aba2d7301b2f7e92d93743",
+      "sha256": "050bb7e5c9a016fbb061c4c500c88211c6f6ace132aba2d7301b2f7e92d93743",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/ContextualContractionsTest.kt",
+      "sourceSha256": "607f5eb5427f5db7f944f7f3d60640a8b35f7d3948c40e2a05738927cafc502e",
+      "sha256": "607f5eb5427f5db7f944f7f3d60640a8b35f7d3948c40e2a05738927cafc502e",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CorpusEvaluation.kt",
+      "sourceSha256": "7ee6ecb6bd1cf0406bb603188e96e7c33613f13851f5caafe9cad238609e0232",
+      "sha256": "436bc875244930ef55e6cdc8302e86baf35afd5aea6c1b0326b7ab30bd9c885b",
+      "transformed": true
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CorpusEvaluationTest.kt",
+      "sourceSha256": "8d592c68777381661f50f9a60e53abf3aabc784f5aff19c311d6160c392dee5f",
+      "sha256": "8d592c68777381661f50f9a60e53abf3aabc784f5aff19c311d6160c392dee5f",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CorpusPortugueseEvaluationTest.kt",
+      "sourceSha256": "0da42fc0b6e49d26c141f3050ea56ce5973cb2b6b3d159b5f938fbebf8a77db6",
+      "sha256": "0da42fc0b6e49d26c141f3050ea56ce5973cb2b6b3d159b5f938fbebf8a77db6",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CorpusPriorTest.kt",
+      "sourceSha256": "0d92d1d4ad2fa7bf59acfd6cec369fe02cb9da0e63d5a939157d293f1393474b",
+      "sha256": "0d92d1d4ad2fa7bf59acfd6cec369fe02cb9da0e63d5a939157d293f1393474b",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CorpusSpanishEvaluationTest.kt",
+      "sourceSha256": "781ffab63aa9a1811f0239892689f699cf0fd20a76eb480fe556d1229e584de3",
+      "sha256": "781ffab63aa9a1811f0239892689f699cf0fd20a76eb480fe556d1229e584de3",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CorrectionDiagnosticsTest.kt",
+      "sourceSha256": "9fd170fc96d0a0012d56c599c78a460ff7521e63602df5f9047694fb76d529b4",
+      "sha256": "9fd170fc96d0a0012d56c599c78a460ff7521e63602df5f9047694fb76d529b4",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CorrectionPolicyTest.kt",
+      "sourceSha256": "5f72163cbab80ec3c1e7e3decdd9683cb945700bf1f99929795b4a46db641d97",
+      "sha256": "5f72163cbab80ec3c1e7e3decdd9683cb945700bf1f99929795b4a46db641d97",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CorrectionTextContextTest.kt",
+      "sourceSha256": "f95af1a88fb7ddf5a81b4ec8ab0e5fd9b009bff6ee11464c09be839b31c5f178",
+      "sha256": "f95af1a88fb7ddf5a81b4ec8ab0e5fd9b009bff6ee11464c09be839b31c5f178",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CorrectorEvaluationTest.kt",
+      "sourceSha256": "0157e062bab6d695e3c512276e1064e156c138ed7af9a401a574a32d1f9d978a",
+      "sha256": "0157e062bab6d695e3c512276e1064e156c138ed7af9a401a574a32d1f9d978a",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CorrectorPortugueseTest.kt",
+      "sourceSha256": "c4778871fe3026d4dab13b5dd91542c17949f7a3b4e60c25b3ef8c18b6b8954d",
+      "sha256": "c4778871fe3026d4dab13b5dd91542c17949f7a3b4e60c25b3ef8c18b6b8954d",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CorrectorSpanishTest.kt",
+      "sourceSha256": "ec9c373c6d1abe5b022aaf93d9baad03c7083baa0c9badc06e22086fccf9dc31",
+      "sha256": "ec9c373c6d1abe5b022aaf93d9baad03c7083baa0c9badc06e22086fccf9dc31",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CorrectorTest.kt",
+      "sourceSha256": "57ff052d551605b2cac59950f2bdf3a4e8ed49a331bab00ac9f000074a4cb6c0",
+      "sha256": "57ff052d551605b2cac59950f2bdf3a4e8ed49a331bab00ac9f000074a4cb6c0",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CorrectorTouchOffsetsTest.kt",
+      "sourceSha256": "29136723a1750512c1dd6047ca512e73d992a781a51d08ff24fb391ebf8eb0f5",
+      "sha256": "29136723a1750512c1dd6047ca512e73d992a781a51d08ff24fb391ebf8eb0f5",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CurrentVocabularyTest.kt",
+      "sourceSha256": "24ff7d541fdd1daadbb6033d7f49ab0cc32191da7b10d554766451895ba1247b",
+      "sha256": "24ff7d541fdd1daadbb6033d7f49ab0cc32191da7b10d554766451895ba1247b",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/CursorGesturesTest.kt",
+      "sourceSha256": "5fde0b42de6a52f379aad04159e7d7900eb7909f6695304597a38fb95684132e",
+      "sha256": "5fde0b42de6a52f379aad04159e7d7900eb7909f6695304597a38fb95684132e",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/DomainHostsTest.kt",
+      "sourceSha256": "8c61348519fe6b4aa66ab7a148a326a8eba89854b111638ea4ef3946cbb2da0d",
+      "sha256": "8c61348519fe6b4aa66ab7a148a326a8eba89854b111638ea4ef3946cbb2da0d",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/DomainTypingTest.kt",
+      "sourceSha256": "cedf92b44e2062f3bfd01281724a1c7d5b128428130a6089514c2c7e3905be8a",
+      "sha256": "cedf92b44e2062f3bfd01281724a1c7d5b128428130a6089514c2c7e3905be8a",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/EditorEditStateTest.kt",
+      "sourceSha256": "61fd1d6d2a373c2cf7a4a60bb3df10f5d429363d125fd974d9c92e2ea576f061",
+      "sha256": "61fd1d6d2a373c2cf7a4a60bb3df10f5d429363d125fd974d9c92e2ea576f061",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/EditorRangeTransactionTest.kt",
+      "sourceSha256": "37f4aa2468c59befc9db4c4087a1263c8031ff6731d4288caea8c8533a8cb8b4",
+      "sha256": "37f4aa2468c59befc9db4c4087a1263c8031ff6731d4288caea8c8533a8cb8b4",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/EmojiChoicesTest.kt",
+      "sourceSha256": "bc52ffd3cb493dc1461fa64a210562c31b305516e171114b2ef938f702f7b202",
+      "sha256": "bc52ffd3cb493dc1461fa64a210562c31b305516e171114b2ef938f702f7b202",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/EmojiInventoryTest.kt",
+      "sourceSha256": "aed5eb439aecb27f8460a59f82ef5234afa6900a2a5b067e16a2376ced23d015",
+      "sha256": "aed5eb439aecb27f8460a59f82ef5234afa6900a2a5b067e16a2376ced23d015",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/EmojiPanelLayoutTest.kt",
+      "sourceSha256": "325374679accb6e0d47b58b09a2c2a0e7a803bf1e5dc277b86eda65ce94ec5a9",
+      "sha256": "325374679accb6e0d47b58b09a2c2a0e7a803bf1e5dc277b86eda65ce94ec5a9",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/EmojiSearchTest.kt",
+      "sourceSha256": "bb727fad307158c3354386c84361c97ba40a3c6074ff135aed3c0cb7ab190895",
+      "sha256": "bb727fad307158c3354386c84361c97ba40a3c6074ff135aed3c0cb7ab190895",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/EmojiSuggestionsTest.kt",
+      "sourceSha256": "7c0c4f121160d1b99f081b746a59f69143ffb074241044df6bfcf07f60115adc",
+      "sha256": "7c0c4f121160d1b99f081b746a59f69143ffb074241044df6bfcf07f60115adc",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/EnginePlatformParityTest.kt",
+      "sourceSha256": "f8d509069b1564ab252fe1924324ccb1e1e7a3c3ecd5e416f29676726e45418e",
+      "sha256": "f8d509069b1564ab252fe1924324ccb1e1e7a3c3ecd5e416f29676726e45418e",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/EngineSelfCheckTest.kt",
+      "sourceSha256": "4aff6020291fade14a111814475daa7b3c9e3d0142f7f4ecd278b5d5a7717345",
+      "sha256": "4aff6020291fade14a111814475daa7b3c9e3d0142f7f4ecd278b5d5a7717345",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/ExpansionsTest.kt",
+      "sourceSha256": "2dfbb174647174cca1eb0bd1d9757bdca041da6650a0a309383d609329713942",
+      "sha256": "2dfbb174647174cca1eb0bd1d9757bdca041da6650a0a309383d609329713942",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/FoundationModelProviderTest.kt",
+      "sourceSha256": "a174702041b0b25464fc72e11df0931255e8cbd4e798638d1f04be1b35870278",
+      "sha256": "a174702041b0b25464fc72e11df0931255e8cbd4e798638d1f04be1b35870278",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/GestureActionsTest.kt",
+      "sourceSha256": "6932792e26958f3bbe74345eec829901996c7693fd31d22dc9ddc04782248693",
+      "sha256": "6932792e26958f3bbe74345eec829901996c7693fd31d22dc9ddc04782248693",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/GestureEvaluation.kt",
+      "sourceSha256": "f97fb62530a825ae3051c5bcd8d5c816c63e95b2f2b360bf8570b36b87a4684c",
+      "sha256": "f97fb62530a825ae3051c5bcd8d5c816c63e95b2f2b360bf8570b36b87a4684c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/GestureEvaluationTest.kt",
+      "sourceSha256": "bab176e537a7d93e7f33090804a4da0b943a1d811d749c2ef603d6d62add8291",
+      "sha256": "bab176e537a7d93e7f33090804a4da0b943a1d811d749c2ef603d6d62add8291",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/HebrewKeyboardTest.kt",
+      "sourceSha256": "b32c964b65ee9a65cbfaf48a03264b76cc2e77562c82d515ce859c6be9e854bb",
+      "sha256": "b32c964b65ee9a65cbfaf48a03264b76cc2e77562c82d515ce859c6be9e854bb",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/InlineRowRulesTest.kt",
+      "sourceSha256": "117dc85ec111f5810af74bbf4bd87ffb9debf07d7c2c4d1abe06ad56bf04de2f",
+      "sha256": "117dc85ec111f5810af74bbf4bd87ffb9debf07d7c2c4d1abe06ad56bf04de2f",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/IpaKeyboardTest.kt",
+      "sourceSha256": "05de6f5df8a7dd556f8dd26d5fbcced136ac982db4939265a9acac4b758d5166",
+      "sha256": "05de6f5df8a7dd556f8dd26d5fbcced136ac982db4939265a9acac4b758d5166",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/KeyHapticsTest.kt",
+      "sourceSha256": "b9708dea6b565c11bf7ddddb204afb5c3f596c455945b871aedcdb0f4f9d88ea",
+      "sha256": "b9708dea6b565c11bf7ddddb204afb5c3f596c455945b871aedcdb0f4f9d88ea",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/KeyboardLayoutTest.kt",
+      "sourceSha256": "35ba278a02ae7942adade821b7dfef4773186243a97b0738aeaa4697af251934",
+      "sha256": "35ba278a02ae7942adade821b7dfef4773186243a97b0738aeaa4697af251934",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/LanguageChoiceTest.kt",
+      "sourceSha256": "10dfee9ce8363e10984cb5e844ab0f6e3411001ed92378fb156814bd2329bf91",
+      "sha256": "10dfee9ce8363e10984cb5e844ab0f6e3411001ed92378fb156814bd2329bf91",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/LanguageEngineTest.kt",
+      "sourceSha256": "e89f6ca9f2812c8e512b84d1682f18576f07c2a0e4457f9a3920aa22c1891f20",
+      "sha256": "e89f6ca9f2812c8e512b84d1682f18576f07c2a0e4457f9a3920aa22c1891f20",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/LearnedPairBufferTest.kt",
+      "sourceSha256": "a918fff125c09d663d60d70a1a11b21c79c9d2d3cde8085f7c8ac233335fa2ef",
+      "sha256": "a918fff125c09d663d60d70a1a11b21c79c9d2d3cde8085f7c8ac233335fa2ef",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/LearnedPairJournalFileTest.kt",
+      "sourceSha256": "1bf0ae47e965b77911794e41c598d7e3e3cfe9da4882b76d0e403fca06d7d836",
+      "sha256": "1bf0ae47e965b77911794e41c598d7e3e3cfe9da4882b76d0e403fca06d7d836",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/LearnedPairJournalTest.kt",
+      "sourceSha256": "3ff32d185d0332ebde07077a726787e426c8327b5881a9faec9773658379759f",
+      "sha256": "3ff32d185d0332ebde07077a726787e426c8327b5881a9faec9773658379759f",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/LexiconTest.kt",
+      "sourceSha256": "af91ba63c8ecb23f16ec7b61bee273719ff117b714a828a71b14421f6c28d7c8",
+      "sha256": "af91ba63c8ecb23f16ec7b61bee273719ff117b714a828a71b14421f6c28d7c8",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/LinkCleanerTest.kt",
+      "sourceSha256": "e4abd1227edda9d6c61bddcfc690400d763e2bb83b2abc34c2c86d39fe98e91d",
+      "sha256": "e4abd1227edda9d6c61bddcfc690400d763e2bb83b2abc34c2c86d39fe98e91d",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/LoggedFieldGateTest.kt",
+      "sourceSha256": "c140bebd6d55c4fedaa51bd15e87b2f45fc454898399ff3a8cdbe905c72a56c2",
+      "sha256": "c140bebd6d55c4fedaa51bd15e87b2f45fc454898399ff3a8cdbe905c72a56c2",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/ModelBudgetTest.kt",
+      "sourceSha256": "06f8d950ac5c51e11864624f587f2d44b0db17c5d6e6df711d342404ef51c3e9",
+      "sha256": "06f8d950ac5c51e11864624f587f2d44b0db17c5d6e6df711d342404ef51c3e9",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/ModelChatTest.kt",
+      "sourceSha256": "fa480496ded35fb5fcf5aa3b342a499035eb83f826362d3c5812914790a1f36a",
+      "sha256": "fa480496ded35fb5fcf5aa3b342a499035eb83f826362d3c5812914790a1f36a",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/ModelRequestGateTest.kt",
+      "sourceSha256": "7ba6f350656c05998a18ab1dc0108e9b4f06206cc568d80e5e1947500777876c",
+      "sha256": "7ba6f350656c05998a18ab1dc0108e9b4f06206cc568d80e5e1947500777876c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/ModelSuggestionCacheTest.kt",
+      "sourceSha256": "c4b218c6732a12da3877fae87ebf1c57749db0c49b8b53fe3be18cb43f420663",
+      "sha256": "c4b218c6732a12da3877fae87ebf1c57749db0c49b8b53fe3be18cb43f420663",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/MotorAccessTest.kt",
+      "sourceSha256": "d65ba849f7649a8afc043e737c4a4efa1993fc6873be5788a2b37ed1dc4eb08f",
+      "sha256": "d65ba849f7649a8afc043e737c4a4efa1993fc6873be5788a2b37ed1dc4eb08f",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/MultiwordCorrectionTest.kt",
+      "sourceSha256": "f6f28e81e6198c88ca41e73eff5618744ff5b4bf4a5f53c5ae8961bb9a5d1ba3",
+      "sha256": "f6f28e81e6198c88ca41e73eff5618744ff5b4bf4a5f53c5ae8961bb9a5d1ba3",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/NeuralAssetTest.kt",
+      "sourceSha256": "e92449709024ea2468681c262f1541ea57194cd46e211db9bed6ec93b292d41b",
+      "sha256": "e92449709024ea2468681c262f1541ea57194cd46e211db9bed6ec93b292d41b",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/NeuralContextTest.kt",
+      "sourceSha256": "aa13a0b71fe63aad016fa71a3c22ed5b1b7006502ef67a000c80a073bbcb3d4c",
+      "sha256": "aa13a0b71fe63aad016fa71a3c22ed5b1b7006502ef67a000c80a073bbcb3d4c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/NeuralCursorStateTest.kt",
+      "sourceSha256": "efeaa6d1612c2634b37b96537ada411f900eb93f3b3b5e8e71d4f9dcb2aad196",
+      "sha256": "efeaa6d1612c2634b37b96537ada411f900eb93f3b3b5e8e71d4f9dcb2aad196",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/NeuralRankingTest.kt",
+      "sourceSha256": "f3e6c434daf06fc551dd2123eab3df504f4e3a937be98f782409ddf52da9b9f4",
+      "sha256": "f3e6c434daf06fc551dd2123eab3df504f4e3a937be98f782409ddf52da9b9f4",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/NeuralRequestStateTest.kt",
+      "sourceSha256": "df630b850233917ced748e43922bb4967ecee3c432b864af62f51a84a470f2fe",
+      "sha256": "df630b850233917ced748e43922bb4967ecee3c432b864af62f51a84a470f2fe",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/NoticeRulesTest.kt",
+      "sourceSha256": "d15c1297f2a94e5a0d9d4540b72e022b9b0f311fa217b62ed5ab84e5048bc6f1",
+      "sha256": "d15c1297f2a94e5a0d9d4540b72e022b9b0f311fa217b62ed5ab84e5048bc6f1",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/OneHandedTest.kt",
+      "sourceSha256": "52731d40997a1a75496e9bf0fc2791ceca4de7f50f1750c9ab3807102ba7d209",
+      "sha256": "52731d40997a1a75496e9bf0fc2791ceca4de7f50f1750c9ab3807102ba7d209",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/OwnedSpacingTest.kt",
+      "sourceSha256": "33ff2130f539eb2cb722e96ed170659c1846ff8fe05e703830f7056e9a12a640",
+      "sha256": "33ff2130f539eb2cb722e96ed170659c1846ff8fe05e703830f7056e9a12a640",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PageLanguageTest.kt",
+      "sourceSha256": "fd18bc9877742f84d2d3b582a98afa14d2cb1bae9909038d86c9065fff1c59ae",
+      "sha256": "fd18bc9877742f84d2d3b582a98afa14d2cb1bae9909038d86c9065fff1c59ae",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PendingKeysTest.kt",
+      "sourceSha256": "50c0699dd82f6795f845bcde37c13f8c1006daa77e2e99df8d9feda735d52a35",
+      "sha256": "50c0699dd82f6795f845bcde37c13f8c1006daa77e2e99df8d9feda735d52a35",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PersonalContextTraceTest.kt",
+      "sourceSha256": "38974e7e224b6541e30ce363b4d0aa3644d446e795c334895be3de71dba85312",
+      "sha256": "38974e7e224b6541e30ce363b4d0aa3644d446e795c334895be3de71dba85312",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PersonalLearningCodecTest.kt",
+      "sourceSha256": "2842b01cbd5f9ccb98b9c53d134f8f661f94cd81e077322ff1095f320a6e8851",
+      "sha256": "2842b01cbd5f9ccb98b9c53d134f8f661f94cd81e077322ff1095f320a6e8851",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PersonalLearningCoordinatorTest.kt",
+      "sourceSha256": "7911c01f09abd5b08dac8ad2275a7a8365be10565d988123c5f1154744a8ee83",
+      "sha256": "7911c01f09abd5b08dac8ad2275a7a8365be10565d988123c5f1154744a8ee83",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PersonalLearningLogReplayTest.kt",
+      "sourceSha256": "b4891188d07531a0ca59df7b1c660512d47de202803d9110a0cb746da74b0761",
+      "sha256": "b4891188d07531a0ca59df7b1c660512d47de202803d9110a0cb746da74b0761",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PersonalLearningStateTest.kt",
+      "sourceSha256": "c815484a07facaf7b8ed48a142d9b8a95afbe0acf23a578eb21835ab385ca83b",
+      "sha256": "c815484a07facaf7b8ed48a142d9b8a95afbe0acf23a578eb21835ab385ca83b",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PersonalRankingTest.kt",
+      "sourceSha256": "8971ee8c99c4ff47c8f98fc1bce429128ae703dfa5f713e2406dcb5d2b13bc10",
+      "sha256": "8971ee8c99c4ff47c8f98fc1bce429128ae703dfa5f713e2406dcb5d2b13bc10",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PopupGeometryTest.kt",
+      "sourceSha256": "4fb8aa306cb6831c43e72a0981043226b0e7e4943cc02d3a57f47e2567e7413a",
+      "sha256": "4fb8aa306cb6831c43e72a0981043226b0e7e4943cc02d3a57f47e2567e7413a",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PopupRowsTest.kt",
+      "sourceSha256": "b10a9f903eab5e884f4ab1c0208d24c047985827323eedace7417400187cf613",
+      "sha256": "b10a9f903eab5e884f4ab1c0208d24c047985827323eedace7417400187cf613",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PortugueseKeyboardTest.kt",
+      "sourceSha256": "28110e9d8aeb30aa27b57d81480ae91890c106538df9ffe2077cf2905901596f",
+      "sha256": "28110e9d8aeb30aa27b57d81480ae91890c106538df9ffe2077cf2905901596f",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PossessiveSuggestionTest.kt",
+      "sourceSha256": "6f91200dae831d1b385ca5007e09905cdbc329d10cc2158e7462458a1b8dd6ac",
+      "sha256": "6f91200dae831d1b385ca5007e09905cdbc329d10cc2158e7462458a1b8dd6ac",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PredictionLogCodecTest.kt",
+      "sourceSha256": "16998d4ddb185f4a2ecfd9c6db981f763dfbddd59b130fae361c0ec8bad9f93f",
+      "sha256": "16998d4ddb185f4a2ecfd9c6db981f763dfbddd59b130fae361c0ec8bad9f93f",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PredictionLogFixture.kt",
+      "sourceSha256": "f606ae08e49013a29f8a56d8e35e07bba3a50ea86ec5b0779f19238b7fabad0a",
+      "sha256": "f606ae08e49013a29f8a56d8e35e07bba3a50ea86ec5b0779f19238b7fabad0a",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PredictionLogSessionTest.kt",
+      "sourceSha256": "ba42fff5253d1875d00f3fce6197476113bf574009c8664c5a19374d70c30b7c",
+      "sha256": "ba42fff5253d1875d00f3fce6197476113bf574009c8664c5a19374d70c30b7c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PredictionReplay.kt",
+      "sourceSha256": "e61311c6bf7bf75e72ddf59ce9cdd6a5119feba2bf15b77f9c15328bd6276190",
+      "sha256": "e61311c6bf7bf75e72ddf59ce9cdd6a5119feba2bf15b77f9c15328bd6276190",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/PredictionReplayTest.kt",
+      "sourceSha256": "afc06c226ac3675c1bd5c50db3968e90c9d771dc05f64fdcaf35f84806ba441f",
+      "sha256": "afc06c226ac3675c1bd5c50db3968e90c9d771dc05f64fdcaf35f84806ba441f",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/ProofreadControlsTest.kt",
+      "sourceSha256": "e16d81da762df53f25cf65a4405b61a549a25b5507dfb0c41f7eebc5c21a1cdb",
+      "sha256": "e16d81da762df53f25cf65a4405b61a549a25b5507dfb0c41f7eebc5c21a1cdb",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/ProofreadingTest.kt",
+      "sourceSha256": "2748f6f3349181dfd6dd2e0dd8684ba5e92b838ffdb89f35bc0f14d659316a97",
+      "sha256": "2748f6f3349181dfd6dd2e0dd8684ba5e92b838ffdb89f35bc0f14d659316a97",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/ProvisionalSpaceTest.kt",
+      "sourceSha256": "816619c2ef774046fd617625137463e4526164cadc3f3ce1162763d371b655ab",
+      "sha256": "816619c2ef774046fd617625137463e4526164cadc3f3ce1162763d371b655ab",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/RecentCopiesTest.kt",
+      "sourceSha256": "527a7b43dde031b7b3a43183c603bd9d941166e57a1b0ca4a9dd446f158fbae5",
+      "sha256": "527a7b43dde031b7b3a43183c603bd9d941166e57a1b0ca4a9dd446f158fbae5",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/RecentWordCorrectionTest.kt",
+      "sourceSha256": "110db7317f295cee3ee36a48de3ce525818edb4311b7978c09dd8c5004bc268a",
+      "sha256": "110db7317f295cee3ee36a48de3ce525818edb4311b7978c09dd8c5004bc268a",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/ReleaseInfoTest.kt",
+      "sourceSha256": "ce81147d64e1f87d6bd9ddf8c33e06bcfe4806ad4ee1d1fff1d9553adf6f75a8",
+      "sha256": "ce81147d64e1f87d6bd9ddf8c33e06bcfe4806ad4ee1d1fff1d9553adf6f75a8",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/RememberedDomainsTest.kt",
+      "sourceSha256": "6218326ecfb6d63b0296bf165feaf869c7fe6fa013687dbeddde5f2de1fea3b5",
+      "sha256": "6218326ecfb6d63b0296bf165feaf869c7fe6fa013687dbeddde5f2de1fea3b5",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/ReportedTypingTest.kt",
+      "sourceSha256": "93710aa1ce6cf88301438ff2b2a9a7d2e0d938f3fa6ded47728f9aaacc676d9f",
+      "sha256": "93710aa1ce6cf88301438ff2b2a9a7d2e0d938f3fa6ded47728f9aaacc676d9f",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/RewritingTest.kt",
+      "sourceSha256": "4a34cf69be7609fc10a9d326fba2295756d899e2c083f313fd9f7c544c356f93",
+      "sha256": "4a34cf69be7609fc10a9d326fba2295756d899e2c083f313fd9f7c544c356f93",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/SavedTextsTest.kt",
+      "sourceSha256": "df513fe9544133b6696fbc25bd639342978c32d163c92f38e883fc78fcf8a88c",
+      "sha256": "df513fe9544133b6696fbc25bd639342978c32d163c92f38e883fc78fcf8a88c",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/SelectedCorrectionOfferTest.kt",
+      "sourceSha256": "108ad97abf1d8a467aebc132954e9d2bea11b4e54a98d1e1f63ec5a124a3b742",
+      "sha256": "108ad97abf1d8a467aebc132954e9d2bea11b4e54a98d1e1f63ec5a124a3b742",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/SettingsCoverageTest.kt",
+      "sourceSha256": "dd7c2d7b922fc680a57e963ef86a627446c9f7ab48b72326ca0d4af30effb7e5",
+      "sha256": "dd7c2d7b922fc680a57e963ef86a627446c9f7ab48b72326ca0d4af30effb7e5",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/SetupFlowTest.kt",
+      "sourceSha256": "5636876fd958ea6c571a86df496eb49513131973e2be87eef2918e85d05d5ea7",
+      "sha256": "5636876fd958ea6c571a86df496eb49513131973e2be87eef2918e85d05d5ea7",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/SmallAccommodationsTest.kt",
+      "sourceSha256": "c276604c3afee171ccc26d9ff6c894c2ee6d32f7b01320151fb3eaddfc43dcfd",
+      "sha256": "c276604c3afee171ccc26d9ff6c894c2ee6d32f7b01320151fb3eaddfc43dcfd",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/SmallLanguagesKeyboardTest.kt",
+      "sourceSha256": "5c654d351630cc7855729cc938d9f0a06d03e330de52580c91a017ae51af434e",
+      "sha256": "5c654d351630cc7855729cc938d9f0a06d03e330de52580c91a017ae51af434e",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/SpanishKeyboardTest.kt",
+      "sourceSha256": "0735b4c553981fc4f2d5ca6025631c0a9421c7c840254a2eca31fc7dca064562",
+      "sha256": "0735b4c553981fc4f2d5ca6025631c0a9421c7c840254a2eca31fc7dca064562",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/StripToolsTest.kt",
+      "sourceSha256": "0e7132e77ae12b83eadd1f7e7ab7e0af4209c85fbde29f5f69c356631410a05d",
+      "sha256": "0e7132e77ae12b83eadd1f7e7ab7e0af4209c85fbde29f5f69c356631410a05d",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/SwipeGestureTest.kt",
+      "sourceSha256": "d18fc3e1cc95b5f9309cd6ab711b68b75c849c6ecfe0f144e56635ee2e1b5bad",
+      "sha256": "d18fc3e1cc95b5f9309cd6ab711b68b75c849c6ecfe0f144e56635ee2e1b5bad",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/SwipeModelTest.kt",
+      "sourceSha256": "13090e770b74e09af3022217b1ac5be8bb89947f36cf54e001a9c5f8a2936832",
+      "sha256": "13090e770b74e09af3022217b1ac5be8bb89947f36cf54e001a9c5f8a2936832",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/ToolsHandOffTest.kt",
+      "sourceSha256": "909f5b2f5c178fa89295ae7e4c07b40a0e84b299c4f6e91c7d479c1f8a0a1c9e",
+      "sha256": "909f5b2f5c178fa89295ae7e4c07b40a0e84b299c4f6e91c7d479c1f8a0a1c9e",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/ToolsPinTest.kt",
+      "sourceSha256": "0492d106dc7e85a0bdec6c792ddfde7e3d28d9a8e14965d6df6e10a9a9e75af5",
+      "sha256": "0492d106dc7e85a0bdec6c792ddfde7e3d28d9a8e14965d6df6e10a9a9e75af5",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/ToolsStepTwoTest.kt",
+      "sourceSha256": "88341a21ab4d9dcd858f2efb383cf03c65e05d67298c4ea38eebc8848804b1fa",
+      "sha256": "88341a21ab4d9dcd858f2efb383cf03c65e05d67298c4ea38eebc8848804b1fa",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/TouchOffsetStoreTest.kt",
+      "sourceSha256": "ca9127a2633f566c00b820149816c4c2bedeb81279039417f51b43409a9f1b53",
+      "sha256": "ca9127a2633f566c00b820149816c4c2bedeb81279039417f51b43409a9f1b53",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/TouchOffsetsTest.kt",
+      "sourceSha256": "672556c583115b4b9bf194e1cf70e3d63271c75dc9e05702ad530b611a942794",
+      "sha256": "672556c583115b4b9bf194e1cf70e3d63271c75dc9e05702ad530b611a942794",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/TranslationResourcesTest.kt",
+      "sourceSha256": "f68a1e1effc9f6fbd118158cc9acd6d3048a77e92241b289d6eac7310bfeda98",
+      "sha256": "f68a1e1effc9f6fbd118158cc9acd6d3048a77e92241b289d6eac7310bfeda98",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/TwoFingerEvaluationTest.kt",
+      "sourceSha256": "9b535359a26142f5c9c37ed72e6cd33856f01255520a03d7f08790e0421064ef",
+      "sha256": "9b535359a26142f5c9c37ed72e6cd33856f01255520a03d7f08790e0421064ef",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/TwoFingerGesturesTest.kt",
+      "sourceSha256": "5ca1994b07ab72d37c39c3ff94762afd1078d371263bd00b17d9b7761617727d",
+      "sha256": "5ca1994b07ab72d37c39c3ff94762afd1078d371263bd00b17d9b7761617727d",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/TwoFingerReplay.kt",
+      "sourceSha256": "9e9937cbf1ee49155bc2310bbc27179837df247bdaf28e616097e09e6ff6dbf0",
+      "sha256": "9e9937cbf1ee49155bc2310bbc27179837df247bdaf28e616097e09e6ff6dbf0",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/TypedRunTest.kt",
+      "sourceSha256": "711438d68c6ee555595c5b2381b8328161309b80678c15cd3dc31743cda8c8e5",
+      "sha256": "711438d68c6ee555595c5b2381b8328161309b80678c15cd3dc31743cda8c8e5",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/TypingEngineTest.kt",
+      "sourceSha256": "ef326c71c70a29fe7c5758e8ee7156b40defd992fc0c82f39eec11e033fe7836",
+      "sha256": "ef326c71c70a29fe7c5758e8ee7156b40defd992fc0c82f39eec11e033fe7836",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/TypingRulesTest.kt",
+      "sourceSha256": "31640fe1e29f62fb835bfc8c7fad592e15602d067534a5f5d31480b44bbb64e8",
+      "sha256": "31640fe1e29f62fb835bfc8c7fad592e15602d067534a5f5d31480b44bbb64e8",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/TypoCorpus.kt",
+      "sourceSha256": "d20484dc0b11bc761c8f61744440207fbdcef6334ee32f74abbbff14ef8e7ea6",
+      "sha256": "d20484dc0b11bc761c8f61744440207fbdcef6334ee32f74abbbff14ef8e7ea6",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/UpdateBannerTest.kt",
+      "sourceSha256": "2219850704248fe340e5b9c0f9f3776561332f0a9c20b547f5ff8d02ecf14c17",
+      "sha256": "2219850704248fe340e5b9c0f9f3776561332f0a9c20b547f5ff8d02ecf14c17",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/UpdateCheckerTest.kt",
+      "sourceSha256": "2378457328b3b0032cebf29761ed240c5e8f9cb202eb1346bd933c227abe25e8",
+      "sha256": "2378457328b3b0032cebf29761ed240c5e8f9cb202eb1346bd933c227abe25e8",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/VerifiedWordTransactionTest.kt",
+      "sourceSha256": "071c4d041eb340f98133daa7411c65f6b531d3fae08801c1f2eee63d8e424a31",
+      "sha256": "071c4d041eb340f98133daa7411c65f6b531d3fae08801c1f2eee63d8e424a31",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/VoiceInputTest.kt",
+      "sourceSha256": "1965749a3b38c6bc09b1868c1f000ccfd622697efdacafe839afca4651556250",
+      "sha256": "1965749a3b38c6bc09b1868c1f000ccfd622697efdacafe839afca4651556250",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/VoiceKeyTest.kt",
+      "sourceSha256": "b6f5e5ccfb2376bef951c423e9958c03e4d83cd6d566b9985368729e3b6e6b41",
+      "sha256": "b6f5e5ccfb2376bef951c423e9958c03e4d83cd6d566b9985368729e3b6e6b41",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/WordDictionaryTest.kt",
+      "sourceSha256": "e9e0ca475764f4026811e937352798402728448ff2cdf386f944aa7a3277db07",
+      "sha256": "e9e0ca475764f4026811e937352798402728448ff2cdf386f944aa7a3277db07",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/WordEditsTest.kt",
+      "sourceSha256": "a1e7081c3fecf699781439bea4ead933e0b1d68827a459f4d1fae096fbbbc06d",
+      "sha256": "a1e7081c3fecf699781439bea4ead933e0b1d68827a459f4d1fae096fbbbc06d",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/WordPersistenceTest.kt",
+      "sourceSha256": "39c44c14e7d18fdf08475f4f88ad0d21d097290792d30430c7b26d48c43fa9b8",
+      "sha256": "39c44c14e7d18fdf08475f4f88ad0d21d097290792d30430c7b26d48c43fa9b8",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/WordSpellingsTest.kt",
+      "sourceSha256": "4ca095563deb827697f420b724f8fe4094c16b6906fd8e4438fb6616dde85a47",
+      "sha256": "4ca095563deb827697f420b724f8fe4094c16b6906fd8e4438fb6616dde85a47",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/WordTraceTest.kt",
+      "sourceSha256": "66193dd253d5de5ce57aebc5f23a405ac67e810a4e4e3b2f664cefd26ad15de8",
+      "sha256": "66193dd253d5de5ce57aebc5f23a405ac67e810a4e4e3b2f664cefd26ad15de8",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/resources/personal-learning-confirmation.json",
+      "sourceSha256": "d25ceb6d7a07799da8814461d309f62cca92c3f2f12c848941bc05e29a534c4b",
+      "sha256": "d25ceb6d7a07799da8814461d309f62cca92c3f2f12c848941bc05e29a534c4b",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/resources/personal-learning-development.json",
+      "sourceSha256": "d171d2ccf64f2eb42a5885a900893cb8859da4152cdda8590e4ccd8399d54b18",
+      "sha256": "d171d2ccf64f2eb42a5885a900893cb8859da4152cdda8590e4ccd8399d54b18",
+      "transformed": false
+    },
+    {
+      "path": "app/src/testFdroid/java/dev/localtype/keyboard/FdroidBoundaryTest.kt",
+      "sourceSha256": "478a5564e61bbdc63ff1df558eba5adae45becdf2d4faf0ea8f8a6b77e1679ee",
+      "sha256": "478a5564e61bbdc63ff1df558eba5adae45becdf2d4faf0ea8f8a6b77e1679ee",
+      "transformed": false
+    },
+    {
+      "path": "build.gradle.kts",
+      "sourceSha256": "f1a6c6ed0719c33f575bbb73599bd6469541033b3d55dc37d472c9ca7a1c2eae",
+      "sha256": "f1a6c6ed0719c33f575bbb73599bd6469541033b3d55dc37d472c9ca7a1c2eae",
+      "transformed": false
+    },
+    {
+      "path": "distribution/source/tlds/exclusions.txt",
+      "sourceSha256": "c50b1a080d46eddca441a77a5f9cd26066317555bdd493d7b0fc4e07705676e2",
+      "sha256": "c50b1a080d46eddca441a77a5f9cd26066317555bdd493d7b0fc4e07705676e2",
+      "transformed": false
+    },
+    {
+      "path": "distribution/source/tlds/public_suffix_list.dat",
+      "sourceSha256": "2919eb9803c91a3f73a507cc6fedc934de005543c22c4016f72e3343de5dd6e7",
+      "sha256": "2919eb9803c91a3f73a507cc6fedc934de005543c22c4016f72e3343de5dd6e7",
+      "transformed": false
+    },
+    {
+      "path": "distribution/source/tlds/source.json",
+      "sourceSha256": "4015f805fb86b649149000eb310ba126b659ce36a9b5602bfa611a428e5ad5f2",
+      "sha256": "4015f805fb86b649149000eb310ba126b659ce36a9b5602bfa611a428e5ad5f2",
+      "transformed": false
+    },
+    {
+      "path": "engine/build.gradle.kts",
+      "sourceSha256": "aca126587bc2384dde8be37ebd8a45918ad73f63864245398de6fd3c32ac2b06",
+      "sha256": "aca126587bc2384dde8be37ebd8a45918ad73f63864245398de6fd3c32ac2b06",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/AdaptiveNgramModel.kt",
+      "sourceSha256": "2f30b87b68f9a9fe7d32fe86df0e4598b9eaa1c7df546dba412210c8636821de",
+      "sha256": "2f30b87b68f9a9fe7d32fe86df0e4598b9eaa1c7df546dba412210c8636821de",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/AddedWords.kt",
+      "sourceSha256": "a43b6c4be5c5fcb32cc07fbdbe2c3fe368c2835dba0e8e78fd8ac9ad888d28eb",
+      "sha256": "a43b6c4be5c5fcb32cc07fbdbe2c3fe368c2835dba0e8e78fd8ac9ad888d28eb",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/BritishSpelling.kt",
+      "sourceSha256": "2bb5940f37d8ffc370b74e7448351a5a1d5ec6f6f6d98303214b3fb6666809c4",
+      "sha256": "2bb5940f37d8ffc370b74e7448351a5a1d5ec6f6f6d98303214b3fb6666809c4",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/Bytes.kt",
+      "sourceSha256": "fbe3f8ddb9194f8c5732ebd14e303fcb2b3e2b045c4add8ca2775bd5110628f9",
+      "sha256": "fbe3f8ddb9194f8c5732ebd14e303fcb2b3e2b045c4add8ca2775bd5110628f9",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/Checksums.kt",
+      "sourceSha256": "ce2e849e087a81c6812f5bb70d89272d383d3fd0fa7295964a4eec7205e1d2e1",
+      "sha256": "ce2e849e087a81c6812f5bb70d89272d383d3fd0fa7295964a4eec7205e1d2e1",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/ChimePredictor.kt",
+      "sourceSha256": "497e8e4888a4be515205700c326878feece4d9bfbc6700953c2d7c8afdb70723",
+      "sha256": "497e8e4888a4be515205700c326878feece4d9bfbc6700953c2d7c8afdb70723",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/CifgModel.kt",
+      "sourceSha256": "075291813907c60e875792c7c696f8ed71882b2046f73b2618a4a4b19a43dad8",
+      "sha256": "075291813907c60e875792c7c696f8ed71882b2046f73b2618a4a4b19a43dad8",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/CifgTokenizer.kt",
+      "sourceSha256": "7f87d5a5212867c7de79312389c118d44f49dd3d1719114207e24bf11fa44475",
+      "sha256": "7f87d5a5212867c7de79312389c118d44f49dd3d1719114207e24bf11fa44475",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/ContextualContractions.kt",
+      "sourceSha256": "a8cbce02b26eaf2bfeefeb08fdc804f652856427203105e4bdef306c0ec96db9",
+      "sha256": "a8cbce02b26eaf2bfeefeb08fdc804f652856427203105e4bdef306c0ec96db9",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/Contractions.kt",
+      "sourceSha256": "8becade6d0f11e4cba35b1a2e89ff66a8fc06d02cc790a674152e8e65353dc16",
+      "sha256": "8becade6d0f11e4cba35b1a2e89ff66a8fc06d02cc790a674152e8e65353dc16",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/CorpusPrior.kt",
+      "sourceSha256": "93b8705ae72fcc89a98a9fc444e77c4421e7ac208af59b3deee4056da77f8b66",
+      "sha256": "93b8705ae72fcc89a98a9fc444e77c4421e7ac208af59b3deee4056da77f8b66",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/CorrectionContext.kt",
+      "sourceSha256": "68f859f64c9c7158749e12bc95d130b0c8a39aefa6c1838648bf1cb44ec186cc",
+      "sha256": "68f859f64c9c7158749e12bc95d130b0c8a39aefa6c1838648bf1cb44ec186cc",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/CorrectionInput.kt",
+      "sourceSha256": "4ae87eb220ca65f55e7f325fff8ff304346a0612f634d387aae0e1457835db6a",
+      "sha256": "4ae87eb220ca65f55e7f325fff8ff304346a0612f634d387aae0e1457835db6a",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/CorrectionPolicy.kt",
+      "sourceSha256": "4d6c2681127edef38ebd98696bafad384b892a2746a7e5ffa36b33971cb0e0c3",
+      "sha256": "4d6c2681127edef38ebd98696bafad384b892a2746a7e5ffa36b33971cb0e0c3",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/Corrector.kt",
+      "sourceSha256": "a7dca2f795f9068c3d1dab14cb5bbffab8f44ff8843c4ae9348158f7b1929788",
+      "sha256": "a7dca2f795f9068c3d1dab14cb5bbffab8f44ff8843c4ae9348158f7b1929788",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/CurrentVocabulary.kt",
+      "sourceSha256": "632d7fe948e49b6c6e22dcbbbfc85c799869bcb84d0839d69b4a0f6e43470a0a",
+      "sha256": "632d7fe948e49b6c6e22dcbbbfc85c799869bcb84d0839d69b4a0f6e43470a0a",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/DomainHosts.kt",
+      "sourceSha256": "6fdd132a3bfe64471d1ac82e99ae7613b4e2422a95e52899329de02f80971674",
+      "sha256": "6fdd132a3bfe64471d1ac82e99ae7613b4e2422a95e52899329de02f80971674",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/DomainTyping.kt",
+      "sourceSha256": "e3bb4e03ae0d08b2c6140e0c3dcbfa38d0a97b3971cf0ef6ced50bc32f70c4a3",
+      "sha256": "e3bb4e03ae0d08b2c6140e0c3dcbfa38d0a97b3971cf0ef6ced50bc32f70c4a3",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/EditorEditState.kt",
+      "sourceSha256": "dfdf089808b810287c63e37144185e7368218460865fda225a5e15aebc5b4e5a",
+      "sha256": "dfdf089808b810287c63e37144185e7368218460865fda225a5e15aebc5b4e5a",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/EmojiSuggestions.kt",
+      "sourceSha256": "9d361206f702aab46b4616f16a2255c7f9c35ef3dfbb2b2d4433aad6f0492d96",
+      "sha256": "9d361206f702aab46b4616f16a2255c7f9c35ef3dfbb2b2d4433aad6f0492d96",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/EngineSelfCheck.kt",
+      "sourceSha256": "bc98e48d262956fef9c42ace29b9a65b5299722a6264aa2692ebed81bf4c4b3c",
+      "sha256": "bc98e48d262956fef9c42ace29b9a65b5299722a6264aa2692ebed81bf4c4b3c",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/KeyGeometry.kt",
+      "sourceSha256": "fc21e7eafb534af21bc391b075c52e7b8bc95bcb50a8e370e32d7bd5e0c9f8ec",
+      "sha256": "fc21e7eafb534af21bc391b075c52e7b8bc95bcb50a8e370e32d7bd5e0c9f8ec",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/LanguageProfile.kt",
+      "sourceSha256": "a1d8123797f1e42e8567c36a84bdefa95b4d4b0b3ac6256219652f076c2fa1db",
+      "sha256": "a1d8123797f1e42e8567c36a84bdefa95b4d4b0b3ac6256219652f076c2fa1db",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/LearnedPairBuffer.kt",
+      "sourceSha256": "9996b1d665ca6b42dac3edeea35044dcc42501a66b15d77a24d257b8d34a541d",
+      "sha256": "9996b1d665ca6b42dac3edeea35044dcc42501a66b15d77a24d257b8d34a541d",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/LearnedPairJournal.kt",
+      "sourceSha256": "0cf5dfcaa26a1348d194e2d31669e7645bf6051bba6b9f3821ccf16f716f7314",
+      "sha256": "0cf5dfcaa26a1348d194e2d31669e7645bf6051bba6b9f3821ccf16f716f7314",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/LetterAccents.kt",
+      "sourceSha256": "c6b8ee6735e10829852d0a0d83c214b49e9bb313059611ad9407cf84847b3485",
+      "sha256": "c6b8ee6735e10829852d0a0d83c214b49e9bb313059611ad9407cf84847b3485",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/Lexicon.kt",
+      "sourceSha256": "1507eb1303c14d2a2fe798470a5bfd55ba90a10177a4d8cbf7def82c47f1d827",
+      "sha256": "1507eb1303c14d2a2fe798470a5bfd55ba90a10177a4d8cbf7def82c47f1d827",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/MailDomains.kt",
+      "sourceSha256": "c59ba9b179c607abba9fa763e9fae3aa1e58394fa9c0305e98a20f53b9d2e921",
+      "sha256": "c59ba9b179c607abba9fa763e9fae3aa1e58394fa9c0305e98a20f53b9d2e921",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/ModelPrompts.kt",
+      "sourceSha256": "98056a6712e880ab5b259a75c4f35f20c7f27cee44f2f26d4c617b43c6dfe0d0",
+      "sha256": "98056a6712e880ab5b259a75c4f35f20c7f27cee44f2f26d4c617b43c6dfe0d0",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/MultiwordCorrection.kt",
+      "sourceSha256": "2b8c9f1b7969302d26c3a1a80a68152715e398da236b6b8e72074ba589a033dd",
+      "sha256": "2b8c9f1b7969302d26c3a1a80a68152715e398da236b6b8e72074ba589a033dd",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/NeuralContext.kt",
+      "sourceSha256": "40b53fae5e68c5a4975bcf950ef9100173406291d54d646cc1faa7c933523f83",
+      "sha256": "40b53fae5e68c5a4975bcf950ef9100173406291d54d646cc1faa7c933523f83",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/NeuralRanking.kt",
+      "sourceSha256": "7119ef326c6914f4ab1b138b3288a06bb9249553a422be05801594d57aab3c9f",
+      "sha256": "7119ef326c6914f4ab1b138b3288a06bb9249553a422be05801594d57aab3c9f",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/OwnedSpacing.kt",
+      "sourceSha256": "63fd0baa61f20b9b47c63ac622034cfc503ae64e11a07d015d0eb0a95a5838a3",
+      "sha256": "63fd0baa61f20b9b47c63ac622034cfc503ae64e11a07d015d0eb0a95a5838a3",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/PersonalContextTrace.kt",
+      "sourceSha256": "d699f1fe93027b46d11b3ad7d7fb3a5040ddab2c6f32fc00895ef0e745ece5cf",
+      "sha256": "d699f1fe93027b46d11b3ad7d7fb3a5040ddab2c6f32fc00895ef0e745ece5cf",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/PersonalLearningCodec.kt",
+      "sourceSha256": "07b76bcfed351f79acb370b605041409cf104e3d609d3c16dc9d4ad11581f771",
+      "sha256": "07b76bcfed351f79acb370b605041409cf104e3d609d3c16dc9d4ad11581f771",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/PersonalLearningCoordinator.kt",
+      "sourceSha256": "b0a832245ef752e8f9ce034334acc60be27e4cd041d5fc389c370715cd185626",
+      "sha256": "b0a832245ef752e8f9ce034334acc60be27e4cd041d5fc389c370715cd185626",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/PersonalLearningState.kt",
+      "sourceSha256": "63165d06568085099ad5ee9bda40af5ea5b09ef0e21bba4641aea444596191a7",
+      "sha256": "63165d06568085099ad5ee9bda40af5ea5b09ef0e21bba4641aea444596191a7",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/PersonalRanking.kt",
+      "sourceSha256": "a652523e5bb6810af7351e991e7f08023e887e774076fc8914b8803eb9ad3d7f",
+      "sha256": "a652523e5bb6810af7351e991e7f08023e887e774076fc8914b8803eb9ad3d7f",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/Platform.kt",
+      "sourceSha256": "e912efc8ba9ed1883f0b1bff2fdb13608eb45f0585beccee55790ecd01a2f899",
+      "sha256": "e912efc8ba9ed1883f0b1bff2fdb13608eb45f0585beccee55790ecd01a2f899",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/PossessiveSuggestion.kt",
+      "sourceSha256": "d6ad1bcd16099f6e78b2f514e230e63ed0cb120e79d71379b220c91a6dd515e2",
+      "sha256": "d6ad1bcd16099f6e78b2f514e230e63ed0cb120e79d71379b220c91a6dd515e2",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/Proofreading.kt",
+      "sourceSha256": "b8c2dad62360b6683ef2e557bea6a7c1b4d8ed514fc485bc42ded41c23dfca74",
+      "sha256": "b8c2dad62360b6683ef2e557bea6a7c1b4d8ed514fc485bc42ded41c23dfca74",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/RecentWordCorrection.kt",
+      "sourceSha256": "798f4fa1cc91045653e6beaf17bf73ea9a800f1d1dbff56a5950eb3cb4b1634c",
+      "sha256": "798f4fa1cc91045653e6beaf17bf73ea9a800f1d1dbff56a5950eb3cb4b1634c",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/Rewriting.kt",
+      "sourceSha256": "26228024fd9447007083acd638551e31a9e59620a45d62ce5760876660d56c58",
+      "sha256": "26228024fd9447007083acd638551e31a9e59620a45d62ce5760876660d56c58",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/SmallAccommodations.kt",
+      "sourceSha256": "1d6c073e90d81e973e36f1243d1ccddf7e8e0361956950fbb34fe797b5d59054",
+      "sha256": "1d6c073e90d81e973e36f1243d1ccddf7e8e0361956950fbb34fe797b5d59054",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/SuggestionWordRules.kt",
+      "sourceSha256": "356b70f47f764da6d519cc3e2615001935ab337ccb55cd16e67184f336677af5",
+      "sha256": "356b70f47f764da6d519cc3e2615001935ab337ccb55cd16e67184f336677af5",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/TextRules.kt",
+      "sourceSha256": "490612223ed73355c4ceef2fb1bc3246baa854395ce0d1cc0b00d5133700bb7b",
+      "sha256": "490612223ed73355c4ceef2fb1bc3246baa854395ce0d1cc0b00d5133700bb7b",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/TouchOffsets.kt",
+      "sourceSha256": "9fd99bf008a9f4a590354f1b6342dad03853eef7af88cf2e55c41625a2276cc2",
+      "sha256": "9fd99bf008a9f4a590354f1b6342dad03853eef7af88cf2e55c41625a2276cc2",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/TypingEngine.kt",
+      "sourceSha256": "15fed5553e5f46f02944adc538edd81b05e959c2af58461f6cc53110d05d77fb",
+      "sha256": "15fed5553e5f46f02944adc538edd81b05e959c2af58461f6cc53110d05d77fb",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/VerifiedWordTransaction.kt",
+      "sourceSha256": "8dd335a86a7f80a92fcd9fc5e81b25496c947602b6a77445f0ab340778e2045a",
+      "sha256": "8dd335a86a7f80a92fcd9fc5e81b25496c947602b6a77445f0ab340778e2045a",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/WordDictionary.kt",
+      "sourceSha256": "7adc45daedc5cebcd293d4105ba545cd8ff00ad08ede163197100961dc744dc3",
+      "sha256": "7adc45daedc5cebcd293d4105ba545cd8ff00ad08ede163197100961dc744dc3",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/WordEdits.kt",
+      "sourceSha256": "9e86cab66ba020c49960934ebf306e52c365580ee3bda8b58188b2f19be5dae8",
+      "sha256": "9e86cab66ba020c49960934ebf306e52c365580ee3bda8b58188b2f19be5dae8",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/WordPersistence.kt",
+      "sourceSha256": "d589af1e6c0923559c4e8d0739b657c24b6fd7ee623091f6cf48fa874006992c",
+      "sha256": "d589af1e6c0923559c4e8d0739b657c24b6fd7ee623091f6cf48fa874006992c",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/WordSpellings.kt",
+      "sourceSha256": "d58f1389382b587713a1e184833205e721c035de966386a1bfe435a49dc5d1dc",
+      "sha256": "d58f1389382b587713a1e184833205e721c035de966386a1bfe435a49dc5d1dc",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/iosMain/kotlin/dev/localtype/keyboard/Platform.ios.kt",
+      "sourceSha256": "bda7277701a404f7fac4201c2f5646d357137c520efc5ae70e184649dfb5315b",
+      "sha256": "bda7277701a404f7fac4201c2f5646d357137c520efc5ae70e184649dfb5315b",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/iosMain/kotlin/dev/localtype/keyboard/TypingEngineFiles.kt",
+      "sourceSha256": "54585c2978d4a9f0d8a9407b3ed70a5a458df6e6a9f692f7c50debef55fa5af6",
+      "sha256": "54585c2978d4a9f0d8a9407b3ed70a5a458df6e6a9f692f7c50debef55fa5af6",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/iosSimulatorArm64Main/kotlin/dev/localtype/keyboard/selfcheck/Main.kt",
+      "sourceSha256": "c04b1831df40b7d2bc1900fd03f7d09a90e31a5587121c0bc08f895ecbac1d5b",
+      "sha256": "c04b1831df40b7d2bc1900fd03f7d09a90e31a5587121c0bc08f895ecbac1d5b",
+      "transformed": false
+    },
+    {
+      "path": "engine/src/jvmMain/kotlin/dev/localtype/keyboard/Platform.jvm.kt",
+      "sourceSha256": "edbef60183786de37a6dad1db212c4971304118cbdf7d3703d39edc294cd5dd3",
+      "sha256": "edbef60183786de37a6dad1db212c4971304118cbdf7d3703d39edc294cd5dd3",
+      "transformed": false
+    },
+    {
+      "path": "fastlane/metadata/android/en-US/changelogs/62.txt",
+      "sourceSha256": "a8990b23b9a1bf733d2dd6bc07b32198c251d4a74848bf25fb90f42ef698db26",
+      "sha256": "a8990b23b9a1bf733d2dd6bc07b32198c251d4a74848bf25fb90f42ef698db26",
+      "transformed": false
+    },
+    {
+      "path": "fastlane/metadata/android/en-US/full_description.txt",
+      "sourceSha256": "d1249f0b8a5bbfa2ef02fefca2d3dc1196cb64c357b4c2403c9cedc3205bc3d8",
+      "sha256": "d1249f0b8a5bbfa2ef02fefca2d3dc1196cb64c357b4c2403c9cedc3205bc3d8",
+      "transformed": false
+    },
+    {
+      "path": "fastlane/metadata/android/en-US/images/icon.png",
+      "sourceSha256": "152a7de31c972c6eeb6f23420e7b6621eda496067564689bdd573ef22aa4d620",
+      "sha256": "152a7de31c972c6eeb6f23420e7b6621eda496067564689bdd573ef22aa4d620",
+      "transformed": false
+    },
+    {
+      "path": "fastlane/metadata/android/en-US/images/phoneScreenshots/1.png",
+      "sourceSha256": "849bf2e42e330307674914d76e120ec6f72796d0c3869d8ee0fb33868512a713",
+      "sha256": "849bf2e42e330307674914d76e120ec6f72796d0c3869d8ee0fb33868512a713",
+      "transformed": false
+    },
+    {
+      "path": "fastlane/metadata/android/en-US/images/phoneScreenshots/2.png",
+      "sourceSha256": "a5cf8e90ba7dcf3aefcf27d849a2d50757f1553e8f5c4fe8b3b36fcd3f1408b4",
+      "sha256": "a5cf8e90ba7dcf3aefcf27d849a2d50757f1553e8f5c4fe8b3b36fcd3f1408b4",
+      "transformed": false
+    },
+    {
+      "path": "fastlane/metadata/android/en-US/short_description.txt",
+      "sourceSha256": "1677962ae220983ced55188235d4464bb77f49901b29877e1bbf97361f05451b",
+      "sha256": "1677962ae220983ced55188235d4464bb77f49901b29877e1bbf97361f05451b",
+      "transformed": false
+    },
+    {
+      "path": "fastlane/metadata/android/en-US/title.txt",
+      "sourceSha256": "e7381c6b256f1aa7986c0bfd7c2571be070737bf8f830af9f905d85afc5a3d36",
+      "sha256": "e7381c6b256f1aa7986c0bfd7c2571be070737bf8f830af9f905d85afc5a3d36",
+      "transformed": false
+    },
+    {
+      "path": "gradle.properties",
+      "sourceSha256": "4d08965ad7b2f86a7e0f56688736641e0a326d23c5827839c9aa1e9312204b19",
+      "sha256": "4d08965ad7b2f86a7e0f56688736641e0a326d23c5827839c9aa1e9312204b19",
+      "transformed": false
+    },
+    {
+      "path": "gradle/verification-metadata.xml",
+      "sourceSha256": "52bd0fbe28949c96dc390f6be40d63bef73146e5c594982eacb8d7a272aabaa2",
+      "sha256": "52bd0fbe28949c96dc390f6be40d63bef73146e5c594982eacb8d7a272aabaa2",
+      "transformed": false
+    },
+    {
+      "path": "gradle/wrapper/gradle-wrapper.jar",
+      "sourceSha256": "7d3a4ac4de1c32b59bc6a4eb8ecb8e612ccd0cf1ae1e99f66902da64df296172",
+      "sha256": "7d3a4ac4de1c32b59bc6a4eb8ecb8e612ccd0cf1ae1e99f66902da64df296172",
+      "transformed": false
+    },
+    {
+      "path": "gradle/wrapper/gradle-wrapper.properties",
+      "sourceSha256": "05fcb55a155233ee632da57149d1ba3cd39a001701ae00e0c20782fbaf6c378b",
+      "sha256": "05fcb55a155233ee632da57149d1ba3cd39a001701ae00e0c20782fbaf6c378b",
+      "transformed": false
+    },
+    {
+      "path": "gradlew",
+      "sourceSha256": "b187b4c52e749f5760afdd6fadc31b2a98ad35fb249bf0dff03b72650f320409",
+      "sha256": "b187b4c52e749f5760afdd6fadc31b2a98ad35fb249bf0dff03b72650f320409",
+      "transformed": false
+    },
+    {
+      "path": "gradlew.bat",
+      "sourceSha256": "1d297e00bd21de3ace22b4d7f2de1f9dfa858883d66bbf7c1ccbecccec8f4f3b",
+      "sha256": "1d297e00bd21de3ace22b4d7f2de1f9dfa858883d66bbf7c1ccbecccec8f4f3b",
+      "transformed": false
+    },
+    {
+      "path": "model/british_spellings.py",
+      "sourceSha256": "eb864f4a1345cd0fd8d5ff9755a9d06fb4f28ca90d475666adc2192a52d2f8ac",
+      "sha256": "eb864f4a1345cd0fd8d5ff9755a9d06fb4f28ca90d475666adc2192a52d2f8ac",
+      "transformed": false
+    },
+    {
+      "path": "model/hebrew_lists.py",
+      "sourceSha256": "2750b3368fbce72f025ecdafc3353c40490ee8f7a645c4d2bbdd210ce6fa3576",
+      "sha256": "2750b3368fbce72f025ecdafc3353c40490ee8f7a645c4d2bbdd210ce6fa3576",
+      "transformed": false
+    },
+    {
+      "path": "model/language_build.py",
+      "sourceSha256": "9dec456891cdcb16b11b5d2301d87ddf0dfd946e08b2166cbc8bb3984db62b61",
+      "sha256": "4e4297a467d3c0143b833e3ceb07e39c7c8ad2f6c4d5f12fd864e7f894e4df7e",
+      "transformed": true
+    },
+    {
+      "path": "model/language_bundle.py",
+      "sourceSha256": "4e3cde21396051f8a6af04d3b0db31fc79a8d277fe3060e094022b83f86c5d92",
+      "sha256": "4e3cde21396051f8a6af04d3b0db31fc79a8d277fe3060e094022b83f86c5d92",
+      "transformed": false
+    },
+    {
+      "path": "model/prior.py",
+      "sourceSha256": "93e28eb9833b15feacf72eb9e78a8f93d7e4730dc9e69efd00811de0435b28a6",
+      "sha256": "239ab6d3267d67ff87bbd85208b34afdc6ede2e723cf3aa39ffd98329cb3c463",
+      "transformed": true
+    },
+    {
+      "path": "model/small_language_lists.py",
+      "sourceSha256": "6d7e4e462f65f66ac79e8c574bafbb323d77d6ef7cdb2a01289b42b8c1df8d2c",
+      "sha256": "6d7e4e462f65f66ac79e8c574bafbb323d77d6ef7cdb2a01289b42b8c1df8d2c",
+      "transformed": false
+    },
+    {
+      "path": "model/tokenize.py",
+      "sourceSha256": "420ff9fab94fa1b0618a37b2775315577b8bf7bd8460ea9e2aa0be391230441a",
+      "sha256": "420ff9fab94fa1b0618a37b2775315577b8bf7bd8460ea9e2aa0be391230441a",
+      "transformed": false
+    },
+    {
+      "path": "scripts/audit-bundled-data.py",
+      "sourceSha256": "6b377c4e4f6d86777d92e7170eaf5269712f3f0bd9074b28e58d20fe1308e2bb",
+      "sha256": "6b377c4e4f6d86777d92e7170eaf5269712f3f0bd9074b28e58d20fe1308e2bb",
+      "transformed": false
+    },
+    {
+      "path": "scripts/build-emoji-inventory.py",
+      "sourceSha256": "79db7d3074376ff52eee4a08ec85f951badf0e04d720da167c3d58678359459b",
+      "sha256": "79db7d3074376ff52eee4a08ec85f951badf0e04d720da167c3d58678359459b",
+      "transformed": false
+    },
+    {
+      "path": "scripts/build-tlds.py",
+      "sourceSha256": "e7b754e9f524155d4013aebb6549c5ab388dc0dc4e069b14524a605aed24c633",
+      "sha256": "e7b754e9f524155d4013aebb6549c5ab388dc0dc4e069b14524a605aed24c633",
+      "transformed": false
+    },
+    {
+      "path": "settings.gradle.kts",
+      "sourceSha256": "38ff0a8e09d5735f394b4438e8a4f36e6417fbb17afc0face0f18923a1221279",
+      "sha256": "38ff0a8e09d5735f394b4438e8a4f36e6417fbb17afc0face0f18923a1221279",
+      "transformed": false
+    },
+    {
+      "path": "README.md",
+      "sha256": "9383cf7a3eda2f9ea13aeebe1630bb913113bc41c359958209cc1c10aa04a29e",
+      "template": "README.public.md"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "db6361c7e0145c1dd81f0a9eeb0ea499ce8f98927181b9be4342d25c0fb66270",
+      "template": "CONTRIBUTING.public.md"
+    },
+    {
+      "path": "DATA-SOURCES.md",
+      "sha256": "88e50b851ebc2c034206c2c662b4aab48c4fb8648303de89cd6219de37ccc97c",
+      "template": "DATA-SOURCES.public.md"
+    }
+  ]
+}

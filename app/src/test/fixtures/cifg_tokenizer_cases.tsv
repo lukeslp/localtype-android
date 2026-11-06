@@ -1,0 +1,152 @@
+H	format	localtype-cifg-golden	1
+H	source	TOKENIZER_TEXTS in model/export.py
+T				
+T	 			
+T	hello	hello	hello	
+T	Hello World	hello world	world	hello
+T	HELLO wor	hello wor	wor	hello
+T	hello 	hello		hello
+T	\t hi \n	hi		
+T	don't	don't	don't	
+T	Don’t you	don't you	you	don't
+T	rock'n'roll	rock'n'roll	rock'n'roll	
+T	'tis	' tis	tis	'
+T	-hello	- hello	hello	-
+T	hello-	hello-	hello-	
+T	e-mail	e-mail	e-mail	
+T	o’	o'	o'	
+T	‘this’ and “that”	' this' and " that "		' this' and " that "
+T	12:30	<num>		<num>
+T	1,000.50	<num>		<num>
+T	3.5	<num>		<num>
+T	abc123def	abc <num> def	def	abc <num>
+T	v2	v <num>		v <num>
+T	٣٤ apples	<num> apples	apples	<num>
+T	1/2	<num>		<num>
+T	10%	<num> %		<num> %
+T	$5	$ <num>		$ <num>
+T	#1	# <num>		# <num>
+T	@me	@ me	me	@
+T	a&b	a & b	b	a &
+T	...	…		
+T	..	…		
+T	. . .	…		
+T	…	…		
+T	‥	…		
+T	wait...what	wait … what	what	
+T	?!	? !		
+T	!!!	!		
+T	??	?		
+T	,,	,		,
+T	--	-		-
+T	—	-		-
+T	a – b	a - b	b	a -
+T	1 - 2	<num> - <num>		<num> - <num>
+T	。	.		
+T	、	,		,
+T	，	,		,
+T	：	:		:
+T	？	?		
+T	！	!		
+T	（hi）	( hi )		( hi )
+T	¿qué?	? qué ?		
+T	¡sí!	! sí !		
+T	x²	x <sym>		x <sym>
+T	x²y	x <sym> y	y	x <sym>
+T	²abc	<sym> abc	abc	<sym>
+T	a'²b	a' <sym> b	b	a' <sym>
+T	²'a	<sym> ' a	a	<sym> '
+T	Ⅻ	<sym>		<sym>
+T	½ cup	<sym> cup	cup	<sym>
+T	❶ first	<sym> first	first	<sym>
+T	café	café	café	
+T	café	cafe <sym>		cafe <sym>
+T	naïve	naïve	naïve	
+T	Straße	straße	straße	
+T	İstanbul	i̇stanbul	i̇stanbul	
+T	ΟΔΟΣ	οδος	οδος	
+T	ǅungla	ǆungla	ǆungla	
+T	𝒜bc	𝒜bc	𝒜bc	
+T	日本語	日本語	日本語	
+T	한국어 단어	한국어 단어	단어	한국어
+T	😀	😀		😀
+T	😀😀	😀 😀		😀 😀
+T	❤	❤		❤
+T	❤️	❤️		❤️
+T	❤︎	❤︎		❤︎
+T	👍🏽	👍🏽		👍🏽
+T	🧑‍💻	🧑‍💻		🧑‍💻
+T	👨‍👩‍👧	👨‍👩‍👧		👨‍👩‍👧
+T	🏳️‍🌈	🏳️‍🌈		🏳️‍🌈
+T	🇺🇸	🇺🇸		🇺🇸
+T	🇺	🇺		🇺
+T	🇺🇸🇬	🇺🇸 🇬		🇺🇸 🇬
+T	🏴󠁧󠁢󠁳󠁣󠁴󠁿	🏴󠁧󠁢󠁳󠁣󠁴󠁿		🏴󠁧󠁢󠁳󠁣󠁴󠁿
+T	#️⃣	#️⃣		#️⃣
+T	1⃣	1⃣		1⃣
+T	1️⃣2	1️⃣ <num>		1️⃣ <num>
+T	*️⃣	*️⃣		*️⃣
+T	©	©		©
+T	®	®		®
+T	™	™		™
+T	↔️	↔️		↔️
+T	☀	☀		☀
+T	⭐	⭐		⭐
+T	〰	〰		〰
+T	Ⓜ	Ⓜ		Ⓜ
+T	㊗	㊗		㊗
+T	‍	<sym>		<sym>
+T	️	<sym>		<sym>
+T	a‍b	a <sym> b	b	a <sym>
+T	<3	< <num>		< <num>
+T	:)	: )		: )
+T	;-)	; - )		; - )
+T	°C	° c	c	°
+T	[x]	[ x ]		[ x ]
+T	~	~		~
+T	^	^		^
+T	\\	\\		\\
+T	|	|		|
+T	_	_		_
+T	+=	+ =		+ =
+T	<>	< >		< >
+T	€5	<sym> <num>		<sym> <num>
+T	£	<sym>		<sym>
+T	¥	<sym>		<sym>
+T	§	<sym>		<sym>
+T	a b	a b	b	a
+T	a\u0085b	a b	b	a
+T	a\u2028b	a b	b	a
+T	a　b	a b	b	a
+T	a\u001fb	a b	b	a
+T	a​b	a <sym> b	b	a <sym>
+T	a⁠b	a <sym> b	b	a <sym>
+T	\u0000	<sym>		<sym>
+T	I 	i		i
+T	I'm going to the 	i'm going to the		i'm going to the
+T	I’m going to the st	i'm going to the st	st	i'm going to the
+T	Thanks. See you 	thanks . see you		see you
+T	OK!\nsee you l	ok ! see you l	l	see you
+T	first.\nsecond. third 	first . second . third		third
+T	Done. The	done . the	the	
+T	Done.The	done . the	the	
+T	What?? Really... ok 	what ? really … ok		ok
+T	x\n..y	x … y	y	
+T	a.\n.	a …		
+T	a,\n,b	a , b	b	,
+T	U.S. army 	u . s . army		army
+T	mr. smith 	mr . smith		smith
+T	hey 😀😀 w	hey 😀 😀 w	w	hey 😀 😀
+T	it costs 12,5 € 	it costs <num> <sym>		it costs <num> <sym>
+T	call 555-1234 now	call <num> - <num> now	now	call <num> - <num>
+T	I'm 25 years 	i'm <num> years		i'm <num> years
+T	2nd place 	<num> nd place		<num> nd place
+T	the 90s 	the <num> s		the <num> s
+T	one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three 	one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three		one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three
+T	one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four 	one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four		three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four
+T	one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five 	one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five		three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five
+T	one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six 	one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six		five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six
+T	one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten 	one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten		seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten
+T	one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten th	one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten th	th	three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten
+T	Done. one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four 	done . one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four		three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four
+T	one, two, three, four, five, six, seven, eight, nine, ten, one, two, three, four, five, six, seven, eight, nine, ten, one, two, three, four, five, six, seven, eight, nine, ten, one, two, three, four, five, six, seven, eight, nine, ten 	one , two , three , four , five , six , seven , eight , nine , ten , one , two , three , four , five , six , seven , eight , nine , ten , one , two , three , four , five , six , seven , eight , nine , ten , one , two , three , four , five , six , seven , eight , nine , ten		seven , eight , nine , ten , one , two , three , four , five , six , seven , eight , nine , ten , one , two , three , four , five , six , seven , eight , nine , ten

@@ -1,0 +1,8 @@
+{
+  "license": "MPL-2.0",
+  "source": "https://raw.githubusercontent.com/publicsuffix/list/3929462652695bad04f0a27afb600974014a3c8b/public_suffix_list.dat",
+  "commit": "3929462652695bad04f0a27afb600974014a3c8b",
+  "sha256": "2919eb9803c91a3f73a507cc6fedc934de005543c22c4016f72e3343de5dd6e7",
+  "entries": 1437,
+  "membershipSha256": "71093802743b87ee52fac5dd4f662cafd0133dae5089ac6c2e34ee73cebfc836"
+}

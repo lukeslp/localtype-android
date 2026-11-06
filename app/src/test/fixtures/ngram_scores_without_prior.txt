@@ -1,0 +1,92 @@
+# AdaptiveNgramModel.predictScored(input, 6), recorded at d103749 before CorpusPrior existed.
+# model|input (\n stands for a newline)|word=score,... The models and inputs are built in AdaptiveNgramModelTest.
+# A model without a prior must reproduce every line. Editing words_en.txt or words_en_modern.txt moves the
+# "defaults" and "learned" rows; re-record those only from a build whose ranking is otherwise unchanged.
+defaults||i=300,hey=281,thanks=275,the=259,just=247,yes=243
+defaults|hello |i=100,you=100,the=99,to=97,a=96,it=96
+defaults|hello wor|work=78,world=75,working=71,worry=71,word=70,words=67
+defaults|go|good=204,go=86,got=84,going=83,god=78,gone=72
+defaults|Th|thanks=275,the=259,that=94,this=91,there=87,they=87
+defaults|please |let=164,i=100,you=100,the=99,to=97,a=96
+defaults|I think |so=168,i=100,you=100,the=99,to=97,a=96
+defaults|See you soon. |i=300,hey=281,thanks=275,the=259,just=247,yes=243
+defaults|good w|we=92,what=92,was=89,with=88,well=85,want=84
+defaults|thank |you=260,i=100,the=99,to=97,a=96,it=96
+defaults|thank y|you=260,your=89,yeah=84,yes=83,you're=82,years=76
+defaults|looking |forward=144,i=100,you=100,the=99,to=97,a=96
+defaults|how are |you=260,i=100,the=99,to=97,a=96,it=96
+defaults|i |will=244,don't=169,think=164,am=159,i=100,you=100
+defaults|hi, |i=100,you=100,the=99,to=97,a=96,it=96
+defaults|so 12 |i=100,you=100,the=99,to=97,a=96,it=96
+defaults|thanks\n|i=300,hey=281,thanks=275,the=259,just=247,yes=243
+defaults|Don’t y|you=100,your=89,yeah=84,yes=83,you're=82,years=76
+defaults|I will be th|there=167,the=99,that=94,this=91,they=87,that's=85
+defaults|mor|more=80,morning=73,morgan=57,moral=54,moron=54,morris=51
+defaults|Wh|what=212,who=84,why=84,what's=83,when=83,where=82
+defaults|what time |is=172,i=100,you=100,the=99,to=97,a=96
+learned||i=300,hey=281,thanks=275,the=259,just=247,yes=243
+learned|hello |i=100,you=100,the=99,to=97,a=96,it=96
+learned|hello wor|work=84,world=75,working=71,worry=71,word=70,words=67
+learned|go|good=204,go=86,got=84,going=83,god=78,gone=72
+learned|Th|thanks=275,the=259,that=94,this=91,there=87,they=87
+learned|please |confirm=239,let=164,i=100,you=100,the=99,to=97
+learned|I think |so=168,i=100,you=100,the=99,to=97,a=96
+learned|See you soon. |i=300,hey=281,thanks=275,the=259,just=247,yes=243
+learned|good w|work=124,we=92,what=92,was=89,with=88,well=85
+learned|thank |you=260,goodness=105,i=100,the=99,to=97,a=96
+learned|thank y|you=260,your=89,yeah=84,yes=83,you're=82,years=76
+learned|looking |forward=144,i=100,you=100,the=99,to=97,a=96
+learned|how are |you=260,i=100,the=99,to=97,a=96,it=96
+learned|i |will=244,don't=169,think=164,am=159,i=100,you=100
+learned|hi, |i=100,you=100,the=99,to=97,a=96,it=96
+learned|so 12 |i=100,you=100,the=99,to=97,a=96,it=96
+learned|thanks\n|i=300,hey=281,thanks=275,the=259,just=247,yes=243
+learned|Don’t y|you=100,your=89,yeah=84,yes=83,you're=82,years=76
+learned|I will be th|there=167,the=99,that=94,this=91,they=87,that's=85
+learned|mor|morning=211,more=80,morgan=57,moral=54,moron=54,morris=51
+learned|Wh|what=212,who=84,why=84,what's=83,when=83,where=82
+learned|what time |is=172,i=100,you=100,the=99,to=97,a=96
+seededSmall||the=260,good=213,hey=200,i=200,thanks=200,hi=160
+seededSmall|hello |there=167,world=157,the=100,good=93,they=90,then=83
+seededSmall|hello wor|world=157,work=80
+seededSmall|go|good=213
+seededSmall|Th|the=260,thanks=200,they=90,there=87,then=83
+seededSmall|please |the=100,good=93,they=90,there=87,then=83,work=80
+seededSmall|I think |the=100,good=93,they=90,there=87,then=83,work=80
+seededSmall|See you soon. |the=260,good=213,hey=200,i=200,thanks=200,hi=160
+seededSmall|good w|work=80,world=77
+seededSmall|thank |the=100,good=93,they=90,there=87,then=83,work=80
+seededSmall|thank y|
+seededSmall|looking |the=100,good=93,they=90,there=87,then=83,work=80
+seededSmall|how are |the=100,good=93,they=90,there=87,then=83,work=80
+seededSmall|i |the=100,good=93,they=90,there=87,then=83,work=80
+seededSmall|hi, |the=100,good=93,they=90,there=87,then=83,work=80
+seededSmall|so 12 |the=100,good=93,they=90,there=87,then=83,work=80
+seededSmall|thanks\n|the=260,good=213,hey=200,i=200,thanks=200,hi=160
+seededSmall|Don’t y|
+seededSmall|I will be th|the=100,they=90,there=87,then=83
+seededSmall|mor|
+seededSmall|Wh|what=120
+seededSmall|what time |the=100,good=93,they=90,there=87,then=83,work=80
+bare||the=100,good=93,they=90,there=87,then=83,work=80
+bare|hello |the=100,good=93,they=90,there=87,then=83,work=80
+bare|hello wor|work=80,world=77
+bare|go|good=93
+bare|Th|the=100,they=90,there=87,then=83
+bare|please |the=100,good=93,they=90,there=87,then=83,work=80
+bare|I think |the=100,good=93,they=90,there=87,then=83,work=80
+bare|See you soon. |the=100,good=93,they=90,there=87,then=83,work=80
+bare|good w|work=80,world=77
+bare|thank |the=100,good=93,they=90,there=87,then=83,work=80
+bare|thank y|
+bare|looking |the=100,good=93,they=90,there=87,then=83,work=80
+bare|how are |the=100,good=93,they=90,there=87,then=83,work=80
+bare|i |the=100,good=93,they=90,there=87,then=83,work=80
+bare|hi, |the=100,good=93,they=90,there=87,then=83,work=80
+bare|so 12 |the=100,good=93,they=90,there=87,then=83,work=80
+bare|thanks\n|the=100,good=93,they=90,there=87,then=83,work=80
+bare|Don’t y|
+bare|I will be th|the=100,they=90,there=87,then=83
+bare|mor|
+bare|Wh|
+bare|what time |the=100,good=93,they=90,there=87,then=83,work=80

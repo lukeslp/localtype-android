@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Keys narrowed to one side -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="22dp" android:height="22dp" android:viewportWidth="24" android:viewportHeight="24"
+    android:tint="@color/kb_on_key">
+    <path android:fillColor="#FFFFFFFF" android:fillType="evenOdd" android:pathData="M10,5h11v14H10zM12,7v10h7V7zM3,12l4,-4v3h2v2H7v3z" />
+</vector>

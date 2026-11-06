@@ -1,0 +1,26 @@
+# Common Portuguese swear words, counts from hermitdave/FrequencyWords (OpenSubtitles 2018, pt_br), CC BY-SA 4.0. Slurs are deliberately excluded.
+merda	171084
+porra	79014
+puta	59377
+vadia	20869
+caralho	16782
+foder	16744
+babaca	14420
+foda	8883
+bosta	5114
+cacete	4972
+merdas	4937
+vagabunda	4805
+fodido	4135
+cu	3775
+putas	3427
+cuzão	2906
+cagar	2563
+fode	2301
+fodeu	2162
+buceta	1557
+boceta	1357
+fodidos	1353
+fodida	1333
+punheta	1219
+xoxota	743

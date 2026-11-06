@@ -1,0 +1,22 @@
+LocalType top-level domains (tlds.txt)
+
+tlds.txt is derived from the ICANN section of the Public Suffix List, under the
+Mozilla Public License 2.0. The upstream license header is retained in the source
+copy. The full license text is in MPL-2.0.txt alongside this notice.
+Source: https://github.com/publicsuffix/list/blob/3929462652695bad04f0a27afb600974014a3c8b/public_suffix_list.dat
+Copyright and contributions: Public Suffix List contributors.
+
+Modifications by Luke Steuber, 2026: take the rightmost label of ICANN rules,
+normalize IDNs to ASCII labels, lowercase, deduplicate and sort. Exclude eleven
+labels not recognized by LocalType 0.5.22; these are explicit compatibility
+exclusions, not a claim that those suffixes are invalid. Private-section rules
+are not used. The resulting 1,437 entries match the earlier recognition set.
+The derived file remains under MPL-2.0. No upstream author endorses LocalType.
+
+The complete pinned source, exclusions and build script accompany the prepared
+source snapshot under distribution/source/tlds/ and scripts/build-tlds.py.
+Run python3 scripts/build-tlds.py --check to verify the generated file. Source
+form is also available at the pinned public URL above and is offered under MPL-2.0.
+
+Earlier versions used an IANA root-zone list under a factual-data rationale.
+This replacement does not assert or invent a new license for the old IANA file.

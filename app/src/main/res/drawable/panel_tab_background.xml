@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- An emoji tab, or the strip's emoji button while the panel is open. Selected is a key-shaped fill
+     with an accent bar under it, so it never rests on colour alone. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/kb_key_pressed">
+    <item android:id="@android:id/mask">
+        <shape><solid android:color="#FFFFFF" /><corners android:radius="10dp" /></shape>
+    </item>
+    <item>
+        <selector>
+            <item android:state_selected="true">
+                <layer-list>
+                    <item android:top="4dp" android:bottom="4dp">
+                        <shape><solid android:color="@color/kb_key" /><corners android:radius="10dp" /></shape>
+                    </item>
+                    <item android:gravity="bottom|center_horizontal" android:width="20dp" android:height="3dp" android:bottom="6dp">
+                        <shape><solid android:color="@color/kb_accent" /><corners android:radius="2dp" /></shape>
+                    </item>
+                </layer-list>
+            </item>
+        </selector>
+    </item>
+</ripple>

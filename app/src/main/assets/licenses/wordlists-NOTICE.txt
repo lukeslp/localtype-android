@@ -1,0 +1,80 @@
+LocalType word lists
+
+Copyright 2026 Luke Steuber for LocalType's original contributions.
+
+words_en.txt and words_en_profanity.txt derive from Hermit Dave's FrequencyWords,
+OpenSubtitles 2018 English frequency data:
+https://github.com/hermitdave/FrequencyWords
+The upstream README licenses content under Creative Commons Attribution-
+ShareAlike 4.0 International and code separately under MIT. The content terms
+apply here. LocalType filters fragments, misspellings and slurs and adds common
+contractions. The original acquisition commit was not recorded; the exact
+derived bytes are pinned in the source asset inventory. No upstream author
+endorses LocalType.
+
+words_en_modern.txt and emoji_en.txt, including the later everyday-reaction
+aliases, are original LocalType lists by Luke Steuber, licensed under the
+Creative Commons Attribution-ShareAlike 4.0 International license. The emoji
+aliases are editorial choices, not measured usage counts. The prior public
+copies are in https://github.com/lukeslp/chime-pipeline; that publication did
+not contain the later aliases.
+
+words_es.txt, words_es_profanity.txt and words_known_es.txt (Spanish) and
+words_pt.txt, words_pt_profanity.txt and words_known_pt.txt (Brazilian
+Portuguese) derive from the same FrequencyWords project, OpenSubtitles 2018
+frequency data in content/2018/es and content/2018/pt_br at commit
+525f9b560de45753a5ea01069454e72e9aa541c6, under the same Creative Commons
+Attribution-ShareAlike 4.0 International content terms. LocalType kept the
+most frequent words, filtered slurs, moved swear words to the profanity lists
+and kept words seen 20 or more times as the recognition lists. No upstream
+author endorses LocalType.
+
+words_he.txt, words_he_profanity.txt and words_known_he.txt (Hebrew) derive
+from the same FrequencyWords project, OpenSubtitles 2018 frequency data in
+content/2018/he at commit 525f9b560de45753a5ea01069454e72e9aa541c6, under the
+same Creative Commons Attribution-ShareAlike 4.0 International content terms.
+LocalType kept the 20,000 most frequent words of Hebrew letters, filtered
+slurs, moved swear words to the profanity list and kept words seen 20 or more
+times as the recognition list. No upstream author endorses LocalType.
+
+words_cy*.txt (Welsh), words_ga*.txt (Irish) and words_mi*.txt (Maori: words_mi.txt,
+words_mi_profanity.txt, words_known_mi.txt) are word counts from each
+language's Wikipedia pages-articles dump of 2026-11-01 (cywiki-20261101,
+gawiki-20261101, miwiki-20261101; https://dumps.wikimedia.org/). Wikipedia
+text is licensed under Creative Commons Attribution-ShareAlike 4.0
+International by its contributors, and these derived lists keep those terms.
+LocalType stripped wiki markup, counted words of each language's own letters,
+filtered slurs and moved swear words to the profanity lists. No Wikipedia
+contributor or the Wikimedia Foundation endorses LocalType.
+
+words_haw.txt, words_haw_profanity.txt and words_known_haw.txt (Hawaiian) derive
+from data/freqlist_haw.txt in dohliam/hawaiian-corpus
+(https://github.com/dohliam/hawaiian-corpus), word counts from modern,
+non-scriptural Hawaiian text in Ulukau, the Hawaiian Electronic Library. The
+upstream data is dedicated to the public domain under CC0 1.0; LocalType's
+derived lists are offered under the same CC0 1.0 dedication
+(https://creativecommons.org/publicdomain/zero/1.0/). No upstream author
+endorses LocalType.
+
+spellings_en_gb.txt is a filtered list of American-to-British spelling pairs
+from SCOWL's VarCon 2020.12.07. Its copyright and permission notice is
+preserved in VarCon-Copyright.txt, which also marks LocalType's modification.
+
+words_known.txt is a lowercased, deduplicated recognition list derived from
+SCOWL 2020.12.07 size 70 (American, British, Canadian and Australian variants
+and names), with LocalType's modern-word supplement. SCOWL-Copyright.txt is
+preserved verbatim and covers the SCOWL material; the LocalType supplement
+retains CC BY-SA 4.0. No SCOWL copyright or permission notice is replaced.
+The historical build recipe for the exact SCOWL subset was not retained;
+this attribution is not a claim to have independently rebuilt that subset.
+Source: https://github.com/en-wl/wordlist/tree/rel-2020.12.07
+
+CC BY-SA 4.0: https://creativecommons.org/licenses/by-sa/4.0/
+The full license text is in CC-BY-SA-4.0.txt alongside this notice.
+
+current_words.txt is an original editorial spelling/score list by Luke Steuber,
+licensed under Apache-2.0. It holds names, spellings and manually chosen scores,
+not copied articles, messages or measured personal usage. Its public references
+are provenance references, not a claim to license those websites' contents.
+See Apache-2.0.txt. The source-review snapshot changes only private provenance
+comments; every vocabulary row remains unchanged.

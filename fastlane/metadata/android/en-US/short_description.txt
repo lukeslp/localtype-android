@@ -1,0 +1,1 @@
+Offline keyboard with local predictions, accents, IPA and undoable corrections

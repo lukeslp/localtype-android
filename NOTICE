@@ -1,0 +1,40 @@
+LocalType
+Copyright 2026 Luke Steuber
+
+The first-party Android application code, tests, build configuration and vector
+resources are licensed under the Apache License, Version 2.0; see LICENSE.
+This grant does not relicense third-party dependencies, bundled data, private
+research records or other material outside that scope.
+
+Bundled assets have separate terms. See distribution/source/asset-licenses.json
+(ASSET-LICENSES.json in the prepared source snapshot) and the notices in
+app/src/main/assets/licenses/:
+
+- current_words.txt: first-party editorial vocabulary, Apache-2.0.
+- emoji_en.txt and words_en_modern.txt: first-party lists, CC BY-SA 4.0.
+- words_en.txt and words_en_profanity.txt: FrequencyWords/OpenSubtitles-derived
+  lists, CC BY-SA 4.0; see wordlists-NOTICE.txt.
+- words_es*.txt, words_known_es.txt, words_pt*.txt, words_known_pt.txt:
+  FrequencyWords/OpenSubtitles-derived Spanish and Portuguese lists, CC BY-SA 4.0.
+- corpus_prior_es.bin and corpus_prior_pt.bin: Leipzig corpus word-pair statistics,
+  CC BY 4.0; see corpus-prior-es-NOTICE.txt and corpus-prior-pt-NOTICE.txt.
+- words_he*.txt: FrequencyWords/OpenSubtitles-derived Hebrew lists, CC BY-SA 4.0.
+- words_cy*.txt, words_ga*.txt, words_mi*.txt: counted from the Welsh, Irish and
+  Maori Wikipedia dumps of 2026-11-01, CC BY-SA 4.0; see wordlists-NOTICE.txt.
+- words_haw*.txt: from dohliam/hawaiian-corpus, CC0 1.0.
+- spellings_en_gb.txt: filtered VarCon 2020.12.07 pairs; retain VarCon-Copyright.txt.
+- words_known.txt: SCOWL 2020.12.07 plus LocalType's modern supplement. Retain
+  SCOWL-Copyright.txt and the supplement's CC BY-SA 4.0 terms.
+- emoji_inventory.txt: Unicode data under Unicode-3.0.
+- cifg_int8.bin: Chime weights and vocabulary, CC BY-SA 4.0.
+- corpus_prior.bin: corpus word-pair statistics, CC BY 4.0.
+- swipe_en.bin: LocalType's swipe weights, CC BY-SA 4.0; the upstream FUTO
+  recording license is MIT. No recordings or vocabulary are in that file.
+- tlds.txt: MPL-2.0, rebuilt from the pinned Public Suffix List with compatibility
+  exclusions. The recognized set is unchanged; see tlds-NOTICE.txt.
+
+Third-party software retains its own licenses. The full distribution includes
+ML Kit, which is excluded from the F-Droid flavor. The optional LiteRT-LM runtime
+has its own Apache-2.0 declaration and third-party notices; its native build
+provenance remains under review. These notices do not establish catalog approval.
+No upstream author endorses LocalType.

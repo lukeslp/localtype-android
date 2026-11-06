@@ -1,0 +1,2 @@
+# A tiny stand-in for the swear list: its words must never reach the prior.
+damn	100

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Themed-icon layer: the keycap with its keys cut out, and the text cursor above it. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#FFFFFF" android:fillType="evenOdd"
+        android:pathData="M36,34h36a8,8 0,0 1,8 8v24a8,8 0,0 1,-8 8h-36a8,8 0,0 1,-8 -8v-24a8,8 0,0 1,8 -8z
+            M37,45h6v6h-6zM47,45h6v6h-6zM57,45h6v6h-6zM67,45h4v6h-4zM37,55h4v6h-4zM45,55h26v6h-26z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M52,22h4v8h-4z" />
+</vector>

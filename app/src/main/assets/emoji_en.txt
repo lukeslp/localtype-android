@@ -1,0 +1,365 @@
+# Word to emoji suggestions. Written for LocalType; one line per word, emoji separated by spaces.
+love	❤️ 🥰 😍 💕 💖 🫶 🩷
+heart	❤️ 💙 💚 💛 💜 🖤 🤍 🧡
+hearts	💕 💖 💗 💞
+kiss	😘 😗 💋 🥰
+hug	🫂 🤗
+hugs	🫂 🤗
+happy	😊 😄 😁 🥳 🤩
+birthday	🎂 🎉 🥳 🎁 🎈
+congrats	🎉 👏 🥳 🏆
+congratulations	🎉 👏 🥳 🏆
+party	🎉 🥳 🎊 🪩
+thanks	🙏 😊 🤗 💐
+thank	🙏 😊 💐
+please	🙏 🥺
+sorry	😅 🙏 😞 🥺
+welcome	🙌
+lol	😂 🤣 😹 😆 😅 💀 😭
+haha	😂 🤣 😄 😆
+hahaha	🤣 😂 😆
+funny	😂 🤣 😆 😹
+laughing	😂 🤣 😆
+joke	😄 😜 🤪 😏
+sad	😢 😞 🙁 😔
+crying	😭 😢 🥲
+cry	😢 😭 🥲
+angry	😠 😡 🤬 😤
+mad	😠 😡 🤬
+confused	😕
+tired	😴 🥱 😫 🫩
+sleep	😴 💤 🛌
+sleeping	😴
+sleepy	😴 🥱 💤
+bored	🥱
+stressed	😩
+nervous	😬
+excited	🤩 🥳 😆 🙌
+proud	🥹
+scared	😨
+shocked	😳
+cool	😎 🆒 🤙
+nice	👌 👍 🙌 ✨
+yes	👍 ✅ 🙌 👌
+yep	👍
+yeah	👍
+sure	👍
+ok	👌 👍 🆗
+okay	👌 👍 🆗
+no	👎 ❌ 🙅
+nope	👎
+coffee	☕ 🍵 🥤
+tea	🍵 🫖 ☕
+beer	🍺 🍻 🥂
+beers	🍻
+wine	🍷 🥂 🍾
+drinks	🍻
+cheers	🥂
+pizza	🍕 🧀
+burger	🍔
+tacos	🌮
+sushi	🍣
+pasta	🍝
+cake	🍰 🎂 🧁
+cookie	🍪
+chocolate	🍫
+icecream	🍦
+breakfast	🥞
+lunch	🥪
+dinner	🍽️
+snack	🍿
+hungry	🍔
+food	🍽️ 🍕 🍔 🥗
+cooking	🍳
+water	💧
+apple	🍎
+banana	🍌
+dog	🐶 🐕 🦮 🐩
+dogs	🐶
+puppy	🐶
+cat	🐱 🐈 😺 😻
+cats	🐱
+kitten	🐱
+bird	🐦
+fish	🐟
+horse	🐴
+cow	🐮
+pig	🐷
+bear	🐻
+fox	🦊
+owl	🦉
+duck	🦆
+penguin	🐧
+monkey	🐵
+bee	🐝
+butterfly	🦋
+dragon	🐉
+sun	☀️ 🌞 😎
+sunny	☀️
+rain	🌧️ ☔ 🌦️
+raining	🌧️
+snow	❄️ 🌨️ ⛄
+snowing	🌨️
+storm	⛈️
+wind	💨
+hot	🥵 🔥 🌡️
+cold	🥶 ❄️ 🧊
+fire	🔥 🚒 🧯
+rainbow	🌈
+cloud	☁️
+moon	🌙
+star	⭐ 🌟 ✨ 💫
+stars	✨
+night	🌙
+morning	🌅
+sunset	🌇
+beach	🏖️
+ocean	🌊
+mountain	⛰️
+tree	🌳
+flower	🌸
+flowers	💐
+garden	🌷
+home	🏠 🏡 🛋️
+house	🏠
+work	💼 🧑‍💻 🏢
+office	🏢
+school	🏫
+class	📚
+meeting	📅
+deadline	⏰
+busy	😤
+done	✅ 🎉 🙌 ☑️
+finished	✅
+fixed	✅ 🔧 🛠️
+broken	💔
+bug	🐛 🪲 🔧
+code	💻 👨‍💻 ⌨️ 🧑‍💻
+coding	💻 🧑‍💻 ⌨️
+laptop	💻
+phone	📱 ☎️ 📞
+email	📧
+call	📞
+calling	📞
+text	💬
+message	💬
+photo	📷
+photos	📷
+video	🎥
+music	🎵 🎶 🎧 🎸
+song	🎶
+guitar	🎸
+dance	💃
+dancing	💃
+movie	🎬
+game	🎮
+gaming	🎮
+book	📖
+reading	📖
+writing	✍️
+idea	💡 ✨ 🧠
+question	❓
+warning	⚠️
+money	💰 💸 🤑 💵
+paid	💸
+shopping	🛒
+gift	🎁 🎀 🛍️
+present	🎁
+travel	✈️ 🧳 🗺️
+flight	✈️ 🛫 🧳
+plane	✈️
+train	🚆
+car	🚗 🚙 🏎️
+driving	🚗
+bike	🚲
+walk	🚶
+running	🏃 🏃‍♀️ 👟
+run	🏃 🏃‍♀️ 👟
+gym	🏋️ 💪 🏃
+workout	🏋️
+yoga	🧘
+swim	🏊
+hiking	🥾
+camping	🏕️
+football	🏈
+soccer	⚽
+basketball	🏀
+tennis	🎾
+golf	⛳
+baby	👶 🍼 🧸
+family	👨‍👩‍👧
+friend	🫶
+friends	🫶
+wedding	💒
+ring	💍
+doctor	🩺
+sick	🤒
+covid	😷
+medicine	💊
+hospital	🏥
+dentist	🦷
+weekend	🎉
+friday	🎉
+monday	😩
+holiday	🏝️
+vacation	🏝️
+christmas	🎄
+halloween	🎃
+newyear	🎆
+summer	☀️
+winter	❄️
+spring	🌷
+autumn	🍂
+rocket	🚀
+launch	🚀
+ship	🚢
+shipping	📦
+package	📦
+delivery	📦
+perfect	👌 💯 ✨
+amazing	🤩
+awesome	🔥 🤩 💯
+great	🙌 👏 💯
+good	👍 😊 ✅
+bad	👎
+wow	😮 🤯 😲 🙀
+omg	😱
+oops	🙈
+secret	🤫
+think	🤔 💭 🧠
+thinking	🤔 💭 🧠
+maybe	🤷 🤔 😅
+whatever	🤷 😮‍💨 🙄
+clap	👏 🙌 🎉
+applause	👏
+wave	👋 🤚 🖐️ ✋ 🫡
+hi	👋 🙋 🤗 😊
+hey	👋 🙋 😄
+hello	👋 🙋 🤗
+bye	👋 🫡 😢
+goodnight	🌙
+goodmorning	☀️
+luck	🍀
+lucky	🍀
+win	🏆
+winner	🏆
+goal	🎯
+target	🎯
+chart	📈
+growth	📈
+down	📉
+brain	🧠 💭 🤯
+eyes	👀
+strong	💪 🦾 🏋️
+muscle	💪 🦾
+pray	🙏 🧘 ✨
+robot	🤖
+alien	👽
+ghost	👻
+magic	✨
+key	🔑
+lock	🔒
+private	🔒
+safe	🔒
+time	⏰
+late	⏰
+early	🌅
+today	📆
+tomorrow	📆
+soon	⏳
+waiting	⏳
+fast	⚡
+battery	🔋
+hands	🙌 👐 🤲 👏 🫶
+yay	🙌 🎉 🥳
+cheer	🙌 🎉 👏
+high	🙌 ✋
+hooray	🙌 🎉 🥳
+# Phrases: tapping the emoji replaces the whole phrase.
+thumbs up	👍
+thumbs down	👎
+high five	🙌 ✋
+fingers crossed	🤞
+red heart	❤️
+broken heart	💔
+heart eyes	😍
+on fire	🔥
+face palm	🤦
+facepalm	🤦
+mind blown	🤯
+eye roll	🙄
+rolling eyes	🙄
+shrug	🤷
+happy birthday	🎂 🎉 🥳 🎁
+good morning	☀️ 🌅
+good night	🌙 😴
+good luck	🍀 🤞
+well done	👏 👍
+love you	❤️ 🥰 😘
+love u	❤️ 🥰 😘
+miss you	🥺 💕
+thank you	🙏 😊
+no worries	👍 😊
+crying laughing	😂
+merry christmas	🎄 🎅
+happy new year	🎆 🥂 🎉
+happy holidays	🎄 ✨
+let's go	🚀 💪
+lets go	🚀 💪
+ice cream	🍦 🍨
+hot dog	🌭
+french fries	🍟
+money bag	💰
+light bulb	💡
+hundred percent	💯
+a hundred percent	💯
+raised hands	🙌
+clapping hands	👏
+praying hands	🙏
+peace out	✌️
+peace	✌️ ☮️
+# Everyday reactions: curated aliases, not measured usage counts.
+touched	🥹 🥰
+so sweet	🥹 🥰 🫶
+happy tears	🥹 🥲
+melting	🫠 🥵
+awkward	🫠 😬 😅
+embarrassed	🫠 😳 🙈
+overwhelmed	🫠 😵‍💫 😮‍💨
+exhausted	🫩 😫 🥱
+sleep deprived	🫩 🥱 😴
+worn out	🫩 😩
+lmao	😂 🤣 💀 😭
+rofl	🤣 😂 💀
+dying laughing	💀 😂 🤣 😭
+pink heart	🩷
+white heart	🤍
+heart hands	🫶
+healing heart	❤️‍🩹
+get well	❤️‍🩹 💐
+watching	👀
+looking	👀
+curious	👀 🤔
+salute	🫡
+roger that	🫡 👍
+on it	🫡 👍
+sigh	😮‍💨
+relieved	😮‍💨 😌
+phew	😮‍💨 😅
+eyeroll	🙄
+eye rolling	🙄
+roll eyes	🙄
+roll my eyes	🙄
+rolling my eyes	🙄
+face palming	🤦
+smh	🤦 🙄
+shrugging	🤷
+no idea	🤷 🤔
+mindblown	🤯
+blown away	🤯 🤩
+fingerscrossed	🤞
+thankful	🙏 🥹
+grateful	🙏 🥹 🫶
+appreciate it	🙏 🫶
+well played	👏 🫡
+you got this	💪 🙌

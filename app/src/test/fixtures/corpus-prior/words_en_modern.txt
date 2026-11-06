@@ -1,0 +1,2 @@
+# A tiny stand-in for the modern additions.
+ok	8000

@@ -1,0 +1,311 @@
+{
+  "cifg_int8.bin": {
+    "sha256": "3255dbeaf6e7fc0922afdca42ef751a22e3ad28903ab4acc9eb0022b9a704318",
+    "status": "existing-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "https://huggingface.co/lukeslp/chime-sms-2m",
+    "notice": "licenses/cifg-NOTICE.txt",
+    "sourceSha256": "3255dbeaf6e7fc0922afdca42ef751a22e3ad28903ab4acc9eb0022b9a704318"
+  },
+  "corpus_prior.bin": {
+    "sha256": "5ea7038a8c99e8fdeb6813bcb57db019933261c8e3e8298b7aff62048c6f4825",
+    "status": "existing-grant",
+    "license": "CC-BY-4.0",
+    "notice": "licenses/corpus-prior-NOTICE.txt",
+    "sourceSha256": "5ea7038a8c99e8fdeb6813bcb57db019933261c8e3e8298b7aff62048c6f4825"
+  },
+  "corpus_prior_es.bin": {
+    "sha256": "fc267ff44fc9657eebc75eb1a3f61804712a3fa3837640dc5e4f45a82fb02f3d",
+    "status": "reviewed-grant",
+    "license": "CC-BY-4.0",
+    "source": "Leipzig Corpora Collection spa_web_2016_1M and spa_news_2024_1M; model/language_build.py and model/prior.py",
+    "notice": "licenses/corpus-prior-es-NOTICE.txt",
+    "review": "Sources, versions and licence pages recorded in model/licenses.md (Spanish 2026-10-17/18, Portuguese 2026-10-18)",
+    "sourceSha256": "fc267ff44fc9657eebc75eb1a3f61804712a3fa3837640dc5e4f45a82fb02f3d"
+  },
+  "corpus_prior_pt.bin": {
+    "sha256": "024814ee3c8ac34cd5d8b027878c5a9fa9b90d971d59ad0519fac5db625522a7",
+    "status": "reviewed-grant",
+    "license": "CC-BY-4.0",
+    "source": "Leipzig Corpora Collection por_news_2024_1M and por-br_newscrawl_2011_1M; model/language_build.py and model/prior.py",
+    "notice": "licenses/corpus-prior-pt-NOTICE.txt",
+    "review": "Sources, versions and licence pages recorded in model/licenses.md (Spanish 2026-10-17/18, Portuguese 2026-10-18)",
+    "sourceSha256": "024814ee3c8ac34cd5d8b027878c5a9fa9b90d971d59ad0519fac5db625522a7"
+  },
+  "current_words.txt": {
+    "sha256": "b5954b222680e4467c5c69d740b5c9dbd3b6f8692518d7717c6bfd5ba9105350",
+    "status": "reviewed-grant",
+    "license": "Apache-2.0",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Original editorial spellings and scores; public export changes comments only",
+    "sourceSha256": "505dd3be2a5d5aebefaa5892269eed7e55848c718ae24d3ae45425adfb20fd0d"
+  },
+  "emoji_en.txt": {
+    "sha256": "89056fda23a7ee22cbcb69d6ce281acda29993143c5052b2a840f40a2ded11ad",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "https://github.com/lukeslp/chime-pipeline",
+    "matchesPublishedCopy": false,
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Later first-party aliases extend the existing CC BY-SA 4.0 grant; no third-party text copied",
+    "sourceSha256": "89056fda23a7ee22cbcb69d6ce281acda29993143c5052b2a840f40a2ded11ad"
+  },
+  "emoji_inventory.txt": {
+    "sha256": "d74b1a29fb9ce37278826b4cd521e1fa6a9f5168740d441b1dc43232a8edc8f7",
+    "status": "existing-grant",
+    "license": "Unicode-3.0",
+    "notice": "licenses/Unicode-LICENSE.txt",
+    "sourceSha256": "d74b1a29fb9ce37278826b4cd521e1fa6a9f5168740d441b1dc43232a8edc8f7"
+  },
+  "spellings_en_gb.txt": {
+    "sha256": "8e1b80ad5fd196bcb878a922063fab3cfceb8e83b474a89b2d607ea9e3b70c2b",
+    "status": "reviewed-grant",
+    "license": "LicenseRef-VarCon",
+    "source": "SCOWL VarCon 2020.12.07, varcon.txt SHA-256 75af63da46ec12d7eb14b9f1ba8d3898d484dd6872755b73c921b215875a3629 (https://raw.githubusercontent.com/en-wl/wordlist/master/varcon/varcon.txt); model/british_spellings.py",
+    "notice": "licenses/VarCon-Copyright.txt",
+    "review": "Filtered American-to-British pairs; VarCon permission notice retained verbatim with a modification note",
+    "sourceSha256": "8e1b80ad5fd196bcb878a922063fab3cfceb8e83b474a89b2d607ea9e3b70c2b"
+  },
+  "swipe_en.bin": {
+    "sha256": "665f2879a6294dddfa4487e25ac4504eeea21934645a542addd0f134e6b563e0",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "notice": "licenses/swipe-NOTICE.txt",
+    "review": "First-party numeric weight export; FUTO recording MIT notice retained separately; vocabulary is NOT embedded",
+    "sourceSha256": "665f2879a6294dddfa4487e25ac4504eeea21934645a542addd0f134e6b563e0"
+  },
+  "tlds.txt": {
+    "sha256": "aff01a9047269d5f718a18faab1cc3bcb7127cd28cb11ad25b33bb0bee6212f4",
+    "status": "reviewed-grant",
+    "license": "MPL-2.0",
+    "notice": "licenses/tlds-NOTICE.txt",
+    "source": "https://github.com/publicsuffix/list/blob/3929462652695bad04f0a27afb600974014a3c8b/public_suffix_list.dat",
+    "review": "Derived from ICANN rules, with explicit exclusions preserving the exact 1437-entry shipped membership; full source and generator included",
+    "sourceSha256": "aff01a9047269d5f718a18faab1cc3bcb7127cd28cb11ad25b33bb0bee6212f4"
+  },
+  "words_cy.txt": {
+    "sha256": "1e7c71f2ea4cddab57b5f536068987ff14f84cc92bb34b0fb3429347c10f42d0",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "Welsh Wikipedia, cywiki-20261101 pages-articles dump (https://dumps.wikimedia.org/cywiki/); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Not read by a native speaker",
+    "sourceSha256": "1e7c71f2ea4cddab57b5f536068987ff14f84cc92bb34b0fb3429347c10f42d0"
+  },
+  "words_cy_profanity.txt": {
+    "sha256": "26f9e3bc6246df51adaa65628be06a1abaef2f2003e44fd4481b6a75ac9ed53c",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "Welsh Wikipedia, cywiki-20261101 pages-articles dump (https://dumps.wikimedia.org/cywiki/); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Not read by a native speaker",
+    "sourceSha256": "26f9e3bc6246df51adaa65628be06a1abaef2f2003e44fd4481b6a75ac9ed53c"
+  },
+  "words_en.txt": {
+    "sha256": "43774d3fca49f207eb6f70710fecbbe9914e5b2798739b4b96b7ea39bf051f00",
+    "status": "existing-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "https://github.com/lukeslp/chime-pipeline",
+    "matchesPublishedCopy": true,
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "sourceSha256": "43774d3fca49f207eb6f70710fecbbe9914e5b2798739b4b96b7ea39bf051f00"
+  },
+  "words_en_modern.txt": {
+    "sha256": "d52f9191813146649548c57200c390b4568baddff394a31ba7a0553088057461",
+    "status": "existing-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "https://github.com/lukeslp/chime-pipeline",
+    "matchesPublishedCopy": true,
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "sourceSha256": "d52f9191813146649548c57200c390b4568baddff394a31ba7a0553088057461"
+  },
+  "words_en_profanity.txt": {
+    "sha256": "7ff9e84f1ef96f35a492d0973be0d9b59dd8f51f71b034910fd9cd99d44518b3",
+    "status": "existing-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "https://github.com/lukeslp/chime-pipeline",
+    "matchesPublishedCopy": true,
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "sourceSha256": "7ff9e84f1ef96f35a492d0973be0d9b59dd8f51f71b034910fd9cd99d44518b3"
+  },
+  "words_es.txt": {
+    "sha256": "fc40e7ebe4c51d30ddf8aba420794bf1e8bc3f25a1c9f7661c1a120d97040bce",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/es/ (OpenSubtitles 2018); model/language_bundle.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Sources, versions and licence pages recorded in model/licenses.md (Spanish 2026-10-17/18, Portuguese 2026-10-18)",
+    "sourceSha256": "fc40e7ebe4c51d30ddf8aba420794bf1e8bc3f25a1c9f7661c1a120d97040bce"
+  },
+  "words_es_profanity.txt": {
+    "sha256": "aee4c6d0ce1edcd581948c2794bfc4a3de9ff591add9f1897e6e36de18673b99",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/es/ (OpenSubtitles 2018); model/language_bundle.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Sources, versions and licence pages recorded in model/licenses.md (Spanish 2026-10-17/18, Portuguese 2026-10-18)",
+    "sourceSha256": "aee4c6d0ce1edcd581948c2794bfc4a3de9ff591add9f1897e6e36de18673b99"
+  },
+  "words_ga.txt": {
+    "sha256": "7fb76ff740ffb1ed7d991fd2a84d3e8aed2c5a20e285c9d5cf2a4f3f1b9686b4",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "Irish Wikipedia, gawiki-20261101 pages-articles dump (https://dumps.wikimedia.org/gawiki/); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Not read by a native speaker",
+    "sourceSha256": "7fb76ff740ffb1ed7d991fd2a84d3e8aed2c5a20e285c9d5cf2a4f3f1b9686b4"
+  },
+  "words_ga_profanity.txt": {
+    "sha256": "136d314fe2b88ae4470766c3d685e87a473b307cc341c9f3ef31c3334d6fe834",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "Irish Wikipedia, gawiki-20261101 pages-articles dump (https://dumps.wikimedia.org/gawiki/); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Not read by a native speaker",
+    "sourceSha256": "136d314fe2b88ae4470766c3d685e87a473b307cc341c9f3ef31c3334d6fe834"
+  },
+  "words_haw.txt": {
+    "sha256": "f7ca3b29964a592b888374342c841c4c96fdbe8593e05dc6446a6ad1cfc94779",
+    "status": "reviewed-grant",
+    "license": "CC0-1.0",
+    "source": "dohliam/hawaiian-corpus data/freqlist_haw.txt (Ulukau text, modern and non-scriptural); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Upstream README states CC0; top counts match upstream HEAD a157cbc61acd33a05bc22a59ed4bcb7f29198a80 on 2026-11-04. The build commit was not recorded",
+    "sourceSha256": "f7ca3b29964a592b888374342c841c4c96fdbe8593e05dc6446a6ad1cfc94779"
+  },
+  "words_haw_profanity.txt": {
+    "sha256": "02930992356622d74057fc2355001c6a24b7e4a5788ef1cbcd0651fa814f87e4",
+    "status": "reviewed-grant",
+    "license": "CC0-1.0",
+    "source": "dohliam/hawaiian-corpus data/freqlist_haw.txt (Ulukau text, modern and non-scriptural); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Upstream README states CC0; top counts match upstream HEAD a157cbc61acd33a05bc22a59ed4bcb7f29198a80 on 2026-11-04. The build commit was not recorded",
+    "sourceSha256": "02930992356622d74057fc2355001c6a24b7e4a5788ef1cbcd0651fa814f87e4"
+  },
+  "words_he.txt": {
+    "sha256": "94c488c8234355c3ecb9506d626ed0667b8fc4e4080763413778731617f248c9",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/he/he_full.txt (OpenSubtitles 2018); model/hebrew_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Same project, commit and content terms as the Spanish and Portuguese lists. Not read by a native speaker",
+    "sourceSha256": "94c488c8234355c3ecb9506d626ed0667b8fc4e4080763413778731617f248c9"
+  },
+  "words_he_profanity.txt": {
+    "sha256": "fdb9e0b67a96e32ea2c80a122ed5cbfbceed93c5f04d1a87b8dbe3a17d988c34",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/he/he_full.txt (OpenSubtitles 2018); model/hebrew_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Same project, commit and content terms as the Spanish and Portuguese lists. Not read by a native speaker",
+    "sourceSha256": "fdb9e0b67a96e32ea2c80a122ed5cbfbceed93c5f04d1a87b8dbe3a17d988c34"
+  },
+  "words_known.txt": {
+    "sha256": "39e4784d9a257b8ba8c0464db7f2a177a4c31c598ea2287547a201690a31a0a3",
+    "status": "reviewed-grant",
+    "license": "LicenseRef-SCOWL AND CC-BY-SA-4.0",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "upstreamNotice": "licenses/SCOWL-Copyright.txt",
+    "review": "SCOWL notice verified byte-identical to rel-2020.12.07; modern supplement retains CC BY-SA 4.0; exact historical subset recipe not recovered",
+    "sourceSha256": "39e4784d9a257b8ba8c0464db7f2a177a4c31c598ea2287547a201690a31a0a3"
+  },
+  "words_known_cy.txt": {
+    "sha256": "deb627513af8e5fc3c154c8d53fcf20ceccde510bf1b678c7403a70701644efa",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "Welsh Wikipedia, cywiki-20261101 pages-articles dump (https://dumps.wikimedia.org/cywiki/); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Not read by a native speaker",
+    "sourceSha256": "deb627513af8e5fc3c154c8d53fcf20ceccde510bf1b678c7403a70701644efa"
+  },
+  "words_known_es.txt": {
+    "sha256": "a5d3c1b50366a0b15f1ffc5706b41d514d7711357cb4e44dbd6d63b1fdaa9ca2",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/es/ (OpenSubtitles 2018); model/language_bundle.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Sources, versions and licence pages recorded in model/licenses.md (Spanish 2026-10-17/18, Portuguese 2026-10-18)",
+    "sourceSha256": "a5d3c1b50366a0b15f1ffc5706b41d514d7711357cb4e44dbd6d63b1fdaa9ca2"
+  },
+  "words_known_ga.txt": {
+    "sha256": "adb858cc30a7bc906bbb3b5bcb97437b7838f16b3d3686b080b714cc9cd1f272",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "Irish Wikipedia, gawiki-20261101 pages-articles dump (https://dumps.wikimedia.org/gawiki/); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Not read by a native speaker",
+    "sourceSha256": "adb858cc30a7bc906bbb3b5bcb97437b7838f16b3d3686b080b714cc9cd1f272"
+  },
+  "words_known_haw.txt": {
+    "sha256": "c3cb9206e0dcf4de07d467760359b2851c2d6f9f1afbeea33ea13f077655cd79",
+    "status": "reviewed-grant",
+    "license": "CC0-1.0",
+    "source": "dohliam/hawaiian-corpus data/freqlist_haw.txt (Ulukau text, modern and non-scriptural); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Upstream README states CC0; top counts match upstream HEAD a157cbc61acd33a05bc22a59ed4bcb7f29198a80 on 2026-11-04. The build commit was not recorded",
+    "sourceSha256": "c3cb9206e0dcf4de07d467760359b2851c2d6f9f1afbeea33ea13f077655cd79"
+  },
+  "words_known_he.txt": {
+    "sha256": "61e25335508a89f946cb14d23b263b528ce3edefd7836047167fa489b093bc4c",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/he/he_full.txt (OpenSubtitles 2018); model/hebrew_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Same project, commit and content terms as the Spanish and Portuguese lists. Not read by a native speaker",
+    "sourceSha256": "61e25335508a89f946cb14d23b263b528ce3edefd7836047167fa489b093bc4c"
+  },
+  "words_known_mi.txt": {
+    "sha256": "adf6734c135ab119923c9d3be55ccf349c47f6a3350e9e05114306c82feb81ba",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "M\u0101ori Wikipedia, miwiki-20261101 pages-articles dump (https://dumps.wikimedia.org/miwiki/); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Not read by a native speaker",
+    "sourceSha256": "adf6734c135ab119923c9d3be55ccf349c47f6a3350e9e05114306c82feb81ba"
+  },
+  "words_known_pt.txt": {
+    "sha256": "15d3bb57b439459637472faecd1f3b0db38fd7f4d191afd42a3a100d65a8f95d",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/pt_br/ (OpenSubtitles 2018); model/language_bundle.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Sources, versions and licence pages recorded in model/licenses.md (Spanish 2026-10-17/18, Portuguese 2026-10-18)",
+    "sourceSha256": "15d3bb57b439459637472faecd1f3b0db38fd7f4d191afd42a3a100d65a8f95d"
+  },
+  "words_mi.txt": {
+    "sha256": "62a7f85975dcab19eb936bb0684a523401ae1a713757a655a4856ee6bf53f4c9",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "M\u0101ori Wikipedia, miwiki-20261101 pages-articles dump (https://dumps.wikimedia.org/miwiki/); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Not read by a native speaker",
+    "sourceSha256": "62a7f85975dcab19eb936bb0684a523401ae1a713757a655a4856ee6bf53f4c9"
+  },
+  "words_mi_profanity.txt": {
+    "sha256": "606719469f9565f067ac9fc9ee3814052e8bb8c8f8468fb66aa8f0efd2dc8a2f",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "M\u0101ori Wikipedia, miwiki-20261101 pages-articles dump (https://dumps.wikimedia.org/miwiki/); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Not read by a native speaker",
+    "sourceSha256": "606719469f9565f067ac9fc9ee3814052e8bb8c8f8468fb66aa8f0efd2dc8a2f"
+  },
+  "words_pt.txt": {
+    "sha256": "120f4083dd09a6167de304c3914988a4d0e51cfdbe7d52515478d36f775aa5fb",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/pt_br/ (OpenSubtitles 2018); model/language_bundle.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Sources, versions and licence pages recorded in model/licenses.md (Spanish 2026-10-17/18, Portuguese 2026-10-18)",
+    "sourceSha256": "120f4083dd09a6167de304c3914988a4d0e51cfdbe7d52515478d36f775aa5fb"
+  },
+  "words_pt_profanity.txt": {
+    "sha256": "093b0bb1b4a15d414d90557ec6c5ecf258196369086f335218cd75941620fb0d",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/pt_br/ (OpenSubtitles 2018); model/language_bundle.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Sources, versions and licence pages recorded in model/licenses.md (Spanish 2026-10-17/18, Portuguese 2026-10-18)",
+    "sourceSha256": "093b0bb1b4a15d414d90557ec6c5ecf258196369086f335218cd75941620fb0d"
+  }
+}

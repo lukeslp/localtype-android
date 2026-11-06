@@ -1,0 +1,1 @@
+The catalog build keeps Chime, correction, saved text, accents, IPA and swipe while excluding optional Nano/Gemma runtimes and direct updates. Includes common-symbol holds, independent currency choices, middle truncation for long suggestions, and ő/ű on O/U holds.

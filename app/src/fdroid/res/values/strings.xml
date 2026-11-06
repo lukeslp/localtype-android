@@ -1,0 +1,8 @@
+<resources>
+    <!-- The catalog distribution keeps Chime, has no network permission, and leaves updates to the installing client. -->
+    <string name="privacy_body">What you type stays on this phone. Suggestions and learning run here, and this F-Droid build has no internet permission, so it never goes online; updates come through the F-Droid client that installed it.\n\nLocalType privately stores words you add, learned word pairs, recent emoji and site names from web or email addresses you typed in full. It never saves the rest of an address. It also learns each letter key’s average finger-lift offset from known words completed without correction. These offsets help choose corrections; they never change which letter a tap types. Forget learned words clears them too.\n\nSaved text stays in a private file excluded from backups and phone-to-phone transfers. Recent copies stay in memory for at most an hour. Copies marked sensitive, or made in password or incognito fields, are never kept. Unconfirmed misspellings are not learned. Password fields get no suggestions; incognito fields save nothing you type.\n\nThe optional typing log records suggestions and the words you type or tap next. It stays on this phone unless you export it. Turning logging off keeps the existing file; Clear log and Forget learned words remove it.</string>
+    <string name="walkthrough_controls_body">Chime suggests words as you type. It starts on; you can turn it off below or in Settings. Chime runs on this phone and does not rewrite sentences.</string>
+    <string-array name="tips_suggestions">
+        <item>Tap a word in quotes|Keeps your spelling, and stops it being corrected.</item>
+    </string-array>
+</resources>

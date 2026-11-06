@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A password manager's chip, light theme. Android draws the chip in another process with the system's
+     own light or dark setting, so these are the literal values of kb_key and kb_divider, not references:
+     the keyboard's theme can be forced either way in settings. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#FFFFFF" />
+    <stroke android:width="1dp" android:color="#C5CAD6" />
+    <corners android:radius="10dp" />
+</shape>

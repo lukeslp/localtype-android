@@ -1,0 +1,1 @@
+# Common Hawaiian swear words, counts from dohliam/hawaiian-corpus, data/freqlist_haw.txt (Ulukau, the Hawaiian Electronic Library), CC0. Slurs are deliberately excluded.

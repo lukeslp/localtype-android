@@ -1,0 +1,24 @@
+<resources>
+    <!-- Keyboard -->
+    <color name="kb_background">#E9EBF2</color>
+    <color name="kb_key">#FFFFFF</color>
+    <color name="kb_key_pressed">#CDD2DE</color>
+    <color name="kb_modifier">#D3D8E6</color>
+    <color name="kb_modifier_pressed">#B6BDD0</color>
+    <color name="kb_accent">#3F5AA9</color>
+    <color name="kb_accent_pressed">#2F4789</color>
+    <color name="kb_on_key">#1B1C22</color>
+    <color name="kb_on_accent">#FFFFFF</color>
+    <!-- Panel headings, notes and key hints: at least 4.5:1 on the background (5.8) and on modifier keys (4.8). -->
+    <color name="kb_hint">#555A69</color>
+    <color name="kb_divider">#C5CAD6</color>
+    <!-- Setup screen -->
+    <color name="surface">#F5F6FA</color>
+    <color name="card">#FFFFFF</color>
+    <color name="on_surface">#1B1C22</color>
+    <color name="on_surface_variant">#555A69</color>
+    <color name="primary">#3F5AA9</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="primary_container">#DCE2F9</color>
+    <color name="on_primary_container">#14265E</color>
+</resources>

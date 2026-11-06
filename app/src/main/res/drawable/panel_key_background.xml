@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Space in a panel's bottom bar, or a Saved text row, drawn like the keyboard's own keys: inset
+     by the same gaps, so the whole cell stays touchable as on the keyboard. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/kb_key_pressed">
+    <item android:left="1.5dp" android:top="2.5dp" android:right="1.5dp" android:bottom="2.5dp">
+        <shape><solid android:color="@color/kb_key" /><corners android:radius="9dp" /></shape>
+    </item>
+</ripple>

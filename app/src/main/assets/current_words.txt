@@ -1,0 +1,28 @@
+# LocalType reviewed vocabulary v1. Editorial scores, not measured frequencies.
+# observed=2026-10-05
+# News bonus: full for 14 days, half until day 30, then zero. Spelling stays valid.
+# key<TAB>display<TAB>score<TAB>kind<TAB>previous words (comma separated, or -)
+# Names/spellings reviewed 2026-10-05; public reference: https://www.nyc.gov/mayors-office
+# Cultural evidence: https://www.cambridge.org/news-and-insights/cambridge-dictionary-adds-skibidi-delulu-and-tradwife (2025-08-18)
+# https://www.cambridge.org/news-and-insights/parasocial-is-cambridge-dictionary-word-of-the-year-2025 (2025-11-18)
+tehran	Tehran	44	news	-
+gaza	Gaza	44	news	-
+israel	Israel	44	news	-
+netanyahu	Netanyahu	44	news	benjamin
+mamdani	Mamdani	44	news	zohran
+zohran	Zohran	44	news	-
+ai	AI	52	technical	-
+inference	inference	48	technical	-
+llm	LLM	44	technical	-
+llms	LLMs	42	technical	-
+gpu	GPU	44	technical	-
+gpus	GPUs	42	technical	-
+chatgpt	ChatGPT	44	technical	-
+parasocial	parasocial	40	cultural	-
+delulu	delulu	36	cultural	-
+# Functional service names; preferred spellings, not usage counts.
+gmail	Gmail	48	functional	-
+hotmail	Hotmail	44	functional	-
+icloud	iCloud	44	functional	-
+github	GitHub	48	functional	-
+youtube	YouTube	48	functional	-

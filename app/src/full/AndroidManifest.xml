@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- What only the full distribution has: Gemini Nano through AICore, and Gemma (modelkit's manifest adds its download
+     job and the door LocalLauncher uses). -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- AICore binding is required by the ML Kit on-device Prompt API. -->
+    <uses-permission android:name="com.google.android.apps.aicore.service.BIND_SERVICE" />
+
+    <!-- Gemma from LocalLauncher when this phone's copy is there instead (modelkit's SharedModelClient). Its door
+         is guarded by this permission, granted from Android 12 to apps signed with a key LocalLauncher lists. -->
+    <uses-permission android:name="dev.localtype.launcher.permission.USE_MODEL" />
+
+    <queries>
+        <!-- Whether AICore is installed (it isn't on GrapheneOS, for example). -->
+        <package android:name="com.google.android.aicore" />
+        <!-- LocalLauncher, whose copy of Gemma LocalType can use when it has none of its own. -->
+        <package android:name="dev.localtype.launcher" />
+    </queries>
+
+    <application>
+        <!-- The language model runs in its own process so a crash or memory kill can't take the keyboard down. -->
+        <service
+            android:name=".ModelInferenceService"
+            android:exported="false"
+            android:process=":model" />
+    </application>
+</manifest>

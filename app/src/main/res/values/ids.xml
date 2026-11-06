@@ -1,0 +1,26 @@
+<resources>
+    <item name="setup_try_input" type="id" />
+    <item name="key_cursor_left" type="id" />
+    <item name="key_cursor_right" type="id" />
+    <item name="key_delete_word" type="id" />
+    <item name="key_alternate_1" type="id" />
+    <item name="key_alternate_2" type="id" />
+    <item name="key_alternate_3" type="id" />
+    <item name="key_alternate_4" type="id" />
+    <item name="key_alternate_5" type="id" />
+    <item name="key_alternate_6" type="id" />
+    <item name="key_alternate_7" type="id" />
+    <item name="key_alternate_8" type="id" />
+    <item name="key_alternate_9" type="id" />
+    <item name="key_alternate_10" type="id" />
+    <item name="key_alternate_11" type="id" />
+    <item name="key_alternate_12" type="id" />
+    <item name="key_alternate_13" type="id" />
+    <item name="key_alternate_14" type="id" />
+    <item name="key_alternate_15" type="id" />
+    <item name="key_alternate_16" type="id" />
+    <item name="key_gesture_left" type="id" />
+    <item name="key_gesture_right" type="id" />
+    <item name="key_gesture_up" type="id" />
+    <item name="key_gesture_down" type="id" />
+</resources>

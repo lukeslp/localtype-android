@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- SHA-256 of the DER signing certificates allowed to hold <package>.permission.USE_MODEL (modelkit). -->
+    <string-array name="modelkit_known_certs" translatable="false">
+        <!-- LocalLauncher's release key (CN=Luke Steuber, O=LocalLauncher), from 2026-10-19. -->
+        <item>25e40df38f6009307d5de014887e432f7f56fdb5dff83ea15732436bf50a784e</item>
+    </string-array>
+    <!-- LocalLauncher may ask for short lines while the person allows sharing; nothing outranks the keyboard here. -->
+    <string-array name="modelkit_callers" translatable="false">
+        <item>dev.localtype.launcher</item>
+    </string-array>
+</resources>

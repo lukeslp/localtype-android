@@ -1,0 +1,353 @@
+#localtype-log=1
+#app=0.4.5
+#code=15
+#flavor=llm
+#sdk=35
+#file=2
+#dict=20059,20094
+#contextScope=verified-sentence
+#contextChars=160
+#keyChars=200
+#candidates=6
+#prior=5ea7038a8c99e8fdeb6813bcb57db019933261c8e3e8298b7aff62048c6f4825
+#priorWeights=20.0,-10.0,16.0
+#seeds=d0243e03065ea084d2b154b4da90b13da986802363bc1f94d0ad4bf611124baf
+#neural=none
+#correctionPolicy=fixture-repair-v1
+#autocorrect=1
+#webAutocorrect=1
+#addedWords=added-words-v1
+#vocabulary=none
+#vocabularyPolicy=current-vocabulary-v1
+#newsBoost=0
+SNAP	file	21
+U	ok	1
+B	\s	good	2
+B	\s	hey	2
+B	\s	i	3
+B	\s	let	2
+B	\s	ok	1
+B	\s	see	2
+B	\s	thanks	2
+B	be	there	2
+B	good	morning	2
+B	i	will	2
+B	let	me	2
+B	me	know	2
+B	my	way	2
+B	on	my	2
+B	see	you	2
+B	thank	you	2
+B	very	much	2
+B	will	be	2
+B	you	soon	2
+B	you	very	2
+END
+DROP	2
+F	2	0	1	0	0	1
+W	1	2		0	1		0
+O	1	0		L	N	1	i:374,hey:271,i'm:226,it's:219,you:219,but:217	Hey,I,I'm	RRR	0	20059	150	380
+O	1	1	T	L	N	1	that:207,that's:205,thanks:155,the:99,to:97,this:91	That's,That,Thanks	RRR	0	20059	190	460
+T	1	1	2	Thanks	R	1
+W	2	2	Thanks 	0	0	thanks	0
+O	2	0		L	N	1	for:286,again:227,so:222,to:221,a:185,man:168	again,for,so	RRR	0	20059	230	540
+O	2	1	f	L	N	1	for:286,from:84,find:78,first:78,father:76,feel:76	from,for,find	RRR	0	20059	270	620
+O	2	2	fo	L	N	1	for:286,found:74,forget:71,four:70,food:68,follow:67	found,for,forget	RRR	0	20059	310	700
+O	2	3	for	L	N	1	for:286,forget:71,forever:65,forgive:65,force:64,forgot:64	forget,for,forever	RRR	0	20059	150	380
+Y	2	for	for	 	0	1	1
+W	3	2	Thanks for 	0	0	for	0
+O	3	0		L	N	1	you:256,a:253,the:249,me:239,it:223,your:223	a,you,the	RRR	0	20059	190	460
+O	3	1	t	L	N	1	the:249,this:207,that:205,talking:183,to:97,there:87	this,the,that	RRR	0	20059	230	540
+T	3	1	1	the	R	1
+W	4	2	Thanks for the 	0	0	the	0
+O	4	0		L	N	1	time:211,way:204,best:202,world:202,same:200,right:198	way,time,best	RRR	0	20059	270	620
+O	4	1	h	L	N	1	house:177,have:90,he:90,here:87,him:86,her:85	have,house,he	RRR	0	20059	310	700
+O	4	2	he	L	N	1	he:90,here:87,her:85,he's:81,hey:81,help:78	here,he,her	RRR	0	20059	150	380
+O	4	3	hel	L	N	1	help:78,hello:75,hell:74,helped:62,helping:62,held:61	hello,help,hell	RRR	0	20059	190	460
+T	4	3	1	help	R	1
+W	5	2	 	0	1		0
+O	5	0		L	N	1	i:365,hey:265,i'm:219,it's:212,you:212,but:210	Hey,I,I'm	RRR	0	20059	310	700
+T	5	0	1	I	R	1
+W	6	2	I 	0	0	i	0
+O	6	0		L	N	1	don't:239,know:238,was:232,just:230,can:228,think:225	know,don't,was	RRR	0	20059	150	380
+O	6	1	w	L	N	1	was:232,want:213,will:164,we:92,what:92,with:88	want,was,will	RRR	0	20059	190	460
+T	6	1	2	will	R	1
+W	7	2	I will 	0	0	will	0
+O	7	0		L	N	1	be:341,help:232,get:222,you:222,do:218,make:215	help,be,get	RRR	0	20059	230	540
+O	7	1	b	L	N	1	be:341,but:88,back:82,been:82,by:81,because:80	but,be,back	RRR	0	20059	270	620
+T	7	1	1	be	R	1
+W	8	2	I will be 	0	0	be	0
+O	8	0		L	N	1	there:279,a:248,the:227,able:218,more:213,really:212	a,there,the	RRR	0	20059	310	700
+O	8	1	t	L	N	1	there:279,the:227,tough:180,to:97,that:94,this:91	the,there,tough	RRR	0	20059	150	380
+O	8	2	th	L	N	1	there:279,the:227,that:94,this:91,they:87,that's:85	the,there,that	RRR	0	20059	190	460
+T	8	2	1	there	R	1
+W	9	2	I will be there 	0	0	there	0
+O	9	0		L	N	1	are:268,for:244,is:241,was:233,and:231,to:216	for,are,is	RRR	0	20059	230	540
+O	9	1	s	L	N	1	so:88,she:86,see:84,say:81,some:81,something:81	she,so,see	RRR	0	20059	270	620
+O	9	2	so	L	N	1	so:88,some:81,something:81,sorry:79,someone:75,son:74	some,so,something	RRR	0	20059	310	700
+O	9	3	soo	L	N	1	soon:71,sooner:59,soo:50,sookie:43,soothing:42,sook:41	sooner,soon,soo	RRR	0	20059	150	380
+O	9	4	soon	L	N	1	soon:71,sooner:59	sooner,soon,	RRB	0	20059	190	460
+T	9	4	1	soon	R	1
+W	10	2	 	0	1		0
+O	10	0		L	N	1	i:404,hey:260,i'm:212,you:206,it's:205,it:204	Hey,I,I'm	RRR	0	20059	310	700
+O	10	1	t	L	N	1	thanks:201,that:195,that's:193,the:105,to:97,there:93	that,thanks,that's	RRR	0	20059	150	380
+O	10	2	te	L	N	1	tell:81,team:69,telling:69,ten:67,terrible:65,test:65	team,tell,telling	RRR	0	20059	190	460
+O	10	3	teh	L	C	1	tehran:39	teh,the,tehran	LCR	0	20059	230	540
+Y	10	teh	the	 	1	1	1
+FIX	10	teh	the	P	0	\s
+W	11	2	the 	0	0	the	0
+O	11	0		L	N	1	time:203,way:197,world:195,best:194,same:193,right:191	way,time,world	RRR	0	20059	270	620
+O	11	1	c	L	N	1	city:166,can:88,come:85,could:81,can't:80,call:77	can,city,come	RRR	0	20059	310	700
+O	11	2	co	L	N	1	come:85,could:81,coming:75,course:75,couldn't:72,comes:70	could,come,coming	RRR	0	20059	150	380
+O	11	3	cof	L	N	1	coffee:66,coffin:52,coffees:42,coffins:42	coffin,coffee,coffees	RRR	0	20059	190	460
+O	11	4	coff	L	N	1	coffee:66,coffin:52,coffees:42,coffins:42	coffin,coffee,coffees	RRR	0	20059	230	540
+O	11	5	coffe	L	C	1	coffee:66,coffees:42	coffe,coffee,coffees	LCR	0	20059	270	620
+Y	11	coffe	coffee	 	1	1	1
+FIX	11	coffe	coffee	P	0	\s
+W	12	2	the coffee 	0	0	coffee	0
+O	12	0		L	N	1	and:245,or:244,is:234,for:226,from:222,shop:221	or,and,is	RRR	0	20059	310	700
+O	12	1	r	L	N	1	right:86,really:81,remember:74,ready:73,real:73,room:73	really,right,remember	RRR	0	20059	150	380
+O	12	2	re	L	N	1	really:81,remember:74,ready:73,real:73,read:70,rest:70	remember,really,ready	RRR	0	20059	190	460
+O	12	3	rec	L	N	1	record:64,received:60,recognize:60,records:60,recently:59,receive:57	received,record,recognize	RRR	0	20059	230	540
+O	12	4	reci	L	N	1	recipe:51,recite:45,recipes:43,recital:43,recipient:40,reciting:39	recite,recipe,recipes	RRR	0	20059	270	620
+O	12	5	recie	L	N	1		,,	BBB	0	20059	310	700
+O	12	6	reciev	L	N	1		,,	BBB	0	20059	150	380
+O	12	7	recieve	L	C	1		recieve,receive,	LCB	0	20059	190	460
+T	12	7	1	receive	C	1
+W	13	2	the coffee receive 	0	0	receive	0
+O	13	0		L	N	1	the:268,a:263,it:247,your:238,my:228,this:223	a,the,it	RRR	0	20059	230	540
+O	13	1	s	L	N	1	some:191,such:173,so:88,she:86,see:84,say:81	such,some,so	RRR	0	20059	270	620
+O	13	2	st	L	N	1	still:78,stop:77,stay:75,start:73,stuff:71,stand:70	stop,still,stay	RRR	0	20059	310	700
+O	13	3	ste	L	N	1	step:66,steal:62,steve:62,stealing:57,steps:57,steady:56	steal,step,steve	RRR	0	20059	150	380
+O	13	4	steu	L	N	1		,,	BBB	0	20059	190	460
+O	13	5	steub	L	N	1		,,	BBB	0	20059	230	540
+O	13	6	steube	L	N	1		,,	BBB	0	20059	270	620
+O	13	7	steuber	L	C	1		steuber,stubber,	LCB	0	20059	310	700
+T	13	7	0	steuber	L	1
+W	14	2	 	0	1		0
+O	14	0		L	N	1	i:397,hey:255,i'm:206,thanks:201,you:201,it's:199	Hey,I,I'm	RRR	0	20059	230	540
+T	14	0	0	Hey	R	1
+W	15	2	Hey 	0	0	hey	0
+O	15	0		L	N	1	there:259,boss:209,man:209,i:206,dad:201,mom:190	boss,there,man	RRR	0	20059	270	620
+T	15	0	1	there	R	1
+W	16	2	Hey there 	0	0	there	0
+O	16	0		L	N	1	are:257,for:235,is:233,was:224,and:223,to:209	for,are,is	RRR	0	20059	310	700
+O	16	1	h	L	N	1	has:186,have:90,he:90,here:87,hey:87,him:86	have,has,he	RRR	0	20059	150	380
+O	16	2	he	L	N	1	he:90,here:87,hey:87,her:85,help:84,he's:81	here,he,hey	RRR	0	20059	190	460
+O	16	3	hel	L	N	1	help:84,hello:75,hell:74,helped:62,helping:62,held:61	hello,help,hell	RRR	0	20059	230	540
+O	16	4	hell	L	N	1	hello:75,hell:74,heller:41,hellhole:39	hell,hello,heller	RRR	0	20059	270	620
+O	16	5	hello	L	N	1	hello:75	,hello,	BRB	0	20059	310	700
+Y	16	hello	hello	 	0	1	1
+R	16
+X	2	hey	there
+W	17	2	 	0	1		0
+O	17	0		L	N	1	i:391,hey:302,thanks:201,i'm:200,you:196,it's:194	Hey,I,Thanks	RRR	0	20059	150	380
+O	17	1	h	L	N	1	hey:302,have:90,he:90,here:87,him:86,her:85	have,hey,he	RRR	0	20059	190	460
+O	17	2	he	L	N	1	hey:302,he:90,here:87,her:85,help:84,he's:81	he,hey,here	RRR	0	20059	230	540
+O	17	3	hel	L	N	1	help:84,hello:81,hell:74,helped:62,helping:62,held:61	hello,help,hell	RRR	0	20059	270	620
+A	17	N
+W	18	2		0	1		0
+O	18	0		L	N	1	i:391,hey:302,thanks:201,i'm:200,you:196,it's:194	Hey,I,Thanks	RRR	0	20059	310	700
+O	18	1	s	L	N	1	so:179,see:164,she:86,say:81,some:81,something:81	see,so,she	RRR	0	20059	150	380
+O	18	2	su	L	N	1	sure:78,such:73,supposed:70,sun:65,suppose:65,surprise:64	such,sure,supposed	RRR	0	20059	190	460
+O	18	3	sur	L	N	1	sure:78,surprise:64,surprised:62,surely:60,surgery:60,survive:60	surprise,sure,surprised	RRR	0	20059	230	540
+O	18	4	sure	L	N	1	sure:78,surely:60	surely,sure,	RRB	0	20059	270	620
+Y	18	sure	sure	 	0	1	1
+W	19	2	 	0	1		0
+O	19	0		L	N	1	i:385,hey:298,thanks:201,i'm:195,you:192,it's:190	Hey,I,Thanks	RRR	0	20059	150	380
+T	19	0	2	Thanks	R	1
+EF	2	2	0	9	0	1	0	1	1
+F	3	0	1	0	0	1
+X	3	thanks	
+W	20	3	thanks 	0	0	thanks	0
+O	20	0		L	N	1	for:320,again:218,so:214,to:213,a:180,i:167	again,for,so	RRR	0	20059	310	700
+O	20	1	f	L	N	1	for:320,from:84,find:78,first:78,father:76,feel:76	from,for,find	RRR	0	20059	150	380
+O	20	2	fo	L	N	1	for:320,found:74,forget:71,four:70,food:68,follow:67	found,for,forget	RRR	0	20059	190	460
+O	20	3	for	L	N	1	for:320,forget:71,forever:65,forgive:65,force:64,forgot:64	forget,for,forever	RRR	0	20059	230	540
+Y	20	for	for	 	0	1	1
+W	21	3	thanks for 	0	0	for	0
+O	21	0		L	N	1	the:292,you:247,a:244,me:231,it:216,your:215	you,the,a	RRR	0	20059	270	620
+O	21	1	t	L	N	1	the:292,this:201,that:199,talking:177,there:99,to:97	this,the,that	RRR	0	20059	310	700
+T	21	1	1	the	R	1
+W	22	3	thanks for the 	0	0	the	0
+O	22	0		L	N	1	time:197,way:191,best:188,world:188,right:186,same:186	way,time,best	RRR	0	20059	150	380
+O	22	1	h	L	N	1	house:166,help:124,hey:93,have:90,he:90,here:87	help,house,hey	RRR	0	20059	190	460
+O	22	2	he	L	N	1	help:124,hey:93,he:90,here:87,her:85,he's:81	hey,help,he	RRR	0	20059	230	540
+O	22	3	hel	L	N	1	help:124,hello:81,hell:74,helped:62,helping:62,held:61	hello,help,hell	RRR	0	20059	270	620
+O	22	4	help	L	N	1	help:124,helped:62,helping:62,helps:57,helpful:54,helpless:51	helped,help,helping	RRR	0	20059	310	700
+Y	22	help	help	 	0	1	1
+X	3	hey	help
+X	3		hey
+X	3	idea	
+W	23	3	idea 	0	0	idea	0
+O	23	0		L	N	1	of:257,for:248,you:248,that:246,what:244,to:240	for,of,you	RRR	0	20059	230	540
+T	23	0	0	for	R	1
+EF	3	1	0	1	1	1	2	0	4
+SNAP	unlogged	55
+U	be	1
+U	coffee	1
+U	for	3
+U	great	1
+U	hello	1
+U	help	2
+U	hey	3
+U	i	1
+U	idea	1
+U	ok	1
+U	receive	1
+U	soon	1
+U	steuber	1
+U	sure	1
+U	thanks	3
+U	the	3
+U	there	2
+U	will	1
+B	\s	good	2
+B	\s	hey	3
+B	\s	i	4
+B	\s	let	2
+B	\s	ok	1
+B	\s	see	2
+B	\s	sure	1
+B	\s	thanks	4
+B	\s	the	1
+B	be	there	3
+B	coffee	receive	1
+B	for	the	2
+B	good	morning	2
+B	great	idea	1
+B	help	hey	1
+B	hey	great	1
+B	hey	there	1
+B	i	will	3
+B	idea	for	1
+B	john	thanks	1
+B	let	me	2
+B	me	know	2
+B	my	way	2
+B	on	my	2
+B	receive	steuber	1
+B	see	you	2
+B	thank	you	2
+B	thanks	for	2
+B	the	coffee	1
+B	the	help	2
+B	there	hello	1
+B	there	hey	1
+B	there	soon	1
+B	very	much	2
+B	will	be	3
+B	you	soon	2
+B	you	very	2
+END
+F	4	1	1	0	0	1
+W	24	4	idea for 	0	0	for	0
+O	24	0		L	N	1	the:331,you:239,a:236,me:223,it:209,your:208	you,the,a	RRR	0	20059	310	700
+O	24	1	p	L	N	1	people:80,please:79,put:77,place:76,pretty:73,phone:72	please,people,put	RRR	0	20059	150	380
+O	24	2	pi	L	N	1	pick:68,picture:66,piece:66,picked:62,pictures:62,pieces:60	picture,pick,piece	RRR	0	20059	190	460
+O	24	3	piz	L	N	1	pizza:58,pizzas:43	pizzas,pizza,	RRB	0	20059	230	540
+O	24	4	pizz	L	N	1	pizza:58,pizzas:43	pizzas,pizza,	RRB	0	20059	270	620
+O	24	5	pizza	L	N	1	pizza:58,pizzas:43	pizzas,pizza,🍕	RRE	0	20059	310	700
+T	24	5	2	🍕	E	1
+W	25	4	idea for 0 	0	0		0
+O	25	0		L	N	1	the:117,for:108,i:106,you:100,there:99,to:97	for,the,I	RRR	0	20059	150	380
+O	25	1	h	L	N	1	hey:99,have:90,he:90,help:90,here:87,him:86	have,hey,he	RRR	0	20059	190	460
+O	25	2	he	L	N	1	hey:99,he:90,help:90,here:87,her:85,he's:81	he,hey,help	RRR	0	20059	230	540
+O	25	3	hel	L	N	1	help:90,hello:81,hell:74,helped:62,helping:62,held:61	hello,help,hell	RRR	0	20059	270	620
+A	25	N
+W	26	4		0	1		0
+O	26	0		L	N	1	i:380,hey:301,thanks:253,i'm:190,you:188,it:185	Hey,I,Thanks	RRR	0	20059	310	700
+O	26	1	k	L	N	1	know:88,keep:76,kind:75,kill:74,knew:73,killed:72	keep,know,kind	RRR	0	20059	150	380
+O	26	2	ku	L	N	1	kurt:52,kung:51,kumar:45,ku:41,kuwait:39	kung,kurt,kumar	RRR	0	20059	190	460
+O	26	3	kub	L	N	1		,,	BBB	0	20059	230	540
+O	26	4	kube	L	N	1		,,	BBB	0	20059	270	620
+O	26	5	kuber	L	N	1		,,	BBB	0	20059	310	700
+O	26	6	kubern	L	N	1		,,	BBB	0	20059	150	380
+O	26	7	kuberne	L	N	1		,,	BBB	0	20059	190	460
+O	26	8	kubernet	L	N	1		,,	BBB	0	20059	230	540
+O	26	9	kubernete	L	N	1		,,	BBB	0	20059	270	620
+O	26	10	kubernetes	L	N	1		,,	BBB	0	20059	310	700
+Y	26	kubernetes	kubernetes	 	0	0	1
+W	27	4	kubernetes 	0	0	kubernetes	0
+O	27	0		L	N	1	the:117,for:108,i:106,you:100,there:99,to:97	for,the,I	RRR	0	20059	150	380
+O	27	1	a	L	N	1	a:96,and:94,are:89,all:88,about:86,at:86	and,a,are	RRR	0	20059	190	460
+O	27	2	ad	L	N	1	adam:62,address:62,admit:62,advice:61,add:59,advantage:58	address,adam,admit	RRR	0	20059	230	540
+O	27	3	add	L	N	1	address:62,add:59,added:53,addition:51,addict:50,adding:49	add,address,added	RRR	0	20059	270	620
+O	27	4	addr	L	N	1	address:62,addressed:47,addresses:47,addressing:42	addressed,address,	RRS	0	20059	310	700
+A	27	N
+EF	4	0	0	1	0	0	0	0	0
+SNAP	same	0
+END
+F	5	0	1	0	1	1
+W	1	5		0	1		0
+O	1	0		L	N	1	i:380,hey:301,thanks:253,i'm:190,you:188,it:185	Hey,I,Thanks	RRR	0	20059	230	540
+O	1	1	G	L	N	1	good:164,get:87,go:86,got:84,going:83,great:83	Get,Good,Go	RRR	0	20059	270	620
+T	1	1	1	Good	R	1
+W	2	5	Good 	0	0	good	0
+O	2	0		L	N	1	to:255,for:239,idea:227,at:226,enough:216,time:215	for,to,idea	RRR	0	20059	310	700
+O	2	1	m	L	N	1	morning:153,me:91,my:90,man:81,make:80,more:80	me,morning,my	RRR	0	20059	150	380
+T	2	1	1	morning	R	1
+W	3	5	Good morning 	0	0	morning	0
+O	3	0		L	N	1	and:275,to:228,when:227,i:222,for:221,so:220	to,and,when	RRR	0	20059	190	460
+O	3	1	e	L	N	1	even:79,everything:77,ever:76,enough:75,every:75,else:74	even,excellent,everything	RMR	1	20059	230	540
+T	3	1	1	excellent	M	1
+W	4	5	Good morning excellent 	0	0	excellent	0
+O	4	0		L	N	1	choice:221,and:216,work:214,job:212,customer:211,doctor:209	sunshine,excellent,choice	MMR	2	20059	310	700
+T	4	0	1	friends	X	1
+W	5	5	Good morning excellent friends 	0	0	friends	0
+O	5	0		L	N	0	and:269,for:249,are:240,with:230,in:214,that:210	for,and,are	RRR	0	20059	150	380
+O	5	1	s	L	N	0	so:88,she:86,see:84,sure:84,say:81,some:81	she,so,see	RRR	0	20059	230	540
+O	5	2	se	L	N	1	see:84,seen:73,second:71,set:70,seems:69,send:69	seen,see,second	RRR	0	20059	270	620
+O	5	3	see	L	N	1	see:84,seen:73,seems:69,seem:67,seeing:66,seemed:62	seen,see,seems	RRR	0	20059	310	700
+Y	5	see	see	 	0	1	1
+W	6	5	Good morning excellent friends see 	0	0	see	0
+O	6	0		L	N	1	you:336,the:262,if:249,what:247,that:238,how:237	the,you,if	RRR	0	20059	150	380
+T	6	0	1	you	R	1
+W	7	5	Good morning excellent friends see you 	0	0	you	0
+O	7	0		L	N	1	for:231,have:230,can:223,to:222,know:220,think:218	have,for,can	RRR	0	20059	190	460
+O	7	1	s	L	N	1	so:206,should:196,soon:157,see:90,she:86,sure:84	should,so,soon	RRR	0	20059	230	540
+T	7	1	2	soon	R	1
+W	8	5	 	0	1		0
+O	8	0		L	N	0	i:375,hey:297,thanks:253,good:210,you:190,i'm:186	Hey,I,Thanks	RRR	0	20059	150	380
+O	8	1	o	L	N	0	ok:98,of:93,on:90,out:86,oh:85,one:85	of,ok,on	RRR	0	20059	230	540
+O	8	2	ok	L	N	0	ok:98,okay:83,oklahoma:45,okinawa:41,okey:40	okay,ok,oklahoma	RRR	0	20059	270	620
+Y	8	ok	ok	 	0	1	1
+W	9	5	ok 	0	0	ok	0
+O	9	0		L	N	1	i:260,then:222,thanks:218,that:216,what:213,with:213	then,I,thanks	RRR	0	20059	310	700
+O	9	1	s	L	N	1	sure:209,see:90,so:88,she:86,soon:83,say:81	see,sure,so	RRR	0	20059	150	380
+T	9	1	0	see	R	1
+W	10	5	ok see 	0	0	see	0
+O	10	0		L	N	1	you:372,the:253,if:239,what:238,that:229,how:228	the,you,if	RRR	0	20059	190	460
+T	10	0	1	you	R	1
+W	11	5	ok see you 	0	0	you	0
+O	11	0		L	N	1	for:223,have:222,can:215,to:215,know:213,think:210	have,for,can	RRR	0	20059	230	540
+O	11	1	l	L	N	1	like:197,let:84,look:82,let's:81,little:80,love:79	let,like,look	RRR	0	20059	270	620
+O	11	2	la	L	N	1	last:77,late:71,later:71,lady:69,laughing:67,laughs:67	late,last,later	RRR	0	20059	310	700
+T	11	2	2	later	R	1
+W	12	5	ok see you later 	0	0	later	0
+O	12	0		L	N	1	on:265,and:236,i:230,in:228,if:226,this:223	and,on,I	RRR	0	20059	150	380
+O	12	1	t	L	N	1	this:223,to:215,today:215,then:214,tonight:210,than:203	to,this,today	RRR	0	20059	190	460
+O	12	2	te	L	N	1	tell:81,team:69,telling:69,ten:67,terrible:65,test:65	team,tell,telling	RRR	0	20059	230	540
+O	12	3	teh	L	N	1	tehran:39	,tehran,	BRB	0	20059	270	620
+O	12	4	tehh	L	N	1		,,	BBB	0	20059	310	700
+Y	12	tehh	tehh	 	0	0	1
+FIX	12	tehh	the	O	0	\s
+FIX	12	tehh	the	J	0	\s
+FIX	12	tehh	the	P	1	later
+W	13	5	ok see you later the 	0	0	the	0
+O	13	0		L	N	1	time:191,way:185,best:182,world:182,right:180,same:180	way,time,best	RRR	0	20059	150	380
+O	13	1	t	L	N	1	time:191,the:123,there:99,to:97,that:94,thanks:93	the,time,there	RRR	0	20059	190	460
+O	13	2	te	L	N	1	tell:81,team:69,telling:69,ten:67,terrible:65,test:65	team,tell,telling	RRR	0	20059	230	540
+O	13	3	tea	L	N	1	team:69,tea:64,teach:63,teacher:63,tears:59,tear:57	tea,team,teach	RRR	0	20059	270	620
+O	13	4	team	L	N	1	team:69,teams:55,teammates:43,teamwork:43,teammate:40	teams,team,teammates	RRR	0	20059	310	700
+Y	13	team	team	 	0	1	1
+FIX	12	tehh	the	U	0	\s
+W	14	5	ok see you later tehh team 	0	0	team	0
+O	14	0		L	N	1	and:259,is:244,of:235,to:233,in:221,for:219	is,and,of	RRR	0	20059	150	380
+O	14	1	f	L	N	1	for:219,from:84,find:78,first:78,friends:78,father:76	from,for,find	RRR	0	20059	190	460
+O	14	2	fo	L	N	1	for:219,found:74,forget:71,four:70,food:68,follow:67	found,for,forget	RRR	0	20059	230	540
+O	14	3	fol	L	N	1	follow:67,following:62,folks:61,followed:60,folk:52,follows:51	following,follow,folks	RRR	0	20059	270	620
+O	14	4	folk	L	N	1	folks:61,folk:52,folklore:39	folk,folks,folklore	RRR	0	20059	310	700
+O	14	5	folks	L	N	1	folks:61	,folks,	BRB	0	20059	150	380
+Y	14	folks	folks	 	0	1	1
+EF	5	4	0	3	0	0	0	0	0

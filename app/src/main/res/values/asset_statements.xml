@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Names the download page's two sites, so Chrome there can answer navigator.getInstalledRelatedApps() and the
+         page's banner can offer an update rather than an install. The pages name this package back in
+         web/distribution/localtype.webmanifest. It opens no links in the app and gives the sites nothing else. -->
+    <string name="asset_statements" translatable="false">[{\"relation\": [\"delegate_permission/common.handle_all_urls\"], \"target\": {\"namespace\": \"web\", \"site\": \"https://dr.eamer.dev\"}}, {\"relation\": [\"delegate_permission/common.handle_all_urls\"], \"target\": {\"namespace\": \"web\", \"site\": \"https://lukesteuber.com\"}}]</string>
+</resources>

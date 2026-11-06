@@ -1,0 +1,26 @@
+LocalType Spanish corpus prior (corpus_prior_es.bin)
+
+corpus_prior_es.bin holds Spanish word-pair statistics that LocalType's model/language_build.py
+computed with model/prior.py from the two corpora below. The text corpora offered for download by
+the Leipzig Corpora Collection are made available under the Creative Commons Attribution licence
+(CC BY), https://creativecommons.org/licenses/by/4.0/ (terms of usage read 2026-10-17 and
+2026-10-18 at https://wortschatz-leipzig.de/en/usage).
+
+The corpora were changed to make this file. The marks ¿ and ¡ were deleted, the text was split into
+words, one sentence in ten was held out, and pairs of adjacent words were counted in the rest. The
+counts were smoothed with interpolated modified Kneser-Ney and limited to words in the keyboard's
+Spanish word list. Only the 10,000 most frequent previous words were kept, with up to 16 followers
+each, and the result was quantized to 8 bits. The file holds no sentence from either corpus.
+
+1. Leipzig Corpora Collection, Spanish web 2016, 1 million sentences (spa_web_2016_1M).
+2. Leipzig Corpora Collection, Spanish news 2024, 1 million sentences (spa_news_2024_1M).
+   https://wortschatz-leipzig.de/en/download
+   D. Goldhahn, T. Eckart and U. Quasthoff, "Building Large Monolingual Dictionaries at the Leipzig
+   Corpora Collection: From 100 to 200 Languages", Proceedings of the 8th International Language
+   Resources and Evaluation Conference (LREC 2012), 2012.
+   Licence: CC BY.
+
+The corpora are provided by their authors as-is and without warranties. The Leipzig Corpora
+Collection has not endorsed LocalType. The words kept are the ones also in the keyboard's Spanish
+word list, words_es.txt (derived from hermitdave/FrequencyWords, OpenSubtitles 2018, CC BY-SA 4.0);
+only membership in that list was used.

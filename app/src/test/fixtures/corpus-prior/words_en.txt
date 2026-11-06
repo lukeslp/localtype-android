@@ -1,0 +1,15 @@
+# A tiny stand-in for the keyboard dictionary, for CorpusPriorTest and model/tests/test_prior.py.
+you	1000
+i	900
+it	800
+so	700
+see	600
+think	500
+it's	400
+thank	300
+much	200
+god	150
+soon	120
+later	110
+over	100
+u	50

@@ -1,0 +1,1159 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "description": "Invented situations and invented neural lists; no model output. Context is verified own completed words. Exposure context identifies where the follower was observed; controls observe it elsewhere. Acceptable target is a desired word, not an evaluator result.",
+  "situations": [
+    {
+      "id": "development-ordinary_followers-1",
+      "family": "ordinary_followers",
+      "context": [
+        "fold",
+        "the",
+        "linen"
+      ],
+      "follower": "neatly",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "neatly",
+      "exposure_count": 1,
+      "exposure_context": [
+        "fold",
+        "the",
+        "linen"
+      ]
+    },
+    {
+      "id": "development-ordinary_followers-2",
+      "family": "ordinary_followers",
+      "context": [
+        "rinse",
+        "the",
+        "ladle"
+      ],
+      "follower": "gently",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "gently",
+      "exposure_count": 2,
+      "exposure_context": [
+        "rinse",
+        "the",
+        "ladle"
+      ]
+    },
+    {
+      "id": "development-ordinary_followers-3",
+      "family": "ordinary_followers",
+      "context": [
+        "sort",
+        "copper",
+        "tokens"
+      ],
+      "follower": "tonight",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "tonight",
+      "exposure_count": 1,
+      "exposure_context": [
+        "sort",
+        "copper",
+        "tokens"
+      ]
+    },
+    {
+      "id": "development-ordinary_followers-4",
+      "family": "ordinary_followers",
+      "context": [
+        "carry",
+        "spare",
+        "twine"
+      ],
+      "follower": "outside",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "outside",
+      "exposure_count": 2,
+      "exposure_context": [
+        "carry",
+        "spare",
+        "twine"
+      ]
+    },
+    {
+      "id": "development-ordinary_followers-5",
+      "family": "ordinary_followers",
+      "context": [
+        "stack",
+        "clay",
+        "bowls"
+      ],
+      "follower": "carefully",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "carefully",
+      "exposure_count": 1,
+      "exposure_context": [
+        "stack",
+        "clay",
+        "bowls"
+      ]
+    },
+    {
+      "id": "development-ordinary_followers-6",
+      "family": "ordinary_followers",
+      "context": [
+        "label",
+        "dried",
+        "herbs"
+      ],
+      "follower": "clearly",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "clearly",
+      "exposure_count": 2,
+      "exposure_context": [
+        "label",
+        "dried",
+        "herbs"
+      ]
+    },
+    {
+      "id": "development-ordinary_followers-7",
+      "family": "ordinary_followers",
+      "context": [
+        "brush",
+        "the",
+        "awning"
+      ],
+      "follower": "weekly",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "weekly",
+      "exposure_count": 1,
+      "exposure_context": [
+        "brush",
+        "the",
+        "awning"
+      ]
+    },
+    {
+      "id": "development-ordinary_followers-8",
+      "family": "ordinary_followers",
+      "context": [
+        "polish",
+        "brass",
+        "hinges"
+      ],
+      "follower": "slowly",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "slowly",
+      "exposure_count": 2,
+      "exposure_context": [
+        "polish",
+        "brass",
+        "hinges"
+      ]
+    },
+    {
+      "id": "development-kept_invented_names-1",
+      "family": "kept_invented_names",
+      "context": [
+        "deliver",
+        "parcel",
+        "to"
+      ],
+      "follower": "Velnora",
+      "origin": "EXPLICIT_KEEP",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "Velnora",
+      "exposure_count": 1,
+      "exposure_context": [
+        "deliver",
+        "parcel",
+        "to"
+      ]
+    },
+    {
+      "id": "development-kept_invented_names-2",
+      "family": "kept_invented_names",
+      "context": [
+        "save",
+        "chair",
+        "for"
+      ],
+      "follower": "Orvellan",
+      "origin": "EXPLICIT_KEEP",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "Orvellan",
+      "exposure_count": 1,
+      "exposure_context": [
+        "save",
+        "chair",
+        "for"
+      ]
+    },
+    {
+      "id": "development-kept_invented_names-3",
+      "family": "kept_invented_names",
+      "context": [
+        "send",
+        "sketch",
+        "toward"
+      ],
+      "follower": "Mireveth",
+      "origin": "EXPLICIT_KEEP",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "Mireveth",
+      "exposure_count": 1,
+      "exposure_context": [
+        "send",
+        "sketch",
+        "toward"
+      ]
+    },
+    {
+      "id": "development-kept_invented_names-4",
+      "family": "kept_invented_names",
+      "context": [
+        "return",
+        "compass",
+        "to"
+      ],
+      "follower": "Talvori",
+      "origin": "EXPLICIT_KEEP",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "Talvori",
+      "exposure_count": 1,
+      "exposure_context": [
+        "return",
+        "compass",
+        "to"
+      ]
+    },
+    {
+      "id": "development-kept_invented_names-5",
+      "family": "kept_invented_names",
+      "context": [
+        "leave",
+        "ribbon",
+        "beside"
+      ],
+      "follower": "Zunessa",
+      "origin": "EXPLICIT_KEEP",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "Zunessa",
+      "exposure_count": 1,
+      "exposure_context": [
+        "leave",
+        "ribbon",
+        "beside"
+      ]
+    },
+    {
+      "id": "development-kept_invented_names-6",
+      "family": "kept_invented_names",
+      "context": [
+        "give",
+        "lantern",
+        "to"
+      ],
+      "follower": "Pelmira",
+      "origin": "EXPLICIT_KEEP",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "Pelmira",
+      "exposure_count": 1,
+      "exposure_context": [
+        "give",
+        "lantern",
+        "to"
+      ]
+    },
+    {
+      "id": "development-kept_invented_names-7",
+      "family": "kept_invented_names",
+      "context": [
+        "hold",
+        "ticket",
+        "for"
+      ],
+      "follower": "Darselin",
+      "origin": "EXPLICIT_KEEP",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "Darselin",
+      "exposure_count": 1,
+      "exposure_context": [
+        "hold",
+        "ticket",
+        "for"
+      ]
+    },
+    {
+      "id": "development-kept_invented_names-8",
+      "family": "kept_invented_names",
+      "context": [
+        "bring",
+        "spool",
+        "near"
+      ],
+      "follower": "Kevrali",
+      "origin": "EXPLICIT_KEEP",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "Kevrali",
+      "exposure_count": 1,
+      "exposure_context": [
+        "bring",
+        "spool",
+        "near"
+      ]
+    },
+    {
+      "id": "development-deliberate_accepts-1",
+      "family": "deliberate_accepts",
+      "context": [
+        "choose",
+        "woven",
+        "shade"
+      ],
+      "follower": "ochre",
+      "origin": "SUGGESTION_ACCEPT",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "ochre",
+      "exposure_count": 1,
+      "exposure_context": [
+        "choose",
+        "woven",
+        "shade"
+      ]
+    },
+    {
+      "id": "development-deliberate_accepts-2",
+      "family": "deliberate_accepts",
+      "context": [
+        "order",
+        "orchard",
+        "drink"
+      ],
+      "follower": "cider",
+      "origin": "SUGGESTION_ACCEPT",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "cider",
+      "exposure_count": 1,
+      "exposure_context": [
+        "order",
+        "orchard",
+        "drink"
+      ]
+    },
+    {
+      "id": "development-deliberate_accepts-3",
+      "family": "deliberate_accepts",
+      "context": [
+        "pick",
+        "river",
+        "route"
+      ],
+      "follower": "upstream",
+      "origin": "SUGGESTION_ACCEPT",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "upstream",
+      "exposure_count": 1,
+      "exposure_context": [
+        "pick",
+        "river",
+        "route"
+      ]
+    },
+    {
+      "id": "development-deliberate_accepts-4",
+      "family": "deliberate_accepts",
+      "context": [
+        "select",
+        "paper",
+        "texture"
+      ],
+      "follower": "ribbed",
+      "origin": "SUGGESTION_ACCEPT",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "ribbed",
+      "exposure_count": 1,
+      "exposure_context": [
+        "select",
+        "paper",
+        "texture"
+      ]
+    },
+    {
+      "id": "development-deliberate_accepts-5",
+      "family": "deliberate_accepts",
+      "context": [
+        "request",
+        "extra",
+        "topping"
+      ],
+      "follower": "sesame",
+      "origin": "SUGGESTION_ACCEPT",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "sesame",
+      "exposure_count": 1,
+      "exposure_context": [
+        "request",
+        "extra",
+        "topping"
+      ]
+    },
+    {
+      "id": "development-deliberate_accepts-6",
+      "family": "deliberate_accepts",
+      "context": [
+        "prefer",
+        "quiet",
+        "seating"
+      ],
+      "follower": "alcove",
+      "origin": "SUGGESTION_ACCEPT",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "alcove",
+      "exposure_count": 1,
+      "exposure_context": [
+        "prefer",
+        "quiet",
+        "seating"
+      ]
+    },
+    {
+      "id": "development-deliberate_accepts-7",
+      "family": "deliberate_accepts",
+      "context": [
+        "book",
+        "morning",
+        "lesson"
+      ],
+      "follower": "pottery",
+      "origin": "SUGGESTION_ACCEPT",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "pottery",
+      "exposure_count": 1,
+      "exposure_context": [
+        "book",
+        "morning",
+        "lesson"
+      ]
+    },
+    {
+      "id": "development-deliberate_accepts-8",
+      "family": "deliberate_accepts",
+      "context": [
+        "accept",
+        "softer",
+        "fabric"
+      ],
+      "follower": "muslin",
+      "origin": "SUGGESTION_ACCEPT",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "muslin",
+      "exposure_count": 1,
+      "exposure_context": [
+        "accept",
+        "softer",
+        "fabric"
+      ]
+    },
+    {
+      "id": "development-ambiguous_contexts-1",
+      "family": "ambiguous_contexts",
+      "context": [
+        "winter",
+        "cabin",
+        "supplies"
+      ],
+      "follower": "kindling",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "kindling",
+      "exposure_count": 1,
+      "exposure_context": [
+        "winter",
+        "cabin",
+        "supplies"
+      ]
+    },
+    {
+      "id": "development-ambiguous_contexts-2",
+      "family": "ambiguous_contexts",
+      "context": [
+        "summer",
+        "cabin",
+        "supplies"
+      ],
+      "follower": "netting",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "netting",
+      "exposure_count": 2,
+      "exposure_context": [
+        "summer",
+        "cabin",
+        "supplies"
+      ]
+    },
+    {
+      "id": "development-ambiguous_contexts-3",
+      "family": "ambiguous_contexts",
+      "context": [
+        "ceramic",
+        "studio",
+        "shelf"
+      ],
+      "follower": "glaze",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "glaze",
+      "exposure_count": 1,
+      "exposure_context": [
+        "ceramic",
+        "studio",
+        "shelf"
+      ]
+    },
+    {
+      "id": "development-ambiguous_contexts-4",
+      "family": "ambiguous_contexts",
+      "context": [
+        "camera",
+        "studio",
+        "shelf"
+      ],
+      "follower": "lenses",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "lenses",
+      "exposure_count": 2,
+      "exposure_context": [
+        "camera",
+        "studio",
+        "shelf"
+      ]
+    },
+    {
+      "id": "development-ambiguous_contexts-5",
+      "family": "ambiguous_contexts",
+      "context": [
+        "garden",
+        "club",
+        "meeting"
+      ],
+      "follower": "seedlings",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "seedlings",
+      "exposure_count": 1,
+      "exposure_context": [
+        "garden",
+        "club",
+        "meeting"
+      ]
+    },
+    {
+      "id": "development-ambiguous_contexts-6",
+      "family": "ambiguous_contexts",
+      "context": [
+        "chess",
+        "club",
+        "meeting"
+      ],
+      "follower": "endgames",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "endgames",
+      "exposure_count": 2,
+      "exposure_context": [
+        "chess",
+        "club",
+        "meeting"
+      ]
+    },
+    {
+      "id": "development-ambiguous_contexts-7",
+      "family": "ambiguous_contexts",
+      "context": [
+        "bakery",
+        "window",
+        "display"
+      ],
+      "follower": "scones",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "scones",
+      "exposure_count": 1,
+      "exposure_context": [
+        "bakery",
+        "window",
+        "display"
+      ]
+    },
+    {
+      "id": "development-ambiguous_contexts-8",
+      "family": "ambiguous_contexts",
+      "context": [
+        "tailor",
+        "window",
+        "display"
+      ],
+      "follower": "waistcoats",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "waistcoats",
+      "exposure_count": 2,
+      "exposure_context": [
+        "tailor",
+        "window",
+        "display"
+      ]
+    },
+    {
+      "id": "development-prefixes-1",
+      "family": "prefixes",
+      "context": [
+        "wrap",
+        "fragile",
+        "tiles"
+      ],
+      "follower": "padding",
+      "origin": "TYPED",
+      "prefix": "pa",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "padding",
+      "exposure_count": 1,
+      "exposure_context": [
+        "wrap",
+        "fragile",
+        "tiles"
+      ]
+    },
+    {
+      "id": "development-prefixes-2",
+      "family": "prefixes",
+      "context": [
+        "measure",
+        "shallow",
+        "groove"
+      ],
+      "follower": "depth",
+      "origin": "TYPED",
+      "prefix": "dep",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "depth",
+      "exposure_count": 2,
+      "exposure_context": [
+        "measure",
+        "shallow",
+        "groove"
+      ]
+    },
+    {
+      "id": "development-prefixes-3",
+      "family": "prefixes",
+      "context": [
+        "pack",
+        "travel",
+        "pouch"
+      ],
+      "follower": "comb",
+      "origin": "TYPED",
+      "prefix": "comb",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "comb",
+      "exposure_count": 1,
+      "exposure_context": [
+        "pack",
+        "travel",
+        "pouch"
+      ]
+    },
+    {
+      "id": "development-prefixes-4",
+      "family": "prefixes",
+      "context": [
+        "prepare",
+        "bright",
+        "pigment"
+      ],
+      "follower": "vermilion",
+      "origin": "TYPED",
+      "prefix": "ve",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "vermilion",
+      "exposure_count": 2,
+      "exposure_context": [
+        "prepare",
+        "bright",
+        "pigment"
+      ]
+    },
+    {
+      "id": "development-prefixes-5",
+      "family": "prefixes",
+      "context": [
+        "repair",
+        "canvas",
+        "strap"
+      ],
+      "follower": "buckle",
+      "origin": "TYPED",
+      "prefix": "buc",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "buckle",
+      "exposure_count": 1,
+      "exposure_context": [
+        "repair",
+        "canvas",
+        "strap"
+      ]
+    },
+    {
+      "id": "development-prefixes-6",
+      "family": "prefixes",
+      "context": [
+        "water",
+        "balcony",
+        "pot"
+      ],
+      "follower": "fern",
+      "origin": "TYPED",
+      "prefix": "fern",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "fern",
+      "exposure_count": 2,
+      "exposure_context": [
+        "water",
+        "balcony",
+        "pot"
+      ]
+    },
+    {
+      "id": "development-prefixes-7",
+      "family": "prefixes",
+      "context": [
+        "inspect",
+        "wooden",
+        "joint"
+      ],
+      "follower": "dowel",
+      "origin": "TYPED",
+      "prefix": "do",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "dowel",
+      "exposure_count": 1,
+      "exposure_context": [
+        "inspect",
+        "wooden",
+        "joint"
+      ]
+    },
+    {
+      "id": "development-prefixes-8",
+      "family": "prefixes",
+      "context": [
+        "fill",
+        "picnic",
+        "flask"
+      ],
+      "follower": "lemonade",
+      "origin": "TYPED",
+      "prefix": "lem",
+      "neural": [
+        "perhaps",
+        "later",
+        "elsewhere"
+      ],
+      "acceptable_target": "lemonade",
+      "exposure_count": 2,
+      "exposure_context": [
+        "fill",
+        "picnic",
+        "flask"
+      ]
+    },
+    {
+      "id": "development-unrelated_controls-1",
+      "family": "unrelated_controls",
+      "context": [
+        "watch",
+        "distant",
+        "clouds"
+      ],
+      "follower": "unshared",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "drift",
+        "quietly",
+        "again"
+      ],
+      "acceptable_target": "drift",
+      "exposure_count": 1,
+      "exposure_context": [
+        "separate",
+        "fabric",
+        "drawer"
+      ]
+    },
+    {
+      "id": "development-unrelated_controls-2",
+      "family": "unrelated_controls",
+      "context": [
+        "hear",
+        "quiet",
+        "footsteps"
+      ],
+      "follower": "unshared",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "approach",
+        "quietly",
+        "again"
+      ],
+      "acceptable_target": "approach",
+      "exposure_count": 2,
+      "exposure_context": [
+        "separate",
+        "fabric",
+        "drawer"
+      ]
+    },
+    {
+      "id": "development-unrelated_controls-3",
+      "family": "unrelated_controls",
+      "context": [
+        "notice",
+        "narrow",
+        "shadows"
+      ],
+      "follower": "unshared",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "lengthen",
+        "quietly",
+        "again"
+      ],
+      "acceptable_target": "lengthen",
+      "exposure_count": 1,
+      "exposure_context": [
+        "separate",
+        "fabric",
+        "drawer"
+      ]
+    },
+    {
+      "id": "development-unrelated_controls-4",
+      "family": "unrelated_controls",
+      "context": [
+        "feel",
+        "cool",
+        "breeze"
+      ],
+      "follower": "unshared",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "return",
+        "quietly",
+        "again"
+      ],
+      "acceptable_target": "return",
+      "exposure_count": 2,
+      "exposure_context": [
+        "separate",
+        "fabric",
+        "drawer"
+      ]
+    },
+    {
+      "id": "development-unrelated_controls-5",
+      "family": "unrelated_controls",
+      "context": [
+        "see",
+        "pale",
+        "blossoms"
+      ],
+      "follower": "unshared",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "open",
+        "quietly",
+        "again"
+      ],
+      "acceptable_target": "open",
+      "exposure_count": 1,
+      "exposure_context": [
+        "separate",
+        "fabric",
+        "drawer"
+      ]
+    },
+    {
+      "id": "development-unrelated_controls-6",
+      "family": "unrelated_controls",
+      "context": [
+        "observe",
+        "small",
+        "ripples"
+      ],
+      "follower": "unshared",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "spread",
+        "quietly",
+        "again"
+      ],
+      "acceptable_target": "spread",
+      "exposure_count": 2,
+      "exposure_context": [
+        "separate",
+        "fabric",
+        "drawer"
+      ]
+    },
+    {
+      "id": "development-unrelated_controls-7",
+      "family": "unrelated_controls",
+      "context": [
+        "find",
+        "loose",
+        "feathers"
+      ],
+      "follower": "unshared",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "nearby",
+        "quietly",
+        "again"
+      ],
+      "acceptable_target": "nearby",
+      "exposure_count": 1,
+      "exposure_context": [
+        "separate",
+        "fabric",
+        "drawer"
+      ]
+    },
+    {
+      "id": "development-unrelated_controls-8",
+      "family": "unrelated_controls",
+      "context": [
+        "spot",
+        "round",
+        "pebbles"
+      ],
+      "follower": "unshared",
+      "origin": "TYPED",
+      "prefix": "",
+      "neural": [
+        "below",
+        "quietly",
+        "again"
+      ],
+      "acceptable_target": "below",
+      "exposure_count": 2,
+      "exposure_context": [
+        "separate",
+        "fabric",
+        "drawer"
+      ]
+    }
+  ]
+}

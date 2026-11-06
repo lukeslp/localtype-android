@@ -1,0 +1,16 @@
+<p>LocalType is an Android keyboard with word predictions and corrections that run on your device. Chime, its small English prediction model, is included. Typing needs no account or model download.</p>
+
+<ul>
+<li>Correct clear typos and undo a correction when it is wrong.</li>
+<li>Choose word suggestions, save useful text and manage learned word pairs.</li>
+<li>Reach accents, IPA symbols, emoji and optional common symbols by holding keys or opening their panels.</li>
+<li>Choose British spelling and currency symbols separately.</li>
+<li>Adjust key size, layout, number row and cursor controls.</li>
+</ul>
+
+<p>English is the main language. Spanish, Portuguese, Hebrew, Welsh, Irish, Māori, Hawaiian and swipe typing are early experiments and start off. A dedicated IPA layout is also available. These features still need wider testing.</p>
+
+<p>The F-Droid distribution has no Internet permission. It keeps Chime and the local typing tools, and leaves updates to your installing client. Optional Nano/Gemma features from the separate full distribution are not included.</p>
+
+<p>Typing logs are optional and start off. Password fields do not teach predictions. You can inspect or clear learned words and pairs. Voice input uses Android's on-device recognizer when available, or can switch to another enabled voice keyboard; that other keyboard has its own privacy behavior.</p>
+
