@@ -41,8 +41,8 @@ android {
         create("fdroid") {
             dimension = "distribution"
             // Private catalog candidate approved November 6. Full keeps its issued identity.
-            versionCode = 62
-            versionName = "0.5.41"
+            versionCode = 63
+            versionName = "0.5.42"
             buildConfigField("boolean", "INCLUDES_NANO", "false")
             buildConfigField("boolean", "INCLUDES_GEMMA", "false")
             buildConfigField("boolean", "DIRECT_UPDATES", "false")
@@ -70,6 +70,8 @@ android {
         release {
             // No shrinking: the model runtime loads native code by reflection.
             isMinifyEnabled = false
+            // Rebuild the exact Git commit that will be tagged; keep its VCS record.
+            vcsInfo.include = true
             if (keystoreProperties.isNotEmpty()) signingConfig = signingConfigs.getByName("release")
         }
     }

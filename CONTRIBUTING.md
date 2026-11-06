@@ -12,6 +12,25 @@ Building downloads no language model or training corpus.
 ```
 
 The unsigned catalog APK is under `app/build/outputs/apk/fdroid/release/`.
+
+For exact release reproduction from 0.5.42 onward, build a clean Git checkout
+at the release tag or full commit. Keep `.git` available. AGP records that
+commit in `META-INF/version-control-info.textproto`; an exported source archive
+has no Git revision and produces different metadata. Source archives remain
+useful for inspection, but are not the exact release build environment.
+
+```sh
+git clone https://github.com/lukeslp/localtype-android.git
+cd localtype-android
+CATALOG_REF=fdroid-v0.5.42
+git checkout --detach "$CATALOG_REF"
+./gradlew -Plocaltype.unsigned=true :app:assembleFdroidRelease
+```
+
+The prospective release commit is frozen before private builds and tests. A
+later approved publication must push that same commit and artifact. Any source
+change requires another build and comparison before publication.
+
 The full distribution also requires its separately maintained modelkit module;
 that private module is outside this source snapshot. No release keystore is
 required for the catalog build. Do not use
@@ -24,9 +43,9 @@ model/corpus tests require separately supplied, appropriately licensed data via
 documents those inputs. Do not change or score a held evaluation split merely to
 build the app. Unit tests do not establish touch, TalkBack or physical acceptance.
 
-The F-Droid recipe remains disabled until a public source commit exists,
-independent Linux reproduction passes and a new versioned developer-signed
-binary is available. The catalog build excludes the optional native runtime.
+The F-Droid recipe remains disabled until its exact Git-checkout build
+reproduces the approved developer-signed APK and the public source/binary pins
+are available. The catalog build excludes the optional native runtime.
 Local builds alone do not establish publication or F-Droid acceptance.
 
 The draft recipe lists five bundled model/data `.bin` files as exact-path

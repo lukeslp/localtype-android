@@ -19,13 +19,15 @@ snapshot builds this distribution without the private modelkit submodule.
 
 Both distributions use `dev.localtype.keyboard` and the same existing developer
 signing identity. They share storage and preference keys. No private signing
-material is included here. Version 0.5.41 (62) is reserved for the catalog
-candidate; full remains 0.5.40 (61) in this checkpoint. Every different APK must
+material is included here. Version 0.5.42 (63) identifies this catalog
+candidate; full remains 0.5.40 (61) in this checkpoint. The published catalog
+0.5.41 (62) stays immutable. Every different APK must
 use a higher version code, across both distributions. Rebuilt copies of the same
 release must reproduce its exact bytes.
 
 See `CONTRIBUTING.md` for building, `ASSET-LICENSES.json` for the file-level asset
-review and `SOURCE-MANIFEST.json` for exact source hashes and disclosed edits.
+review and `SOURCE-MANIFEST.json` for file hashes and the initial export's
+provenance. Later maintenance is tracked in this repository's Git history.
 `python3 scripts/audit-bundled-data.py` checks the five model/statistics files'
 hashes and documented layouts. `--require-cleared` also rejects unresolved asset
 rights. `python3 scripts/build-tlds.py --check` rebuilds the TLD list from the
@@ -42,8 +44,9 @@ are part of this candidate.
 
 The [Chime pipeline](https://github.com/lukeslp/chime-pipeline) is already public
 under Apache-2.0, with separate word-list terms and documented reproduction limits.
-The current signed app is available at
-[the download page](https://dr.eamer.dev/downloads/apps/localtype/).
+Catalog APKs are available under
+[releases](https://github.com/lukeslp/localtype-android/releases). The
+[download page](https://dr.eamer.dev/downloads/apps/localtype/) serves the
+separate full distribution.
 The independent repository **LocalType releases** is separate from main-catalog
-inclusion. This source candidate is a proposal for the next release, not the exact
-source payload of the current published APK.
+inclusion. This candidate is being prepared for the next catalog release.

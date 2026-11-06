@@ -2,6 +2,23 @@
   "sourceCommit": "89fd8ac170444789ac48cbd9cffa3ec76941255d",
   "files": [
     {
+      "path": ".gitignore",
+      "sha256": "ba727612939856c567f0b1d9b208dcc15587a50bf70f8de1601cf7a1cc617dec",
+      "addedAfterExport": true
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "5aaaec0030156f38b3281a476bc6e7b6dd52d4fc2917681d3f20fa628c9a49c9",
+      "template": "CONTRIBUTING.public.md",
+      "baseExportSha256": "db6361c7e0145c1dd81f0a9eeb0ea499ce8f98927181b9be4342d25c0fb66270",
+      "updatedAfterExport": true
+    },
+    {
+      "path": "DATA-SOURCES.md",
+      "sha256": "88e50b851ebc2c034206c2c662b4aab48c4fb8648303de89cd6219de37ccc97c",
+      "template": "DATA-SOURCES.public.md"
+    },
+    {
       "path": "LICENSE",
       "sourceSha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
       "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
@@ -14,10 +31,19 @@
       "transformed": false
     },
     {
+      "path": "README.md",
+      "sha256": "2a649006a528b04469ab02854941e8126ad0294a6f58a5fc8bb046c2a248191a",
+      "template": "README.public.md",
+      "baseExportSha256": "9383cf7a3eda2f9ea13aeebe1630bb913113bc41c359958209cc1c10aa04a29e",
+      "updatedAfterExport": true
+    },
+    {
       "path": "app/build.gradle.kts",
       "sourceSha256": "a930c3300cc7ed5529f0944d3b93afd3cd675801bca13f18fa6e95b0d19d8047",
-      "sha256": "51307bce38cd647c7897f11b768c01073c5ec01d6b514938512de3e367bcd34d",
-      "transformed": true
+      "sha256": "6126878df15c81eeee82ee806bce3e540afbc08958153341d964d27b697fbd45",
+      "transformed": true,
+      "baseExportSha256": "51307bce38cd647c7897f11b768c01073c5ec01d6b514938512de3e367bcd34d",
+      "updatedAfterExport": true
     },
     {
       "path": "app/gradle.lockfile",
@@ -2642,6 +2668,11 @@
       "transformed": false
     },
     {
+      "path": "fastlane/metadata/android/en-US/changelogs/63.txt",
+      "sha256": "c63927a46ef435b8b172bcbcdf024127bcfd5879a814f2d50b7b7beb0601e788",
+      "addedAfterExport": true
+    },
+    {
       "path": "fastlane/metadata/android/en-US/full_description.txt",
       "sourceSha256": "d1249f0b8a5bbfa2ef02fefca2d3dc1196cb64c357b4c2403c9cedc3205bc3d8",
       "sha256": "d1249f0b8a5bbfa2ef02fefca2d3dc1196cb64c357b4c2403c9cedc3205bc3d8",
@@ -2778,21 +2809,10 @@
       "sourceSha256": "38ff0a8e09d5735f394b4438e8a4f36e6417fbb17afc0face0f18923a1221279",
       "sha256": "38ff0a8e09d5735f394b4438e8a4f36e6417fbb17afc0face0f18923a1221279",
       "transformed": false
-    },
-    {
-      "path": "README.md",
-      "sha256": "9383cf7a3eda2f9ea13aeebe1630bb913113bc41c359958209cc1c10aa04a29e",
-      "template": "README.public.md"
-    },
-    {
-      "path": "CONTRIBUTING.md",
-      "sha256": "db6361c7e0145c1dd81f0a9eeb0ea499ce8f98927181b9be4342d25c0fb66270",
-      "template": "CONTRIBUTING.public.md"
-    },
-    {
-      "path": "DATA-SOURCES.md",
-      "sha256": "88e50b851ebc2c034206c2c662b4aab48c4fb8648303de89cd6219de37ccc97c",
-      "template": "DATA-SOURCES.public.md"
     }
-  ]
+  ],
+  "sourceCommitRole": "Initial reviewed private-monorepo export; subsequent changes are tracked by public Git history.",
+  "basePublicCommit": "c3697f79379ab305177de4463fa6ef090643310c",
+  "catalogVersion": "0.5.42",
+  "catalogVersionCode": 63
 }
