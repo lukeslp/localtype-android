@@ -5,12 +5,14 @@
 <li>Choose word suggestions, save useful text and manage learned word pairs.</li>
 <li>Reach accents, IPA symbols, emoji and optional common symbols by holding keys or opening their panels.</li>
 <li>Choose British spelling and currency symbols separately.</li>
-<li>Adjust key size, layout, number row and cursor controls.</li>
+<li>Adjust the space bar, suggestion bar, one-handed mode, number row and cursor sliding.</li>
 </ul>
 
 <p>English is the main language. Spanish, Portuguese, Hebrew, Welsh, Irish, Māori, Hawaiian and swipe typing are early experiments and start off. A dedicated IPA layout is also available. These features still need wider testing.</p>
 
-<p>The F-Droid distribution has no Internet permission. It keeps Chime and the local typing tools, and leaves updates to your installing client. Optional Nano/Gemma features from the separate full distribution are not included.</p>
+<p>The F-Droid distribution has no Internet permission. It keeps Chime and the local typing tools, and leaves updates to your installing client. The separate full distribution's optional Gemini Nano and Gemma features are not included.</p>
 
-<p>Typing logs are optional and start off. Password fields do not teach predictions. You can inspect or clear learned words and pairs. Voice input uses Android's on-device recognizer when available, or can switch to another enabled voice keyboard; that other keyboard has its own privacy behavior.</p>
+<p>Typing logs are optional and start off. Password fields do not teach predictions. You can inspect or clear learned words and pairs. Voice input uses Android's on-device recognizer when available, or can switch to another enabled voice keyboard; that other keyboard has its own privacy behavior. The microphone permission is requested the first time you use voice input.</p>
+
+<p>The Contacts tool can insert a name, number or address once you allow it. Contacts stay on the phone, in memory only, and are never learned or sent.</p>
 

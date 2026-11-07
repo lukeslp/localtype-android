@@ -1,1 +1,1 @@
-Builds from the final Git commit so the embedded version-control record can match an F-Droid checkout. Typing features, bundled data, settings and signing identity are unchanged.
+No changes to typing, settings or bundled data. This version is built from its tagged Git commit, so F-Droid can reproduce the APK exactly.

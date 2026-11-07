@@ -19,12 +19,14 @@ separate terms.
 | Swipe weights | First-party LTSW numeric weights, with the recording-source and derivative notices retained. The app includes its pure Kotlin reader and inference code. The format audit checks the exact payload; it does not rerun training. |
 | Reviewed vocabulary and known-word lists | The asset inventory and word-list notices distinguish original editorial rows, SCOWL material and FrequencyWords derivatives. |
 
-These generation tools are included for inspection and work with separately
-supplied source data. They are not run by the Android build. Some use NumPy.
-They neither download a corpus automatically nor make historical model training
-fully reproducible. The app APK's reproducibility is a separate check.
+The generation tools are here for inspection and need separately supplied
+source data. The Android build doesn't run them, and some use NumPy. They don't
+download a corpus, and they don't make the historical model training fully
+reproducible. Reproducing the APK is a separate check, described in
+`CONTRIBUTING.md`.
 
-The recipe's five narrow binary-data exceptions cover Chime, three corpus
-priors and swipe weights. The audit verifies hashes, documented layouts and
-checksums where present. No native library or directory is exempted. Treatment
-of these data files remains subject to F-Droid's review.
+F-Droid's recipe exempts five exact data files from its binary scan: the Chime
+weights, the three corpus priors and the swipe weights. The audit checks their
+hashes, documented layouts and, where present, checksums. No native library or
+directory is exempted, and F-Droid's maintainers still have to review how these
+files are treated.
