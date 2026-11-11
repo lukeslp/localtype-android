@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Word lists for the keyboard's Welsh, Irish, Māori and Hawaiian, from openly licensed text, with no Galactus build.
+"""Word lists for the keyboard's Welsh, Irish, Scottish Gaelic, Galician, Māori, Hawaiian and Navajo, from openly licensed text, with no Galactus build.
 
 These languages have no subtitle counts in FrequencyWords, so each comes from the best open source that has real
 running text (word forms, not lemmas: Irish mutates its words, so "bhí" and "mbeidh" must be in the list, not just "bí"):
 
-    cy, ga, mi  a Wikipedia ``pages-articles`` dump (``<code>wiki-<date>-pages-articles.xml.bz2``), CC BY-SA 4.0
+    cy, ga, gd, gl, mi, nv  a Wikipedia ``pages-articles`` dump (``<code>wiki-<date>-pages-articles.xml.bz2``), CC BY-SA 4.0
     haw         dohliam/hawaiian-corpus ``data/freqlist_haw.txt`` (10.7 million words from Ulukau, modern and
                 non-scriptural text), CC0
 
@@ -28,6 +28,12 @@ Template, table, file and Wikidata-list markup (with any SPARQL inside it) is st
 template words that still get through ("align", "thumb", "nbsp") are recognized but never offered, and so are the
 200 commonest words of the keyboard's English list, except those that are also words of the language (Welsh "man",
 Irish "go", Māori "take").
+Navajo Wikipedia is mostly short articles written from a few templates (a species, a town, an aircraft), so the same
+sentence recurs thousands of times with only a name and a number changed. For Navajo a line counts once however often
+it recurs: two lines are the same when they match after their numbers, capitalized words and quoted names are taken out. Its glottal
+stop is U+02BC, a letter, which the wiki writes consistently; the few apostrophes written for it become it. The high
+nasal vowels are a nasal vowel and a combining acute (U+0301), which stays inside the word.
+
 Slurs are dropped by their SHA-256 in ``SuggestionWordRules`` (every language's list), checking each hyphenated part.
 Māori Wikipedia is small, so its suggestion list is about 1,700 words; a second Māori corpus would help. Experimental: no native speaker
 has read the lists.
@@ -77,9 +83,41 @@ LANGUAGES = {
         not_offered="align right left center of the nbsp www com org net ed pp mm",
         english_kept="a an as i in is do go long",
     ),
+    "gd": dict(
+        name="Scottish Gaelic",
+        # The eighteen letters of the Gaelic alphabet, with the grave vowels and the acutes older spelling used.
+        letters="abcdefghilmnoprstuàèìòùáéó",
+        known_floor=3,
+        swears="cac siùrsach galla",
+        # Template words, and the consonant pairs left when an elided word loses its apostrophe ("th'" for "tha").
+        not_offered="align right left center thumb of the nbsp www com org net ed pp mm th mh bh ch dh",
+        # Real Gaelic words among the commonest English ones ("an" the, "do" to, "is" and, "air" on, "no" or, "so" this).
+        english_kept="a an as am i is do e air mi sin no can so",
+    ),
+    "gl": dict(
+        name="Galician",
+        # Galician's own letters: j, k, w and y come only in loanwords.
+        letters="abcdefghilmnñopqrstuvxzáéíóúïü",
+        known_floor=5,
+        swears="carallo merda foder fodido fodida puta putas cona cabrón cabróns",
+        not_offered="align right left center thumb ref nbsp www com org net ed pp mm",
+        # Real Galician words among the commonest English ones ("do" of the, "no" in the, "son" are, "can" dog, "ten" has).
+        english_kept="a e o as do no me son can ten come des man non mal home has so",
+    ),
     "mi": dict(name="Māori", letters="aehikmngoprtuwāēīōū", known_floor=2, swears="", prefer_marked=True,
                not_offered="an it nbsp www com org net ed pp mm water earth without woman men top",
                english_kept="a e he i o to me take here one"),
+    "nv": dict(
+        name="Navajo",
+        # The Navajo alphabet (no f, p, q, r, u or v), its marked vowels, ł, ń, the glottal stop and the combining acute.
+        letters="abcdeghijklmnostwxyzáéíóąęįǫłńʼ\u0301",
+        known_floor=2,
+        swears="",
+        glottal="ʼ",
+        dedupe=True,
+        not_offered="align right left center thumb ref nbsp www com org net ed pp mm",
+        english_kept="",
+    ),
     "haw": dict(
         name="Hawaiian",
         letters="aeiouhklmnpwʻāēīōū",
@@ -188,7 +226,28 @@ def english_common() -> set[str]:
     return set([line.split("\t", 1)[0] for line in lines if line and not line.startswith("#")][:ENGLISH_STOP])
 
 
-def wikipedia_counts(path: Path, pattern: re.Pattern[str]) -> tuple[Counter, Counter, Counter]:
+CAPITALIZED = re.compile(r"\b[^\W\d_a-zà-ÿąęįǫłń]\w*")
+NUMBER = re.compile(r"\d[\d.,]*")
+# A quoted name, such as the Latin name in a species article: lowercase words that still change line to line.
+QUOTED = re.compile(r'"[^"\n]{0,80}"|“[^”\n]{0,80}”')
+
+
+def new_lines(body: str, seen: set[str]) -> str:
+    """The lines of [body] not yet seen with other names and numbers in them; a short line is always kept."""
+    kept = []
+    for line in body.split("\n"):
+        if len(line) > 30:
+            skeleton = " ".join(CAPITALIZED.sub("", NUMBER.sub("0", QUOTED.sub("", line))).split())
+            if skeleton in seen:
+                continue
+            seen.add(skeleton)
+        kept.append(line)
+    return "\n".join(kept)
+
+
+def wikipedia_counts(path: Path, pattern: re.Pattern[str], spec: dict | None = None) -> tuple[Counter, Counter, Counter]:
+    spec = spec or {}
+    seen_lines: set[str] = set()
     total, lower, articles = Counter(), Counter(), Counter()
     with bz2.open(path, "rb") as f:
         for _, elem in ET.iterparse(f):
@@ -199,6 +258,11 @@ def wikipedia_counts(path: Path, pattern: re.Pattern[str]) -> tuple[Counter, Cou
             redirect = elem.find("./{*}redirect")
             if ns is not None and ns.text == "0" and redirect is None and text is not None and text.text:
                 body = unicodedata.normalize("NFC", plain(text.text)).replace("’", "'")
+                if spec.get("glottal"):
+                    for mark in "'`‘":
+                        body = body.replace(mark, spec["glottal"])
+                if spec.get("dedupe"):
+                    body = new_lines(body, seen_lines)
                 seen = set()
                 for match in pattern.finditer(body.lower()):
                     word = match.group(0)
@@ -241,10 +305,11 @@ def main(argv: list[str]) -> None:
     hashes = digests(RULES.read_text(encoding="utf-8"))
     swears = set(spec["swears"].split())
     if source_path.name.endswith(".xml.bz2"):
-        total, lower, articles = wikipedia_counts(source_path, pattern)
+        total, lower, articles = wikipedia_counts(source_path, pattern, spec)
         dump = source_path.name.removesuffix("-pages-articles.xml.bz2")
         source = f"Wikipedia ({dump} pages-articles dump), CC BY-SA 4.0"
-        counts = Counter({w: n for w, n in total.items() if articles[w] >= ARTICLES_FLOOR})
+        # A word never starts with a combining mark or the glottal-stop letter's look-alike left at a quotation's edge.
+        counts = Counter({w: n for w, n in total.items() if articles[w] >= ARTICLES_FLOOR and unicodedata.category(w[0]) != "Mn"})
         offerable = {w for w, n in counts.items() if lower[w] * 2 >= n}
         english = english_common() - set(spec.get("english_kept", "").split())
         print(f"{code}: not offering English: {' '.join(sorted(english & offerable))}")

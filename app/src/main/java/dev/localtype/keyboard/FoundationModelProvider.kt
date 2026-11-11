@@ -56,6 +56,10 @@ interface FoundationModelInstaller {
      */
     val importProgress: Int? get() = null
 
+    /** Installed or orphaned model/metadata files still requiring an explicit removal retry. */
+    fun hasModelFiles(): Boolean = installedModel() != null
+
+    /** Throws when any requested model file could not be removed. */
     fun remove()
 
     /** True when the other app (LocalLauncher) has Gemma and lends it, so this app needs no copy of its own. */

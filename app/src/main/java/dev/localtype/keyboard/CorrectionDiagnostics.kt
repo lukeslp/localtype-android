@@ -14,6 +14,8 @@ class CorrectionDiagnostics {
         // The callback and the fresh read agree with each other, so the keyboard's anchor was wrong, not the read.
         // REANCHORED: the text before the caret is exactly the keyboard's own appended text, so the word stays own.
         SELECTION_READ_AGREES, SELECTION_REANCHORED,
+        // A first start of a field, kept apart from RESTART (restarting=true), which alone means the app restarted input.
+        FIELD_START,
     }
     private val counts = LongArray(Reason.entries.size)
     private val revisits = LongArray(Revisit.entries.size)

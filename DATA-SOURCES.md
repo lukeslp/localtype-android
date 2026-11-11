@@ -11,7 +11,8 @@ separate terms.
 | English, Spanish and Portuguese corpus priors | Numeric LTCP statistics. Notices identify the corpus sources. `model/prior.py`, `model/tokenize.py` and `model/language_build.py` provide the generation code. Spanish and Portuguese use the recorded Leipzig corpora. |
 | Spanish and Portuguese word lists | FrequencyWords/OpenSubtitles, with the source revision in the asset inventory. `model/language_bundle.py` and its included helpers generate these lists. |
 | Hebrew word lists | Pinned FrequencyWords/OpenSubtitles input; `model/hebrew_lists.py`. |
-| Welsh, Irish and Māori word lists | The November 1, 2026 Wikipedia dumps named in the inventory and asset headers; `model/small_language_lists.py`. |
+| Arabic and Persian word lists | Pinned FrequencyWords/OpenSubtitles input; Persian adds the first part of the November 1, 2026 Persian Wikipedia dump. `model/arabic_script_lists.py`. |
+| Welsh, Irish, Scottish Gaelic, Galician, Māori and Navajo word lists | The November 1, 2026 Wikipedia dumps named in the inventory and asset headers; `model/small_language_lists.py`. |
 | Hawaiian word lists | The Hawaiian corpus source named in the inventory, with CC0 terms; `model/small_language_lists.py`. |
 | British spelling pairs | VarCon 2020.12.07, with its input digest and full notice; `model/british_spellings.py`. |
 | Emoji names and inventory | Unicode and the separately licensed Chime vocabulary. `scripts/build-emoji-inventory.py` generates the Unicode inventory. |

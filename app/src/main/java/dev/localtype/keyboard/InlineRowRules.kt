@@ -26,6 +26,32 @@ object InlineRowRules {
 
     /** Display order as indexes into [pinned]: pinned chips first, each group in the order the manager sent it. */
     fun order(pinned: List<Boolean>): List<Int> = pinned.indices.sortedBy { !pinned[it] }
+
+    /** Each chip's left and top from the start edge, and the height of all the lines. */
+    data class Flow(val places: List<Pair<Int, Int>>, val height: Int)
+
+    /**
+     * The Passwords & cards panel's chips in lines, each at its drawn width and height: a chip that would run past
+     * [width] starts the next line, [gap] apart from its neighbours and from the line above. A chip wider than [width]
+     * has a line of its own.
+     */
+    fun flow(sizes: List<Pair<Int, Int>>, width: Int, gap: Int): Flow {
+        val places = ArrayList<Pair<Int, Int>>(sizes.size)
+        var x = 0
+        var y = 0
+        var line = 0
+        for ((w, h) in sizes) {
+            if (x > 0 && x + w > width) {
+                x = 0
+                y += line + gap
+                line = 0
+            }
+            places += x to y
+            x += w + gap
+            line = maxOf(line, h)
+        }
+        return Flow(places, if (sizes.isEmpty()) 0 else y + line)
+    }
 }
 
 /**

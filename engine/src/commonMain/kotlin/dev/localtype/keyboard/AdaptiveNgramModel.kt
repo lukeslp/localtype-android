@@ -26,6 +26,10 @@ class AdaptiveNgramModel(
     private val openingMarks: String = "",
     /** One-letter words that may be offered and learned ([LanguageProfile.oneLetterWords]); English's by default. */
     private val oneLetterWords: Set<String> = LanguageProfile.ENGLISH.oneLetterWords,
+    /** Personal exclusions are an optional filter, never a weight or a change to replay's default ranker. */
+    private val excluded: (String) -> Boolean = { false },
+    /** What this language counts as a word ([LanguageProfile.wordRule]); the shared rule unless it has marks of its own. */
+    private val wordRule: WordRule = WordRule.DEFAULT,
 ) {
     private val unigrams = HashMap<String, Int>()
     private val bigrams = HashMap<String, MutableMap<String, Int>>()
@@ -72,6 +76,7 @@ class AdaptiveNgramModel(
         val priorBonus = prior?.let { p -> previous?.let { priorBonuses(p, it) } }.orEmpty()
 
         fun add(word: String) {
+            if (excluded(word)) return
             if (word.length < 2 && word !in oneLetterWords) return
             if (prefix.isNotEmpty() && !words.completesPrefix(word, prefix)) return
             if (scores.containsKey(word)) return
@@ -88,7 +93,7 @@ class AdaptiveNgramModel(
         vocabulary.candidates(prefix, previous).forEach { (word, _) ->
             add(word)
             // Do not add editorial counts to learned tables or change dictionary/correction scores.
-            val existing = scores.getValue(word)
+            val existing = scores[word] ?: return@forEach
             scores[word] = existing + vocabulary.predictionLift(word, words.score(word), previous)
         }
 
@@ -102,6 +107,7 @@ class AdaptiveNgramModel(
     fun accept(previousWord: String?, selectedWord: String, persist: Boolean = true) {
         val next = normalizeWord(selectedWord) ?: return
         val previous = previousWord?.let(::normalizeWord)
+        if (excluded(next) || (previous != null && excluded(previous))) return
         recordTransition(previous ?: START, next)
         if (persist) learningStore.record(previous ?: START, next)
     }
@@ -121,6 +127,7 @@ class AdaptiveNgramModel(
 
     private fun learnableWord(beforeSeparator: String, isKept: (String) -> Boolean): String? {
         val word = normalizeWord(activePrefix(beforeSeparator)) ?: return null
+        if (excluded(word) || lastCompletedWord(beforeSeparator)?.let(excluded) == true) return null
         if (word.length < 2 && word !in oneLetterWords) return null
         if (word !in dictionary && !knows(word) && !isKept(word)) return null
         return word
@@ -191,6 +198,7 @@ class AdaptiveNgramModel(
     /** Counts a word once without a previous word, for replaying a mutation whose context is unknown. */
     fun countWord(word: String) {
         val next = normalizeWord(word) ?: return
+        if (excluded(next)) return
         unigrams[next] = (unigrams[next] ?: 0) + 1
     }
 
@@ -201,11 +209,11 @@ class AdaptiveNgramModel(
     )
 
     /** Empty field, or the word being typed follows a sentence end, with any opening marks between. */
-    fun isSentenceStart(beforeCursor: String): Boolean = Companion.isSentenceStart(beforeCursor, openingMarks)
+    fun isSentenceStart(beforeCursor: String): Boolean = Companion.isSentenceStart(beforeCursor, openingMarks, wordRule)
 
-    fun activePrefix(beforeCursor: String): String = Companion.activePrefix(beforeCursor)
+    fun activePrefix(beforeCursor: String): String = wordRule.activePrefix(beforeCursor)
 
-    fun lastCompletedWord(beforeCursor: String): String? = Companion.lastCompletedWord(beforeCursor)
+    fun lastCompletedWord(beforeCursor: String): String? = Companion.lastCompletedWord(beforeCursor, wordRule)
 
     private fun replayLearned() {
         restoreLearned(learningStore.entries())
@@ -223,7 +231,7 @@ class AdaptiveNgramModel(
     }
 
     private fun learnPhrase(phrase: String) {
-        val words = WORD_REGEX.findAll(phrase).map { normalize(it.value) }.toList()
+        val words = wordRule.word.findAll(phrase).map { normalize(it.value) }.toList()
         // Seeds teach context only; word frequency comes from the dictionary and from taps.
         words.zipWithNext().forEach { (previous, next) ->
             repeat(SEED_WEIGHT) { recordTransition(previous, next, countWord = false) }
@@ -243,7 +251,7 @@ class AdaptiveNgramModel(
         }
     }
 
-    private fun normalizeWord(word: String): String? = WORD_REGEX.find(word)?.value?.let { normalize(it) }
+    private fun normalizeWord(word: String): String? = wordRule.word.find(word)?.value?.let { normalize(it) }
 
     /**
      * The shape of the prior's bonus: [weight] points per nat of log-probability above [floor], so
@@ -318,21 +326,21 @@ class AdaptiveNgramModel(
          * Empty field, or the word being typed follows a sentence end. [openingMarks] stand between the two without
          * ending anything: with "¿", "Hola. ¿qué" starts a sentence and "Hola ¿qué" doesn't.
          */
-        fun isSentenceStart(beforeCursor: String, openingMarks: String = ""): Boolean {
+        fun isSentenceStart(beforeCursor: String, openingMarks: String = "", rule: WordRule = WordRule.DEFAULT): Boolean {
             // Trim spaces and tabs only: a newline is itself a sentence boundary.
-            var tail = beforeCursor.dropLast(activePrefix(beforeCursor).length).trimEnd(' ', '\t')
+            var tail = beforeCursor.dropLast(rule.activePrefix(beforeCursor).length).trimEnd(' ', '\t')
             if (openingMarks.isNotEmpty() && tail.lastOrNull()?.let { it in openingMarks } == true) {
                 tail = tail.trimEnd { it in openingMarks }.trimEnd(' ', '\t')
             }
             return tail.isEmpty() || tail.last() in ".!?\n"
         }
 
-        fun lastCompletedWord(beforeCursor: String): String? {
-            val withoutPrefix = beforeCursor.dropLast(activePrefix(beforeCursor).length)
+        fun lastCompletedWord(beforeCursor: String, rule: WordRule = WordRule.DEFAULT): String? {
+            val withoutPrefix = beforeCursor.dropLast(rule.activePrefix(beforeCursor).length)
             // Punctuation, numbers, and sentence ends reset context: "Done. The" should not predict from "done".
             val tail = withoutPrefix.trimEnd(' ', '\t')
-            if (tail.isEmpty() || !tail.last().isLetter()) return null
-            return WORD_REGEX.findAll(tail).lastOrNull()?.value?.let { normalize(it) }
+            if (tail.isEmpty() || !rule.ends(tail.last())) return null
+            return rule.word.findAll(tail).lastOrNull()?.value?.let { normalize(it) }
         }
 
         /**

@@ -26,7 +26,7 @@ object PersonalRanking {
         fun normalized(raw: String): String? {
             val word = AdaptiveNgramModel.normalize(raw)
             return word.takeIf { it.length in 1..128 && it.encodeToByteArray().size <= 512 &&
-                AdaptiveNgramModel.WORD_REGEX.matches(it) &&
+                WordRule.STORED.matches(it) &&
                 (it.length >= 2 || it in oneLetterWords) &&
                 it.startsWith(normalizedPrefix) && allowed(it) }
         }

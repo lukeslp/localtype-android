@@ -67,7 +67,7 @@ object WordEdits {
      */
     fun suggestion(
         before: String?, after: String?, selected: Boolean, word: String, revisited: Boolean,
-        readLimit: Int, capsLock: Boolean = false,
+        readLimit: Int, capsLock: Boolean = false, rule: WordRule = WordRule.DEFAULT,
     ): Suggestion? {
         if (word.isBlank()) return null
         if (selected) {
@@ -78,11 +78,11 @@ object WordEdits {
         }
         before ?: return null
         after ?: return null
-        val prefix = AdaptiveNgramModel.activePrefix(before)
+        val prefix = rule.activePrefix(before)
         if (clippedPrefix(before, prefix, readLimit) || splitsCharacter(before, after) || markBeforePrefix(before, prefix)) return null
         // Apostrophes and hyphens continue an existing word, but don't begin a word on their own.
-        val suffix = if (prefix.isNotEmpty()) CONTINUATION.find(after)?.value.orEmpty()
-        else AdaptiveNgramModel.WORD_REGEX.find(after)?.takeIf { it.range.first == 0 }?.value.orEmpty()
+        val suffix = if (prefix.isNotEmpty()) rule.continuation.find(after)?.value.orEmpty()
+        else rule.word.find(after)?.takeIf { it.range.first == 0 }?.value.orEmpty()
         if (suffix.length == after.length && after.length >= readLimit) return null
         if (suffix.length == after.length - 1 && after.length >= readLimit && after.last().isHighSurrogate()) return null
         val original = prefix + suffix
@@ -107,7 +107,7 @@ object WordEdits {
     fun separator(
         before: String, after: String?, selected: Boolean, separator: String, revisited: Boolean,
         suggestions: Boolean, automatic: Boolean, readLimit: Int, typed: Boolean = true,
-        capitalizeI: Boolean = true, autoSpaced: Boolean = false,
+        capitalizeI: Boolean = true, autoSpaced: Boolean = false, rule: WordRule = WordRule.DEFAULT,
         correct: (String) -> String?,
     ): Separator {
         // Only a known provisional space may be consumed. Manual whitespace stays literal.
@@ -117,13 +117,13 @@ object WordEdits {
                 return Separator(Replacement(0, 0, ""), before, "", false, false)
             }
         }
-        val prefix = AdaptiveNgramModel.activePrefix(before)
+        val prefix = rule.activePrefix(before)
         val end = !selected && after != null && !clippedPrefix(before, prefix, readLimit) &&
-            !splitsCharacter(before, after) && !markBeforePrefix(before, prefix) && CONTINUATION.find(after)?.value.isNullOrEmpty()
+            !splitsCharacter(before, after) && !markBeforePrefix(before, prefix) && rule.continuation.find(after)?.value.isNullOrEmpty()
         val protected = DomainTyping.protected(before, after)
         val cased = protected && DomainTyping.casedWord(before, after)
         val eligible = suggestions && typed && end && !revisited && (!protected || cased) && prefix.isNotEmpty() &&
-            isLetterCodePoint(codePointBefore(prefix, prefix.length))
+            (isLetterCodePoint(codePointBefore(prefix, prefix.length)) || prefix.last() in rule.marks)
         val correction = if (eligible && automatic && !cased) correct(prefix) else null
         val capital = if (eligible && capitalizeI && prefix == "i") "I" else null
         val replacement = correction ?: capital
@@ -154,7 +154,6 @@ object WordEdits {
         return !first.isWhitespace() && !startsWithMark(after.orEmpty()) && first.category.javaType() !in PUNCTUATION
     }
 
-    private val CONTINUATION = Regex("^[\\p{L}'’-]+")
     private val MARKS = setOf(UnicodeType.NON_SPACING_MARK, UnicodeType.COMBINING_SPACING_MARK, UnicodeType.ENCLOSING_MARK)
     private val PUNCTUATION = setOf(
         UnicodeType.CONNECTOR_PUNCTUATION, UnicodeType.DASH_PUNCTUATION, UnicodeType.START_PUNCTUATION,

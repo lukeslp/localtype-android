@@ -53,7 +53,7 @@ enum class SpaceBar {
 
 /** Rows of keys; [rowHeights] scales each row against the standard key height. */
 data class KeyboardLayout(val rows: List<List<Key>>, val rowHeights: List<Float> = List(rows.size) { 1f }) {
-    enum class Mode { LETTERS, SYMBOLS, MORE_SYMBOLS, NUMBER, PHONE }
+    enum class Mode { LETTERS, SYMBOLS, MORE_SYMBOLS, NUMBER, PHONE, DATETIME }
 
     companion object {
         const val ROW_UNITS = 10f
@@ -80,11 +80,12 @@ data class KeyboardLayout(val rows: List<List<Key>>, val rowHeights: List<Float>
         ): KeyboardLayout = when (mode) {
             Mode.LETTERS -> letters(showSwitchKey, digitsOnHold = !numberRow, inputType = inputType, language = language, spaceLabel = spaceLabel,
                 commonSymbolHolds = commonSymbolHolds, pound = pound)
-                .let { if (numberRow) withNumberRow(it, pound) else it }.withVoiceKey(voiceKey).withSpaceBar(spaceBar)
+                .let { if (numberRow) withNumberRow(it, pound, language.digits) else it }.withVoiceKey(voiceKey).withSpaceBar(spaceBar)
             Mode.SYMBOLS -> symbols(showSwitchKey, inputType, language, spaceLabel, pound).withVoiceKey(voiceKey).withSpaceBar(spaceBar)
             Mode.MORE_SYMBOLS -> moreSymbols(showSwitchKey, inputType, language, spaceLabel, pound).withVoiceKey(voiceKey).withSpaceBar(spaceBar)
             Mode.NUMBER -> numberPad(showSwitchKey, inputType)
             Mode.PHONE -> phonePad(showSwitchKey)
+            Mode.DATETIME -> dateTimePad(showSwitchKey, inputType)
         }
 
         /** Width the layer key and Return keep beside a wider space bar, in key widths (1.5 as standard). */
@@ -144,9 +145,36 @@ data class KeyboardLayout(val rows: List<List<Key>>, val rowHeights: List<Float>
             val number = inputType and InputType.TYPE_MASK_CLASS == InputType.TYPE_CLASS_NUMBER
             val signed = number && inputType and InputType.TYPE_NUMBER_FLAG_SIGNED != 0
             val decimal = number && inputType and InputType.TYPE_NUMBER_FLAG_DECIMAL != 0
+            // A web number box is always decimal and never signed, though it takes negative values, so a decimal field
+            // without its own minus key keeps one on the hold of 0. Digits-only boxes (PINs, one-time codes) and number
+            // passwords get no hold, so their pad stays plain.
+            val minusOnZero = decimal && !signed && !TypingRules.isSensitive(inputType)
             return pad(
                 listOf("123", "456", "789").map { row -> row.map { char(it.toString()) } } +
-                    listOf(listOf(if (signed) char("-") else spacer(1f), char("0"), if (decimal) char(".") else spacer(1f))),
+                    listOf(listOf(
+                        if (signed) char("-") else spacer(1f),
+                        char("0", if (minusOnZero) listOf("-") else emptyList()),
+                        // The comma is the decimal mark in much of the world; a field that only takes the period drops it.
+                        if (decimal) char(".", listOf(",")) else spacer(1f),
+                    )),
+                showSwitchKey,
+            )
+        }
+
+        /**
+         * Digits with the separators a date or a time is written with, in the two cells beside 0, by the field's
+         * variation: a date gets "/" (holding "." and "-") and "-"; a time gets ":" alone; a date and time gets "/"
+         * (holding "-" and ".") and ":". Letters for am and pm, and a space, are a layer away (ABC, ?123), and the
+         * symbols page comes back here after a space.
+         */
+        private fun dateTimePad(showSwitchKey: Boolean, inputType: Int): KeyboardLayout {
+            val (left, right) = when (inputType and InputType.TYPE_MASK_VARIATION) {
+                InputType.TYPE_DATETIME_VARIATION_DATE -> char("/", listOf(".", "-")) to char("-", listOf("."))
+                InputType.TYPE_DATETIME_VARIATION_TIME -> char(":") to spacer(1f)
+                else -> char("/", listOf("-", ".")) to char(":")
+            }
+            return pad(
+                listOf("123", "456", "789").map { row -> row.map { char(it.toString()) } } + listOf(listOf(left, char("0"), right)),
                 showSwitchKey,
             )
         }
@@ -166,9 +194,11 @@ data class KeyboardLayout(val rows: List<List<Key>>, val rowHeights: List<Float>
          * 1–0 above the letters. Holding a number gives the symbol that shares its key on a hardware
          * keyboard first (1 → !), then superscripts and fractions.
          */
-        private fun withNumberRow(letters: KeyboardLayout, pound: Boolean = false) = KeyboardLayout(
-            listOf("1234567890".map { digit ->
-                char(digit.toString(), NUMBER_ALTERNATES[digit].orEmpty().let { if (pound && digit == '4') listOf("£") + it else it })
+        private fun withNumberRow(letters: KeyboardLayout, pound: Boolean = false, digits: String = "") = KeyboardLayout(
+            listOf("1234567890".mapIndexed { index, digit ->
+                // A script's own digit comes first on the hold ("۱" on 1 in Persian), ahead of the symbol.
+                char(digit.toString(), listOfNotNull(digits.getOrNull(index)?.toString()) +
+                    NUMBER_ALTERNATES[digit].orEmpty().let { if (pound && digit == '4') listOf("£") + it else it })
             }) + letters.rows,
             listOf(NUMBER_ROW_HEIGHT) + letters.rowHeights,
         )
@@ -198,8 +228,11 @@ data class KeyboardLayout(val rows: List<List<Key>>, val rowHeights: List<Float>
         private fun letters(showSwitchKey: Boolean, digitsOnHold: Boolean = true, inputType: Int, language: LanguageProfile, spaceLabel: String,
                             commonSymbolHolds: Boolean = false, pound: Boolean = false) = KeyboardLayout(
             language.keyRows.let { (top, home, bottom) ->
-                val homePad = (ROW_UNITS - home.length) / 2f
-                val bottomPad = (ROW_UNITS - bottom.length) / 2f
+                // Eleven letters across (Arabic script) make each key that much narrower; ten leave it one unit wide.
+                val unit = ROW_UNITS / language.columns
+                val homePad = (language.columns - home.length) / 2f * unit
+                val bottomPad = (language.columns - bottom.length) / 2f * unit
+                fun letter(c: Char, alternates: List<String>) = char(c.toString(), alternates).let { if (unit == 1f) it else it.copy(width = unit) }
                 fun holds(c: Char, digit: List<String> = emptyList()): List<String> {
                     val accents = LetterAccents.holds(language, c, digit)
                     val shortcut = if (c in TOP_ROW_SYMBOL_HOLDS) digit.firstOrNull() ?: TOP_ROW_SYMBOL_HOLDS[c] else COMMON_SYMBOL_HOLDS[c]
@@ -210,19 +243,22 @@ data class KeyboardLayout(val rows: List<List<Key>>, val rowHeights: List<Float>
                 // A symbols keyboard's own row above the letters (IPA's commonest symbols), the width of the top row.
                 val above = if (language.topRow.isEmpty()) emptyList() else listOf(language.topRow.map { char(it.toString(), holds(it)) })
                 val topLetters = top.mapIndexed { index, c ->
-                    val digit = if (digitsOnHold && index < 10) listOf(((index + 1) % 10).toString()) else emptyList()
-                    char(c.toString(), holds(c, digit))
+                    // The script's own digit follows the Western one on the hold ("1", then "۱").
+                    val digit = if (digitsOnHold && index < 10) listOfNotNull(((index + 1) % 10).toString(), language.digits.getOrNull(index)?.toString()) else emptyList()
+                    letter(c, holds(c, digit))
                 }
                 above + listOf(
                     // A script with no capitals has no Shift: Delete takes the rest of the top row instead.
-                    if (language.shiftless && top.length < ROW_UNITS) topLetters + backspace().copy(width = ROW_UNITS - top.length) else topLetters,
+                    if (language.shiftless && top.length < language.columns) topLetters + backspace().copy(width = ROW_UNITS - top.length * unit) else topLetters,
                     (if (homePad > 0f) listOf(spacer(homePad)) else emptyList()) +
-                        home.map { char(it.toString(), holds(it)) } +
+                        home.map { letter(it, holds(it)) } +
                         (if (homePad > 0f) listOf(spacer(homePad)) else emptyList()),
-                    if (language.shiftless) (if (bottomPad > 0f) listOf(spacer(bottomPad)) else emptyList()) +
-                        bottom.map { char(it.toString(), holds(it)) } + (if (bottomPad > 0f) listOf(spacer(bottomPad)) else emptyList())
+                    // With the top row full (Arabic script), Delete ends the bottom row and its letters start at the left edge.
+                    if (language.deleteEndsBottomRow) bottom.map { letter(it, holds(it)) } + backspace().copy(width = ROW_UNITS - bottom.length * unit)
+                    else if (language.shiftless) (if (bottomPad > 0f) listOf(spacer(bottomPad)) else emptyList()) +
+                        bottom.map { letter(it, holds(it)) } + (if (bottomPad > 0f) listOf(spacer(bottomPad)) else emptyList())
                     else listOf(Key("⇧", KeyAction.Shift, bottomPad, KeyStyle.MODIFIER, spokenLabel = "Shift")) +
-                        bottom.map { char(it.toString(), holds(it)) } + backspace().copy(width = bottomPad),
+                        bottom.map { letter(it, holds(it)) } + backspace().copy(width = bottomPad),
                     bottomRow(Key("?123", KeyAction.ToSymbols, 1.5f, KeyStyle.MODIFIER, spokenLabel = "Symbols"), showSwitchKey, inputType, language, spaceLabel),
                 )
             },
@@ -245,8 +281,26 @@ data class KeyboardLayout(val rows: List<List<Key>>, val rowHeights: List<Float>
                     else Key("=\\<", KeyAction.ToMoreSymbols, 1.5f, KeyStyle.MODIFIER, spokenLabel = "More symbols")) +
                     listOf("*", "\"", "'", ":", ";", "!", "?").map { char(it, language.openingMark(it)) } + backspace(),
                 bottomRow(abc(), showSwitchKey, inputType, language, spaceLabel),
-            ),
+            ).let(::withoutRepeatedHolds),
         )
+
+        /**
+         * On the ?123 page the comma's and period's holds offered @ & - ' " ? ! ; :, which are already keys there
+         * (an audit, November 7, 2026). There they hold what the page lacks instead: dashes and angle quotes on the
+         * comma, a middle dot and a bullet on the period. The period keeps its comma, which a widest space bar drops.
+         */
+        private fun withoutRepeatedHolds(rows: List<List<Key>>): List<List<Key>> {
+            val onPage = rows.flatten().mapNotNullTo(HashSet()) { (it.action as? KeyAction.Text)?.value }
+            val extras = mapOf("," to listOf("–", "—", "«", "»"), "." to listOf("·", "•"))
+            return rows.map { row ->
+                row.map { key ->
+                    val more = extras[key.label] ?: return@map key
+                    // Only a single repeated mark goes: a mail field's .com, .org and .net stay first on the period.
+                    val kept = key.alternates.filter { it.length > 1 || it !in onPage || (key.label == "." && it == ",") }
+                    key.copy(alternates = (kept + more).distinct())
+                }
+            }
+        }
 
         /**
          * The page the =\< key promises. < and > close the math run after ÷ and ×, in the slots ¶ and ∆
@@ -307,9 +361,10 @@ data class KeyboardLayout(val rows: List<List<Key>>, val rowHeights: List<Float>
                 !language.words -> char(STRESS, STRESS_HOLDS)
                 fieldMode == Mode.NUMBER -> Key("123", KeyAction.ToFieldLayout, style = KeyStyle.MODIFIER, spokenLabel = "Number pad")
                 fieldMode == Mode.PHONE -> Key("123", KeyAction.ToFieldLayout, style = KeyStyle.MODIFIER, spokenLabel = "Phone pad")
+                fieldMode == Mode.DATETIME -> Key("123", KeyAction.ToFieldLayout, style = KeyStyle.MODIFIER, spokenLabel = "Date and time pad")
                 TypingRules.isEmail(inputType) -> char("@")
                 TypingRules.isUrl(inputType) -> char("/")
-                else -> char(",", listOf("'", "\"", "-", "@", "&"))
+                else -> char(language.comma, (if (language.comma == ",") emptyList() else listOf(",")) + listOf("'", "\"", "-", "@", "&"))
             })
             // The comma sits beside ?123, as on Gboard, and the switch key beside the space bar: with the switch
             // key first, a thumb reaching for the comma kept changing keyboards (feedback after a month of use, 2026-10-20).
@@ -317,13 +372,19 @@ data class KeyboardLayout(val rows: List<List<Key>>, val rowHeights: List<Float>
             val url = TypingRules.isUrl(inputType)
             val email = TypingRules.isEmail(inputType)
             // Web and mail addresses get a .com key; in a mail field its hold has the other usual endings.
-            add(Key(spaceLabel, KeyAction.Space, (if (showSwitchKey) 4f else 5f) - if (url || email) 1f else 0f, KeyStyle.SPACE,
+            // Persian's non-joiner key takes one unit of the space bar, as on Android's own Persian layout.
+            add(Key(spaceLabel, KeyAction.Space, (if (showSwitchKey) 4f else 5f) - (if (url || email) 1f else 0f) - (if (language.joinerKey) 1f else 0f), KeyStyle.SPACE,
                 spokenLabel = if (spaceLabel.isEmpty()) "Space" else "Space, $spaceLabel"))
+            if (language.joinerKey) add(Key(JOINER_LABEL, KeyAction.Text(ZWNJ), 1f, KeyStyle.MODIFIER, alternates = listOf(ZWJ), spokenLabel = spokenName(ZWNJ)))
             if (url) add(char(".com"))
             if (email) add(char(".com", listOf(".org", ".net", ".edu", ".me")))
             val domains = if (TypingRules.isEmail(inputType)) listOf(".com", ".org", ".net") else emptyList()
             val marks = if (language.english) listOf("?", "!") else listOf("?", "¿", "!", "¡")
-            add(char(".", if (!language.words) PERIOD_HOLDS_IPA else domains + marks + listOf(",", ";", ":", "…", "'", "\"")))
+            add(char(".", when {
+                !language.words -> PERIOD_HOLDS_IPA
+                language.periodHolds.isNotEmpty() -> domains + language.periodHolds
+                else -> domains + marks + listOf(",", ";", ":", "…", "'", "\"")
+            }))
             add(Key("↵", KeyAction.Enter, 1.5f, KeyStyle.ACCENT, spokenLabel = "Return"))
         }
 
@@ -390,7 +451,27 @@ data class KeyboardLayout(val rows: List<List<Key>>, val rowHeights: List<Float>
         /** Invisible filler that centers the home row; touches on it go to the nearest real key. */
         private fun spacer(width: Float) = Key("", KeyAction.Text(""), width)
 
+        /** The zero-width non-joiner Persian writes inside words, and the joiner on its key's hold. */
+        const val ZWNJ = "\u200C"
+        const val ZWJ = "\u200D"
+        /** What the non-joiner key shows: two halves kept apart, since the character itself draws nothing. */
+        const val JOINER_LABEL = "‹›"
+
         fun spokenName(value: String): String = when (value) {
+            ZWNJ -> "Zero-width non-joiner"
+            ZWJ -> "Zero-width joiner"
+            "،" -> "Arabic comma"
+            "؛" -> "Arabic semicolon"
+            "؟" -> "Arabic question mark"
+            "\u064B" -> "Fathatan"
+            "\u064C" -> "Dammatan"
+            "\u064D" -> "Kasratan"
+            "\u064E" -> "Fatha"
+            "\u064F" -> "Damma"
+            "\u0650" -> "Kasra"
+            "\u0651" -> "Shadda"
+            "\u0652" -> "Sukun"
+            "\u0640" -> "Tatweel"
             "," -> "Comma"
             "." -> "Period"
             ".com" -> "Dot com"
@@ -423,6 +504,7 @@ data class KeyboardLayout(val rows: List<List<Key>>, val rowHeights: List<Float>
             "$" -> "Dollar sign"
             "£" -> "Pound sign"
             "ʻ" -> "ʻOkina"
+            "ʼ" -> "Glottal stop"
             "°" -> "Degree sign"
             else -> IPA_NAMES[value] ?: value
         }

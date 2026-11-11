@@ -37,6 +37,29 @@ LocalType kept the 20,000 most frequent words of Hebrew letters, filtered
 slurs, moved swear words to the profanity list and kept words seen 20 or more
 times as the recognition list. No upstream author endorses LocalType.
 
+words_ar.txt, words_ar_profanity.txt and words_known_ar.txt (Arabic) derive
+from the same FrequencyWords project, OpenSubtitles 2018 frequency data in
+content/2018/ar at commit 525f9b560de45753a5ea01069454e72e9aa541c6, under the
+same Creative Commons Attribution-ShareAlike 4.0 International content terms.
+LocalType removed vowel marks other than a final tanwin, tatweel and
+presentation forms, kept the 20,000 most frequent words of Arabic letters,
+filtered slurs, moved swear words to the profanity list and kept words seen
+20 or more times as the recognition list. No upstream author endorses
+LocalType.
+
+words_fa.txt, words_fa_profanity.txt and words_known_fa.txt (Persian) combine
+that project's Persian subtitle counts (content/2018/fa at the same commit,
+Creative Commons Attribution-ShareAlike 4.0 International) with word counts
+from the first part of the Persian Wikipedia pages-articles dump of 2026-11-01
+(fawiki-20261101-pages-articles1.xml-p1p1500000.bz2,
+https://dumps.wikimedia.org/fawiki/), whose text its contributors license
+under Creative Commons Attribution-ShareAlike 4.0 International. The derived
+lists keep those terms. LocalType wrote Arabic yeh and kaf as the Persian
+letters, removed vowel marks other than a final tanwin, scaled the Wikipedia
+counts to the subtitle total at half weight, filtered slurs and moved swear
+words to the profanity list. No upstream author, Wikipedia contributor or the
+Wikimedia Foundation endorses LocalType.
+
 words_cy*.txt (Welsh), words_ga*.txt (Irish) and words_mi*.txt (Maori: words_mi.txt,
 words_mi_profanity.txt, words_known_mi.txt) are word counts from each
 language's Wikipedia pages-articles dump of 2026-11-01 (cywiki-20261101,
@@ -46,6 +69,25 @@ International by its contributors, and these derived lists keep those terms.
 LocalType stripped wiki markup, counted words of each language's own letters,
 filtered slurs and moved swear words to the profanity lists. No Wikipedia
 contributor or the Wikimedia Foundation endorses LocalType.
+
+words_gl*.txt and words_known_gl.txt (Galician) and words_gd*.txt and
+words_known_gd.txt (Scottish Gaelic) are word counts from each language's
+Wikipedia pages-articles dump of 2026-11-01 (glwiki-20261101, gdwiki-20261101;
+https://dumps.wikimedia.org/), made the same way and under the same Creative
+Commons Attribution-ShareAlike 4.0 International terms as the Welsh, Irish and
+Maori lists above. No Wikipedia contributor or the Wikimedia Foundation
+endorses LocalType.
+
+words_nv.txt, words_nv_profanity.txt and words_known_nv.txt (Navajo, Diné
+bizaad) are word counts from the Navajo Wikipedia pages-articles dump of
+2026-11-01 (nvwiki-20261101; https://dumps.wikimedia.org/nvwiki/), whose text
+its contributors license under Creative Commons Attribution-ShareAlike 4.0
+International; the derived lists keep those terms. LocalType stripped wiki
+markup, counted each templated line once and counted words of Navajo letters.
+The lists have not been read by a Navajo speaker. They are not reviewed,
+approved or endorsed by the Navajo Nation, by any Wikipedia contributor or by
+the Wikimedia Foundation, and will be changed or removed at the Nation's
+request.
 
 words_haw.txt, words_haw_profanity.txt and words_known_haw.txt (Hawaiian) derive
 from data/freqlist_haw.txt in dohliam/hawaiian-corpus

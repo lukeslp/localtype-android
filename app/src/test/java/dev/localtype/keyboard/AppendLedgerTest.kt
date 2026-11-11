@@ -78,4 +78,43 @@ class AppendLedgerTest {
         val entry = "56789"
         assertTrue(ledger.missing(editor, entry) == listOf("a"))
     }
+
+    @Test
+    fun `an append the editor answered after is never resent, whatever the text says later`() {
+        val ledger = AppendLedger(window = 280)
+        // A crossword cell: the letter lands, a read answers, the page moves focus to the next empty cell and restarts.
+        ledger.record(editor, "", "k")
+        ledger.landed()
+        assertEquals(0, ledger.size)
+        assertEquals(emptyList<String>(), ledger.missing(editor, ""))
+        // A field the app empties after one character, and a caret the app moves back one place.
+        ledger.record(editor, "0123456789", "x")
+        ledger.landed()
+        assertEquals(emptyList<String>(), ledger.missing(editor, "0123456789"))
+    }
+
+    @Test
+    fun `without an answer the append is still resent, and a resend that lands is not sent a second time`() {
+        val ledger = AppendLedger(window = 280)
+        ledger.record(editor, "0123456789", "x")
+        // No read answered after the commit: the connection had been retired, and the restart shows the old text.
+        assertEquals(listOf("x"), ledger.missing(editor, "0123456789"))
+        // The service sends it again and records it; this time the read after it answers.
+        ledger.record(editor, "0123456789", "x")
+        ledger.landed()
+        assertEquals(emptyList<String>(), ledger.missing(editor, "0123456789"))
+    }
+
+    @Test
+    fun `an answer covers every append before it`() {
+        val ledger = AppendLedger(window = 280)
+        ledger.record(editor, "ab", "c")
+        ledger.record(editor, null, "d")
+        ledger.record(editor, null, "e")
+        ledger.landed()
+        assertEquals(emptyList<String>(), ledger.missing(editor, "ab"))
+        // What is recorded after the answer is judged on its own.
+        ledger.record(editor, "abcde", "f")
+        assertEquals(listOf("f"), ledger.missing(editor, "abcde"))
+    }
 }

@@ -168,6 +168,7 @@ class SettingsActivity : Activity() {
         refreshSetupState()
         refreshAddedWords()
         refreshLearnedSummary()
+        refreshBlockedWords()
         refreshLogStatus()
         refreshSavedSummary()
         refreshSites()
@@ -611,7 +612,7 @@ class SettingsActivity : Activity() {
      */
     private fun addLanguages() {
         val body = section("languages", R.string.section_languages, openByDefault = true) {
-            KeyboardSettings.languages(this).joinToString(", ") { it.nativeName }
+            KeyboardSettings.languages(this).joinToString(", ") { "\u2068${it.nativeName}\u2069" }
         }.body
         val words = listOf(
             Triple(LanguageProfile.ENGLISH, R.string.english_summary, null),
@@ -622,6 +623,11 @@ class SettingsActivity : Activity() {
             Triple(LanguageProfile.IRISH, R.string.irish_summary, R.string.irish_body),
             Triple(LanguageProfile.MAORI, R.string.maori_summary, R.string.maori_body),
             Triple(LanguageProfile.HAWAIIAN, R.string.hawaiian_summary, R.string.hawaiian_body),
+            Triple(LanguageProfile.ARABIC, R.string.arabic_summary, R.string.arabic_body),
+            Triple(LanguageProfile.PERSIAN, R.string.persian_summary, R.string.persian_body),
+            Triple(LanguageProfile.GALICIAN, R.string.galician_summary, R.string.galician_body),
+            Triple(LanguageProfile.SCOTTISH_GAELIC, R.string.gaelic_summary, R.string.gaelic_body),
+            Triple(LanguageProfile.NAVAJO, R.string.navajo_summary, R.string.navajo_body),
         )
         words.forEach { (language, summary, details) ->
             val row = addSwitch(body, language.nativeName, getString(summary), details?.let { getString(it) }, languageOn(language)) { on ->
@@ -689,6 +695,7 @@ class SettingsActivity : Activity() {
             LanguageProfile.IRISH -> KeyboardSettings.setIrish(this, on)
             LanguageProfile.MAORI -> KeyboardSettings.setMaori(this, on)
             LanguageProfile.HAWAIIAN -> KeyboardSettings.setHawaiian(this, on)
+            in LanguageProfile.EXTRA -> KeyboardSettings.setExtraLanguage(this, language, on)
             else -> KeyboardSettings.setIpa(this, on)
         }
         refreshLanguages()
@@ -699,7 +706,8 @@ class SettingsActivity : Activity() {
         val offered = KeyboardSettings.languages(this)
         languageRows.forEach { (language, row) -> row.switch.isChecked = language in offered }
         languageFooter.text = speak(
-            if (offered.size > 1) getString(R.string.languages_hold_space, offered.joinToString(" → ") { it.nativeName })
+            // Each name is isolated, so two right-to-left names in a row (العربية, فارسی) keep the order they are offered in.
+            if (offered.size > 1) getString(R.string.languages_hold_space, offered.joinToString(" → ") { "\u2068${it.nativeName}\u2069" })
             else getString(R.string.languages_hold_space_one)
         )
         val chosen = KeyboardSettings.settingsLanguage(this)
@@ -835,7 +843,7 @@ class SettingsActivity : Activity() {
     private fun addTouchAndTiming() {
         val body = section("motor", R.string.section_motor, openByDefault = false) {
             val m = KeyboardSettings.motor(this)
-            onCount(m.ignoreRepeatMs > 0, m.holdMs > 0, m.dwell, m.steadyKeys, m.aimFromTouches)
+            onCount(m.ignoreRepeatMs > 0, m.holdMs > 0, m.dwell, m.steadyKeys, m.aimFromTouches, KeyboardSettings.inactiveGaps(this))
         }.body
         body.addView(text(getString(R.string.motor_intro), 13f, R.color.on_surface_variant))
         val motor = KeyboardSettings.motor(this)
@@ -853,6 +861,9 @@ class SettingsActivity : Activity() {
         }
         addSwitch(body, R.string.aim_touches_title, R.string.aim_touches_summary, R.string.aim_touches_body, motor.aimFromTouches) {
             KeyboardSettings.setAimFromTouches(this, it)
+        }
+        addSwitch(body, R.string.inactive_gaps_title, R.string.inactive_gaps_summary, R.string.inactive_gaps_body, KeyboardSettings.inactiveGaps(this)) {
+            KeyboardSettings.setInactiveGaps(this, it)
         }
     }
 
@@ -1028,6 +1039,13 @@ class SettingsActivity : Activity() {
             KeyboardSettings.setOneHanded(this, hands[index].first)
         }
         body.addView(text(getString(R.string.one_handed_body), 13f, R.color.on_surface_variant))
+        subhead(body, getString(R.string.wide_keys_title), topMargin = 14)
+        val wides = listOf(WideKeys.CENTERED to R.string.wide_keys_centered, WideKeys.FULL_WIDTH to R.string.wide_keys_full)
+        segmented(body, getString(R.string.wide_keys_title), wides.map { getString(it.second) to null },
+            wides.indexOfFirst { it.first == KeyboardSettings.wideKeys(this) }) { index ->
+            KeyboardSettings.setWideKeys(this, wides[index].first)
+        }
+        body.addView(text(getString(R.string.wide_keys_body), 13f, R.color.on_surface_variant))
     }
 
     // Pasting and saved text
@@ -1065,6 +1083,8 @@ class SettingsActivity : Activity() {
             getString(R.string.data_summary, addedCount, learnedCount)
         }.body
         addDataLanguage(body)
+        addBlockedWords(body)
+        divider(body)
         addAddedWords(body)
         divider(body)
         addLearnedWords(body)
@@ -1111,6 +1131,121 @@ class SettingsActivity : Activity() {
         }
         refreshAddedWords()
         refreshLearnedSummary()
+        refreshBlockedWords()
+    }
+
+    private lateinit var blockedInput: EditText
+    private lateinit var blockedButton: Button
+    private lateinit var blockedSummary: TextView
+    private lateinit var blockedList: LinearLayout
+    private lateinit var blockedToggle: Button
+    private lateinit var blockedRetry: Button
+    private lateinit var blockedReset: Button
+    private var blockedExpanded = false
+
+    /** Exclusions live beside learned words, but Forget never removes this deliberate choice. */
+    private fun addBlockedWords(parent: LinearLayout) {
+        subhead(parent, getString(R.string.blocked_words_title), getString(R.string.blocked_words_details), topMargin = 4)
+        parent.addView(text(getString(R.string.blocked_words_summary), 13f, R.color.on_surface_variant))
+        val entry = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER_VERTICAL }
+        blockedInput = EditText(this).apply {
+            hint = getString(R.string.blocked_words_input)
+            setSingleLine(true)
+            minHeight = dp(48)
+            setTextColor(getColor(R.color.on_surface))
+            setHintTextColor(getColor(R.color.on_surface_variant))
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+            imeOptions = android.view.inputmethod.EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING or android.view.inputmethod.EditorInfo.IME_ACTION_DONE
+            filters = arrayOf(android.text.InputFilter.LengthFilter(BlockedWords.MAX_WORD_UNITS))
+            setOnEditorActionListener { _, action, _ ->
+                if (action == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                    if (blockedButton.isEnabled) blockedButton.performClick()
+                    true
+                } else false
+            }
+        }
+        blockedButton = button(getString(R.string.blocked_words_block), primary = false).apply {
+            setOnClickListener {
+                val chosen = dataLanguage
+                val store = BlockedWordStore.get(this@SettingsActivity, chosen)
+                val word = BlockedWords.normalize(blockedInput.text.toString())
+                when {
+                    word == null -> blockedInput.error = getString(R.string.blocked_words_invalid)
+                    word in store.words -> blockedInput.error = getString(R.string.blocked_words_exists)
+                    store.words.size >= BlockedWords.MAX_WORDS -> blockedInput.error = getString(R.string.blocked_words_full, BlockedWords.MAX_WORDS)
+                    else -> {
+                        store.change(word) { success ->
+                            if (!isDestroyed && chosen == dataLanguage) {
+                                if (success) { blockedInput.text.clear(); blockedInput.error = null }
+                                refreshBlockedWords()
+                            }
+                        }
+                        refreshBlockedWords()
+                    }
+                }
+            }
+        }
+        entry.addView(blockedInput, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+        entry.addView(blockedButton, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(48)))
+        parent.addView(entry)
+        blockedSummary = text("", 13f, R.color.on_surface_variant)
+        parent.addView(blockedSummary)
+        blockedRetry = button(getString(R.string.blocked_words_retry), primary = false).apply {
+            setOnClickListener { BlockedWordStore.get(this@SettingsActivity, dataLanguage).reload(); refreshBlockedWords() }
+        }
+        parent.addView(blockedRetry)
+        blockedReset = button(getString(R.string.blocked_words_reset), primary = false).apply {
+            setOnClickListener {
+                val chosen = dataLanguage
+                android.app.AlertDialog.Builder(this@SettingsActivity)
+                    .setTitle(R.string.blocked_words_reset)
+                    .setMessage(R.string.blocked_words_reset_confirm)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(R.string.blocked_words_reset) { _, _ ->
+                        BlockedWordStore.get(this@SettingsActivity, chosen).change(null, reset = true) {
+                            if (!isDestroyed && chosen == dataLanguage) refreshBlockedWords()
+                        }
+                        refreshBlockedWords()
+                    }.show()
+            }
+        }
+        parent.addView(blockedReset)
+        blockedList = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        parent.addView(blockedList)
+        blockedToggle = listToggle(parent) { blockedExpanded = !blockedExpanded; refreshBlockedWords() }
+        refreshBlockedWords()
+    }
+
+    private fun refreshBlockedWords() {
+        if (!this::blockedSummary.isInitialized) return
+        val chosen = dataLanguage
+        val store = BlockedWordStore.get(this, chosen)
+        blockedInput.isEnabled = store.ready && !store.busy
+        blockedButton.isEnabled = store.ready && !store.busy
+        blockedSummary.text = when {
+            store.busy -> getString(R.string.blocked_words_loading)
+            store.failed -> getString(if (store.ready) R.string.blocked_words_save_failed else R.string.blocked_words_load_failed)
+            else -> getString(R.string.blocked_words_count, store.words.size)
+        }
+        blockedRetry.visibility = if (store.failed && !store.busy) View.VISIBLE else View.GONE
+        blockedReset.visibility = blockedRetry.visibility
+        blockedList.removeAllViews()
+        val words = store.words.sorted()
+        showToggle(blockedToggle, words.size, blockedExpanded)
+        (if (blockedExpanded) words else words.take(LIST_PREVIEW)).forEach { word ->
+            val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER_VERTICAL }
+            row.addView(text(word, 15f, R.color.on_surface), LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+            row.addView(button(getString(R.string.blocked_words_unblock), primary = false).apply {
+                contentDescription = getString(R.string.blocked_words_unblock_named, word)
+                isEnabled = !store.busy
+                setOnClickListener {
+                    store.change(word, block = false) { if (!isDestroyed && chosen == dataLanguage) refreshBlockedWords() }
+                    refreshBlockedWords()
+                }
+            }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(48)))
+            blockedList.addView(row)
+        }
+        if (store.busy) store.whenLoaded { if (!isDestroyed && chosen == dataLanguage) refreshBlockedWords() }
     }
 
     /** Explicit additions share the private journal and reset path, without pretending to be typed pairs. */
@@ -1144,6 +1279,11 @@ class SettingsActivity : Activity() {
                 val store = JournalLearningStore.get(this@SettingsActivity, dataLanguage)
                 if (!store.ready) return@setOnClickListener
                 val word = AddedWords.normalize(addedInput.text.toString(), dataLanguage)
+                val blocked = BlockedWordStore.get(this@SettingsActivity, dataLanguage)
+                if (!blocked.ready || word?.let { BlockedWords.contains(blocked.words, it) } == true) {
+                    addedInput.error = getString(R.string.blocked_words_unblock_first)
+                    return@setOnClickListener
+                }
                 val result = AddedWords.add(store, addedInput.text.toString(), dataLanguage)
                 when (result) {
                     AddedWords.Result.INVALID -> addedInput.error = getString(R.string.added_words_invalid)
@@ -1653,6 +1793,8 @@ class SettingsActivity : Activity() {
     private var gemmaDownload: Button? = null
     private var gemmaCancel: Button? = null
     private var gemmaRemove: Button? = null
+    private var modelRemovalError: String? = null
+    private var modelSharingError: String? = null
 
     /** Download or import progress, announced once when it starts and then updated silently. */
     private enum class Ongoing { DOWNLOAD, IMPORT }
@@ -1675,9 +1817,26 @@ class SettingsActivity : Activity() {
         }
         // LocalLauncher may borrow Gemma only where Android can check its signing key (knownSigner, Android 12).
         if (ModelKitBridge.sharingOffered(android.os.Build.VERSION.SDK_INT)) {
-            addSwitch(controls, R.string.share_model_title, R.string.share_model_summary, R.string.share_model_body,
-                ModelKitBridge.sharingEnabled(this)) {
-                ModelKitBridge.setSharingEnabled(this, it)
+            lateinit var sharingRow: SwitchRow
+            sharingRow = addSwitch(controls, R.string.share_model_title, R.string.share_model_summary, R.string.share_model_body,
+                ModelKitBridge.sharingEnabled(this)) { wanted ->
+                // The generic row toggles first; show only actual authorization while the file write is pending.
+                sharingRow.switch.isChecked = ModelKitBridge.sharingEnabled(this)
+                sharingRow.row.isEnabled = false
+                modelSharingError = null
+                screenScope.launch {
+                    val result = withContext(Dispatchers.IO) {
+                        runCatching { ModelKitBridge.setSharingEnabled(this@SettingsActivity, wanted) }
+                    }
+                    val actual = ModelKitBridge.sharingEnabled(this@SettingsActivity)
+                    sharingRow.switch.isChecked = actual
+                    sharingRow.row.isEnabled = true
+                    if (result.isFailure) {
+                        modelSharingError = "Couldn't save sharing. Sharing is ${if (actual) "on" else "off"}. Try again."
+                        Toast.makeText(this@SettingsActivity, modelSharingError, Toast.LENGTH_LONG).show()
+                    }
+                    refreshModelState()
+                }
             }
         }
         // Proofreading needs a model, so its shortcut sits with them.
@@ -1733,8 +1892,15 @@ class SettingsActivity : Activity() {
         gemmaRemove = button("Remove Gemma", primary = false).apply {
             visibility = View.GONE
             setOnClickListener {
+                isEnabled = false
+                modelRemovalError = null
+                showGemmaState("Removing Gemma…")
                 screenScope.launch {
-                    withContext(Dispatchers.IO) { FoundationModelProviderFactory.installer(this@SettingsActivity).remove() }
+                    val result = withContext(Dispatchers.IO) {
+                        runCatching { FoundationModelProviderFactory.installer(this@SettingsActivity).remove() }
+                    }
+                    modelRemovalError = if (result.isFailure) "Some Gemma files couldn't be removed. Try Remove again." else null
+                    gemmaRemove?.isEnabled = true
                     refreshModelState()
                 }
             }
@@ -1746,7 +1912,7 @@ class SettingsActivity : Activity() {
 
     private fun confirmDownload(pinned: PinnedModel) {
         val wifiOnly = android.widget.CheckBox(this).apply {
-            text = "Wi-Fi only"
+            text = "Unmetered network"
             isChecked = true
             setPadding(dp(4), 0, 0, 0)
         }
@@ -1928,6 +2094,7 @@ class SettingsActivity : Activity() {
             val twoCopies = BuildConfig.INCLUDES_GEMMA && model != null && !progress.isActive && withContext(Dispatchers.IO) { installer.peerHasCopyToo() }
             // A cancelled, failed or interrupted download keeps its partial file for resuming.
             val partialBytes = withContext(Dispatchers.IO) { installer.partialDownloadBytes() }
+            val modelFilesRemain = withContext(Dispatchers.IO) { installer.hasModelFiles() }
             val pinned = installer.downloadableModel
             val kept = if (pinned != null && partialBytes > 0) {
                 "${ModelKitBridge.formatBytes(partialBytes)} of ${ModelKitBridge.formatBytes(pinned.bytes)} downloaded"
@@ -1946,6 +2113,7 @@ class SettingsActivity : Activity() {
                         else "Loads when you pause while typing or tap the sparkle.") +
                         if (twoCopies) " LocalLauncher has the same Gemma, so this phone keeps two copies. One is enough: " +
                             "after Remove Gemma, LocalType uses LocalLauncher's." else ""
+                modelFilesRemain -> "Gemma files remain on this phone. Remove Gemma files retries deleting them."
                 borrowed -> "Using LocalLauncher's copy of Gemma on this phone, so there's nothing to download."
                 progress.state == ModelDownloadState.FAILED ->
                     (progress.message ?: "The download failed. Try again.") + (kept?.let { " $it; Download picks up from there." } ?: "")
@@ -1953,15 +2121,21 @@ class SettingsActivity : Activity() {
                 pinned != null -> "Optional. Download Gemma to use it for extra suggestions and proofreading."
                 else -> "Not installed."
             }
-            showGemmaState(message, if (progress.state == ModelDownloadState.DOWNLOADING) Ongoing.DOWNLOAD else null)
+            val failure = listOfNotNull(modelSharingError, modelRemovalError).joinToString(" ")
+            showGemmaState(if (failure.isEmpty()) message else "$failure $message",
+                if (progress.state == ModelDownloadState.DOWNLOADING && failure.isEmpty()) Ongoing.DOWNLOAD else null)
             gemmaDownload?.visibility = if (model == null && !borrowed && !progress.isActive) View.VISIBLE else View.GONE
             gemmaCancel?.visibility = if (progress.isActive) View.VISIBLE else View.GONE
             gemmaImport?.visibility = if (progress.isActive) View.GONE else View.VISIBLE
             val importLabel = if (model != null) "Replace Gemma" else "Use a model file instead"
             gemmaImport?.let { if (it.text.toString() != importLabel) it.text = importLabel }
             // Remove deletes the partial file too, so the same button discards a download nobody will finish.
-            gemmaRemove?.visibility = if ((model != null || partialBytes > 0) && !progress.isActive) View.VISIBLE else View.GONE
-            val removeLabel = if (model != null) "Remove Gemma" else "Discard partial download"
+            gemmaRemove?.visibility = if ((modelFilesRemain || partialBytes > 0) && !progress.isActive) View.VISIBLE else View.GONE
+            val removeLabel = when {
+                model != null -> "Remove Gemma"
+                modelFilesRemain -> "Remove Gemma files"
+                else -> "Discard partial download"
+            }
             gemmaRemove?.let { if (it.text.toString() != removeLabel) it.text = removeLabel }
             val nano = lastNanoState == FoundationModelStatus.READY
             modelsSummary = getString(when {
@@ -2007,6 +2181,7 @@ class SettingsActivity : Activity() {
             getString(R.string.about_summary, info.versionName)
         }.body
         addUpdates(body)
+        addLink(body, getString(R.string.about_release_notes)) { openInBrowser(ReleaseInfo.CHANGELOG_URL) }
         divider(body)
         addLink(body, getString(R.string.walkthrough_reopen)) {
             startActivity(Intent(this@SettingsActivity, SetupActivity::class.java).putExtra(SetupActivity.REPLAY, true))

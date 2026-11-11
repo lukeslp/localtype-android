@@ -1,0 +1,11 @@
+# Common Galician swear words, counts from Wikipedia (glwiki-20261101 pages-articles dump), CC BY-SA 4.0. Slurs are deliberately excluded.
+puta	128
+merda	102
+putas	59
+carallo	58
+cona	49
+cabrón	26
+foder	20
+fodido	7
+cabróns	6
+fodida	4

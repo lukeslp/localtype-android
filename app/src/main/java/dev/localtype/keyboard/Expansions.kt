@@ -7,7 +7,7 @@ package dev.localtype.keyboard
  * like a paste; [SavedWords] keeps a saved text's words from becoming a learned previous word.
  */
 object Expansions {
-    enum class Kind { SHORTCUT, DOMAIN, LINK }
+    enum class Kind { SHORTCUT, DOMAIN, LINK, SYMBOL }
 
     /**
      * [label] is what the slot shows. Taking it removes [replace] characters before the caret and inserts
@@ -22,6 +22,10 @@ object Expansions {
         val text = saved?.expansion(prefix) ?: return null
         return Offer(Kind.SHORTCUT, SavedTexts.preview(text, LABEL_CHARS), prefix.length, text)
     }
+
+    /** A symbol for the cue or name typed just before the caret ([SymbolCues]): `(c)` or "copyright" offers ©. */
+    fun symbol(run: String, prefix: String): Offer? =
+        SymbolCues.find(run, prefix)?.let { Offer(Kind.SYMBOL, it.symbol, it.replace, it.symbol) }
 
     /** The link standing right before the caret, offered without its tracking under [label]. */
     fun link(found: LinkCleaner.AtCaret, label: String): Offer = Offer(Kind.LINK, label, found.replace, found.text, found.host)

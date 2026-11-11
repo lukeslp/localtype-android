@@ -35,6 +35,7 @@
     <string name="neural_predictions_body">Suggests next words and completes words as you type. Chime is built in (about 2 MB, no download) and runs on this phone without saving your text or training on it. It starts on and remembers your choice; turned off, dictionary and learned-word suggestions remain. Changes take effect in the next ordinary text field. Everyday typing checks are still ongoing.</string>
     <string name="emoji_insert_description">Replace with %1$s</string>
     <string name="expansion_saved_text_description">Insert saved text: %1$s</string>
+    <string name="expansion_symbol_description">Insert %1$s, %2$s</string>
     <string name="expansion_host_description">Finish the address: %1$s</string>
     <string name="emoji_description_variants">Replace with %1$s. Hold for more emoji</string>
     <string name="emoji_variants_action">More emoji</string>
@@ -223,6 +224,7 @@
         <item>Hold a letter|Its accents and IPA symbols open above it. Slide to the one you want, or lift on the first.</item>
         <item>Hold a key in the top row|Types its number, while the number row is off.</item>
         <item>Hold the period|Offers ? ! , ; : … and quotes.</item>
+        <item>Hold 0 or the period on a number pad|Types a minus or a comma, in boxes that take decimals.</item>
         <item>Hold the comma|Offers an apostrophe, quotes, a dash, @ and &amp;.</item>
         <item>Double-tap Shift|Caps lock. Tap it again to turn it off. With TalkBack, hold Shift instead.</item>
         <item>Tap space twice|Ends the sentence with a period and a space.</item>
@@ -541,6 +543,7 @@
     <string name="clearance_large">Large</string>
     <string name="updates_client_managed">Use the client that installed this build to check for updates.</string>
     <string name="about_download_page">LocalType’s download page</string>
+    <string name="about_release_notes">Release notes</string>
     <string name="about_download_page_summary">The newest version and how to install it</string>
     <string name="about_support">Get help or send feedback</string>
     <string name="about_support_summary">Tell me what isn’t working, or what you’d like</string>
@@ -576,6 +579,16 @@
     <string name="maori_body">Adds te reo Māori, on the QWERTY keys: hold a vowel for its macron (ā ē ī ō ū). Hold Space to switch; the space bar shows the language you’re typing. This is an early test: the word lists come from Māori Wikipedia and haven’t been checked by a native speaker, so some suggestions and corrections will be off, and there is no next-word model yet, so suggestions come from the list and from what you type. Slurs are left out. Its words are learned apart from the other languages. Chime, the extra models, proofreading, swipe typing and the typing log stay English only.</string>
     <string name="hawaiian_summary">Hawaiian, experimental: ʻokina key, kahakō</string>
     <string name="hawaiian_body">Adds ʻŌlelo Hawaiʻi, on the QWERTY keys with an ʻokina key beside L: hold a vowel for its kahakō (ā ē ī ō ū). Hold Space to switch; the space bar shows the language you’re typing. This is an early test: the word lists come from the Hawaiian Corpus Project’s counts of texts in Ulukau and haven’t been checked by a native speaker, so some suggestions and corrections will be off, and there is no next-word model yet, so suggestions come from the list and from what you type. Slurs are left out. Its words are learned apart from the other languages. Chime, the extra models, proofreading, swipe typing and the typing log stay English only.</string>
+    <string name="arabic_summary">Arabic, experimental: 11-key rows, no Shift</string>
+    <string name="arabic_body">Adds Arabic, in the layout Android’s own Arabic keyboard draws: eleven letters on each of the top two rows, ten and delete below, and no Shift since Arabic has no capitals. Hold ا for أ إ آ, ي for ئ, ل for لا, and the period for ؟ ؛ and the vowel marks; the comma key types ، and holding a digit gives its Arabic form. A word typed without its hamza, with ه for ة or without its tanwin still completes and corrects to the full spelling. Hold Space to switch; the space bar shows the language you’re typing. This is an early test: the Arabic word lists come from film subtitles and haven’t been checked by a native speaker, so some suggestions and corrections will be off, and there is no next-word model yet, so suggestions come from the list and from what you type. The slurs I could identify are left out, and swear words follow Suggest swear words. Arabic words are learned apart from the other languages. Chime, the extra models, proofreading, swipe typing and the typing log stay English only.</string>
+    <string name="persian_summary">Persian, experimental: half-space key</string>
+    <string name="persian_body">Adds Persian, in Android’s Persian layout: the Arabic rows with Persian ی and ک, and پ چ ژ گ on keys of their own. The ‹› key beside the space bar types the half-space (نیم‌فاصله, the zero-width non-joiner) inside words like می‌رود; a word typed without it still completes and corrects to the spelling that has it. The comma key types ، and holding a digit gives its Persian form. Hold Space to switch; the space bar shows the language you’re typing. This is an early test: the Persian word lists come from film subtitles, with half-space spellings from Persian Wikipedia, and haven’t been checked by a native speaker, so some suggestions and corrections will be off, and there is no next-word model yet, so suggestions come from the list and from what you type. The slurs I could identify are left out, and swear words follow Suggest swear words. Persian words are learned apart from the other languages. Chime, the extra models, proofreading, swipe typing and the typing log stay English only.</string>
+    <string name="galician_summary">Galician, experimental: ñ key and accents</string>
+    <string name="galician_body">Adds Galician (Galego), on the Spanish layout with ñ on the home row: hold a vowel for its accent, and i or u for ï and ü. A word typed without its accents still completes and corrects to the accented spelling. Hold Space to switch; the space bar shows the language you’re typing. This is an early test: the word lists come from Galician Wikipedia and haven’t been checked by a native speaker, so some suggestions and corrections will be off, and there is no next-word model yet. The slurs on the Spanish and Portuguese lists are left out, and swear words follow Suggest swear words. Galician words are learned apart from the other languages. Chime, the extra models, proofreading, swipe typing and the typing log stay English only.</string>
+    <string name="gaelic_summary">Scottish Gaelic, experimental: grave accents</string>
+    <string name="gaelic_body">Adds Scottish Gaelic (Gàidhlig), on the QWERTY keys: hold a vowel for its grave accent (à è ì ò ù), then the acute that older spelling used. A word typed without its accents still completes and corrects to the accented spelling. Hold Space to switch; the space bar shows the language you’re typing. This is an early test: the word lists come from Scottish Gaelic Wikipedia and haven’t been checked by a native speaker, so some suggestions and corrections will be off, and there is no next-word model yet. It has no slur list of its own beyond the one every language shares, and swear words follow Suggest swear words. Scottish Gaelic words are learned apart from the other languages. Chime, the extra models, proofreading, swipe typing and the typing log stay English only.</string>
+    <string name="navajo_summary">Navajo, very experimental: ʼ key and marks</string>
+    <string name="navajo_body">Adds Navajo (Diné bizaad), on the QWERTY keys with a glottal stop key (ʼ) beside L: hold a vowel for its high tone, nasal and high nasal forms (á ą ą́), l for ł and n for ń. A word typed without its marks still completes to the marked spelling, and an apostrophe typed for the glottal stop is read as one. Nothing is corrected automatically in Navajo: fixes are only offered, because the word list covers only part of the language. Hold Space to switch; the space bar shows the language you’re typing. This is a very early test, rougher than the other experimental languages: the word list comes from Navajo Wikipedia, which is mostly short articles about animals, plants and places, and it hasn’t been checked by a Navajo speaker or reviewed by the Navajo Nation. There is no next-word model, and no Navajo slur list beyond the one every language shares. Navajo words are learned apart from the other languages. Chime, the extra models, proofreading, swipe typing and the typing log stay English only.</string>
     <string name="tools_title">Tools</string>
     <string name="tools_all">All tools</string>
     <string name="tools_open">Open</string>
@@ -639,12 +652,17 @@
     <string name="one_handed_left">Left</string>
     <string name="one_handed_right">Right</string>
     <string name="one_handed_body">Narrows the keys toward one edge so a thumb reaches across them. The One-handed tool turns it on and off, and the buttons beside the keys move them to the other side or bring back the full width. The strip and panels keep the full width.</string>
+    <string name="wide_keys_title">Keys on wide screens</string>
+    <string name="wide_keys_centered">Centered</string>
+    <string name="wide_keys_full">Full width</string>
+    <string name="wide_keys_body">On a tablet, an unfolded Fold or a desktop window at least 600 dp wide, Centered keeps the keys about 600 dp wide in the middle, so each letter is a comfortable size for a thumb. Full width spreads them across the window, for typing with all fingers on a tablet on a stand. A phone, upright or on its side, always uses the full width, and One-handed keys come first when they are on. Takes effect in the next field you open.</string>
     <string name="one_handed_swap_left">Move keys to the left</string>
     <string name="one_handed_swap_right">Move keys to the right</string>
     <string name="one_handed_full">Full-width keys</string>
     <string name="one_handed_left_notice">One-handed keys, on the left</string>
     <string name="one_handed_right_notice">One-handed keys, on the right</string>
     <string name="one_handed_off_notice">Full-width keys</string>
+    <string name="one_handed_centered">Centered keys</string>
     <string name="contacts_title_for">Contacts for “%1$s”</string>
     <string name="contacts_why">Allow contacts to insert a name, number or address. They stay on this phone, held in memory only, and are never learned or sent. Names you know are never corrected.</string>
     <string name="contacts_allow">Allow contacts</string>
@@ -689,4 +707,64 @@
     <string name="currency_dollar">Dollar ($)</string>
     <string name="currency_pound">Pound (£)</string>
     <string name="currency_body">Choose $ or £ without changing spelling. Follow spelling uses £ with British English and $ otherwise. Changes take effect in the next field you open.</string>
+    <string name="tool_passwords">Passwords &amp; cards</string>
+    <string name="tool_suggestions_waiting">%1$s, suggestions waiting</string>
+    <string name="passwords_waiting">Waiting for your password manager…</string>
+    <string name="passwords_none">Your password manager hasn’t offered anything for this field.</string>
+    <string name="passwords_off">Password manager suggestions are off in LocalType’s settings, so your manager shows its own list under the field.</string>
+    <string name="passwords_talkback">With TalkBack on, your password manager shows its own list under the field.</string>
+    <string name="passwords_no_manager">No password manager is chosen for autofill on this phone.</string>
+    <string name="passwords_open">Open %1$s</string>
+    <string name="passwords_open_manager">Open password manager</string>
+    <string name="passwords_autofill_settings">Android’s autofill settings</string>
+    <string name="passwords_not_opened">Android didn’t open it</string>
+    <string name="inactive_gaps_title">Inactive row gaps</string>
+    <string name="inactive_gaps_summary">Ignore touches in gaps between rows</string>
+    <string name="inactive_gaps_body">Touches in the narrow gaps between key rows do nothing. An extra gap below suggestions helps avoid accidental taps. Swipe typing still crosses the gaps. Off keeps the existing touch areas.</string>
+    <string name="blocked_words_title">Blocked words</string>
+    <string name="blocked_words_summary">Never suggest or learn these words</string>
+    <string name="blocked_words_details">Blocks up to 256 words in the selected language, regardless of case. Accents stay distinct. Blocking hides ordinary suggestions and prevents new learning; it does not edit your text or erase existing history. Forget removes learned evidence but keeps this blocked list. Unblock lets a word be suggested and learned again. Explicit saved text, dictation and proofreading are unchanged. The list stays on this device and is excluded from backups. While any words are blocked, the typing log pauses so private exclusions do not enter a log or change its replay. Existing logs remain; collection can resume in a new field after all words are unblocked.</string>
+    <string name="blocked_words_input">Word to block</string>
+    <string name="blocked_words_block">Block</string>
+    <string name="blocked_words_unblock">Unblock</string>
+    <string name="blocked_words_unblock_named">Unblock %1$s</string>
+    <string name="blocked_words_count">%1$d blocked words</string>
+    <string name="blocked_words_invalid">Enter one word, up to 80 characters.</string>
+    <string name="blocked_words_exists">This word is already blocked.</string>
+    <string name="blocked_words_full">The blocked list holds up to %1$d words.</string>
+    <string name="blocked_words_unblock_first">Unblock this word first, or wait for the blocked list to load.</string>
+    <string name="blocked_words_loading">Loading or saving blocked words…</string>
+    <string name="blocked_words_save_failed">Could not save the change. The previous blocked list is still active. Retry loading or reset the list.</string>
+    <string name="blocked_words_load_failed">Could not read blocked words. Suggestions and learning are paused; typing still works. Retry or reset the list.</string>
+    <string name="blocked_words_retry">Retry loading</string>
+    <string name="blocked_words_reset">Reset blocked list</string>
+    <string name="blocked_words_reset_confirm">Remove all blocked words for this language? This replaces the unreadable or failed list. Learned history and your text stay as they are.</string>
+    <string name="blocked_words_keyboard_error">Blocked words unavailable. Tap for Settings.</string>
+    <!-- Local character tools: available in More, unpinned by default. -->
+    <string name="symbol_tool_title">Symbols</string>
+    <string name="text_effects_title">Text effects</string>
+    <string name="local_tool_search">Search</string>
+    <string name="local_tool_edit">Edit source</string>
+    <string name="local_tool_done">Done</string>
+    <string name="local_tool_insert">Insert</string>
+    <string name="local_tool_copy">Copy</string>
+    <string name="local_tool_copied">Copied</string>
+    <string name="local_tool_no_results">No matching symbols</string>
+    <string name="local_tool_source">Source: %1$s</string>
+    <string name="local_tool_preview">Preview: %1$s</string>
+    <string name="local_tool_empty">Type your own draft</string>
+    <string name="local_tool_insert_named">Insert %1$s</string>
+    <string name="local_tool_selected">%1$s, selected</string>
+    <string name="symbol_tool_text">Text</string>
+    <string name="symbol_tool_emoji">Emoji</string>
+    <string name="symbol_tool_presentation">Text symbols have no emoji selector. Another app may still display them as emoji. Emoji entries are explicit variants.</string>
+    <string name="text_effects_caution">Changes characters, not fonts. Screen readers may read them differently.</string>
+    <string name="text_effects_unavailable">Enter up to 256 characters. Control characters or more than two combining marks in a row are not supported.</string>
+    <string name="text_effects_source_changed">The selected text changed. Select it again before inserting an effect.</string>
+    <string name="effect_small_caps">Small caps</string>
+    <string name="effect_superscript">Superscript</string>
+    <string name="effect_monospace">Monospace</string>
+    <string name="effect_fullwidth">Fullwidth</string>
+    <string name="effect_cursed">Cursed</string>
+    <string name="local_tool_copy_failed">Copy was refused by Android</string>
 </resources>

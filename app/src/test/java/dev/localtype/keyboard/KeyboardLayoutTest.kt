@@ -147,7 +147,12 @@ class KeyboardLayoutTest {
                 val expected = ('0'..'9').map(Char::toString).toSet() +
                     (if (signed) setOf("-") else emptySet()) + (if (decimal) setOf(".") else emptySet())
                 assertEquals(expected, typed(layout).toSet())
-                assertTrue(layout.rows.flatten().all { it.alternates.isEmpty() })
+                // A decimal field holds a comma on its period, and one with no minus key of its own holds a minus
+                // on 0 (a web number box is decimal and never signed). Digits-only boxes and number passwords hold nothing.
+                val holds = layout.rows.flatten().filter { it.alternates.isNotEmpty() }.associate { it.label to it.alternates }
+                val minusOnZero = decimal && !signed && !password
+                assertEquals((if (decimal) mapOf("." to listOf(",")) else emptyMap()) +
+                    (if (minusOnZero) mapOf("0" to listOf("-")) else emptyMap()), holds)
                 assertPadActions(layout, switchKey)
                 assertSpokenLabels(layout)
             }
@@ -343,5 +348,44 @@ class KeyboardLayoutTest {
         assertEquals(48, StripHeight.STANDARD.dp)
         assertTrue(StripHeight.entries.zipWithNext().all { (a, b) -> b.dp > a.dp && b.wordSp > a.wordSp })
         assertTrue(StripHeight.entries.all { it.wordSp > StripHeight.MIN_WORD_SP })
+    }
+
+    /** The audit of November 7, 2026: a hold on the ?123 page no longer repeats a key on that page. */
+    @org.junit.Test fun theSymbolsPageHoldsOnlyWhatItLacks() {
+        val page = KeyboardLayout.build(KeyboardLayout.Mode.SYMBOLS, showSwitchKey = false)
+        val keys = page.rows.flatten().mapNotNull { (it.action as? KeyAction.Text)?.value }.toSet()
+        for (key in page.rows.flatten()) for (held in key.alternates) {
+            if ((key.label == "." && held == ",") || held.length > 1) continue
+            org.junit.Assert.assertFalse("${key.label} holds $held, already a key", held in keys)
+        }
+        val comma = page.rows.last().first { it.label == "," }
+        org.junit.Assert.assertTrue(comma.alternates.containsAll(listOf("–", "—")))
+        // At the widest space bar the comma key goes, and the period still holds it.
+        val widest = KeyboardLayout.build(KeyboardLayout.Mode.SYMBOLS, showSwitchKey = false, spaceBar = SpaceBar.WIDEST)
+        org.junit.Assert.assertTrue(widest.rows.last().first { it.label == "." }.alternates.contains(","))
+    }
+
+    @Test
+    fun `a date or time field gets digits with its own separators beside 0`() {
+        val cases = mapOf(
+            InputType.TYPE_DATETIME_VARIATION_DATE to (listOf("/", "0", "-") to mapOf("/" to listOf(".", "-"), "-" to listOf("."))),
+            InputType.TYPE_DATETIME_VARIATION_TIME to (listOf(":", "0", "") to emptyMap()),
+            InputType.TYPE_DATETIME_VARIATION_NORMAL to (listOf("/", "0", ":") to mapOf("/" to listOf("-", "."))),
+        )
+        for ((variation, expected) in cases) for (switchKey in listOf(false, true)) {
+            val inputType = InputType.TYPE_CLASS_DATETIME or variation
+            val layout = KeyboardLayout.build(TypingRules.layoutFor(inputType), switchKey, inputType = inputType)
+            assertPadGrid(layout)
+            assertEquals(listOf("1", "2", "3", "4", "5", "6", "7", "8", "9"), layout.rows.take(3).flatten().map { it.label })
+            assertEquals(expected.first, layout.rows[3].map { it.label })
+            assertEquals(expected.second, layout.rows.flatten().filter { it.alternates.isNotEmpty() }.associate { it.label to it.alternates })
+            assertPadActions(layout, switchKey)
+            assertSpokenLabels(layout)
+            // Its symbols and letters pages carry a key back to this pad, as a number field's do.
+            for (mode in listOf(KeyboardLayout.Mode.SYMBOLS, KeyboardLayout.Mode.MORE_SYMBOLS, KeyboardLayout.Mode.LETTERS)) {
+                val back = KeyboardLayout.build(mode, switchKey, inputType = inputType).rows.last().first { it.action == KeyAction.ToFieldLayout }
+                assertEquals("Date and time pad", back.spokenLabel)
+            }
+        }
     }
 }

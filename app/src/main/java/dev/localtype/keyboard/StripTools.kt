@@ -6,7 +6,10 @@ package dev.localtype.keyboard
  */
 enum class StripTool(val id: String, val label: Int, val icon: Int, val group: StripTools.Group, val gesture: GestureAction? = null) {
     CLIPBOARD("clipboard", R.string.tool_clipboard, R.drawable.ic_paste, StripTools.Group.INSERT, GestureAction.SAVED_TEXT),
+    PASSWORDS("passwords", R.string.tool_passwords, R.drawable.ic_passwords, StripTools.Group.INSERT),
     EMOJI("emoji", R.string.emoji_panel, R.drawable.ic_emoji, StripTools.Group.INSERT, GestureAction.EMOJI),
+    SYMBOLS("symbols", R.string.symbol_tool_title, R.drawable.ic_emoji, StripTools.Group.INSERT),
+    TEXT_EFFECTS("text_effects", R.string.text_effects_title, R.drawable.ic_text_case, StripTools.Group.EDIT),
     VOICE("voice", R.string.voice_input, R.drawable.ic_mic, StripTools.Group.INSERT),
     CONTACTS("contacts", R.string.tool_contacts, R.drawable.ic_contacts, StripTools.Group.INSERT),
     TODAY("today", R.string.tool_today, R.drawable.ic_today, StripTools.Group.INSERT),
@@ -43,9 +46,13 @@ object StripTools {
         KEYBOARD(R.string.tools_group_keyboard),
     }
 
-    /** The built-in row: the first ones that are offered in the field and fit, then More. Holding a tile changes it. */
+    /**
+     * The built-in row: the first ones that are offered in the field and fit, then More. Holding a tile changes it,
+     * and a row someone has changed is kept as they left it ([rowOrder]), so a tool added here never moves into it.
+     */
     val ROW_ORDER = listOf(
-        StripTool.CLIPBOARD, StripTool.EMOJI, StripTool.VOICE, StripTool.UNDO, StripTool.PROOFREAD, StripTool.SELECT_ALL,
+        StripTool.CLIPBOARD, StripTool.PASSWORDS, StripTool.EMOJI, StripTool.VOICE, StripTool.UNDO, StripTool.PROOFREAD,
+        StripTool.SELECT_ALL,
     )
 
     /** At most this many tools are pinned to the row; it shows only as many as fit. */
@@ -88,10 +95,13 @@ object StripTools {
     data class Field(
         val voice: Boolean,
         val proofread: Boolean,
+        /** A password manager's chips can reach the keyboard at all: Android 11 and later ([PasswordsTile.available]). */
+        val passwords: Boolean = false,
     )
 
     fun offered(tool: StripTool, field: Field): Boolean = when (tool) {
         StripTool.VOICE -> field.voice
+        StripTool.PASSWORDS -> field.passwords
         // Rewriting asks the same on-device model as proofreading, so it goes where proofreading does.
         StripTool.PROOFREAD, StripTool.REWRITE_SHORTER, StripTool.REWRITE_FORMAL, StripTool.REWRITE_FRIENDLY -> field.proofread
         else -> true
@@ -123,6 +133,7 @@ object StripTools {
             // Speaking text out loud reads it: never a password, and nothing in a terminal.
             StripTool.READ_ALOUD -> !now.sensitive && !now.terminal
             // Reading the text to count or recase it: never a password.
+            StripTool.TEXT_EFFECTS -> !now.sensitive && now.learning && !now.terminal
             StripTool.CHANGE_CASE, StripTool.COUNT -> !now.sensitive && !now.terminal
             // Cleaning a link only removes from it, but it reads the text: never a password or a terminal.
             StripTool.CLEAN_LINKS -> !now.sensitive && !now.terminal
@@ -131,6 +142,9 @@ object StripTools {
             StripTool.SEARCH_WEB, StripTool.SEND_TO_APP -> !now.sensitive && now.learning && !now.terminal
             // A contact goes into any field but a password: it's the person's own choice of text, never learned.
             StripTool.CONTACTS -> !now.sensitive
+            // Wherever the manager's chips can be, password fields above all. The panel shows views Android draws and
+            // opens the manager's app; it reads nothing, so no field rule applies.
+            StripTool.PASSWORDS -> true
             else -> true
         }
     }

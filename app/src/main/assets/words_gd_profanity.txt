@@ -1,0 +1,2 @@
+# Common Scottish Gaelic swear words, counts from Wikipedia (gdwiki-20261101 pages-articles dump), CC BY-SA 4.0. Slurs are deliberately excluded.
+cac	7

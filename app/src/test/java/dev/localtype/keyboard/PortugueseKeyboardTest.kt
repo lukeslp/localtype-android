@@ -45,7 +45,7 @@ class PortugueseKeyboardTest {
         assertEquals(listOf("words_pt.txt", "words_pt_profanity.txt", "words_known_pt.txt"),
             listOf(portuguese.wordsAsset, portuguese.profanityAsset, portuguese.lexiconAsset))
         assertEquals(listOf(LanguageProfile.ENGLISH, LanguageProfile.SPANISH, portuguese, LanguageProfile.HEBREW,
-            LanguageProfile.WELSH, LanguageProfile.IRISH, LanguageProfile.MAORI, LanguageProfile.HAWAIIAN), LanguageProfile.WITH_WORDS)
+            LanguageProfile.WELSH, LanguageProfile.IRISH, LanguageProfile.MAORI, LanguageProfile.HAWAIIAN) + LanguageProfile.EXTRA, LanguageProfile.WITH_WORDS)
         assertEquals(LanguageProfile.WITH_WORDS + LanguageProfile.IPA, LanguageProfile.ALL)
         assertEquals(portuguese, LanguageProfile.of("pt"))
     }

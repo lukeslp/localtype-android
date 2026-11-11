@@ -287,7 +287,7 @@ class TypingRulesTest {
         }
         for (variation in listOf(InputType.TYPE_DATETIME_VARIATION_NORMAL, InputType.TYPE_DATETIME_VARIATION_DATE,
             InputType.TYPE_DATETIME_VARIATION_TIME)) {
-            assertEquals(KeyboardLayout.Mode.SYMBOLS, TypingRules.layoutFor(InputType.TYPE_CLASS_DATETIME or variation))
+            assertEquals(KeyboardLayout.Mode.DATETIME, TypingRules.layoutFor(InputType.TYPE_CLASS_DATETIME or variation))
         }
         for (variation in listOf(InputType.TYPE_TEXT_VARIATION_NORMAL, InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS,
             InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS, InputType.TYPE_TEXT_VARIATION_URI,
@@ -381,5 +381,56 @@ class TypingRulesTest {
         assertFalse(TypingRules.wantsSuggestions(web))
         assertTrue(TypingRules.allowsAutocorrect(text or InputType.TYPE_TEXT_FLAG_AUTO_CORRECT))
         assertTrue(TypingRules.allowsAutocorrect(text or InputType.TYPE_TEXT_VARIATION_WEB_EDIT_TEXT))
+    }
+
+    @Test
+    fun `two spaces make a period only in ordinary text`() {
+        val text = InputType.TYPE_CLASS_TEXT
+        for (ordinary in listOf(text, text or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES,
+            text or InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE, text or InputType.TYPE_TEXT_VARIATION_WEB_EDIT_TEXT,
+            text or InputType.TYPE_TEXT_VARIATION_PERSON_NAME, text or InputType.TYPE_TEXT_VARIATION_EMAIL_SUBJECT,
+            // An address bar is where searches are typed (0.5.18).
+            text or InputType.TYPE_TEXT_VARIATION_URI)) assertTrue(Integer.toHexString(ordinary), TypingRules.doubleSpacePeriod(ordinary))
+        // A passphrase with two spaces must be stored as typed, and an address has no sentences.
+        for (literal in listOf(text or InputType.TYPE_TEXT_VARIATION_PASSWORD, text or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD,
+            text or InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD, text or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS,
+            text or InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS, InputType.TYPE_CLASS_NUMBER,
+            InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD, InputType.TYPE_CLASS_PHONE,
+            InputType.TYPE_CLASS_DATETIME, InputType.TYPE_NULL)) assertFalse(Integer.toHexString(literal), TypingRules.doubleSpacePeriod(literal))
+    }
+
+    @Test
+    fun `an all-capitals field is one, and a number field's signed flag is not`() {
+        assertTrue(TypingRules.capitalizesEveryLetter(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS))
+        assertFalse(TypingRules.capitalizesEveryLetter(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS))
+        assertFalse(TypingRules.capitalizesEveryLetter(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES))
+        // The same bit means "signed" in a number field.
+        assertEquals(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS, InputType.TYPE_NUMBER_FLAG_SIGNED)
+        assertFalse(TypingRules.capitalizesEveryLetter(InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_SIGNED))
+    }
+
+    @Test
+    fun `addresses and passwords never get an automatic capital`() {
+        val caps = InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+        val text = InputType.TYPE_CLASS_TEXT
+        assertTrue(TypingRules.autoShift(caps, autoCapitalize = true, inputType = text or caps))
+        // What WebView sends for a text input with inputmode=email or inputmode=url: the address variation with sentence capitals.
+        for (address in listOf(text or InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS or caps, text or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS or caps,
+            text or InputType.TYPE_TEXT_VARIATION_URI or caps, text or InputType.TYPE_TEXT_VARIATION_PASSWORD or caps,
+            text or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD or caps, text or InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD or caps)) {
+            assertFalse(Integer.toHexString(address), TypingRules.autoShift(caps, autoCapitalize = true, inputType = address))
+            assertFalse(Integer.toHexString(address), TypingRules.capitalizesSentences(address, autoCapitalize = true))
+        }
+        assertEquals(0x40d1, text or InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS or caps)
+        assertTrue(TypingRules.capitalizesSentences(text or InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE or caps, autoCapitalize = true))
+    }
+
+    @Test
+    fun `a symbols page goes back to the field's own keys`() {
+        assertEquals(KeyboardLayout.Mode.LETTERS, TypingRules.layerAfterSymbol(InputType.TYPE_CLASS_TEXT))
+        assertEquals(KeyboardLayout.Mode.LETTERS, TypingRules.layerAfterSymbol(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD))
+        assertEquals(KeyboardLayout.Mode.NUMBER, TypingRules.layerAfterSymbol(InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL))
+        assertEquals(KeyboardLayout.Mode.PHONE, TypingRules.layerAfterSymbol(InputType.TYPE_CLASS_PHONE))
+        assertEquals(KeyboardLayout.Mode.DATETIME, TypingRules.layerAfterSymbol(InputType.TYPE_CLASS_DATETIME))
     }
 }

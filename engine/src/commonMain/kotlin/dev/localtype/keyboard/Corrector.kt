@@ -140,14 +140,14 @@ class Corrector(
             .filter { !isWeak(it, words, known) }
             .sortedByDescending(words::score)
             .map { Target(it, words.score(it).toFloat(), keys) }
-            .groupBy { it.word.length }
+            .groupBy { keys.language.bareLength(it.word) }
         index = Index(words, known, keys, built)
         return built
     }
 
     private fun computeProposal(typed: String, touches: List<Touch?>?, previous: String?, sentenceStart: Boolean, afterComma: Boolean, keys: Keys): Correction? {
         val word = typed.replace('’', '\'').lowercase()
-        if (word.length < 2 || word.any { !it.isLetter() && it != '\'' }) return null
+        if (word.length < 2 || word.any { !it.isLetter() && it != '\'' && it !in keys.language.dropped }) return null
         // Leave acronyms and mid-word capitals ("NASA", "iPhone") alone.
         if (typed.drop(1).any { it.isUpperCase() }) return null
         if (isKept(word)) return null
@@ -214,7 +214,7 @@ class Corrector(
             else -> null
         }
         val guard = when {
-            word.length < 2 || word.any { !it.isLetter() && it != '\'' } -> "invalid-word"
+            word.length < 2 || word.any { !it.isLetter() && it != '\'' && it !in language().dropped } -> "invalid-word"
             typed.drop(1).any { it.isUpperCase() } -> "capitalization"
             isKept(word) -> "kept"
             blocked(word) -> "excluded"
@@ -268,7 +268,7 @@ class Corrector(
         val leastFix = FloatArray(word.length) { i ->
             val c = word[i]
             val touch = touches?.getOrNull(i)
-            var cheapest = extraKey(word, i, keys)
+            var cheapest = extraCost(word, i, keys)
             for (other in keys.letters) if (other != c) cheapest = minOf(cheapest, substitution(c, touch, other, keys))
             cheapest
         }
@@ -296,7 +296,9 @@ class Corrector(
         }
         val maxLengthChange = (budget / MIN_INSERT_OR_DELETE).toInt().coerceAtMost(3)
         val byLength = targetsByLength(words, known, keys)
-        for (length in (word.length - maxLengthChange)..(word.length + maxLengthChange)) {
+        // Lengths are counted without the marks a list spells with, so "میرود" finds "می‌رود" at its own length.
+        val bareLength = keys.language.bareLength(word)
+        for (length in (bareLength - maxLengthChange)..(bareLength + maxLengthChange)) {
             for (target in byLength[length].orEmpty()) {
                 val limit = affordable(target.base)
                 // Sorted by frequency, so nothing later in this length can do better.
@@ -413,6 +415,10 @@ class Corrector(
             return slip(from.x - to.x, from.y - to.y) + if (target != intended) ACCENT else 0f
         }
 
+        /** [extraKey], or the price of an accent for a mark the candidate doesn't spell with (a non-joiner typed where none belongs). */
+        private fun extraCost(typed: String, i: Int, keys: Keys): Float =
+            if (typed[i] in keys.language.dropped) ACCENT else extraKey(typed, i, keys)
+
         /** An extra key: a double tap, or brushing the key beside the one before or after it. */
         private fun extraKey(typed: String, i: Int, keys: Keys): Float {
             val c = typed[i]
@@ -450,12 +456,14 @@ class Corrector(
         private fun cost(typed: String, candidate: String, calibrated: List<Touch?>?, limit: Float, keys: Keys): Float {
             val n = typed.length
             val m = candidate.length
-            if (kotlin.math.abs(n - m) * MIN_INSERT_OR_DELETE > limit) return Float.MAX_VALUE
-            val s = scratch.get()!!.fit(n + 1, m + 1)
             val language = keys.language
+            // A mark the lists spell with is as cheap as an accent, so it doesn't count toward the length a fix must make up.
+            if (kotlin.math.abs(language.bareLength(typed) - language.bareLength(candidate)) * MIN_INSERT_OR_DELETE > limit) return Float.MAX_VALUE
+            val s = scratch.get()!!.fit(n + 1, m + 1)
+            val dropped = language.dropped
             for (i in 0 until n) {
                 val c = typed[i]
-                s.extra[i] = extraKey(typed, i, keys)
+                s.extra[i] = extraCost(typed, i, keys)
                 s.typedBare[i] = language.fold(c)
                 val from = calibrated?.getOrNull(i) ?: keys.geometry.center(keys.keyOf(c))
                 s.fromKnown[i] = from != null
@@ -463,7 +471,7 @@ class Corrector(
             }
             for (j in 0 until m) {
                 val c = candidate[j]
-                s.missed[j] = missedKey(candidate, j)
+                s.missed[j] = if (c in dropped) ACCENT else missedKey(candidate, j)
                 s.candidateBare[j] = language.fold(c)
                 val target = keys.keyOf(c)
                 val center = keys.geometry.center(target)

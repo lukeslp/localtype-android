@@ -162,7 +162,7 @@ class PersonalLearningState(
     private fun normalizedWord(word: String, offerable: Boolean): String? {
         if (!validSize(word)) return null
         val normalized = AdaptiveNgramModel.normalize(word)
-        if (!validSize(normalized) || !AdaptiveNgramModel.WORD_REGEX.matches(normalized) || !LearnedPairState.validWord(normalized)) return null
+        if (!validSize(normalized) || !WordRule.STORED.matches(normalized) || !LearnedPairState.validWord(normalized)) return null
         if (offerable && normalized.length < 2 && normalized !in oneLetterWords) return null
         return normalized
     }

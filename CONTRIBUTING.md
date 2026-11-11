@@ -1,11 +1,11 @@
 # Build and review
 
-Gradle 8.14.3 runs on JDK 21, the Kotlin toolchain needs an installed JDK 17, and
-the app builds against Android SDK platform 35. Set `ANDROID_HOME` to the SDK.
-Gradle downloads dependencies from Google Maven, Maven Central and the Gradle
-plugin portal. The artifact checksums, the wrapper distribution checksum and the
-app's resolved dependencies are checked in. Building downloads no language model
-or training corpus.
+Gradle 8.14.3 runs on JDK 21 or 17, the modules compile to Java 17 bytecode with
+no JDK toolchain, and the app builds against Android SDK platform 35. Set
+`ANDROID_HOME` to the SDK. Gradle downloads dependencies from Google Maven, Maven
+Central and the Gradle plugin portal. The artifact checksums, the wrapper
+distribution checksum and the app's resolved dependencies are checked in.
+Building downloads no language model or training corpus.
 
 ```sh
 ./gradlew :app:testFdroidDebugUnitTest :app:assembleFdroidDebug :app:lintFdroidDebug

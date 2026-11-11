@@ -15,8 +15,8 @@ import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
 
-/** The panels that can cover the keys: every emoji, Saved text, every tool, the arrow pad and contacts. */
-enum class KeyboardPanel { EMOJI, SAVED, TOOLS, ARROWS, CONTACTS }
+/** The panels that can cover the keys: every emoji, Saved text, every tool, the arrow pad, contacts and passwords. */
+enum class KeyboardPanel { EMOJI, SAVED, TOOLS, ARROWS, CONTACTS, PASSWORDS, SYMBOLS, TEXT_EFFECTS }
 
 /**
  * The area under the suggestion strip: the keys, and any open panel laid over them at exactly the
@@ -46,8 +46,15 @@ class KeyArea(context: Context) : FrameLayout(context) {
         // The keys come first and set the height; a panel takes exactly that, however much it could fill.
         val keys = getChildAt(0) ?: return super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         measureChild(keys, widthMeasureSpec, heightMeasureSpec)
+        // Keys given a fixed width (one-handed, or centered on a wide window) never overflow an area that side insets
+        // left narrower than that width; they fill it instead.
+        val room = MeasureSpec.getSize(widthMeasureSpec)
+        if (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.UNSPECIFIED && keys.measuredWidth > room) {
+            keys.measure(MeasureSpec.makeMeasureSpec(room, MeasureSpec.EXACTLY),
+                getChildMeasureSpec(heightMeasureSpec, 0, keys.layoutParams.height))
+        }
         val areaHeight = if (pinnedHeight > 0) pinnedHeight else keys.measuredHeight
-        // One-handed keys are narrower than the area, which keeps the full width for panels and the rail.
+        // One-handed and centered keys are narrower than the area, which keeps the full width for panels and the rail.
         val areaWidth = if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.UNSPECIFIED) keys.measuredWidth
             else maxOf(keys.measuredWidth, MeasureSpec.getSize(widthMeasureSpec))
         val width = MeasureSpec.makeMeasureSpec(areaWidth, MeasureSpec.EXACTLY)

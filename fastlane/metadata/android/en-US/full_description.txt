@@ -8,7 +8,7 @@
 <li>Adjust the space bar, suggestion bar, one-handed mode, number row and cursor sliding.</li>
 </ul>
 
-<p>English is the main language. Spanish, Portuguese, Hebrew, Welsh, Irish, Māori, Hawaiian and swipe typing are early experiments and start off. A dedicated IPA layout is also available. These features still need wider testing.</p>
+<p>English is the main language. Spanish, Portuguese, Galician, Hebrew, Arabic, Persian, Welsh, Irish, Scottish Gaelic, Māori, Hawaiian and swipe typing are early experiments and start off. Navajo is a very early experiment that corrects nothing automatically. A dedicated IPA layout is also available. These features still need wider testing.</p>
 
 <p>The F-Droid distribution has no Internet permission. It keeps Chime and the local typing tools, and leaves updates to your installing client. The separate full distribution's optional Gemini Nano and Gemma features are not included.</p>
 

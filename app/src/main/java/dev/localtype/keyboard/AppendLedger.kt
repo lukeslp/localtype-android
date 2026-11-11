@@ -12,6 +12,11 @@ package dev.localtype.keyboard
  * are returned to be sent again. Anything else, or an ambiguous match, returns nothing, so a character that did land is
  * never sent twice. Any edit other than a plain append clears the ledger first.
  *
+ * The editor's text alone cannot tell a swallowed append from one the app undid: a field the app emptied, a caret it
+ * moved back, or focus moving to the next empty box of a web page (a crossword grid) all read like the text before the
+ * append. So the service reads once more right after each append, through the same connection, and reports an answer
+ * with [landed]. A retired connection answers nothing, so only an append with no answer after it is ever resent.
+ *
  * Pure state, so the matching rules are testable without Android.
  */
 class AppendLedger(private val window: Int, private val capacity: Int = 32) {
@@ -57,6 +62,15 @@ class AppendLedger(private val window: Int, private val capacity: Int = 32) {
         // Two entries with the same starting text (a long run of one character) can't say which arrived.
         if (matches.size != 1) return emptyList()
         return recorded.drop(matches.single()).map { it.text }
+    }
+
+    /**
+     * A read through the connection the appends went through has answered since the last of them. A connection never
+     * comes back from being retired, so it was live when each append was sent and each reached its editor. Whatever
+     * the text says at a later restart is the app's doing, and nothing is resent.
+     */
+    fun landed() {
+        entries.clear()
     }
 
     fun clear() {

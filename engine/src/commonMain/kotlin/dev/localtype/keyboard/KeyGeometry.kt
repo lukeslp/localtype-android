@@ -45,9 +45,19 @@ class LetterGeometry private constructor(private val centers: Map<Char, Touch>) 
         val QWERTY: LetterGeometry = rows("qwertyuiop" to 0f, "asdfghjkl" to 0.5f, "zxcvbnm" to 1.5f)
 
         /** Letter rows, top first, each with its indent in key widths. */
-        fun rows(vararg rows: Pair<String, Float>): LetterGeometry = LetterGeometry(buildMap {
+        fun rows(vararg rows: Pair<String, Float>): LetterGeometry = rows(1f, *rows)
+
+        /**
+         * Letter rows whose keys are [keyWidth] of a row unit wide, each row with its indent in keys. The centers are
+         * summed key by key, the way [the drawn layout][LetterGeometry] is read back, so the two agree to the bit.
+         */
+        fun rows(keyWidth: Float, vararg rows: Pair<String, Float>): LetterGeometry = LetterGeometry(buildMap {
             rows.forEachIndexed { row, (letters, indent) ->
-                letters.forEachIndexed { column, c -> put(c, Touch(indent + column + 0.5f, row + 0.5f)) }
+                var x = indent * keyWidth
+                for (c in letters) {
+                    put(c, Touch(x + keyWidth / 2f, row + 0.5f))
+                    x += keyWidth
+                }
             }
         })
 
@@ -59,9 +69,10 @@ class LetterGeometry private constructor(private val centers: Map<Char, Touch>) 
          * [ROW_UNITS] keys: the top row from the left edge, a shorter home row centered, and the bottom
          * row after Shift, which takes half of what its letters leave.
          */
-        fun fromRows(rows: List<String>): LetterGeometry = rows(*rows.mapIndexed { index, letters ->
-            letters to if (index == 0) 0f else (ROW_UNITS - letters.length) / 2f
-        }.toTypedArray())
+        fun fromRows(rows: List<String>, columns: Int = ROW_UNITS.toInt(), bottomFromLeft: Boolean = false): LetterGeometry =
+            rows(ROW_UNITS / columns, *rows.mapIndexed { index, letters ->
+                letters to if (index == 0 || (bottomFromLeft && index == rows.lastIndex)) 0f else (columns - letters.length) / 2f
+            }.toTypedArray())
 
         const val ROW_UNITS = 10f
     }

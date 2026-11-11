@@ -21,7 +21,8 @@ class BundledWordListsTest {
             "words_pt.txt", "words_pt_profanity.txt", "words_known_pt.txt",
             "words_he.txt", "words_he_profanity.txt", "words_known_he.txt",
             "words_cy.txt", "words_known_cy.txt", "words_ga.txt", "words_known_ga.txt",
-            "words_mi.txt", "words_known_mi.txt", "words_haw.txt", "words_known_haw.txt")))
+            "words_mi.txt", "words_known_mi.txt", "words_haw.txt", "words_known_haw.txt") +
+            LanguageProfile.EXTRA.flatMap { listOf(it.wordsAsset, it.profanityAsset, it.lexiconAsset) }))
         var checked = 0
         var checkedSpanish = 0
         var checkedPortuguese = 0
@@ -35,7 +36,9 @@ class BundledWordListsTest {
                 spanish -> SuggestionWordRules.EXCLUDED_HASHES_ES
                 portuguese -> SuggestionWordRules.EXCLUDED_HASHES_PT
                 hebrew -> SuggestionWordRules.EXCLUDED_HASHES_HE
-                else -> emptySet()
+                // The languages added later name their lists by code alone.
+                else -> LanguageProfile.EXTRA.firstOrNull { list.name.endsWith("_${it.code}.txt") || list.name.contains("_${it.code}_") }
+                    ?.let { SuggestionWordRules.forLanguage(it) }.orEmpty()
             }
             list.readLines().forEachIndexed { index, line ->
                 if (line.isBlank() || line.startsWith("#")) return@forEachIndexed
@@ -70,6 +73,11 @@ class BundledWordListsTest {
         val hebrewOnly = SuggestionWordRules.EXCLUDED_HASHES_HE
         assertTrue(hebrewOnly.size >= 30 && hebrewOnly.none { it in SuggestionWordRules.EXCLUDED_HASHES })
         assertTrue(SuggestionWordRules.forLanguage(LanguageProfile.HEBREW) === hebrewOnly)
+        for ((language, own) in listOf(LanguageProfile.ARABIC to SuggestionWordRules.EXCLUDED_HASHES_AR,
+            LanguageProfile.PERSIAN to SuggestionWordRules.EXCLUDED_HASHES_FA)) {
+            assertTrue(language.code, own.size >= 8 && own.none { it in SuggestionWordRules.EXCLUDED_HASHES })
+            assertTrue(language.code, SuggestionWordRules.forLanguage(language) === own)
+        }
         assertTrue(SuggestionWordRules.forLanguage(LanguageProfile.IPA).isEmpty())
     }
 

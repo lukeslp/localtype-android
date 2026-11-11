@@ -6,7 +6,7 @@ package dev.localtype.keyboard
  * foreground app, so a toast from the service or a panel is not seen on most phones.
  */
 object NoticeRules {
-    enum class Message { REFUSED, UNVERIFIED, SWIPE_OFF_HERE, SWIPE_NEW_WORD, SWIPE_SELECTION, SWIPE_LANGUAGE, LANGUAGE, TOOL_PINNED, TOOL_UNPINNED, TOOLS_ROW_FULL }
+    enum class Message { REFUSED, UNVERIFIED, SWIPE_OFF_HERE, SWIPE_NEW_WORD, SWIPE_SELECTION, SWIPE_LANGUAGE, LANGUAGE, TOOL_PINNED, TOOL_UNPINNED, TOOLS_ROW_FULL, NOT_OPENED, EFFECT_SOURCE_CHANGED, COPY_FAILED }
 
     enum class Place { STATUS_ROW, SAVED_TITLE, OVER_HEADER }
 
@@ -29,7 +29,8 @@ object NoticeRules {
     fun place(panel: KeyboardPanel?): Place = when (panel) {
         null -> Place.STATUS_ROW
         KeyboardPanel.SAVED -> Place.SAVED_TITLE
-        KeyboardPanel.EMOJI, KeyboardPanel.TOOLS, KeyboardPanel.ARROWS, KeyboardPanel.CONTACTS -> Place.OVER_HEADER
+        KeyboardPanel.EMOJI, KeyboardPanel.TOOLS, KeyboardPanel.ARROWS, KeyboardPanel.CONTACTS, KeyboardPanel.PASSWORDS,
+        KeyboardPanel.SYMBOLS, KeyboardPanel.TEXT_EFFECTS -> Place.OVER_HEADER
     }
 
     /**

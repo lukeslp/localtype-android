@@ -1,0 +1,23 @@
+# Common Persian swear words, counts from hermitdave/FrequencyWords, content/2018/fa (OpenSubtitles 2018) at commit 525f9b560de45753a5ea01069454e72e9aa541c6, CC BY-SA 4.0, with Persian Wikipedia (fawiki-20261101-pages-articles1.xml-p1p1500000.bz2), CC BY-SA 4.0. Slurs are deliberately excluded.
+کس	11532
+حرومزاده	5494
+جنده	4176
+گه	4016
+کون	2703
+کیر	1681
+گوه	760
+مادرجنده	755
+کیری	713
+کیرم	524
+ریدم	523
+لاشی	423
+بگا	285
+حرامزاده	237
+ریدی	226
+گاییدم	215
+دیوث	197
+جاکش	170
+گاییدن	118
+کسکش	83
+کص	56
+کصکش	6

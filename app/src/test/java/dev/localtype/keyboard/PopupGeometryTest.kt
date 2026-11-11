@@ -131,4 +131,28 @@ class PopupGeometryTest {
             }
         }
     }
+
+    @Test
+    fun `a finger clamped to the window's top still reaches the upper row`() {
+        val placement = PopupGeometry.Placement(originX = 0f, mirrored = false, columns = 8)
+        // Two 50-high rows from y = -95 to 5; the window's top is at -60, inside the upper row.
+        val originY = -95f
+        val pick = { y: Float -> PopupGeometry.indexAt(cell / 2, y, placement, originY, 8, 2, cell, height, 12, reachableTop = -60f) }
+        assertEquals(0, pick(0f))
+        assertEquals(8, pick(-60f))
+        assertEquals(8, pick(-40f))
+        assertEquals(0, pick(-20f))
+        // Without clamping the drawn rows decide, as before.
+        assertEquals(0, PopupGeometry.indexAt(cell / 2, -40f, placement, originY, 8, 2, cell, height, 12))
+        assertEquals(8, PopupGeometry.indexAt(cell / 2, -60f, placement, originY, 8, 2, cell, height, 12))
+    }
+
+    @Test
+    fun `a popup inside the reachable area keeps its drawn rows`() {
+        val placement = PopupGeometry.Placement(originX = 0f, mirrored = false, columns = 8)
+        for (y in listOf(-90f, -50f, -45f, 0f)) assertEquals(
+            PopupGeometry.indexAt(cell / 2, y, placement, -95f, 8, 2, cell, height, 12),
+            PopupGeometry.indexAt(cell / 2, y, placement, -95f, 8, 2, cell, height, 12, reachableTop = -200f),
+        )
+    }
 }

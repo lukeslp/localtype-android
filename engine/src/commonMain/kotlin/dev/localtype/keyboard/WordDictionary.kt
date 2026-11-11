@@ -54,11 +54,24 @@ class WordDictionary private constructor(
     fun completesPrefix(word: String, prefix: String): Boolean {
         if (word.startsWith(prefix)) return true
         val language = folded?.language ?: return false
-        if (word.length < prefix.length) return false
-        return prefix.indices.all { i ->
-            val p = prefix[i]
-            word[i] == p || (language.fold(p) == p && language.fold(word[i]) == p)
+        return foldedMatch(language, word, prefix)
+    }
+
+    /**
+     * [word] begins the way [prefix] was typed: each typed character is the word's own, or a bare letter standing for
+     * its accented form, and a mark the language's lists spell with ([LanguageProfile.dropped]: the non-joiner in
+     * "می‌رود") may sit in the word where nothing was typed. An accent or a mark that was typed must be there.
+     */
+    private fun foldedMatch(language: LanguageProfile, word: String, prefix: String): Boolean {
+        var j = 0
+        for (p in prefix) {
+            while (j < word.length && word[j] != p && word[j] in language.dropped) j++
+            if (j >= word.length) return false
+            val w = word[j]
+            if (w != p && !(language.fold(p) == p && language.fold(w) == p)) return false
+            j++
         }
+        return true
     }
 
     private fun foldedCompletions(folded: Folded, prefix: String, limit: Int): List<Pair<String, Int>> {
@@ -69,7 +82,7 @@ class WordDictionary private constructor(
         while (low < folded.keys.size && folded.keys[low].startsWith(bare)) {
             val position = folded.positions[low]
             val word = sortedWords[position]
-            if (prefix.indices.all { i -> word[i] == prefix[i] || language.fold(prefix[i]) == prefix[i] }) {
+            if (foldedMatch(language, word, prefix)) {
                 matches += word to sortedScores[position]
             }
             low++
@@ -103,7 +116,7 @@ class WordDictionary private constructor(
             }
             val sorted = scored.sortedBy { it.first }
             val sortedWords = sorted.map { it.first }.toTypedArray()
-            val folded = if (language.folds.isEmpty()) null else {
+            val folded = if (!language.folding) null else {
                 val order = sortedWords.indices.sortedWith(compareBy<Int> { language.fold(sortedWords[it]) }.thenBy { it })
                 Folded(language, Array(order.size) { language.fold(sortedWords[order[it]]) }, order.toIntArray())
             }

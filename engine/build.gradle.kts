@@ -8,8 +8,12 @@ plugins {
 // iPhone keyboard (the iOS framework). No Android or Apple types here: the platforms differ only in the few
 // expect/actual helpers in Platform.kt (hashes, checksums, character categories, a lock).
 kotlin {
-    jvmToolchain(17)
-    jvm()
+    // Java 17 bytecode without a toolchain, as in app/build.gradle.kts.
+    jvm {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
+    }
 
     val xcframework = XCFramework("LocalTypeEngine")
     val simulator = iosSimulatorArm64()

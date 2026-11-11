@@ -149,9 +149,29 @@ object TypingRules {
     fun layoutFor(inputType: Int): KeyboardLayout.Mode = when (inputType and InputType.TYPE_MASK_CLASS) {
         InputType.TYPE_CLASS_NUMBER -> KeyboardLayout.Mode.NUMBER
         InputType.TYPE_CLASS_PHONE -> KeyboardLayout.Mode.PHONE
-        InputType.TYPE_CLASS_DATETIME -> KeyboardLayout.Mode.SYMBOLS
+        InputType.TYPE_CLASS_DATETIME -> KeyboardLayout.Mode.DATETIME
         else -> KeyboardLayout.Mode.LETTERS
     }
+
+    /**
+     * Where a symbols page goes back to once a space or an apostrophe has been typed from it: the field's own keys.
+     * In a text field that is the letters; in a number, phone or date field it is that field's pad, never letters the
+     * field did not ask for.
+     */
+    fun layerAfterSymbol(inputType: Int): KeyboardLayout.Mode = layoutFor(inputType)
+
+    /**
+     * Two quick spaces end a sentence with a period only in ordinary text. A password or an email address is not
+     * prose: there the second space must stay a space, or a passphrase is stored as something its owner never typed.
+     * Number, phone, date and raw-key fields have no sentences either. An address bar keeps it, since people type
+     * searches there (0.5.18).
+     */
+    fun doubleSpacePeriod(inputType: Int): Boolean =
+        inputType and InputType.TYPE_MASK_CLASS == InputType.TYPE_CLASS_TEXT && !isSensitive(inputType) && !isEmail(inputType)
+
+    /** A text field that asks for every letter as a capital (`TYPE_TEXT_FLAG_CAP_CHARACTERS`): booking references, plates, codes. */
+    fun capitalizesEveryLetter(inputType: Int): Boolean =
+        inputType and InputType.TYPE_MASK_CLASS == InputType.TYPE_CLASS_TEXT && inputType and InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS != 0
 
     /**
      * Whether a field start picks fresh keys. A restart usually keeps the person's layer, since some apps
@@ -181,12 +201,20 @@ object TypingRules {
     fun isNameOrAddress(inputType: Int): Boolean = isTextVariation(inputType, InputType.TYPE_TEXT_VARIATION_PERSON_NAME) ||
         isTextVariation(inputType, InputType.TYPE_TEXT_VARIATION_POSTAL_ADDRESS)
 
-    /** Shift turns itself on only where the field asks for capitals and automatic capitalization is on. */
-    fun autoShift(fieldCapsMode: Int, autoCapitalize: Boolean): Boolean = autoCapitalize && fieldCapsMode != 0
+    /**
+     * Shift turns itself on only where the field asks for capitals and automatic capitalization is on, and never in an
+     * email address, a web address or a password, whatever the field's flags say: a web page's "email or username" box
+     * (`inputmode=email` on a text input) arrives with sentence capitals set, and "Jo@…" is not what anyone means.
+     */
+    fun autoShift(fieldCapsMode: Int, autoCapitalize: Boolean, inputType: Int = InputType.TYPE_CLASS_TEXT): Boolean =
+        autoCapitalize && fieldCapsMode != 0 && !neverCapitalized(inputType)
 
     /** Suggestions start with a capital at a sentence start only in sentence-caps fields, and only with automatic capitalization on. */
     fun capitalizesSentences(inputType: Int, autoCapitalize: Boolean): Boolean =
-        autoCapitalize && inputType and InputType.TYPE_TEXT_FLAG_CAP_SENTENCES != 0
+        autoCapitalize && inputType and InputType.TYPE_TEXT_FLAG_CAP_SENTENCES != 0 && !neverCapitalized(inputType)
+
+    /** Addresses and passwords are typed as they are meant; no automatic capital belongs in them. */
+    private fun neverCapitalized(inputType: Int): Boolean = isEmail(inputType) || isUrl(inputType) || isSensitive(inputType)
 
     /** A lone "i" becomes "I" on space or punctuation, except in names and addresses or with automatic capitalization off. */
     fun capitalizesLoneI(inputType: Int, autoCapitalize: Boolean): Boolean = autoCapitalize && !isNameOrAddress(inputType)

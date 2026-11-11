@@ -22,6 +22,13 @@ app/src/main/assets/licenses/:
 - words_cy*.txt, words_ga*.txt, words_mi*.txt: counted from the Welsh, Irish and
   Maori Wikipedia dumps of 2026-11-01, CC BY-SA 4.0; see wordlists-NOTICE.txt.
 - words_haw*.txt: from dohliam/hawaiian-corpus, CC0 1.0.
+- words_ar*.txt and words_known_ar.txt: FrequencyWords/OpenSubtitles-derived
+  Arabic lists, CC BY-SA 4.0.
+- words_fa*.txt and words_known_fa.txt: Persian lists from FrequencyWords/
+  OpenSubtitles counts and the Persian Wikipedia dump of 2026-11-01, CC BY-SA 4.0.
+- words_gl*.txt, words_known_gl.txt, words_gd*.txt, words_known_gd.txt,
+  words_nv*.txt, words_known_nv.txt: counted from the Galician, Scottish Gaelic
+  and Navajo Wikipedia dumps of 2026-11-01, CC BY-SA 4.0; see wordlists-NOTICE.txt.
 - spellings_en_gb.txt: filtered VarCon 2020.12.07 pairs; retain VarCon-Copyright.txt.
 - words_known.txt: SCOWL 2020.12.07 plus LocalType's modern supplement. Retain
   SCOWL-Copyright.txt and the supplement's CC BY-SA 4.0 terms.

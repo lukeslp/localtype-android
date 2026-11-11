@@ -113,6 +113,20 @@ class KeyboardView(context: Context) : View(context) {
             invalidate()
         }
 
+    /** Ignore the narrow painted row gaps, plus a band below the suggestion strip; off by default. */
+    var inactiveGaps: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+            cancelAllPointers()
+            requestLayout()
+            computeKeyBounds()
+            invalidate()
+            accessibility.invalidateRoot()
+        }
+
+    private val stripGap: Float get() = if (inactiveGaps) InactiveGaps.BELOW_STRIP_DP * density else 0f
+
     /** Touch accommodations for a tremor or limited reach ([MotorSettings]), read once per field. */
     var motor: MotorSettings = MotorSettings.OFF
         set(value) {
@@ -205,6 +219,8 @@ class KeyboardView(context: Context) : View(context) {
         var dwelled: Boolean = false,
         /** The pending hold-time or dwell timer for [key]. */
         var timer: Runnable? = null,
+        /** A normal press crossed an inactive band; its hold/dwell must start anew on returning. */
+        var inGap: Boolean = false,
     )
     private val pointers = HashMap<Int, Pointer>()
     /** A first finger held back, not yet typed, and the second finger that may make a swipe with it. */
@@ -229,10 +245,10 @@ class KeyboardView(context: Context) : View(context) {
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val width = MeasureSpec.getSize(widthMeasureSpec)
         val rows = layout.rowHeights.sum()
-        val desired = (rows * fullRowHeight + gapY).toInt() + paddingTop + paddingBottom
+        val desired = (rows * fullRowHeight + gapY + stripGap).toInt() + paddingTop + paddingBottom
         val height = resolveSize(desired, heightMeasureSpec)
         // With less room than the keys need, rows get shorter instead of the bottom row being clipped off the screen.
-        val fitted = if (height < desired && rows > 0) ((height - paddingTop - paddingBottom - gapY) / rows).coerceAtLeast(1f) else fullRowHeight
+        val fitted = if (height < desired && rows > 0) ((height - paddingTop - paddingBottom - gapY - stripGap) / rows).coerceAtLeast(1f) else fullRowHeight
         if (fitted != rowHeight) {
             rowHeight = fitted
             computeKeyBounds()
@@ -247,7 +263,7 @@ class KeyboardView(context: Context) : View(context) {
     private fun computeKeyBounds() {
         if (width == 0) return
         val usable = width - sidePadding * 2
-        var top = paddingTop + gapY / 2
+        var top = paddingTop + gapY / 2 + stripGap
         bounds = layout.rows.mapIndexed { rowIndex, row ->
             val unit = usable / maxOf(KeyboardLayout.ROW_UNITS, row.sumOf { it.width.toDouble() }.toFloat())
             val rowWidth = row.sumOf { it.width.toDouble() }.toFloat() * unit
@@ -393,6 +409,19 @@ class KeyboardView(context: Context) : View(context) {
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val index = event.actionIndex
         val id = event.getPointerId(index)
+        // A second/third DOWN or another finger's UP can force an earlier press to commit.
+        // Every contact in the event carries a newer position, even without a MOVE of its own.
+        for (i in 0 until event.pointerCount) pointers[event.getPointerId(i)]?.let { pointer ->
+            pointer.x = event.getX(i); pointer.y = event.getY(i)
+            if (inactiveGaps && !pointer.consumed && !pointer.longPressed && !pointer.sliding && pointer.popup == null &&
+                pointer.gesture?.let { it.active || it.cancelled } != true && keyAt(pointer.x, pointer.y) == null) {
+                if (!pointer.inGap && pair?.first != event.getPointerId(i)) cancelTimers()
+                pointer.timer?.let(handler::removeCallbacks)
+                pointer.timer = null
+                pointer.ready = false
+                pointer.inGap = true
+            }
+        }
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
                 if (event.actionMasked == MotionEvent.ACTION_DOWN) ignored.clear()
@@ -403,6 +432,11 @@ class KeyboardView(context: Context) : View(context) {
                     return true
                 }
                 val key = aimedKeyAt(event.getX(index), event.getY(index))
+                if (key == null) {
+                    // A gap-down never acquires a key later, including while dwell can adopt a moving finger.
+                    ignored.add(id)
+                    return true
+                }
                 val first = pointers.entries.singleOrNull()
                 val unit = keyWidth()
                 if (pair == null && key != null && first != null && event.pointerCount == 2 && unit > 0f && pairable(first.value, key) &&
@@ -419,7 +453,6 @@ class KeyboardView(context: Context) : View(context) {
                     // Fast two-thumb typing: a new touch finishes any key still held.
                     pointers.keys.toList().forEach { releasePointer(it, commit = pointers[it]?.gesture?.active != true) }
                 }
-                if (key == null) return true
                 pointers[id] = Pointer(key, event.getX(index), event.getY(index), downTime = event.eventTime)
                 val text = (key.action as? KeyAction.Text)?.value
                 val manager = context.getSystemService(android.view.accessibility.AccessibilityManager::class.java)
@@ -475,8 +508,24 @@ class KeyboardView(context: Context) : View(context) {
                     }
                     // A finger in an undecided pair does not slide; it may once the pair is told apart.
                     if (paired == null && slide(pointer)) continue
+                    if (inactiveGaps && !pointer.longPressed && keyAt(pointer.x, pointer.y) == null) {
+                        if (!pointer.inGap && pair?.first != pointerId) cancelTimers()
+                        pointer.timer?.let(handler::removeCallbacks)
+                        pointer.timer = null
+                        pointer.ready = false
+                        pointer.inGap = true
+                        invalidate()
+                        continue
+                    }
                     // While dwelling, delete is a key like the others: the finger glides onto it and rests.
-                    if (pointer.longPressed || (pointer.key.action == KeyAction.Backspace && !motor.dwell)) continue
+                    if (pointer.longPressed) continue
+                    if (pointer.key.action == KeyAction.Backspace && !motor.dwell) {
+                        if (pointer.inGap && motor.timed && keyAt(pointer.x, pointer.y) === pointer.key) {
+                            pointer.inGap = false
+                            startTiming(pointerId, event.eventTime)
+                        }
+                        continue
+                    }
                     val key = aimedKeyAt(event.getX(i), event.getY(i)) ?: continue
                     // Delete acts on press, so a finger sliding onto it keeps the key it started on,
                     // without that key's hold: resting there to erase must not type m's "ɱ".
@@ -487,7 +536,8 @@ class KeyboardView(context: Context) : View(context) {
                     // Steady keys: a shaking finger keeps its key until it is clearly past the edge.
                     if (key !== pointer.key && motor.steadyKeys &&
                         keyBounds(pointer.key)?.let { MotorRules.staysOn(it.box(), event.getX(i), event.getY(i), keyWidth()) } == true) continue
-                    if (key !== pointer.key) {
+                    if (key !== pointer.key || pointer.inGap) {
+                        pointer.inGap = false
                         pointer.key = key
                         cancelTimers()
                         scheduleLongPress(pointerId, key)
@@ -770,6 +820,8 @@ class KeyboardView(context: Context) : View(context) {
             if (pointer.key.action == KeyAction.Backspace) listener?.onDeleteSlideEnd(commit)
             return
         }
+        // UP may enter a gap without an intervening MOVE. Never commit the key retained from DOWN.
+        if (inactiveGaps && keyAt(pointer.x, pointer.y) == null) return
         if (commit && !pointer.longPressed && pointer.key.action != KeyAction.Backspace && MotorRules.typesOnLift(motor, pointer.ready)) {
             reportTouch(pointer)
             listener?.onKey(pointer.key.action)
@@ -845,9 +897,14 @@ class KeyboardView(context: Context) : View(context) {
             elevation = 6f * density
         }
 
+        // Android 14 and earlier clamp touches to the keyboard's window (SoftInputWindow.dispatchTouchEvent), so a
+        // finger can rise no higher than the window's top, which is above this view by its offset in the window.
+        private var reachableTop = Float.NEGATIVE_INFINITY
+
         fun show() {
             val location = IntArray(2)
             getLocationInWindow(location)
+            if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) reachableTop = -location[1].toFloat()
             window.showAtLocation(this@KeyboardView, android.view.Gravity.NO_GRAVITY, location[0] + originX.toInt(), location[1] + originY.toInt())
             content.contentDescription = options.joinToString(" ")
             announceForAccessibility(options.first())
@@ -855,7 +912,7 @@ class KeyboardView(context: Context) : View(context) {
 
         /** Picks the option under the finger; returns true when the highlight moved. */
         fun select(x: Float, y: Float): Boolean {
-            val index = PopupGeometry.indexAt(x, y, placement, originY, columns, rows, cellWidth, cellHeight, options.size)
+            val index = PopupGeometry.indexAt(x, y, placement, originY, columns, rows, cellWidth, cellHeight, options.size, reachableTop)
             if (index == selectedIndex) return false
             selectedIndex = index
             content.invalidate()
@@ -879,11 +936,14 @@ class KeyboardView(context: Context) : View(context) {
         super.onDetachedFromWindow()
     }
 
-    /** Finds the key under a point; filler and gaps resolve to the nearest real key in the row. */
+    /** Filler resolves to the nearest key. Optional vertical no-touch bands are rejected before learned aim. */
     private fun keyAt(x: Float, y: Float): Key? {
         if (bounds.isEmpty()) return null
         // Rows can differ in height (a shorter number row), so find the row by its bounds.
         val row = bounds.indexOfFirst { cells -> cells.isNotEmpty() && y < cells[0].bottom }.let { if (it < 0) bounds.lastIndex else it }
+        if (inactiveGaps && bounds[row].firstOrNull()?.let {
+                InactiveGaps.accepts(y, it.top, it.bottom, gapY / 2)
+            } != true) return null
         return layout.rows[row].withIndex()
             .filter { !it.value.isSpacer }
             .minByOrNull { (i, _) ->
@@ -936,6 +996,7 @@ class KeyboardView(context: Context) : View(context) {
             node.contentDescription = spokenLabel(key)
             node.className = "android.inputmethodservice.Keyboard\$Key"
             node.setBoundsInParent(android.graphics.Rect(rect.left.toInt(), rect.top.toInt(), rect.right.toInt(), rect.bottom.toInt()))
+            // Accessibility keeps the full stable cell; direct touch alone has the optional inactive margins.
             node.addAction(AccessibilityNodeInfoCompat.ACTION_CLICK)
             node.isClickable = true
             // What a hold types (a number's symbol, a letter's first accent), announced as the hold action.

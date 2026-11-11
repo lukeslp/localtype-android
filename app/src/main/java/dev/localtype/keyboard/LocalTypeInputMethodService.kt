@@ -46,6 +46,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private var correctionPersonal: PersonalLearningCoordinator.Contribution? = null
     private var boundaryPersonalContext: List<String> = emptyList()
     private var pendingPersonalContext: List<String> = emptyList()
+    private lateinit var blockedStore: BlockedWordStore
     private lateinit var learningStore: JournalLearningStore
     private lateinit var touchOffsetStore: TouchOffsetStore
     /** Laid out on the language's keys; replaced with its store on every switch. */
@@ -121,6 +122,14 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     }
     private var fieldIdentity: String? = null
     private var compatibilityEditorRestarted = false
+    private var inputViewStarts = 0L
+    private var inputViewRestarts = 0L
+    private var inputViewFinishes = 0L
+    private var finishingInputViews = 0L
+    private var windowsShown = 0L
+    private var windowsHidden = 0L
+    private var explicitHideRequests = 0L
+    private var restartBoundaryRecoveries = 0L
     /** Only reused synchronously by this key's finalization; async results always read anew. */
     private var verifiedWordReceipt: VerifiedWordTransaction.Snapshot? = null
     private var expectedContext: String? = null
@@ -132,14 +141,23 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private var loggedCorrectionMode: Triple<String, Boolean, Boolean>? = null
     private val correctionSettingsListener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == "bottom_clearance") handler.post { keyboardRoot?.let { ViewCompat.requestApplyInsets(it) } }
+        if (key == KeyboardSettings.INACTIVE_GAPS) handler.post { keyboardView?.inactiveGaps = KeyboardSettings.inactiveGaps(this) }
         // Spanish turned off in settings while it was in use goes back to English; on, the space bar names the language.
         if (key == KeyboardSettings.SPANISH || key == KeyboardSettings.PORTUGUESE || key == KeyboardSettings.HEBREW ||
             key == KeyboardSettings.WELSH || key == KeyboardSettings.IRISH || key == KeyboardSettings.MAORI ||
-            key == KeyboardSettings.HAWAIIAN || key == KeyboardSettings.IPA || key == KeyboardSettings.LANGUAGE) handler.post { if (!destroyed) followLanguageSetting() }
+            key == KeyboardSettings.HAWAIIAN || key == KeyboardSettings.IPA || key == KeyboardSettings.LANGUAGE ||
+            key in KeyboardSettings.EXTRA_KEYS) handler.post { if (!destroyed) followLanguageSetting() }
         // Vibration goes off or on at once, without waiting for the next field.
         if (key == KeyboardSettings.VIBRATE_ON_KEY_PRESS) handler.post { KeyHaptics.enabled = KeyboardSettings.vibrateOnKeyPress(this) }
         if (key in setOf("autocorrect", "web_autocorrect", "auto_capitalize", "profanity", "emoji", "neural_predictions", "number_row", "theme", "model_on_tap", "triple_space_proofread", "prediction_log", "learned_generation", "experimental_swipe")) {
             val refresh = Runnable {
+                // A newly published exclusion must stop collection before canceling any old logged offer.
+                if (key == "learned_generation" && this::blockedStore.isInitialized &&
+                    (!blockedStore.ready || blockedStore.words.isNotEmpty())) {
+                    if (logAllowed) PredictionLog.endField()
+                    logAllowed = false
+                    loggedFieldGate.finish()
+                }
                 cancelRecentCorrection()
                 spaceProofread.reset()
                 tripleSpaceProofread = KeyboardSettings.tripleSpaceProofread(this)
@@ -283,6 +301,22 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     // Panels (see KeyboardPanel): one covers the keys at their exact height and puts its header in the strip.
     /** The open panel, or null while the keys show. */
     private var panel: KeyboardPanel? = null
+    private var symbolsPanel: SymbolToolsPanel? = null
+    private var symbolsPanelRoot: View? = null
+    private var effectsPanel: TextEffectsPanel? = null
+    private var effectsPanelRoot: View? = null
+    // In-memory only; never sent to the editor, prediction model or typing log as keys.
+    private var symbolQuery = ""
+    private var effectsSource = ""
+    private data class EffectsSelection(val start: Int, val end: Int, val text: String)
+    private var effectsSelection: EffectsSelection? = null
+    /** Last explicitly selected source, retained when Edit source makes an independent local draft. */
+    private var effectsEditorSelection: EffectsSelection? = null
+    private var localInputKind: KeyboardPanel? = null
+    private var localInputMode = KeyboardLayout.Mode.LETTERS
+    private var localInputShift = KeyboardView.ShiftState.OFF
+    private var localInputHeader: android.widget.TextView? = null
+
     /** The keys, with any panel laid over them. */
     private var keyArea: KeyArea? = null
     /** The strip's place for an open panel's header, in place of the lead button, suggestions and notices. */
@@ -299,10 +333,19 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private var arrowPad: ArrowPadPanel? = null
     private var arrowsPanelRoot: View? = null
     private var contactsPanel: ContactsPanel? = null
+    /** Passwords & cards: the password manager's chips moved over the keys, or why there are none. */
+    private var passwordsPanel: PasswordsPanel? = null
+    private var passwordsPanelRoot: View? = null
+    /** The icons in the open tools row, so the Passwords dot can change in place. */
+    private val rowToolIcons = HashMap<StripTool, android.widget.ImageView>()
     /** One-handed keys ([OneHanded]) and the rail beside them, with the move and full-width buttons. */
     private var oneHanded = OneHanded.OFF
+    /** Keys on a wide window ([WideKeys]), read once per field, and where [applyKeyWidth] last put them. */
+    private var wideKeys = WideKeys.CENTERED
+    private var keyPlacement: KeyWidthRules.Placement? = null
     private var oneHandedRail: LinearLayout? = null
     private var oneHandedSwap: android.widget.ImageView? = null
+    private var oneHandedFull: android.widget.ImageView? = null
     private var contactsPanelRoot: View? = null
     /**
      * The phone's contacts, read only once the person allowed it and kept in memory only; null until read. Their
@@ -550,7 +593,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         super.onCreate()
         getSharedPreferences("keyboard_state", Context.MODE_PRIVATE).registerOnSharedPreferenceChangeListener(correctionSettingsListener)
         themeMode = ThemeMode.of(this)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) inlineAutofill = InlineAutofill(this, ::dp, ::attachInlineChips)
+        if (PasswordsTile.available(Build.VERSION.SDK_INT)) inlineAutofill = InlineAutofill(this, ::dp, ::attachInlineChips, ::inlineChipTapped)
         language = KeyboardSettings.language(this)
         openLanguageStores()
         learnedGeneration = KeyboardSettings.learnedGeneration(this)
@@ -562,7 +605,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             isKnown = { localModel.knows(it) || it in keptWords || it in profanityWords || it in fieldVocabulary },
             lexicon = { lexicon },
             contextCount = { previous, word -> localModel.pairCount(previous, word) },
-            blocked = { publishedWithProfanity == false && it in profanityWords },
+            blocked = { personallyBlocked(it) || (publishedWithProfanity == false && it in profanityWords) },
             isKept = { it in keptWords || localModel.isAddedWord(it) || isProtectedWord(it) },
             touchOffsets = { touchOffsets },
             language = { language },
@@ -608,11 +651,17 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     /** The learning stores, tap offsets and model of [language]: when the service starts, and on every switch. */
     private fun openLanguageStores() {
         languageOpening++
+        blockedStore = BlockedWordStore.get(this, language)
         learningStore = JournalLearningStore.get(this, language)
         personalStore = PersonalLearningStore.get(this, language)
-        personalLearning = PersonalLearningCoordinator(personalStore::record, personalStore::undo)
+        personalLearning = PersonalLearningCoordinator({ context, word, origin ->
+            if (mayLearnWord(word, context)) personalStore.record(context, word, origin) else null
+        }, personalStore::undo)
         val opening = languageOpening
         personalStore.whenReady { if (!destroyed && opening == languageOpening) scheduleRefresh() }
+        blockedStore.whenLoaded {
+            handler.post { if (!destroyed && opening == languageOpening) { openPendingLoggedField(); scheduleRefresh() } }
+        }
         touchOffsetStore = TouchOffsetStore(this, language)
         touchOffsets = if (language.english) TouchOffsets() else TouchOffsets(language.geometry)
         touchOffsetStore.load(touchOffsets)
@@ -762,8 +811,10 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         (fieldWantsSuggestions || addressBar) && !inputIsSensitive && !NeuralPredictionWorker.unavailable && language.english
 
     /** Gemini Nano and Gemma, for words and proofreading: their prompts are English, so other languages don't ask them. */
-    // Gemini Nano and Gemma read English only, and the F-Droid distribution carries neither.
-    private val foundationAllowed: Boolean get() = language.english && (BuildConfig.INCLUDES_NANO || BuildConfig.INCLUDES_GEMMA)
+    // Gemini Nano and Gemma read English only, and the F-Droid distribution carries neither. The private Model Lab
+    // build has its own explicitly chosen model instead.
+    private val foundationAllowed: Boolean get() = language.english &&
+        (BuildConfig.INCLUDES_NANO || BuildConfig.INCLUDES_GEMMA || BuildConfig.MODEL_LAB)
 
     /** The phone's own Spanish ("es-MX") where it has one, for dictation in that language. */
     private fun speechLanguage(): String {
@@ -863,6 +914,14 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             mode = emojiSearchMode
             shiftState = emojiSearchShift
         }
+        if (localInputKind != null) {
+            mode = localInputMode; shiftState = localInputShift; localInputKind = null
+        }
+        symbolsPanel = null
+        symbolsPanelRoot = null
+        effectsPanel = null
+        effectsPanelRoot = null
+        localInputHeader = null
         panel = null
         // The strip that showed the words being heard is going away with the old views.
         stopDictationNow(commit = false)
@@ -877,6 +936,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         arrowsPanelRoot = null
         contactsPanel = null
         contactsPanelRoot = null
+        passwordsPanel = null
+        passwordsPanelRoot = null
         panelToggles.clear()
         savedTexts?.forgetLastChange()
         emojiPopup.dismiss()
@@ -917,10 +978,12 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             insets
         }
         applyLayout()
-        applyOneHanded()
+        applyKeyWidth()
     }
 
     override fun onStartInputView(info: EditorInfo, restarting: Boolean) {
+        inputViewStarts++
+        if (restarting) inputViewRestarts++
         cancelSwipeWork()
         ownedSpacing.reset()
         super.onStartInputView(info, restarting)
@@ -944,6 +1007,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             info.inputType and InputType.TYPE_MASK_VARIATION != InputType.TYPE_TEXT_VARIATION_WEB_EDIT_TEXT &&
             identity == fieldIdentity && expectedContext != null && currentContext() == expectedContext &&
             observed != null && observed == previousPosition
+        if (!sameFieldRestart) clearCharacterTools()
         val retainTrace = sameFieldRestart && trace.hasTouchesFor(localModel.activePrefix(expectedContext!!))
         // Dictation survives only a restart proven to be the same field with the text and caret this keyboard left.
         // Two boxes on one web page share an identity, so any other restart may be another field: stop listening.
@@ -1015,6 +1079,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         keyboardView?.slideSpeed = KeyboardSettings.slideSpeed(this)
         keyboardView?.keyShapes = KeyboardSettings.keyShapes(this)
         keyboardView?.motor = KeyboardSettings.motor(this)
+        keyboardView?.inactiveGaps = KeyboardSettings.inactiveGaps(this)
         // Read at each touch, so it follows the offsets as they learn and the language's own set.
         keyboardView?.aimShift = { key ->
             key.label.singleOrNull()?.lowercaseChar()?.let { letter ->
@@ -1027,7 +1092,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         cleanLinks = KeyboardSettings.cleanPastedLinks(this)
         rememberDomains = KeyboardSettings.rememberDomains(this)
         oneHanded = KeyboardSettings.oneHanded(this)
-        applyOneHanded()
+        wideKeys = KeyboardSettings.wideKeys(this)
+        applyKeyWidth()
         // Contact names stay protected from correction while the permission stands; a read is at most every few minutes.
         readContactsIfStale(CONTACTS_FIELD_STALE_MS)
         hostField = when {
@@ -1040,7 +1106,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         corrector.forgetRecentAnswers()
         diag { "field pkg=${info.packageName} inputType=0x${Integer.toHexString(inputType)} imeOptions=0x${Integer.toHexString(info.imeOptions)} suggestions=$suggestionsEnabled learning=$learningAllowed autocorrect=$autocorrectEnabled" }
         // Text already in the field was not typed here; editing it counts as revisiting.
-        if (!retainTrace) revisitTrace(CorrectionDiagnostics.Revisit.RESTART)
+        if (!retainTrace) revisitTrace(if (restarting) CorrectionDiagnostics.Revisit.RESTART else CorrectionDiagnostics.Revisit.FIELD_START)
         if (!sameFieldRestart) { expectedContext = null; lastAutocorrect = null; autoSpaced = false; cleanedPaste = null; hideLinkNotice(); hideGestureNotice(); hideNotice() }
         if (TypingRules.startsNewLayout(restarting, fieldLayout, inputType)) {
             // A new field starts on the keys. A restart is usually the same field (some apps restart on every change),
@@ -1060,7 +1126,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         // the strip shows from the ones it ranked, which the log's slot sources can't express, so it isn't logged.
         val wantsLog = KeyboardSettings.predictionLog(this) && learningAllowed && fieldWantsSuggestions && language.english &&
             !britishSpelling
-        logAllowed = loggedFieldGate.start(wantsLog, dictionaryReady, restarting, learningStore.ready)
+        logAllowed = loggedFieldGate.start(wantsLog && blockedStore.words.isEmpty(), dictionaryReady, restarting, learningStore.ready && blockedStore.ready)
         if (logAllowed) openLoggedField(restarting)
         // An uncertain text receipt invalidates correction eligibility, not a finger already
         // pressing an unchanged key in this editor. Reassigning the layout would drop that key.
@@ -1085,6 +1151,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     }
 
     override fun onFinishInputView(finishingInput: Boolean) {
+        inputViewFinishes++
+        if (finishingInput) finishingInputViews++
         cancelSwipeWork()
         // A proofread or its proposal belongs to this field; dismissing first lets the removeCallbacks below drop its refresh.
         proofreadJob?.cancel()
@@ -1249,6 +1317,12 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     }
 
     override fun onKey(action: KeyAction) {
+        // Panel-local input returns before Voice, dictation, editor reads, learning or logging.
+        if (localInputKind != null) {
+            pendingTouch = null
+            cancelSwipeWork()
+            return characterToolKey(action)
+        }
         // The voice key starts or stops dictation as the strip's mic does; it is not a key that edits the field, so it
         // never reaches the typing path, held keys or a running dictation's stop-on-any-key. A swipe still being decoded
         // is dropped first, as any key drops it, so its word can't land after dictation starts.
@@ -1355,6 +1429,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     }
 
     override fun onLongPressSpace() {
+        if (localInputKind != null) return
         if (KeyboardSettings.languages(this).size > 1) showLanguageChooser() else showInputMethodPicker()
     }
 
@@ -1396,11 +1471,11 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
                 val first = action.value.firstOrNull()
                 val text = if (shiftState != KeyboardView.ShiftState.OFF) TypingRules.shifted(action.value) else action.value
                 if (shiftState == KeyboardView.ShiftState.ON && first?.isLetter() == true) setShift(KeyboardView.ShiftState.OFF)
-                if (action.value.length == 1 && first != null && first in "'’" && mode != KeyboardLayout.Mode.LETTERS) setMode(KeyboardLayout.Mode.LETTERS)
+                if (action.value.length == 1 && first != null && first in "'’" && onSymbols()) setMode(fieldLayer())
                 HeldKey(KeyAction.Text(text), touch)
             }
             KeyAction.Space -> {
-                if (mode == KeyboardLayout.Mode.SYMBOLS || mode == KeyboardLayout.Mode.MORE_SYMBOLS) setMode(KeyboardLayout.Mode.LETTERS)
+                if (onSymbols()) setMode(fieldLayer())
                 HeldKey(action, touch)
             }
             else -> HeldKey(action, touch)
@@ -1549,13 +1624,20 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             personalWordOwned = false
         }
         val prefixBefore = localModel.activePrefix(currentBeforeAppend)
-        if (value.length == 1 && (first.isLetter() || (first in "'’-" && prefixBefore.isNotEmpty()))) {
+        // A language's own marks continue a word as an apostrophe does (the non-joiner in Persian "می‌رود"), and one hold
+        // can type a letter with its mark or two letters ("ą́", "لا"): each character joins the word's trace in turn.
+        val wordMarks = language.marks
+        val continuesWord = (first.isLetter() || ((first in "'’-" || first in wordMarks) && prefixBefore.isNotEmpty())) &&
+            (value.length == 1 || (!language.english && language.words && value.all { it.isLetter() || it in wordMarks }))
+        if (continuesWord) {
             if (prefixBefore.isEmpty()) {
                 personalWordOwned = ownedAppend && fieldLearnsWords && first.isLetter()
                 capsLockUsedForWord = false
             }
             if (first.isLetter() && capsLocked()) capsLockUsedForWord = true
-            if (trace.letter(prefixBefore, touch.takeIf { first.isLetter() })) correctionDiagnostics.revisit(CorrectionDiagnostics.Revisit.LETTER_PREFIX)
+            var mismatch = trace.letter(prefixBefore, touch.takeIf { first.isLetter() })
+            for (i in 1 until value.length) mismatch = trace.letter(prefixBefore + value.take(i), null) || mismatch
+            if (mismatch) correctionDiagnostics.revisit(CorrectionDiagnostics.Revisit.LETTER_PREFIX)
         } else {
             personalWordOwned = false
             trace.finish()
@@ -1577,17 +1659,19 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
                 // again when the selection began the field or followed white space: the read is of the text before it.
                 else if (hostsAllowed) typedRun.appended(rawBefore, text)
                 expectedContext = (currentBeforeAppend + text).takeLast(MAX_CONTEXT_CHARS)
-                appendRecentCorrection(text, boundary = !first.isLetter() && first !in "'’-" )
+                appendRecentCorrection(text, boundary = !continuesWord && !first.isLetter() && first !in "'’-" )
             } else { editorEdits.uncertain(); revisitTrace(CorrectionDiagnostics.Revisit.COMMIT_FAILED); expectedContext = null }
         }
         autoSpaced = provisionalSpace
         if (shiftState == KeyboardView.ShiftState.ON && first.isLetter() && !replayingKeys) setShift(KeyboardView.ShiftState.OFF)
-        if (value.length == 1 && first in "'’" && mode != KeyboardLayout.Mode.LETTERS && !replayingKeys) setMode(KeyboardLayout.Mode.LETTERS)
-        if (!first.isLetter()) updateShiftFromEditor()
+        if (value.length == 1 && first in "'’" && onSymbols() && !replayingKeys) setMode(fieldLayer())
+        // A field that asks for every letter as a capital gets Shift back after each one; elsewhere a letter leaves it off.
+        if (!first.isLetter() || TypingRules.capitalizesEveryLetter(currentInputEditorInfo?.inputType ?: 0)) updateShiftFromEditor()
     }
 
     private fun typeSpace() {
         val ic = currentInputConnection ?: return
+        val boundaryGeneration = editorEdits.generation
         val now = SystemClock.uptimeMillis()
         // Proofreading is English, so in another language three spaces are three spaces.
         val tripleSpaceProofread = tripleSpaceProofread && foundationAllowed
@@ -1604,7 +1688,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             lastSpaceTap = SystemClock.uptimeMillis()
             autoSpaced = false
             trace.finish()
-            if ((mode == KeyboardLayout.Mode.SYMBOLS || mode == KeyboardLayout.Mode.MORE_SYMBOLS) && !replayingKeys) setMode(KeyboardLayout.Mode.LETTERS)
+            if (onSymbols() && !replayingKeys) setMode(fieldLayer())
             updateShiftFromEditor()
             return
         }
@@ -1613,7 +1697,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         correctionOffer = null
         val quickSecondSpace = autoSpaced || now - lastSpaceTap < DOUBLE_SPACE_MS
         val period = WordEdits.doubleSpace(
-            ic.getTextBeforeCursor(2, 0)?.toString().orEmpty(), quickSecondSpace, hasEditorSelection(), mode == KeyboardLayout.Mode.LETTERS,
+            ic.getTextBeforeCursor(2, 0)?.toString().orEmpty(), quickSecondSpace, hasEditorSelection(),
+            mode == KeyboardLayout.Mode.LETTERS && TypingRules.doubleSpacePeriod(currentInputEditorInfo?.inputType ?: InputType.TYPE_CLASS_TEXT),
             autoSpaced = autoSpaced,
         )
         if (period != null) {
@@ -1630,6 +1715,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             val repairTouches = trace.touchesFor(edit.prefix)
             val touches = trace.touchesFor(edit.prefix).takeIf { learningAllowed && edit.learningEligible && !edit.corrected }
             val applied = applyWordReplacement(edit.replacement, fallback = " ", precondition = edit.precondition) ?: run { spaceProofread.reset(); return }
+            if (applied == edit.replacement && edit.replacement == WordEdits.Replacement(0, 0, " ") &&
+                edit.precondition?.selection?.collapsed == true) resumeCorrectionAfterBoundary(" ", boundaryGeneration, ic)
             if (tripleSpaceProofread) spaceProofread.committed(now, editorEdits.generation, gestureInitial,
                 verifiedWordReceipt, madePeriod = false, automaticSpace = automaticSpace)
             if (applied == edit.replacement && edit.corrected) lastAutocorrect = AutoCorrection(edit.prefix, edit.replacement.text)
@@ -1642,12 +1729,13 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         }
         autoSpaced = false
         trace.finish()
-        if ((mode == KeyboardLayout.Mode.SYMBOLS || mode == KeyboardLayout.Mode.MORE_SYMBOLS) && !replayingKeys) setMode(KeyboardLayout.Mode.LETTERS)
+        if (onSymbols() && !replayingKeys) setMode(fieldLayer())
         updateShiftFromEditor()
     }
 
     private fun typeEnter() {
         val ic = currentInputConnection ?: return
+        val boundaryGeneration = editorEdits.generation
         val action = currentInputEditorInfo?.let { TypingRules.enterAction(it.imeOptions) }
         if (applyPendingPeriod(if (action == null) "\n" else "")) {
             autoSpaced = false
@@ -1662,6 +1750,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         val repairTouches = trace.touchesFor(edit.prefix)
         val touches = trace.touchesFor(edit.prefix).takeIf { learningAllowed && edit.learningEligible && !edit.corrected }
         val applied = if (edit.replacement.text.isEmpty()) edit.replacement.takeIf { edit.precondition != null && editorSnapshot() == edit.precondition } else applyWordReplacement(edit.replacement, precondition = edit.precondition)
+        if (action == null && applied == edit.replacement && edit.replacement == WordEdits.Replacement(0, 0, "\n") &&
+            edit.precondition?.selection?.collapsed == true) resumeCorrectionAfterBoundary("\n", boundaryGeneration, ic)
         if (applied == edit.replacement) {
             learnJustCompletedWord(edit, verified, touches)
             if (action == null) finishCorrection(edit, repairTouches)
@@ -1683,6 +1773,18 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             ic.performEditorAction(action)
         }
         updateShiftFromEditor()
+    }
+
+    /** A verified delimiter ends restart suppression; it never makes a revisited word owned again. */
+    private fun resumeCorrectionAfterBoundary(delimiter: String, generation: Long, connection: android.view.inputmethod.InputConnection) {
+        if (!compatibilityEditorRestarted || connection !== currentInputConnection) return
+        val receipt = verifiedWordReceipt
+        val observed = editorSnapshot()
+        if (connection === currentInputConnection && RestartCorrectionRecovery.canResume(delimiter, generation,
+                editorEdits.generation, receipt, observed, editorEdits.expected)) {
+            compatibilityEditorRestarted = false
+            restartBoundaryRecoveries++
+        }
     }
 
     private fun toggleShift() {
@@ -1710,7 +1812,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     /** Follows the field's own capitalization request, e.g. sentence caps in a message box, unless automatic capitalization is off; not while the keys type an emoji search. */
     private fun updateShiftFromEditor() {
         // Replayed keys keep the case they were pressed with; the drain syncs shift once it finishes.
-        if (replayingKeys || emojiQuery != null || shiftState == KeyboardView.ShiftState.LOCKED || mode != KeyboardLayout.Mode.LETTERS) return
+        if (replayingKeys || emojiQuery != null || localInputKind != null || shiftState == KeyboardView.ShiftState.LOCKED || mode != KeyboardLayout.Mode.LETTERS) return
         val info = currentInputEditorInfo ?: return
         var caps = currentInputConnection?.getCursorCapsMode(info.inputType) ?: 0
         // Android doesn't know "¿" and "¡" open a sentence; "Hola. ¿" still wants a capital next.
@@ -1719,8 +1821,14 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             if (before.trimEnd(' ', '\t').lastOrNull()?.let { it in language.openingMarks } == true && localModel.isSentenceStart(before))
                 caps = TextUtils.CAP_MODE_SENTENCES
         }
-        setShift(if (TypingRules.autoShift(caps, autoCapitalize)) KeyboardView.ShiftState.ON else KeyboardView.ShiftState.OFF)
+        setShift(if (TypingRules.autoShift(caps, autoCapitalize, info.inputType)) KeyboardView.ShiftState.ON else KeyboardView.ShiftState.OFF)
     }
+
+    private fun onSymbols(): Boolean = mode == KeyboardLayout.Mode.SYMBOLS || mode == KeyboardLayout.Mode.MORE_SYMBOLS
+
+    /** The keys this field starts on, which a symbols page returns to after a space or an apostrophe ([TypingRules.layerAfterSymbol]). */
+    private fun fieldLayer(): KeyboardLayout.Mode =
+        TypingRules.layerAfterSymbol(currentInputEditorInfo?.inputType ?: InputType.TYPE_CLASS_TEXT)
 
     private fun setMode(newMode: KeyboardLayout.Mode) {
         mode = newMode
@@ -1731,7 +1839,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private fun applyLayout(preserveTouches: Boolean = false) {
         val view = keyboardView ?: return
         // Search types a query, so field-specific keys and the return-to-pad key don't belong there.
-        val inputType = if (emojiQuery != null) InputType.TYPE_CLASS_TEXT else currentInputEditorInfo?.inputType ?: InputType.TYPE_CLASS_TEXT
+        val inputType = if (emojiQuery != null || localInputKind != null) InputType.TYPE_CLASS_TEXT else currentInputEditorInfo?.inputType ?: InputType.TYPE_CLASS_TEXT
         layoutVoiceKey = voiceOnKeys()
         val next = KeyboardLayout.build(mode, showSwitchKey = shouldOfferSwitchKey(), numberRow = numberRow, inputType = inputType,
             language = language, spaceLabel = spaceLabel(), spaceBar = spaceBar, pound = poundFirst(), voiceKey = layoutVoiceKey,
@@ -1743,7 +1851,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     }
 
     /** The voice key belongs on the keys: chosen in Settings, offered in this field, and not while emoji search has them. */
-    private fun voiceOnKeys(): Boolean = voiceKey == VoiceKey.KEYS && voiceOffered && emojiQuery == null
+    private fun voiceOnKeys(): Boolean = voiceKey == VoiceKey.KEYS && voiceOffered && emojiQuery == null && localInputKind == null
 
     /** Android 13+ puts its own keyboard switcher in the navigation bar, so skip the duplicate there. */
     private fun shouldOfferSwitchKey(): Boolean = when {
@@ -1762,6 +1870,12 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
      */
     private fun recordAppend(before: String?, text: String, earlier: String? = null) {
         appendLedger.record(fieldIdentity, before, text, earlier)
+        // One more read, through the connection the text just went through. An answer means that connection was still
+        // live, so the append reached its editor, and a restart that later shows the old text is the app's own doing:
+        // a field it emptied, or focus moving to the next box of a web page, where a resend would type the letter
+        // twice (a crossword grid, reported 2026-11-10). A retired connection answers nothing, and only then can the
+        // append have been swallowed. Skipped where the read before the key failed: that editor has no text to read.
+        if (before != null && currentInputConnection?.getTextBeforeCursor(1, 0) != null) appendLedger.landed()
         val spacingAllowed = smallAccommodationsAllowed() && !capsLockUsedForWord && !replayingKeys
         if (text == "(" && spacingAllowed && before != null) {
             val s = editorSnapshot()
@@ -1868,6 +1982,9 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
                 renderContactsPanel()
                 readContactsIfStale(CONTACTS_PANEL_STALE_MS)
             }
+            KeyboardPanel.PASSWORDS -> renderPasswordsPanel()
+            KeyboardPanel.SYMBOLS -> symbolsPanel?.show(symbolQuery)
+            KeyboardPanel.TEXT_EFFECTS -> effectsPanel?.show(effectsSource)
         }
         // Built GONE, so this is the visibility change that has TalkBack announce the pane's title.
         root.visibility = View.VISIBLE
@@ -1914,9 +2031,12 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
      */
     private fun leavePanel(kind: KeyboardPanel) {
         emojiPopup.dismiss()
+        if (kind == localInputKind) stopCharacterToolInput()
         if (kind == KeyboardPanel.EMOJI) stopEmojiSearch()
         panelRootOf(kind)?.visibility = View.GONE
         if (kind == KeyboardPanel.SAVED) savedTexts?.forgetLastChange()
+        // The manager's chips go back to the strip, which shows them again once nothing covers it.
+        if (kind == KeyboardPanel.PASSWORDS) inlineRow?.let { inlineAutofill?.attach(it) }
     }
 
     /**
@@ -1942,6 +2062,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         voice = voiceOffered,
         proofread = suggestionsEnabled && fieldWantsSuggestions && foundationAllowed &&
             TypingRules.proofreadsOnHold(currentInputEditorInfo?.inputType ?: 0),
+        // Android 11 and later only: the keyboard has an InlineAutofill exactly when chips can reach it.
+        passwords = inlineAutofill != null,
     )
 
     /**
@@ -1959,6 +2081,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         if (dictationSession.listening) stopDictationNow()
         if (!proofreading) dismissProposal()
         row.removeAllViews()
+        rowToolIcons.clear()
         val metrics = resources.displayMetrics
         val stripWidth = candidateStripView?.width?.takeIf { it > 0 } ?: metrics.widthPixels
         val state = gestureState()
@@ -1978,6 +2101,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         if (!toolsOpen) return
         toolsOpen = false
         toolRow?.removeAllViews()
+        rowToolIcons.clear()
         updateToolsHandle()
         updateSlotVisibility()
         scheduleRefresh()
@@ -1990,12 +2114,28 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         ViewCompat.setStateDescription(handle, getString(if (toolsOpen) R.string.tools_open else R.string.tools_closed))
     }
 
-    /** One tool in the row: dimmed where the field forbids it, and it still answers a tap to say so. */
+    /**
+     * One tool in the row: dimmed where the field forbids it, and it still answers a tap to say so. Passwords & cards
+     * carries a dot while the manager's chips are waiting.
+     */
     private fun toolIcon(tool: StripTool, allowed: Boolean) = stripIcon(tool.icon, tool.label) { runTool(tool) }.apply {
-        if (!allowed) {
-            alpha = 0.45f
-            contentDescription = getString(R.string.tool_off_description, getString(tool.label))
+        if (!allowed) alpha = 0.45f
+        setImageDrawable(ToolIcon.drawable(this@LocalTypeInputMethodService, tool.icon, toolDot(tool)))
+        contentDescription = ToolIcon.description(this@LocalTypeInputMethodService, tool, allowed, toolDot(tool))
+        rowToolIcons[tool] = this
+    }
+
+    /** Whether [tool]'s icon has the dot: only Passwords & cards, while chips are waiting for this field. */
+    private fun toolDot(tool: StripTool): Boolean = tool == StripTool.PASSWORDS && PasswordsTile.dot(inlineAutofill?.drawn ?: 0)
+
+    /** The chips changed: the dot on Passwords & cards follows, in the open row and the Tools panel, without a redraw. */
+    private fun updatePasswordsDot() {
+        val dot = toolDot(StripTool.PASSWORDS)
+        rowToolIcons[StripTool.PASSWORDS]?.let { icon ->
+            icon.setImageDrawable(ToolIcon.drawable(this, StripTool.PASSWORDS.icon, dot))
+            icon.contentDescription = ToolIcon.description(this, StripTool.PASSWORDS, StripTools.allowed(StripTool.PASSWORDS, gestureState()), dot)
         }
+        if (panel == KeyboardPanel.TOOLS) toolsPanel?.setDot(StripTool.PASSWORDS, dot)
     }
 
     /** More, or holding the handle: every tool over the keys. */
@@ -2008,7 +2148,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         if (panel != KeyboardPanel.TOOLS) return
         val state = gestureState()
         val order = toolsOrder()
-        toolsPanel?.show(StripTools.panel(toolsField()), { StripTools.allowed(it, state) }, { it in order })
+        toolsPanel?.show(StripTools.panel(toolsField()), { StripTools.allowed(it, state) }, { it in order }, ::toolDot)
     }
 
     /** The tools row's order as the person left it, or the built-in one. */
@@ -2035,6 +2175,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         TalkBackFocus.moveTo(toolsHandle)
         if (!StripTools.allowed(tool, gestureState())) return showGestureNotice(getString(R.string.gesture_not_here, getString(tool.label)))
         when (tool) {
+            StripTool.SYMBOLS -> openPanel(KeyboardPanel.SYMBOLS)
+            StripTool.TEXT_EFFECTS -> openTextEffects()
             StripTool.VOICE -> onVoiceTapped()
             StripTool.PROOFREAD -> proofreadSentence()
             StripTool.REWRITE_SHORTER -> proofreadSentence(RewriteStyle.SHORTER)
@@ -2056,6 +2198,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             StripTool.SEARCH_WEB -> searchWeb()
             StripTool.SEND_TO_APP -> sendToApp()
             StripTool.CONTACTS -> openContacts()
+            StripTool.PASSWORDS -> openPanel(KeyboardPanel.PASSWORDS)
             StripTool.ONE_HANDED -> setOneHanded(OneHandedRules.toggled(oneHanded))
             else -> tool.gesture?.let(::runGestureAction)
         }
@@ -2083,7 +2226,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             setOneHanded(OneHanded.OFF)
             // The rail went with the full width; TalkBack's focus goes to the handle, which stays.
             TalkBackFocus.moveTo(toolsHandle)
-        }, LinearLayout.LayoutParams(dp(48), dp(48)))
+        }.also { oneHandedFull = it }, LinearLayout.LayoutParams(dp(48), dp(48)))
     }
 
     /** Saves [next] and lays the keys out for it at once, saying which way they went. */
@@ -2091,35 +2234,46 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         val was = oneHanded
         oneHanded = next
         KeyboardSettings.setOneHanded(this, next)
-        applyOneHanded()
+        applyKeyWidth()
         if (was == next) return
         showGestureNotice(getString(when (next) {
-            OneHanded.OFF -> R.string.one_handed_off_notice
+            OneHanded.OFF -> if (keyPlacement?.side == KeyWidthRules.Side.CENTER) R.string.one_handed_centered else R.string.one_handed_off_notice
             OneHanded.LEFT -> R.string.one_handed_left_notice
             OneHanded.RIGHT -> R.string.one_handed_right_notice
         }))
     }
 
     /**
-     * Narrows the keys toward [oneHanded]'s side, with the rail in the space they leave ([OneHandedRules]). The strip
-     * and panels keep the full width. Too narrow a window keeps full-width keys.
+     * Lays out the keys' width ([KeyWidthRules]): one-handed narrows them toward [oneHanded]'s side with the rail in the
+     * space they leave, a wide window centers them at [KeyWidthRules.MAX_KEYS_DP] unless [wideKeys] is full width, and
+     * anything else keeps the full width. The strip and panels keep the full width. Only the view narrows; its keys
+     * stay in key widths, so correction's geometry and the touch offsets are the same on every width.
      */
-    private fun applyOneHanded() {
+    private fun applyKeyWidth() {
         val view = keyboardView ?: return
         val rail = oneHandedRail ?: return
-        val widthDp = resources.configuration.screenWidthDp
-        val on = OneHandedRules.applies(oneHanded, widthDp)
+        val config = resources.configuration
+        val placement = KeyWidthRules.place(oneHanded, wideKeys, config.screenWidthDp, config.screenHeightDp)
+        keyPlacement = placement
         val keys = view.layoutParams as? android.widget.FrameLayout.LayoutParams ?: return
-        keys.width = if (on) dp(OneHandedRules.keysDp(oneHanded, widthDp)) else android.widget.FrameLayout.LayoutParams.MATCH_PARENT
-        keys.gravity = if (oneHanded == OneHanded.LEFT) android.view.Gravity.START or android.view.Gravity.TOP
-            else android.view.Gravity.END or android.view.Gravity.TOP
+        keys.width = if (placement.side == KeyWidthRules.Side.FULL) android.widget.FrameLayout.LayoutParams.MATCH_PARENT
+            else dp(placement.widthDp)
+        keys.gravity = android.view.Gravity.TOP or when (placement.side) {
+            KeyWidthRules.Side.LEFT -> android.view.Gravity.START
+            KeyWidthRules.Side.CENTER -> android.view.Gravity.CENTER_HORIZONTAL
+            else -> android.view.Gravity.END
+        }
         view.layoutParams = keys
         val railParams = rail.layoutParams as? android.widget.FrameLayout.LayoutParams ?: return
         railParams.gravity = if (oneHanded == OneHanded.LEFT) android.view.Gravity.END else android.view.Gravity.START
         rail.layoutParams = railParams
-        rail.visibility = if (!on) View.GONE else if (view.visibility == View.VISIBLE) View.VISIBLE else View.INVISIBLE
+        rail.visibility = if (!placement.rail) View.GONE else if (view.visibility == View.VISIBLE) View.VISIBLE else View.INVISIBLE
         oneHandedSwap?.contentDescription = getString(
             if (oneHanded == OneHanded.LEFT) R.string.one_handed_swap_right else R.string.one_handed_swap_left)
+        // On a wide window, leaving one-handed centers the keys rather than spreading them, and the button says so.
+        val off = KeyWidthRules.place(OneHanded.OFF, wideKeys, config.screenWidthDp, config.screenHeightDp)
+        oneHandedFull?.contentDescription = getString(
+            if (off.side == KeyWidthRules.Side.CENTER) R.string.one_handed_centered else R.string.one_handed_full)
         keyArea?.requestLayout()
     }
 
@@ -2502,6 +2656,19 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
 
     /** The strip's header and the key area's root for [kind], built on first use for the current views. */
     private fun panelViews(kind: KeyboardPanel, area: KeyArea): Pair<View, View> = when (kind) {
+        KeyboardPanel.SYMBOLS -> {
+            val tool = symbolsPanel ?: SymbolToolsPanel(this, { startCharacterToolInput(KeyboardPanel.SYMBOLS) }) { text ->
+                if (panel == KeyboardPanel.SYMBOLS && localInputKind == null && insertFromPanel(text)) closePanel()
+            }.also { symbolsPanel = it }
+            val root = symbolsPanelRoot ?: characterToolRoot(area, kind, R.string.symbol_tool_title, tool.content).also { symbolsPanelRoot = it }
+            tool.header to root
+        }
+        KeyboardPanel.TEXT_EFFECTS -> {
+            val tool = effectsPanel ?: TextEffectsPanel(this, { startCharacterToolInput(KeyboardPanel.TEXT_EFFECTS) },
+                ::insertTextEffect, ::copyTextEffect).also { effectsPanel = it }
+            val root = effectsPanelRoot ?: characterToolRoot(area, kind, R.string.text_effects_title, tool.content).also { effectsPanelRoot = it }
+            tool.header to root
+        }
         KeyboardPanel.EMOJI -> {
             val emoji = emojiPanel ?: EmojiPanel(
                 this, emojiPopup, emojiTones, ::insertPanelEmoji,
@@ -2558,6 +2725,17 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             }
             pad.header to root
         }
+        KeyboardPanel.PASSWORDS -> {
+            val passwords = passwordsPanel ?: PasswordsPanel(this, ::openPasswordManager).also { passwordsPanel = it }
+            val root = passwordsPanelRoot ?: PanelViews.root(
+                this, getString(R.string.tool_passwords), passwords.content,
+                panelBar(KeyboardPanel.PASSWORDS, PanelViews.Toggle(R.drawable.ic_tools_more, R.string.tools_all) { switchPanel(KeyboardPanel.TOOLS) }),
+            ).also {
+                area.addView(it, android.widget.FrameLayout.LayoutParams(android.widget.FrameLayout.LayoutParams.MATCH_PARENT, android.widget.FrameLayout.LayoutParams.MATCH_PARENT))
+                passwordsPanelRoot = it
+            }
+            passwords.header to root
+        }
         KeyboardPanel.CONTACTS -> {
             val list = contactsPanel ?: ContactsPanel(this, ::insertContact, ::askForContacts).also { contactsPanel = it }
             val root = contactsPanelRoot ?: PanelViews.root(
@@ -2577,6 +2755,9 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         KeyboardPanel.TOOLS -> toolsPanelRoot
         KeyboardPanel.ARROWS -> arrowsPanelRoot
         KeyboardPanel.CONTACTS -> contactsPanelRoot
+        KeyboardPanel.PASSWORDS -> passwordsPanelRoot
+        KeyboardPanel.SYMBOLS -> symbolsPanelRoot
+        KeyboardPanel.TEXT_EFFECTS -> effectsPanelRoot
     }
 
     /** [kind]'s bar. Space and delete behave exactly as the keys do; there's no Enter in a panel. */
@@ -2615,7 +2796,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     }
 
     /** Clipboard, saved text and panel emoji share one unlearned, non-retrying insertion path. */
-    private fun insertExternalText(text: String): VerifiedWordTransaction.Insertion {
+    private fun insertExternalText(text: String, expectedSelection: EffectsSelection? = null): VerifiedWordTransaction.Insertion {
         personalWordOwned = false
         personalLearning.reset(PersonalContextTrace.ResetReason.PASTE)
         syncLearnedState()
@@ -2627,6 +2808,11 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         // still committed once; a shortened receipt simply cannot certify that whole insertion.
         val limit = MAX_CONTEXT_CHARS + minOf(text.length, 5_000)
         val initial = readEditorSnapshot(limit)
+        if (expectedSelection != null && (initial?.selection?.start != expectedSelection.start ||
+                initial?.selection?.end != expectedSelection.end || initial?.selected != expectedSelection.text)) {
+            showNotice(NoticeRules.Message.EFFECT_SOURCE_CHANGED)
+            return VerifiedWordTransaction.Insertion.REJECTED
+        }
         val generation = editorEdits.generation
         markEdit()
         revisitTrace(CorrectionDiagnostics.Revisit.INSERT)
@@ -2728,6 +2914,9 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             NoticeRules.Message.TOOL_PINNED -> R.string.tool_pinned
             NoticeRules.Message.TOOL_UNPINNED -> R.string.tool_unpinned
             NoticeRules.Message.TOOLS_ROW_FULL -> R.string.tools_row_full
+            NoticeRules.Message.NOT_OPENED -> R.string.passwords_not_opened
+            NoticeRules.Message.EFFECT_SOURCE_CHANGED -> R.string.text_effects_source_changed
+            NoticeRules.Message.COPY_FAILED -> R.string.local_tool_copy_failed
         }, language.nativeName)
         val place = NoticeRules.place(panel)
         when (place) {
@@ -2948,11 +3137,148 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
 
     /** What Enter shows: Done while searching emoji, where it only goes back to the grid, else the field's own action. */
     private fun enterLabel(info: EditorInfo?): String = when {
+        localInputKind != null -> getString(R.string.local_tool_done)
         emojiQuery != null -> TypingRules.enterLabel(EditorInfo.IME_ACTION_DONE)
         else -> info?.let { TypingRules.enterAction(it.imeOptions) }?.let(TypingRules::enterLabel) ?: "↵"
     }
 
     // endregion
+
+    /** Local character tools share the panel shell and the paste insertion contract. */
+    private fun characterToolRoot(area: KeyArea, kind: KeyboardPanel, title: Int, content: View): View =
+        PanelViews.root(this, getString(title), content,
+            panelBar(kind, PanelViews.Toggle(R.drawable.ic_tools_more, R.string.tools_all) { switchPanel(KeyboardPanel.TOOLS) })
+        ).also { area.addView(it, android.widget.FrameLayout.LayoutParams(android.widget.FrameLayout.LayoutParams.MATCH_PARENT, android.widget.FrameLayout.LayoutParams.MATCH_PARENT)) }
+
+    private fun effectsAllowed(): Boolean = StripTools.allowed(StripTool.TEXT_EFFECTS, gestureState())
+
+    private fun openTextEffects() {
+        if (!effectsAllowed()) return
+        // Read only a bounded, explicitly selected range. No surrounding field or password draft is harvested.
+        val range = observedSelection()
+        val size = range?.let { kotlin.math.abs(it.end.toLong() - it.start.toLong()) } ?: 0
+        if (range != null && size > 0) {
+            val selected = if (range.start >= 0 && range.end >= 0 && size <= TextEffects.MAX_INPUT)
+                currentInputConnection?.getSelectedText(0) else null
+            val fresh = selected?.takeIf { it.length.toLong() == size }?.let {
+                EffectsSelection(range.start, range.end, it.toString())
+            }
+            if (fresh == null) {
+                // An unreadable or oversized new selection must not reuse an older source over it.
+                effectsSource = ""; effectsSelection = null; effectsEditorSelection = null
+            } else if (fresh != effectsEditorSelection) {
+                effectsSource = fresh.text
+                effectsSelection = fresh
+                effectsEditorSelection = fresh
+            }
+        }
+        openPanel(KeyboardPanel.TEXT_EFFECTS)
+    }
+
+    private fun insertTextEffect(text: String) {
+        if (panel != KeyboardPanel.TEXT_EFFECTS || localInputKind != null || !effectsAllowed()) return
+        val original = effectsSelection
+        if (original != null) {
+            val range = observedSelection()
+            if (range?.start != original.start || range?.end != original.end) {
+                return showNotice(NoticeRules.Message.EFFECT_SOURCE_CHANGED)
+            }
+            val selected = currentInputConnection?.getSelectedText(0)
+            if (selected == null || selected.length != original.text.length || selected.toString() != original.text) {
+                return showNotice(NoticeRules.Message.EFFECT_SOURCE_CHANGED)
+            }
+        }
+        drainPendingKeys()
+        if (insertExternalText(text, expectedSelection = original) == VerifiedWordTransaction.Insertion.APPLIED) {
+            effectsSelection = null
+            closePanel()
+        }
+    }
+
+    private fun copyTextEffect(text: String) {
+        if (panel != KeyboardPanel.TEXT_EFFECTS || localInputKind != null || !effectsAllowed()) return
+        val clipboard = getSystemService(android.content.ClipboardManager::class.java) ?: return
+        runCatching { clipboard.setPrimaryClip(android.content.ClipData.newPlainText(getString(R.string.text_effects_title), text)) }
+            .onSuccess { effectsPanelRoot?.announceForAccessibility(getString(R.string.local_tool_copied)) }
+            .onFailure { showNotice(NoticeRules.Message.COPY_FAILED) }
+    }
+
+    private fun clearCharacterTools() {
+        if (panel == KeyboardPanel.SYMBOLS || panel == KeyboardPanel.TEXT_EFFECTS) closePanel()
+        symbolQuery = ""; effectsSource = ""; effectsSelection = null; effectsEditorSelection = null
+        symbolsPanel?.show(""); effectsPanel?.clear()
+    }
+
+    private fun startCharacterToolInput(kind: KeyboardPanel) {
+        if (panel != kind || localInputKind != null || (kind == KeyboardPanel.TEXT_EFFECTS && !effectsAllowed())) return
+        localInputMode = mode; localInputShift = shiftState
+        // Editing explicitly turns the source copy into an independent local draft.
+        if (kind == KeyboardPanel.TEXT_EFFECTS) effectsSelection = null
+        localInputKind = kind
+        panelRootOf(kind)?.visibility = View.GONE
+        setKeysVisible(true)
+        // The pinned panel height remains fixed while the ordinary keys collect a local draft/query.
+        setMode(KeyboardLayout.Mode.LETTERS); setShift(KeyboardView.ShiftState.OFF)
+        val ui = CharacterToolViews(this)
+        val query = ui.text("").apply {
+            maxLines = 1; ellipsize = android.text.TextUtils.TruncateAt.START
+            accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
+        }
+        localInputHeader = query
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            addView(query, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f))
+            addView(ui.button(getString(R.string.local_tool_done)) { endCharacterToolInput() })
+        }
+        panelHeader?.removeAllViews(); panelHeader?.addView(row)
+        updateCharacterToolQuery()
+        keyboardView?.enterLabel = getString(R.string.local_tool_done)
+        TalkBackFocus.moveTo(query)
+    }
+
+    private fun updateCharacterToolQuery() {
+        val value = if (localInputKind == KeyboardPanel.SYMBOLS) symbolQuery else effectsSource
+        localInputHeader?.text = value.ifEmpty { getString(if (localInputKind == KeyboardPanel.SYMBOLS) R.string.local_tool_search else R.string.local_tool_empty) }
+    }
+
+    private fun stopCharacterToolInput() {
+        if (localInputKind == null) return
+        localInputKind = null; localInputHeader = null
+        mode = localInputMode; shiftState = localInputShift
+        applyLayout(); keyboardView?.enterLabel = enterLabel(currentInputEditorInfo)
+    }
+
+    private fun endCharacterToolInput() {
+        val kind = localInputKind ?: return
+        stopCharacterToolInput()
+        val area = keyArea ?: return
+        val (title, root) = panelViews(kind, area)
+        setKeysVisible(false)
+        panelHeader?.removeAllViews(); panelHeader?.addView(title)
+        if (kind == KeyboardPanel.SYMBOLS) symbolsPanel?.show(symbolQuery) else effectsPanel?.show(effectsSource)
+        root.visibility = View.VISIBLE
+        TalkBackFocus.moveTo(title)
+    }
+
+    private fun characterToolKey(action: KeyAction) {
+        val kind = localInputKind ?: return
+        when (action) {
+            KeyAction.Enter -> endCharacterToolInput()
+            KeyAction.Shift -> toggleShift()
+            KeyAction.ToSymbols -> setMode(KeyboardLayout.Mode.SYMBOLS)
+            KeyAction.ToMoreSymbols -> setMode(KeyboardLayout.Mode.MORE_SYMBOLS)
+            KeyAction.ToLetters, KeyAction.ToFieldLayout -> setMode(KeyboardLayout.Mode.LETTERS)
+            KeyAction.SwitchKeyboard, KeyAction.Voice -> Unit
+            else -> {
+                val typed = if (action is KeyAction.Text && shiftState != KeyboardView.ShiftState.OFF) KeyAction.Text(TypingRules.shifted(action.value)) else action
+                val old = if (kind == KeyboardPanel.SYMBOLS) symbolQuery else effectsSource
+                val next = LocalPanelInput.edit(old, typed, if (kind == KeyboardPanel.SYMBOLS) 64 else TextEffects.MAX_INPUT) ?: return
+                if (kind == KeyboardPanel.SYMBOLS) symbolQuery = next else effectsSource = next
+                if (action is KeyAction.Text && shiftState == KeyboardView.ShiftState.ON) setShift(KeyboardView.ShiftState.OFF)
+                updateCharacterToolQuery()
+            }
+        }
+    }
 
     // region Candidates
 
@@ -2999,6 +3325,18 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             setTextColor(getColor(R.color.kb_hint))
             gravity = Gravity.CENTER
             visibility = View.GONE
+            setOnClickListener {
+                if (blockedLoadFailed()) startActivity(android.content.Intent(this@LocalTypeInputMethodService, SettingsActivity::class.java)
+                    .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK))
+            }
+            isClickable = false
+            isFocusable = false
+            accessibilityDelegate = object : View.AccessibilityDelegate() {
+                override fun onInitializeAccessibilityNodeInfo(host: View, info: android.view.accessibility.AccessibilityNodeInfo) {
+                    super.onInitializeAccessibilityNodeInfo(host, info)
+                    if (host.isClickable) info.className = android.widget.Button::class.java.name
+                }
+            }
         }
         addView(privateNotice, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f))
 
@@ -3313,13 +3651,14 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             return
         }
         val chips = inlineAutofill
-        val inline = !busy && chips != null && InlineRowRules.shows(chips.count, chips.unpinned, stripOff == null, inlineTyped)
+        val blockedFailure = stripOff == null && blockedLoadFailed()
+        val inline = !busy && !blockedFailure && chips != null && InlineRowRules.shows(chips.count, chips.unpinned, stripOff == null, inlineTyped)
         inlineRow?.visibility = if (inline) View.VISIBLE else View.GONE
         val host = !busy && !inline && stripOff != null && expansion != null
         hostChip?.visibility = if (host) View.VISIBLE else View.GONE
-        val notice = !busy && !inline && !host && stripOff != null
+        val notice = !busy && !inline && !host && (stripOff != null || blockedFailure)
         privateNotice?.visibility = if (notice) View.VISIBLE else View.GONE
-        val occupied = busy || inline || stripOff != null
+        val occupied = busy || inline || stripOff != null || blockedFailure
         val selected = selectionProofreadEligible && suggestionsEnabled && fieldWantsSuggestions && !occupied
         selectionProofread?.visibility = if (selected) View.VISIBLE else View.GONE
         slotViews.forEach { it.visibility = if (occupied || selected) View.GONE else View.VISIBLE }
@@ -3501,6 +3840,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     }
 
     private fun acceptCandidate(index: Int) {
+        syncLearnedState()
         swipeChoices?.let { choice ->
             if (choice.expires > SystemClock.uptimeMillis() && editorSnapshot() == choice.receipt) {
                 choice.words.getOrNull(index)?.let { commitSwipe(choice.base, choice.receipt, it, choice.words, choice.shift, choice.inserted.length, choice.spacing) }
@@ -3515,7 +3855,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         cancelRecentCorrection()
         if (index == expansionSlot) return acceptExpansion()
         val word = slotValues.getOrNull(index).orEmpty()
-        if (word.isBlank() || !suggestionsEnabled) return
+        if (word.isBlank() || !suggestionsEnabled || personallyBlocked(word)) { scheduleRefresh(); return }
         // Emoji replace the matched words and are never learned as a word.
         if (index == emojiSlot) {
             if (insertEmoji(word) && logAllowed) PredictionLog.tapEmoji(index)
@@ -3531,7 +3871,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         }
         val edit = WordEdits.suggestion(
             context, initial?.after ?: ic.getTextAfterCursor(MAX_CONTEXT_CHARS, 0)?.toString(), selected, word,
-            trace.revisited, MAX_CONTEXT_CHARS, capsLocked(),
+            trace.revisited, MAX_CONTEXT_CHARS, capsLocked(), rule = language.wordRule,
         ) ?: return
         lastAutocorrect = null
         KeyHaptics.perform(keyboardView, android.view.HapticFeedbackConstants.KEYBOARD_TAP)
@@ -3541,7 +3881,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         val ownPrevious = if (fieldLearnsWords) personalLearning.context(edit.contextBeforeWord).lastOrNull() else null
         if (applyWordReplacement(edit.replacement, precondition = initial) == null) return
         val wordVerified = edit.learningEligible && verifiedWordReceipt != null && ownedPrefix
-        if (index == literalSlot) keepWord(edit.word, persist = fieldLearnsWords && wordVerified)
+        val keepContext = personalLearning.context(edit.contextBeforeWord) + listOfNotNull(localModel.lastCompletedWord(context.orEmpty()))
+        if (index == literalSlot) keepWord(edit.word, persist = fieldLearnsWords && wordVerified && mayLearnWord(edit.word, keepContext))
         personalLearning.complete(edit.contextBeforeWord, edit.word, edit.word,
             if (index == literalSlot) LearningOrigin.EXPLICIT_KEEP else LearningOrigin.SUGGESTION_ACCEPT,
             fieldLearnsWords, wordVerified)
@@ -3550,7 +3891,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         // A field that doesn't allow learning teaches nothing, not even the in-memory counts later fields rank with.
         // Existing-word and selection edits are not a new typed word or a scored prediction instance.
         // A paste, expansion or cursor move cannot donate a previous word or a partial prefix.
-        val canLearn = WordPersistence.pair(fieldLearnsWords, wordVerified, previous, ownPrevious)
+        val canLearn = mayLearnWord(edit.word, listOfNotNull(previous)) && WordPersistence.pair(fieldLearnsWords, wordVerified, previous, ownPrevious)
         if (canLearn) {
             localModel.accept(previous, edit.word)
             modelMutated = true
@@ -3606,7 +3947,13 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             TypingRules.StripOff.TERMINAL -> getString(R.string.terminal_field)
             TypingRules.StripOff.FIELD -> getString(R.string.no_suggestions_field)
             TypingRules.StripOff.IPA -> getString(R.string.ipa_field)
-            null -> ""
+            null -> if (blockedLoadFailed()) getString(R.string.blocked_words_keyboard_error) else ""
+        }
+        privateNotice?.let { view ->
+            val recovery = stripOff == null && blockedLoadFailed()
+            view.isClickable = recovery
+            view.isFocusable = recovery
+            if (recovery) view.readFromStart()
         }
         updateSlotVisibility()
         val context = currentContext()
@@ -3637,6 +3984,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             }
         }
         syncLearnedState()
+        if (!blockedStore.ready) { showCandidates(emptyList(), context); updateLead(); return }
         // Selecting an existing word is a request to edit that word, not to predict
         // from the empty prefix before the selection. These offers are never logged
         // as newly typed outcomes or sent to the neural worker.
@@ -3669,7 +4017,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         val ownContext = if (fieldLearnsWords) personalLearning.context(context.dropLast(prefix.length)) else emptyList()
         val followers = if (ownContext.isNotEmpty()) personalStore.followers(ownContext, NeuralRanking.PERSONAL_POLICY.maxContext) else emptyList()
         val learned = if (ownContext.isNotEmpty()) localModel.learnedFollowers(ownContext.last()) else emptyList()
-        val blocked = if (profanityAllowed) emptySet() else profanityWords
+        val blocked = blockedStore.words + if (profanityAllowed) emptySet() else profanityWords
         val shared = fieldVocabulary.candidates(prefix, localModel.lastCompletedWord(context)).map { it.first }
         val correction = correctionFor(context, prefix)
         if (correction != null) {
@@ -3702,7 +4050,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         }
         // Cached model words for this context show instantly; the model itself never blocks typing.
         val cached = if (!fieldWantsSuggestions || !foundationAllowed || (neuralEnabled && manualFoundationContext != context.dropLast(prefix.length))) emptyList()
-            else activeModelCache.lookup(context, prefix).orEmpty()
+            else activeModelCache.lookup(context, prefix).orEmpty().filterNot(::personallyBlocked)
         val neuralChoices = if ((neural != null || followers.isNotEmpty() || learned.any { it.second >= 2 }) && cached.isEmpty()) {
             val hasEmoji = expansionFor(context, prefix) != null ||
                 (emojiEnabled && !addressBar && emojiSuggestions.match(context, prefix, limit = EMOJI_VARIANTS) != null)
@@ -4041,9 +4389,13 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private fun storeModelAnswer(cache: ModelSuggestionCache, contextBeforeWord: String, phrases: List<String>,
                                  persistence: WordPersistence.Request) {
         val persist = cache === modelCache && persistence.persists(personalLearning.generation)
-        val firsts = phrases.map { it.substringBefore(' ') }.distinct()
-        cache.put(contextBeforeWord, firsts, persist)
-        phrases.filter { ' ' in it }.groupBy({ it.substringBefore(' ') }, { it.substringAfter(' ') }).forEach { (first, seconds) ->
+        val permitted = phrases.filter { phrase ->
+            blockedStore.ready && AdaptiveNgramModel.WORD_REGEX.findAll(phrase).none { personallyBlocked(it.value) }
+        }
+        val mayPersist = persist && AdaptiveNgramModel.WORD_REGEX.findAll(contextBeforeWord).none { personallyBlocked(it.value) }
+        val firsts = permitted.map { it.substringBefore(' ') }.distinct()
+        cache.put(contextBeforeWord, firsts, mayPersist)
+        permitted.filter { ' ' in it }.groupBy({ it.substringBefore(' ') }, { it.substringAfter(' ') }).forEach { (first, seconds) ->
             val ahead = "$contextBeforeWord$first "
             // A hypothetical model word is not a personally completed word.
             if (!cache.hasEntryFor(ahead, "")) cache.put(ahead, seconds.distinct(), persist = false)
@@ -4059,12 +4411,12 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private fun showCandidates(ranked: List<String>, context: String = "") {
         val prefix = localModel.activePrefix(context)
         // With swear words off, nothing from any source (learned pairs, model, cache) suggests one.
-        val allowed = if (profanityAllowed) ranked else ranked.filter { it.lowercase() !in profanityWords }
+        val allowed = ranked.filter { !personallyBlocked(it) && (profanityAllowed || it.lowercase() !in profanityWords) }
         // Shift may be off after a line break even in a sentence-caps field, so check the text too.
         val capsField = TypingRules.capitalizesSentences(currentInputEditorInfo?.inputType ?: 0, autoCapitalize)
         val sentenceStart = shiftState != KeyboardView.ShiftState.OFF ||
             (capsField && prefix.isEmpty() && localModel.isSentenceStart(context))
-        val words = TypingRules.arrangeForStrip(BritishSpelling.distinct(allowed.map(::british)).map { displayCandidate(it, prefix, sentenceStart) })
+        val words = TypingRules.arrangeForStrip(BritishSpelling.distinct(allowed.map(::british)).map { displayCandidate(it, prefix, sentenceStart) }.filterNot(::personallyBlocked))
         setSlots(withEmoji(words, context, prefix), literal = -1)
     }
 
@@ -4112,12 +4464,13 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private fun setSlots(slots: List<String>, literal: Int) {
         shownNeuralWords = emptySet()
         shownPersonalWords = emptySet()
-        slotValues = slots
+        val permitted = slots.map { it.takeUnless(::personallyBlocked).orEmpty() }
+        slotValues = permitted
         literalSlot = literal
         stripRevision++
         val offer = expansion
         candidateViews.forEachIndexed { index, view ->
-            val word = slots.getOrNull(index).orEmpty()
+            val word = permitted.getOrNull(index).orEmpty()
             val expands = offer != null && index == expansionSlot
             if (expands != (view.tag == true)) {
                 // A host or saved text takes the accent colour and still shrinks to fit before being cut.
@@ -4170,7 +4523,12 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         Expansions.Kind.SHORTCUT -> getString(R.string.expansion_saved_text_description, offer.label)
         Expansions.Kind.DOMAIN -> getString(R.string.expansion_host_description, offer.label)
         Expansions.Kind.LINK -> getString(R.string.clean_link_description, offer.host.orEmpty())
+        Expansions.Kind.SYMBOL -> getString(R.string.expansion_symbol_description, offer.text, symbolName(offer.text))
     }
+
+    /** A sign's Unicode name in lowercase ("copyright sign"), for TalkBack; the sign itself when Android has none. */
+    private fun symbolName(symbol: String): String =
+        runCatching { Character.getName(symbol.codePointAt(0)) }.getOrNull()?.lowercase() ?: symbol
 
     /** A saved text's shortcut, or a word of a contact's name: correction never changes either. */
     private fun isProtectedWord(word: String): Boolean =
@@ -4193,6 +4551,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             // [LinkCleaner.atCaret] has already checked what follows the link.
             Expansions.Kind.LINK -> true
             Expansions.Kind.SHORTCUT -> Expansions.wordEndsAt(after)
+            // A cue like (c) or -> ends at the caret when what follows doesn't continue it.
+            Expansions.Kind.SYMBOL -> Expansions.hostEndsAt(after)
         } }
     }
 
@@ -4204,6 +4564,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         // or there before. Only where words show, since the offer takes the last word slot.
         if (cleanLinks && suggestionsEnabled) linkOffer(context)?.let { return it }
         if (suggestionsEnabled && prefix.isNotEmpty()) Expansions.shortcut(prefix, savedTexts)?.let { return it }
+        // A typed cue or a sign's name: (c) or "copyright" offers ©, -> offers →. After saved texts, so a shortcut wins.
+        if (suggestionsEnabled && !addressBar) Expansions.symbol(Expansions.run(context), prefix)?.let { return it }
         if (!hostsAllowed) return null
         if (!suggestionsEnabled && hostField == Expansions.Field.TEXT) return null
         // The usual mail providers fill in after an @ until the person's own hosts are remembered.
@@ -4314,6 +4676,11 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         boundaryPersonalContext = emptyList()
         if (!fieldLearnsWords || !edit.learningEligible) return
         val before = edit.beforeSeparator
+        if (!mayLearnWord(localModel.activePrefix(before), listOfNotNull(localModel.lastCompletedWord(before)))) {
+            personalLearning.reset(PersonalContextTrace.ResetReason.UNVERIFIABLE)
+            personalWordOwned = false
+            return
+        }
         val beforeWord = before.dropLast(localModel.activePrefix(before).length)
         boundaryPersonalContext = personalLearning.context(beforeWord)
         val previous = localModel.lastCompletedWord(before)
@@ -4368,14 +4735,16 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
      * and the corpus prior once they've loaded. Every rebuild goes through here so none drops the prior.
      */
     /** English starts with its seed phrases and sentence starters; another language starts from nothing but its own typing. */
-    private fun buildLocalModel() = if (language.english) AdaptiveNgramModel(learningStore, dictionary = dictionary, prior = corpusPrior, vocabulary = fieldVocabulary)
+    private fun buildLocalModel() = if (language.english) AdaptiveNgramModel(learningStore, dictionary = dictionary, prior = corpusPrior, vocabulary = fieldVocabulary, excluded = ::personallyBlocked)
         else AdaptiveNgramModel(learningStore, seedPhrases = emptyList(), dictionary = dictionary, sentenceStarters = emptyList(),
             prior = corpusPrior, priorWeights = AdaptiveNgramModel.PriorWeights(weight = language.priorWeight), vocabulary = CurrentVocabulary.EMPTY,
-            openingMarks = language.openingMarks, oneLetterWords = language.oneLetterWords)
+            openingMarks = language.openingMarks, oneLetterWords = language.oneLetterWords, excluded = ::personallyBlocked,
+            wordRule = language.wordRule)
 
     /** Either background load can finish first; the waiting field opens only after both publish. */
     private fun openPendingLoggedField() {
-        loggedFieldGate.published(dictionaryReady, learningStore.ready)?.let { restart ->
+        if (blockedStore.ready && blockedStore.words.isNotEmpty()) { loggedFieldGate.finish(); return }
+        loggedFieldGate.published(dictionaryReady, learningStore.ready && blockedStore.ready)?.let { restart ->
             logAllowed = true
             snapshotClean = false
             openLoggedField(restart)
@@ -4420,6 +4789,12 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
      */
     private fun syncLearnedState() {
         val reloaded = reloadLearnedIfChanged()
+        if (!blockedStore.ready || blockedStore.words.isNotEmpty()) {
+            if (logAllowed) PredictionLog.endField()
+            logAllowed = false
+            // Collection resumes only in a fresh eligible field after every exclusion has been removed.
+            if (blockedStore.ready) loggedFieldGate.finish()
+        }
         if (logAllowed && (reloaded || PredictionLog.logGeneration != logGenerationSeen)) {
             // A single forgotten pair keeps the file; end this field there so the new tables don't land inside it.
             PredictionLog.endField()
@@ -4429,6 +4804,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
 
     /** Takes a fresh table snapshot when the log needs one, then opens this field in the log. */
     private fun openLoggedField(restart: Boolean) {
+        if (!blockedStore.ready || blockedStore.words.isNotEmpty()) { logAllowed = false; return }
         // Covers the dictionary-publish path too, which opens a field without passing onStartInputView.
         reloadLearnedIfChanged()
         if (PredictionLog.takeHiddenMutation()) snapshotClean = false
@@ -4541,13 +4917,13 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
      * [automaticOnly], only fixes confident enough to apply on space are returned.
      */
     private fun correctionFor(context: String, prefix: String, automaticOnly: Boolean = false, explicitSelection: Boolean = false): String? {
-        if (!autocorrectEnabled || !suggestionsEnabled || (!automaticOnly && mode != KeyboardLayout.Mode.LETTERS)) return null
+        if (!blockedStore.ready || !autocorrectEnabled || !suggestionsEnabled || (!automaticOnly && mode != KeyboardLayout.Mode.LETTERS)) return null
         if (DomainTyping.protected(context, currentInputConnection?.getTextAfterCursor(MAX_CONTEXT_CHARS, 0)?.toString())) return null
         if (prefix.length < 2 || prefix.lowercase() in keptWords || isProtectedWord(prefix)) return null
         // A word the person came back to edit is theirs: still suggest, never replace on a boundary.
         // Ordinary web boxes follow the explicit web-autocorrect setting.
         if (automaticOnly && (trace.revisited || !trace.hasTouchesFor(prefix) || !fieldAllowsAutocorrect || compatibilityEditorRestarted)) return null
-        if (!localModel.isAddedWord(prefix)) fieldVocabulary.capitalization(prefix)?.let { return it }
+        if (!localModel.isAddedWord(prefix)) fieldVocabulary.capitalization(prefix)?.takeUnless(::personallyBlocked)?.let { return it }
         val touches = trace.touchesFor(prefix)
         val previous = localModel.lastCompletedWord(context)
         val sentenceStart = localModel.isSentenceStart(context)
@@ -4561,7 +4937,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         if (automaticOnly) correctionDiagnostics.count(if (fix == null)
             CorrectionDiagnostics.Reason.NO_AUTOMATIC_CANDIDATE else CorrectionDiagnostics.Reason.AUTOMATIC_CANDIDATE)
         diag { "correction lookup len=${prefix.length} us=${(SystemClock.elapsedRealtimeNanos() - startedAt) / 1_000}" }
-        return fix?.let { TypingRules.applyCase(british(it), prefix, sentenceStart = false, capsLock = capsLocked()) }
+        return fix?.let { TypingRules.applyCase(british(it), prefix, sentenceStart = false, capsLock = capsLocked()) }?.takeUnless(::personallyBlocked)
     }
 
     /** Whether English's Spelling: British choice applies to this field's words. */
@@ -4601,11 +4977,11 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         return WordEdits.separator(
             context, initial?.after ?: currentInputConnection?.getTextAfterCursor(MAX_CONTEXT_CHARS, 0)?.toString(),
             initial?.let { !it.selection.collapsed } ?: hasEditorSelection(),
-            separator, trace.revisited, suggestionsEnabled, autocorrectEnabled && fieldAllowsAutocorrect, MAX_CONTEXT_CHARS,
+            separator, trace.revisited, suggestionsEnabled, autocorrectEnabled && fieldAllowsAutocorrect && language.autocorrect, MAX_CONTEXT_CHARS,
             typed = typed,
             capitalizeI = !compatibilityEditorRestarted && language.english &&
                 TypingRules.capitalizesLoneI(currentInputEditorInfo?.inputType ?: InputType.TYPE_CLASS_TEXT, autoCapitalize),
-            autoSpaced = autoSpaced && initial != null,
+            autoSpaced = autoSpaced && initial != null, rule = language.wordRule,
         ) { prefix -> correctionFor(context, prefix, automaticOnly = true) }.copy(precondition = initial)
     }
 
@@ -4783,12 +5159,22 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
      */
     private fun keepWord(word: String, persist: Boolean = fieldLearnsWords) {
         val key = word.lowercase()
+        if (personallyBlocked(word)) return
         // Private fields and unverified edits keep a spelling only for this field.
         if (keptWords.add(key) && !persist) fieldKeptWords += key
         // A kept spelling with a capital inside it ("LocalType") is how the person writes it.
         if (persist && word.drop(1).any { it.isUpperCase() }) spellings().change(word, WordSpellings.added(word))
         corrector.forgetRecentAnswers()
     }
+
+    private fun blockedLoadFailed(): Boolean = this::blockedStore.isInitialized && !blockedStore.ready && blockedStore.failed
+
+    private fun personallyBlocked(word: String): Boolean = !blockedStore.ready || BlockedWords.contains(blockedStore.words, word)
+
+    private fun blockedOutput(text: String): Boolean = !blockedStore.ready || BlockedWords.blocksText(blockedStore.words, text)
+
+    private fun mayLearnWord(word: String, context: List<String> = emptyList()): Boolean =
+        blockedStore.ready && BlockedWords.mayLearn(blockedStore.words, context, word)
 
     private fun spellings() = WordSpellingStore.get(this, language)
 
@@ -4888,6 +5274,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     }
 
     private fun offerSmallAccommodation(offer: SmallAccommodations.Offer, snapshot: VerifiedWordTransaction.Snapshot) {
+        if (blockedOutput(offer.replacement)) return
         val now = SystemClock.uptimeMillis()
         val word = RecentWordCorrection.Word(correctionIdentity(), offer.original, offer.delimiter, offer.start,
             offer.context.takeLast(32), snapshot.after, now, previous = localModel.lastCompletedWord(offer.context),
@@ -4933,13 +5320,14 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         if (!language.english) return false
         val s = verifiedWordReceipt ?: return false
         if (!verified || !edit.learningEligible || edit.corrected || !fieldLearnsWords ||
-            !autocorrectEnabled || !fieldAllowsAutocorrect || !viewShown || proofreading || proposal != null ||
+            !autocorrectEnabled || !fieldAllowsAutocorrect || !language.autocorrect || !viewShown || proofreading || proposal != null ||
             panel != null || capsLocked() || "its" in keptWords || localModel.isAddedWord("its") || isProtectedWord("its")) return false
         val identity = correctionIdentity()
         val now = SystemClock.uptimeMillis()
         contractionAnchor = ContextualContractions.remember(identity, s, edit.prefix, now, verifiedOwn = verified)
         val offer = ContextualContractions.propose(previous, identity, s, edit.prefix, verified,
             boundaryPersonalContext.lastOrNull(), now) ?: return false
+        if (blockedOutput(offer.replacement)) return false
         val anchor = offer.anchor
         val word = RecentWordCorrection.Word(identity, anchor.original, offer.delimiter, anchor.start,
             anchor.context.takeLast(32), s.after, now,
@@ -4977,7 +5365,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     }
 
     private fun finishCorrectionMeasured(edit: WordEdits.Separator, touches: List<Touch?>?, boundary: String?) {
-        if (!edit.learningEligible || !autocorrectEnabled || !fieldAllowsAutocorrect || touches == null) return
+        if (!blockedStore.ready || !edit.learningEligible || !autocorrectEnabled || !fieldAllowsAutocorrect || !language.autocorrect || touches == null) return
         val s = verifiedWordReceipt ?: return
         val delimiter = boundary ?: edit.replacement.text.lastOrNull()?.toString() ?: return
         val original = edit.prefix
@@ -4988,7 +5376,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         val start = s.selection.end - replacement.length - delimiter.length
         val fullContext = s.before.dropLast(replacement.length + delimiter.length)
         val typedContext = fullContext + original
-        val contextState = CorrectionTextContext.capture(typedContext)
+        val contextState = CorrectionTextContext.capture(typedContext, language.marks)
         val precedingWord = contextState.previous
         val word = RecentWordCorrection.Word(correctionIdentity(), original, delimiter, start, fullContext.takeLast(32), s.after, SystemClock.uptimeMillis(),
             previous = precedingWord, contextBeforeWord = fullContext)
@@ -5013,7 +5401,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         val input = CorrectionInput(original, fullContext, previous, sentenceStart, fullContext.trimEnd().endsWith(','),
             dictionary, lexicon, protected, spellings.filterTo(HashSet()) { it in keptWords || localModel.isAddedWord(it) || isProtectedWord(it) },
             // Published asset sets are immutable; personal counts and touch offsets are detached.
-            if (profanityAllowed) emptySet() else profanityWords, localModel.correctionCounts(previous),
+            blockedStore.words + if (profanityAllowed) emptySet() else profanityWords, localModel.correctionCounts(previous),
             touchOffsets.entries(), touches.toList(), language)
         val request = ++correctionRequest
         val worker = neuralWorker ?: NeuralPredictionWorker(this, handler).also { neuralWorker = it }
@@ -5022,6 +5410,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             if (request != correctionRequest || recentCorrection.pending != word || !viewShown || proofreading || panel != null || answer == null) return@evaluateCorrection
             val now = SystemClock.uptimeMillis()
             val fix = answer.suggestion?.let { TypingRules.applyCase(it, original, false, capsLocked()) } ?: return@evaluateCorrection
+            if (personallyBlocked(fix)) return@evaluateCorrection
             val current = editorSnapshot() ?: return@evaluateCorrection
             val range = recentCorrection.repair(correctionIdentity(), current, fix, now) ?: return@evaluateCorrection
             // The reserved validation gate did not pass. This branch stays an offer unless a
@@ -5078,7 +5467,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
 
     private fun applyRecentOffer() {
         syncLearnedState()
-        val fix = correctionOffer ?: return
+        val fix = correctionOffer?.takeUnless(::blockedOutput) ?: return
         val word = recentCorrection.pending ?: return hideCorrectionFeedback()
         val s = editorSnapshot() ?: return cancelRecentCorrection()
         val edit = recentCorrection.repair(correctionIdentity(), s, fix, SystemClock.uptimeMillis()) ?: return cancelRecentCorrection()
@@ -5088,7 +5477,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private fun completeRecentRepair(word: RecentWordCorrection.Word, fix: String, explicit: Boolean = false) {
         val ownPrevious = pendingPersonalContext.lastOrNull()
         correctionPersonal = if (word.grammar) null else personalLearning.repair(pendingPersonalContext, fix,
-            fieldLearnsWords && !fix.any(Char::isWhitespace),
+            fieldLearnsWords && mayLearnWord(fix, pendingPersonalContext) && !fix.any(Char::isWhitespace),
             if (explicit) LearningOrigin.SUGGESTION_ACCEPT else LearningOrigin.VERIFIED_REPAIR)
         pendingPersonalContext = emptyList()
         if (word.grammar) {
@@ -5105,7 +5494,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         // No touch training: this word was corrected. Only the verified replacement learns once.
         // A multiword offer is an editor repair, not one dictionary entry or a
         // single-word replay outcome. Its bounded Undo still uses the exact phrase.
-        val learned = !word.grammar && !fix.any(Char::isWhitespace) &&
+        val learned = mayLearnWord(fix, listOfNotNull(word.previous)) && !word.grammar && !fix.any(Char::isWhitespace) &&
             WordPersistence.pair(fieldLearnsWords, true, word.previous, ownPrevious)
         if (learned) {
             localModel.accept(word.previous, fix)
@@ -5164,6 +5553,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
 
     private fun showCorrectionFeedback(original: String, replacement: String, offered: Boolean) {
         if (proofreading || proposal != null || proposalRow?.visibility == View.VISIBLE || panel != null || stripOff != null) return
+        if (offered && blockedOutput(replacement)) return
         hideNotice()
         linkNotice = false
         handler.removeCallbacks(hideLinkMessage)
@@ -5314,7 +5704,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             if (destroyed || !request.matches(swipeSerial, swipeAllowedNow(), editorSnapshot())) return@decode
             // Words run together in an address or a password, as decoded: no capital I there.
             val capitalizeI = swipeCapitalizesI() && !swipeSpacing.joined
-            val words = candidates.filter { profanityAllowed || it !in profanityWords }
+            val words = candidates.filter { !personallyBlocked(it) && (profanityAllowed || it !in profanityWords) }
                 .map { SwipeInsertion.word(it, capitalizeI) }.distinct().take(3)
             if (words.isEmpty() || duration > 2_000) {
                 cancelSwipeWork()
@@ -5332,7 +5722,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             swipeLastMs = duration
             if (destroyed || serial != swipeSerial || !swipeAllowedNow()) return@decode
             swipeBlind = false
-            val word = candidates.firstOrNull { profanityAllowed || it !in profanityWords }
+            val word = candidates.firstOrNull { !personallyBlocked(it) && (profanityAllowed || it !in profanityWords) }
             if (word == null || duration > 2_000) {
                 showProposalMessage(getString(R.string.swipe_no_word), autoDismissMs = 2_000)
                 return@decode
@@ -5348,6 +5738,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         word: String, words: List<String>, case: KeyboardView.ShiftState, replaced: Int = 0, spacing: SwipeSpacing) {
         if (!swipeAllowedNow() || editorSnapshot() != initial) return cancelSwipeWork()
         syncLearnedState()
+        if (personallyBlocked(word)) { cancelSwipeWork(); scheduleRefresh(); return }
         cancelRecentCorrection()
         // After a lone "a" or "I", or a swiped word that got no space ([SwipeSpacing.afterSwipe]), the swipe adds the
         // space a tap would have needed. A later choice replaces everything the first commit inserted, lead included.
@@ -5495,7 +5886,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
 
     private fun gestureState() = GestureRules.State(
         enabled = twoFingerGestures, shown = viewShown, connected = currentInputConnection != null,
-        panel = panel != null, emojiSearch = emojiQuery != null,
+        panel = panel != null, emojiSearch = emojiQuery != null || localInputKind != null,
         proofreading = proofreading || proposal != null || proposalRow?.visibility == View.VISIBLE,
         touchExploration = getSystemService(android.view.accessibility.AccessibilityManager::class.java)?.isTouchExplorationEnabled == true,
         sensitive = inputIsSensitive, learning = learningAllowed, terminal = stripOff == TypingRules.StripOff.TERMINAL,
@@ -5534,7 +5925,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             GestureAction.CURSOR_END -> gestureMoveCaret(start = false)
             GestureAction.SELECT_ALL -> gestureSelectAll()
             GestureAction.PASTE -> gesturePaste()
-            GestureAction.HIDE_KEYBOARD -> requestHideSelf(0)
+            GestureAction.HIDE_KEYBOARD -> { explicitHideRequests++; requestHideSelf(0) }
             GestureAction.EMOJI -> openPanel(KeyboardPanel.EMOJI)
             GestureAction.SAVED_TEXT -> openSavedPanel()
             GestureAction.SYMBOLS -> setMode(if (mode == KeyboardLayout.Mode.SYMBOLS || mode == KeyboardLayout.Mode.MORE_SYMBOLS)
@@ -5728,13 +6119,20 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
 
     /** The keyboard's window has gone; nothing is listening after that. */
     override fun onWindowHidden() {
+        windowsHidden++
         cancelSwipeWork()
         stopDictationNow(commit = false)
         super.onWindowHidden()
     }
 
+    override fun onWindowShown() {
+        windowsShown++
+        super.onWindowShown()
+    }
+
     /** The editor has finished for good, whether or not its view was showing. */
     override fun onFinishInput() {
+        clearCharacterTools()
         cancelSwipeWork()
         stopDictationNow(commit = false)
         super.onFinishInput()
@@ -5929,14 +6327,73 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     override fun onInlineSuggestionsResponse(response: InlineSuggestionsResponse): Boolean =
         inlineAutofill?.response(response) ?: false
 
-    /** The chips changed: into the strip's row, and the strip decides whether that row shows. */
+    /**
+     * The chips changed: into the strip's row, and the strip decides whether that row shows; or, while Passwords &
+     * cards is open, into its panel. The tile's dot follows either way.
+     */
     private fun attachInlineChips() {
         val covered = inlineRow?.visibility == View.VISIBLE
-        inlineRow?.let { inlineAutofill?.attach(it) }
+        if (panel == KeyboardPanel.PASSWORDS) renderPasswordsPanel() else inlineRow?.let { inlineAutofill?.attach(it) }
         updateSlotVisibility()
+        updatePasswordsDot()
         // The last offer was logged as covered by chips or as seen, and that just changed: a tap on a word that
         // has only now come into view must not be logged against an offer marked unseen.
         if (covered != (inlineRow?.visibility == View.VISIBLE)) scheduleRefresh()
+    }
+
+    /** A chip was tapped and Android is filling the field: if Passwords & cards held it, the keys come back. */
+    private fun inlineChipTapped() {
+        if (panel != KeyboardPanel.PASSWORDS) return
+        closePanel()
+        TalkBackFocus.moveTo(toolsHandle)
+    }
+
+    /**
+     * Passwords & cards, while it's open: the chips drawn so far, moved here from the strip, or a sentence for why
+     * there are none, and a button for the manager's app. Counts, the setting and the manager's name only: what a chip
+     * says never reaches the keyboard.
+     */
+    private fun renderPasswordsPanel() {
+        if (panel != KeyboardPanel.PASSWORDS) return
+        val view = passwordsPanel ?: return
+        val chips = inlineAutofill
+        chips?.attach(view.chips)
+        val manager = passwordManager()
+        val touch = getSystemService(android.view.accessibility.AccessibilityManager::class.java)?.isTouchExplorationEnabled == true
+        val state = PasswordsTile.state(chips?.drawn ?: 0, chips?.count ?: 0, KeyboardSettings.passwordManagerSuggestions(this), touch, manager)
+        val button = when (PasswordsTile.opens(manager, managerLaunch(manager) != null)) {
+            PasswordsTile.Opens.MANAGER_APP -> managerName(manager)?.let { getString(R.string.passwords_open, it) }
+                ?: getString(R.string.passwords_open_manager)
+            PasswordsTile.Opens.AUTOFILL_SETTINGS -> getString(R.string.passwords_autofill_settings)
+        }
+        view.show(state, button)
+    }
+
+    /** The autofill service's package, from the system's own setting; null when none is selected. */
+    private fun passwordManager(): String? = PasswordsTile.managerPackage(
+        runCatching { android.provider.Settings.Secure.getString(contentResolver, AUTOFILL_SERVICE_SETTING) }.getOrNull())
+
+    /** The manager's own app, when it has one to open (the manifest's queries make autofill services visible). */
+    private fun managerLaunch(manager: String?): android.content.Intent? =
+        manager?.let { runCatching { packageManager.getLaunchIntentForPackage(it) }.getOrNull() }
+
+    private fun managerName(manager: String?): String? = manager?.let {
+        runCatching { packageManager.getApplicationLabel(packageManager.getApplicationInfo(it, 0)).toString() }.getOrNull()
+    }?.takeIf { it.isNotBlank() }
+
+    /**
+     * The panel's button: the manager's app, or where it has none, Android's choice of autofill service, which changes
+     * nothing until the person picks one there. It never asks for a fill. The panel closes first, as for Contacts.
+     */
+    private fun openPasswordManager() {
+        val manager = passwordManager()
+        val launch = managerLaunch(manager)
+        val intent = if (PasswordsTile.opens(manager, launch != null) == PasswordsTile.Opens.MANAGER_APP && launch != null) launch
+            else android.content.Intent(android.provider.Settings.ACTION_REQUEST_SET_AUTOFILL_SERVICE, android.net.Uri.parse("package:$packageName"))
+        closePanel()
+        TalkBackFocus.moveTo(toolsHandle)
+        runCatching { startActivity(intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)) }
+            .onFailure { showNotice(NoticeRules.Message.NOT_OPENED) }
     }
 
     override fun dump(fd: java.io.FileDescriptor, writer: java.io.PrintWriter, args: Array<out String>) {
@@ -5948,14 +6405,15 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         writer.println("added_correction_key_cpu samples=${summary.first} p95_us=${summary.second / 1000} max_us=${summary.third / 1000}")
         writer.println("held_keys replayed=$heldKeysReplayed resent=$heldKeysResent sent=$heldKeysSent dropped=$heldKeysDropped held=${pendingKeys.size}")
         writer.println("oneHanded mode=$oneHanded rail=${oneHandedRail?.visibility == View.VISIBLE}")
-        writer.println("window fullscreen=$isFullscreenMode heightDp=${resources.configuration.screenHeightDp} widthDp=${resources.configuration.screenWidthDp}")
+        writer.println("window fullscreen=$isFullscreenMode heightDp=${resources.configuration.screenHeightDp} widthDp=${resources.configuration.screenWidthDp} keysDp=${keyPlacement?.widthDp ?: -1} keysAt=${keyPlacement?.side ?: "none"} wideKeys=$wideKeys")
+        writer.println("input_view starts=$inputViewStarts restarts=$inputViewRestarts finishes=$inputViewFinishes finishing=$finishingInputViews windowShown=$windowsShown windowHidden=$windowsHidden explicitHides=$explicitHideRequests visible=$isInputViewShown restartBlocked=$compatibilityEditorRestarted boundaryRecoveries=$restartBoundaryRecoveries")
         writer.println("contacts allowed=${ContactsReader.granted(this)} read=${contacts?.size ?: -1} names=${contactNames.size}")
         writer.println("voice route=$voiceRoute offered=$voiceOffered listening=${dictationSession.listening} inserted=${dictationSession.inserted} lastEnd=$dictationLastEnd")
         writer.println("notices shown=$noticesShown place=$noticePlace showing=${notice != null}")
         // Counts and the last swipe's direction and action only; never text.
         writer.println("gestures enabled=$twoFingerGestures watching=${twoFingerAllowed()} ${keyboardView?.twoFingerCounts} run=$gesturesRun refused=$gesturesRefused last=$gestureLast undo=${gestureUndo != null}")
         // Counts only. The chips are drawn by Android in another process; the keyboard has nothing of theirs to print.
-        inlineAutofill?.let { writer.println("inline requests=${it.requests} responses=${it.responses} inflated=${it.inflated} chips=${it.count} unpinned=${it.unpinned} shown=${inlineRow?.visibility == View.VISIBLE} row=${inlineRow?.width}x${inlineRow?.height} at=${it.geometry()}") }
+        inlineAutofill?.let { writer.println("inline requests=${it.requests} responses=${it.responses} inflated=${it.inflated} chips=${it.count} unpinned=${it.unpinned} drawn=${it.drawn} shown=${inlineRow?.visibility == View.VISIBLE} row=${inlineRow?.width}x${inlineRow?.height} at=${it.geometry()} panel=${panel == KeyboardPanel.PASSWORDS} panelChips=${passwordsPanel?.chips?.flow?.childCount ?: 0}") }
         // Counts only: no host and no saved text is ever printed.
         writer.println("expansions hosts=${rememberedDomains?.entries?.size} offered=${rememberedDomains?.offered?.size} shortcuts=${savedTexts?.codes?.size} " +
             "endings=${DomainStore.tlds.size} remembering=$rememberDomains field=$hostField showing=${expansion?.kind} slot=$expansionSlot " +
@@ -6092,6 +6550,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         private const val VOICE_MESSAGE_MS = 4_000L
         /** A password manager's chip in the 48 dp strip, with room above and below it. */
         private const val INLINE_CHIP_HEIGHT_DP = 36
+        /** The secure setting naming the autofill service, a flattened component. Readable by apps, though not in the SDK. */
+        private const val AUTOFILL_SERVICE_SETTING = "autofill_service"
         /** How long the strip offers to put a cleaned link back. */
         private const val LINK_NOTICE_MS = 4_000L
         /** How long a notice stays, the same as a cleaned link's offer and a voice message. */

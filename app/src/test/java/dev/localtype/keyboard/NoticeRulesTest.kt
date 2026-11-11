@@ -21,6 +21,7 @@ class NoticeRulesTest {
         assertEquals(NoticeRules.Place.STATUS_ROW, NoticeRules.place(null))
         assertEquals(NoticeRules.Place.SAVED_TITLE, NoticeRules.place(KeyboardPanel.SAVED))
         assertEquals(NoticeRules.Place.OVER_HEADER, NoticeRules.place(KeyboardPanel.EMOJI))
+        assertEquals(NoticeRules.Place.OVER_HEADER, NoticeRules.place(KeyboardPanel.PASSWORDS))
     }
 
     @Test

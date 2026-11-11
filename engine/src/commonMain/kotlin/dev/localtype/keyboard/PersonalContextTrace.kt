@@ -84,6 +84,6 @@ class PersonalContextTrace {
         if (raw.length !in 1..128 || raw.encodeToByteArray().size > 512) return null
         val word = AdaptiveNgramModel.normalize(raw)
         return word.takeIf { it.length in 1..128 && it.encodeToByteArray().size <= 512 &&
-            AdaptiveNgramModel.WORD_REGEX.matches(it) && LearnedPairState.validWord(it) }
+            WordRule.STORED.matches(it) && LearnedPairState.validWord(it) }
     }
 }

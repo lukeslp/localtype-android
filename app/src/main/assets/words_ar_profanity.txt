@@ -1,0 +1,24 @@
+# Common Arabic swear words, counts from hermitdave/FrequencyWords, content/2018/ar (OpenSubtitles 2018) at commit 525f9b560de45753a5ea01069454e72e9aa541c6, CC BY-SA 4.0. Slurs are deliberately excluded.
+نيك	13843
+عاهرة	9594
+لعين	8726
+عاهرات	1288
+كس	320
+شرموطة	60
+طيزك	56
+متناكة	54
+زب	53
+خراء	48
+كسمك	41
+قحبة	38
+طيز	30
+خرا	27
+منيوك	24
+زبي	21
+انيك	19
+شراميط	15
+كسم	15
+عرص	7
+منيوكة	4
+متناك	2
+قحاب	1

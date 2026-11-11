@@ -14,6 +14,8 @@ import dev.localtype.modelkit.ModelImportRules
 import dev.localtype.modelkit.PinnedModel
 import dev.localtype.modelkit.SharedModelClient
 import java.io.File
+import java.io.IOException
+import java.nio.file.Files
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -230,13 +232,18 @@ internal class LiteRtGemmaCompletionProvider(
         return InstalledModel(name.orEmpty().ifEmpty { MODEL_FILE_NAME }, modelFile.length())
     }
 
+    override fun hasModelFiles(): Boolean =
+        listOf(modelFile, nameFile, files.npuAttemptMarker(modelFile)).any { it.exists() } || downloaded.hasModelFiles()
+
     override fun remove() {
         client.reload()
         client.unbind()
-        modelFile.delete()
-        nameFile.delete()
-        files.npuAttemptMarker(modelFile).delete()
+        for (file in listOf(modelFile, nameFile, files.npuAttemptMarker(modelFile))) {
+            Files.deleteIfExists(file.toPath())
+            if (file.exists()) throw IOException("Some Gemma files could not be removed. Try again.")
+        }
         downloaded.remove()
+        ModelDownloads.writeProgress(appContext, ModelDownloadProgress(ModelDownloadProgress.State.IDLE))
     }
 
     private fun queryNameAndSize(context: Context, source: Uri): Pair<String?, Long?> =

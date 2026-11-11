@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The dot on the Passwords & cards tile while a password manager's chips are waiting: a filled circle ringed in
+     the strip's background, so it stands apart from the icon it sits on. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="@color/kb_accent" />
+    <stroke android:width="1.5dp" android:color="@color/kb_background" />
+    <size android:width="9dp" android:height="9dp" />
+</shape>

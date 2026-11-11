@@ -6,7 +6,8 @@ object AddedWords {
     const val CONTEXT = AdaptiveNgramModel.ADDED_WORDS_CONTEXT
     const val VERSION = "added-words-v1"
     const val MAX_WORDS = LearnedPairState.MAX_FOLLOWERS
-    private val WORD = Regex("[\\p{L}]+(?:['-][\\p{L}]+)*'?")
+    // Letters, with the marks and the non-joiner some languages write inside a word ([WordRule]).
+    private val WORD = Regex("\\p{L}[\\p{L}\\p{Mn}\u200C]*(?:['-]\\p{L}[\\p{L}\\p{Mn}\u200C]*)*'?")
 
     enum class Result { ADDED, EXISTS, INVALID, FULL }
 

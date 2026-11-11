@@ -24,7 +24,7 @@ object WordPersistence {
     fun modelContext(context: String, owned: List<String>, allowed: Boolean): Boolean {
         if (!allowed) return false
         val words = context.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
-        if (words.isEmpty() || words.size > owned.size || words.any { !AdaptiveNgramModel.WORD_REGEX.matches(it) }) return false
+        if (words.isEmpty() || words.size > owned.size || words.any { !WordRule.STORED.matches(it) }) return false
         return words.map(AdaptiveNgramModel::normalize) == owned.takeLast(words.size).map(AdaptiveNgramModel::normalize)
     }
 

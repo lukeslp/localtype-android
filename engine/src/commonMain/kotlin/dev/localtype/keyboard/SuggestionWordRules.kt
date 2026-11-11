@@ -19,6 +19,9 @@ object SuggestionWordRules {
         LanguageProfile.SPANISH.code -> EXCLUDED_HASHES_ES
         LanguageProfile.PORTUGUESE.code -> EXCLUDED_HASHES_PT
         LanguageProfile.HEBREW.code -> EXCLUDED_HASHES_HE
+        LanguageProfile.ARABIC.code -> EXCLUDED_HASHES_AR
+        LanguageProfile.PERSIAN.code -> EXCLUDED_HASHES_FA
+        LanguageProfile.GALICIAN.code -> EXCLUDED_HASHES_GL
         else -> emptySet()
     }
 
@@ -121,6 +124,33 @@ object SuggestionWordRules {
         e3575c262f841f19ab7dffdfa6104b172ed636853ba68d36b6c1a81d8f0d6da2 f2ccf21a9dd1d73752faa4fddf23c06788c19cd99b91b6a62c5c9209199942ff
         f3cf22cc8c5b20395e67917d04d41134b4744377f69becc8fb8e32dfe23539e7 f6d76e10b219b478ea4fddf46c2ac73aae90ad79621b15db2144a62e0e32eed2
         fbe0d87c2b04e31b19200978a9534dab091355beb495e492bcfd991d22400ea9 ffd0f013028dcb2e7ef073b11db9c447dc31c559288661fd04adabbbc0f919e2
+        """.trim().split(Regex("\\s+")).toSet()
+
+    /** Galician shares its slurs with its two neighbours, so it takes both their lists (no Galician reader has added to them). */
+    val EXCLUDED_HASHES_GL: Set<String> by lazy { EXCLUDED_HASHES_ES + EXCLUDED_HASHES_PT }
+
+    /**
+     * Arabic racial and homophobic slurs, the few I could identify with confidence (2026-11-10, without a native
+     * reader; Arabic is experimental). A reader's list would be longer.
+     */
+    val EXCLUDED_HASHES_AR: Set<String> = """
+        0307b949ebfd2ffd151dc2e26dcf72dfb178860c77e2d2ec4f4fb6c890821078 152616fe255c67d3c5e66a0b4ff20de18a38af3d6ea4f2088205e20620d911c3
+        3b7413489c6bf8d2b7bef29f9180ce53f5cf6bc21151f37dcdba0364aee331a1 722d77d9ca7eb36edcff2a7f24306a2e725bcc32f7f68588b6f1148028173324
+        7b53505a8bc961acd777dc8bd700b861af358fbd5e2c4189b7413886fe233a0f 9f5082e01284108ef2f31f78e5d4940a7f93bf524cf8b12a66fd844a5f985c9d
+        afb573b647280953ecdf5d0d201f075a9b8f52d58cc7f852f62517b016b426f2 bc92b2c6da1b304516d299a14405d9843d34129488bac1eb46dd3054a38d5861
+        c6e505c49d0e27a0ef286edd35fa69ac734320c821df54dd84b8e9d8294a952c f486656123ebdb4ff58c4d4616c502452c8db2118f6331b22e0e1e219b50ff6f
+        """.trim().split(Regex("\\s+")).toSet()
+
+    /**
+     * Persian homophobic and racial slurs, with and without the non-joiner, the few I could identify with confidence
+     * (2026-11-10, without a native reader; Persian is experimental).
+     */
+    val EXCLUDED_HASHES_FA: Set<String> = """
+        1a5cfead260158ee118c748bc6f0f3c185f576c542fed5b30cae1937f5a160bc 1bbedcbf6eb62f68da47e85d9dcb347c8d71d49cb09a27a19991b2bc881a848b
+        3084eb7feb2ad12afa814f1eadc05f9b6ad8447867752b5acfc28682831ed372 470019dc8303551da774d3715ee62ced0708b82912cc0a032716d0f8be9efb9a
+        4d86926633ef472f358fa002bae06033c109a1a1daa8ad2059d42509be8b1d6d 50725a7a29f5ea08f310447f43d452b9dada0490eb136650589e5fb3fda607bb
+        7d049c976be9402b00a877ad0ca4719d754a1d8e25374ebe2112fadbecd4de75 86de2834fcc4ce1c50443ca0365498715c0f0a26b65fa7c1260abb40d2c4a922
+        960c6f55aa7cd55f66b1e1f71bdd22d85c8f7efdd6b67a5fad6d033d48a99e6b fcdbcba8e64c1b010971fe764eb3f4907b7e2311ebab3d262d8a5943a542feca
         """.trim().split(Regex("\\s+")).toSet()
 
     /**

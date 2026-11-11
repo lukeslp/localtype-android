@@ -7,15 +7,67 @@ import org.junit.Test
 
 /** Which tools the strip's row shows, how many fit, and where each may run. */
 class StripToolsTest {
-    private val everything = StripTools.Field(voice = true, proofread = true)
+    @Test fun characterToolsAreDiscoverableUnpinnedAndEffectsStayOutOfPrivateFields() {
+        val field = StripTools.Field(voice = true, proofread = true)
+        for (tool in listOf(StripTool.SYMBOLS, StripTool.TEXT_EFFECTS)) {
+            assertTrue(tool in StripTools.panel(field).flatMap { it.second })
+            assertFalse(tool in StripTools.ROW_ORDER)
+        }
+        val state = GestureRules.State(enabled = false)
+        assertTrue(StripTools.allowed(StripTool.TEXT_EFFECTS, state))
+        assertFalse(StripTools.allowed(StripTool.TEXT_EFFECTS, state.copy(sensitive = true)))
+        assertFalse(StripTools.allowed(StripTool.TEXT_EFFECTS, state.copy(learning = false)))
+        assertFalse(StripTools.allowed(StripTool.TEXT_EFFECTS, state.copy(terminal = true)))
+    }
+    private val everything = StripTools.Field(voice = true, proofread = true, passwords = true)
+    /** Android 10 and older: no inline chips, so no Passwords & cards. */
+    private val beforeAndroid11 = StripTools.Field(voice = true, proofread = true, passwords = false)
     private val plain = GestureRules.State(enabled = false)
 
     @Test
     fun `with the lead button hidden a 360 dp strip fits five tools and More, a 411 dp Pixel six`() {
         assertEquals(6, StripTools.cells(360))
-        assertEquals(listOf(StripTool.CLIPBOARD, StripTool.EMOJI, StripTool.VOICE, StripTool.UNDO, StripTool.PROOFREAD), StripTools.row(360, everything))
+        assertEquals(listOf(StripTool.CLIPBOARD, StripTool.PASSWORDS, StripTool.EMOJI, StripTool.VOICE, StripTool.UNDO), StripTools.row(360, everything))
         assertEquals(7, StripTools.cells(411))
-        assertEquals(StripTool.SELECT_ALL, StripTools.row(411, everything).last())
+        assertEquals(
+            listOf(StripTool.CLIPBOARD, StripTool.PASSWORDS, StripTool.EMOJI, StripTool.VOICE, StripTool.UNDO, StripTool.PROOFREAD),
+            StripTools.row(411, everything),
+        )
+    }
+
+    @Test
+    fun `the built-in row begins Clipboard, Passwords and cards, Emoji, Voice, Undo, Proofread`() {
+        assertEquals(
+            listOf(StripTool.CLIPBOARD, StripTool.PASSWORDS, StripTool.EMOJI, StripTool.VOICE, StripTool.UNDO, StripTool.PROOFREAD),
+            StripTools.ROW_ORDER.take(6),
+        )
+    }
+
+    @Test
+    fun `before Android 11 there is no Passwords and cards tile, and the row is as it was`() {
+        assertEquals(listOf(StripTool.CLIPBOARD, StripTool.EMOJI, StripTool.VOICE, StripTool.UNDO, StripTool.PROOFREAD), StripTools.row(360, beforeAndroid11))
+        assertEquals(StripTool.SELECT_ALL, StripTools.row(411, beforeAndroid11).last())
+        assertFalse(StripTools.offered(StripTool.PASSWORDS, beforeAndroid11))
+        assertFalse(StripTools.panel(beforeAndroid11).flatMap { it.second }.contains(StripTool.PASSWORDS))
+        // Pinned in a saved row, it still stays out where chips can't come.
+        assertEquals(listOf(StripTool.UNDO), StripTools.row(411, beforeAndroid11, listOf(StripTool.PASSWORDS, StripTool.UNDO)))
+    }
+
+    @Test
+    fun `a row someone saved is kept as it was, without the new tile`() {
+        val saved = StripTools.rowOrder(listOf("clipboard", "emoji", "undo"))
+        assertEquals(listOf(StripTool.CLIPBOARD, StripTool.EMOJI, StripTool.UNDO), saved)
+        assertEquals(saved, StripTools.row(411, everything, saved))
+    }
+
+    @Test
+    fun `Passwords and cards sits in Insert and runs wherever the chips can, password fields above all`() {
+        assertTrue(StripTool.PASSWORDS in StripTools.panel(everything).toMap().getValue(StripTools.Group.INSERT))
+        assertTrue(StripTools.allowed(StripTool.PASSWORDS, plain))
+        assertTrue(StripTools.allowed(StripTool.PASSWORDS, plain.copy(sensitive = true)))
+        assertTrue(StripTools.allowed(StripTool.PASSWORDS, plain.copy(learning = false)))
+        assertTrue(StripTools.allowed(StripTool.PASSWORDS, plain.copy(terminal = true)))
+        assertFalse(StripTools.allowed(StripTool.PASSWORDS, plain.copy(connected = false)))
     }
 
     @Test

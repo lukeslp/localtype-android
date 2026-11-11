@@ -83,6 +83,24 @@
     "review": "Derived from ICANN rules, with explicit exclusions preserving the exact 1437-entry shipped membership; full source and generator included",
     "sourceSha256": "aff01a9047269d5f718a18faab1cc3bcb7127cd28cb11ad25b33bb0bee6212f4"
   },
+  "words_ar.txt": {
+    "sha256": "20183cdbfb5872ac4efb0c28a204beba6a04271799bd5433d52b26a269bfdcd0",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/ar/ar_full.txt (OpenSubtitles 2018); model/arabic_script_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Same project, commit and content terms as the Spanish, Portuguese and Hebrew lists; checked 2026-11-10. Not read by a native speaker",
+    "sourceSha256": "20183cdbfb5872ac4efb0c28a204beba6a04271799bd5433d52b26a269bfdcd0"
+  },
+  "words_ar_profanity.txt": {
+    "sha256": "ddad5883d57992a7d1a7e1a2ed577cfadb542565fbcd9b42a979fc6908b8d1d2",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/ar/ar_full.txt (OpenSubtitles 2018); model/arabic_script_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Same project, commit and content terms as the Spanish, Portuguese and Hebrew lists; checked 2026-11-10. Not read by a native speaker",
+    "sourceSha256": "ddad5883d57992a7d1a7e1a2ed577cfadb542565fbcd9b42a979fc6908b8d1d2"
+  },
   "words_cy.txt": {
     "sha256": "1e7c71f2ea4cddab57b5f536068987ff14f84cc92bb34b0fb3429347c10f42d0",
     "status": "reviewed-grant",
@@ -146,6 +164,24 @@
     "review": "Sources, versions and licence pages recorded in model/licenses.md (Spanish 2026-10-17/18, Portuguese 2026-10-18)",
     "sourceSha256": "aee4c6d0ce1edcd581948c2794bfc4a3de9ff591add9f1897e6e36de18673b99"
   },
+  "words_fa.txt": {
+    "sha256": "6644e4a60e1a7d609f5f3f8f2723d314ab2c94cb5b245547566a4ac54ee76899",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/fa/fa_full.txt (OpenSubtitles 2018) and Persian Wikipedia, fawiki-20261101-pages-articles1.xml-p1p1500000.bz2 (https://dumps.wikimedia.org/fawiki/, SHA-1 9d23e9df1e2f3344bd53826666e3dcd91e020bd3); model/arabic_script_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Subtitle counts under the same project, commit and content terms as the Hebrew lists; Wikipedia text is CC BY-SA 4.0, so the combined counts are too. Checked 2026-11-10. Not read by a native speaker",
+    "sourceSha256": "6644e4a60e1a7d609f5f3f8f2723d314ab2c94cb5b245547566a4ac54ee76899"
+  },
+  "words_fa_profanity.txt": {
+    "sha256": "e57007060298d1d22e0895282a06b2b7543bae0c8cdd7716cee3cc754f1286ad",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/fa/fa_full.txt (OpenSubtitles 2018) and Persian Wikipedia, fawiki-20261101-pages-articles1.xml-p1p1500000.bz2 (https://dumps.wikimedia.org/fawiki/, SHA-1 9d23e9df1e2f3344bd53826666e3dcd91e020bd3); model/arabic_script_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Subtitle counts under the same project, commit and content terms as the Hebrew lists; Wikipedia text is CC BY-SA 4.0, so the combined counts are too. Checked 2026-11-10. Not read by a native speaker",
+    "sourceSha256": "e57007060298d1d22e0895282a06b2b7543bae0c8cdd7716cee3cc754f1286ad"
+  },
   "words_ga.txt": {
     "sha256": "7fb76ff740ffb1ed7d991fd2a84d3e8aed2c5a20e285c9d5cf2a4f3f1b9686b4",
     "status": "reviewed-grant",
@@ -163,6 +199,42 @@
     "notice": "licenses/wordlists-NOTICE.txt",
     "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Not read by a native speaker",
     "sourceSha256": "136d314fe2b88ae4470766c3d685e87a473b307cc341c9f3ef31c3334d6fe834"
+  },
+  "words_gd.txt": {
+    "sha256": "e2a08bcfc377c17cf897d1143fba052eb4642496b698826ab8bcb55c09062dab",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "Scottish Gaelic Wikipedia, gdwiki-20261101 pages-articles dump (https://dumps.wikimedia.org/gdwiki/); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Checked 2026-11-10. Not read by a native speaker",
+    "sourceSha256": "e2a08bcfc377c17cf897d1143fba052eb4642496b698826ab8bcb55c09062dab"
+  },
+  "words_gd_profanity.txt": {
+    "sha256": "bca7cdff21a97ebc1b792d04e291eddf3e2d1930ece83317cf4e8cfe35dbe29d",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "Scottish Gaelic Wikipedia, gdwiki-20261101 pages-articles dump (https://dumps.wikimedia.org/gdwiki/); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Checked 2026-11-10. Not read by a native speaker",
+    "sourceSha256": "bca7cdff21a97ebc1b792d04e291eddf3e2d1930ece83317cf4e8cfe35dbe29d"
+  },
+  "words_gl.txt": {
+    "sha256": "2f88971ea9b617983c5bc0763a73944347ec1ffe8aabf0856aabb2b755f83d64",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "Galician Wikipedia, glwiki-20261101 pages-articles dump (https://dumps.wikimedia.org/glwiki/); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Checked 2026-11-10. Not read by a native speaker",
+    "sourceSha256": "2f88971ea9b617983c5bc0763a73944347ec1ffe8aabf0856aabb2b755f83d64"
+  },
+  "words_gl_profanity.txt": {
+    "sha256": "63a15aed3e46dc792e2042e7c956236cf673866118d45a12c8c714b57e74355c",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "Galician Wikipedia, glwiki-20261101 pages-articles dump (https://dumps.wikimedia.org/glwiki/); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Checked 2026-11-10. Not read by a native speaker",
+    "sourceSha256": "63a15aed3e46dc792e2042e7c956236cf673866118d45a12c8c714b57e74355c"
   },
   "words_haw.txt": {
     "sha256": "f7ca3b29964a592b888374342c841c4c96fdbe8593e05dc6446a6ad1cfc94779",
@@ -209,6 +281,15 @@
     "review": "SCOWL notice verified byte-identical to rel-2020.12.07; modern supplement retains CC BY-SA 4.0; exact historical subset recipe not recovered",
     "sourceSha256": "39e4784d9a257b8ba8c0464db7f2a177a4c31c598ea2287547a201690a31a0a3"
   },
+  "words_known_ar.txt": {
+    "sha256": "6e781dc745c9aa1ae7ad010cc12aa4b28f1ae53780a515b9f3eb1c1a9bb1be8e",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/ar/ar_full.txt (OpenSubtitles 2018); model/arabic_script_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Same project, commit and content terms as the Spanish, Portuguese and Hebrew lists; checked 2026-11-10. Not read by a native speaker",
+    "sourceSha256": "6e781dc745c9aa1ae7ad010cc12aa4b28f1ae53780a515b9f3eb1c1a9bb1be8e"
+  },
   "words_known_cy.txt": {
     "sha256": "deb627513af8e5fc3c154c8d53fcf20ceccde510bf1b678c7403a70701644efa",
     "status": "reviewed-grant",
@@ -227,6 +308,15 @@
     "review": "Sources, versions and licence pages recorded in model/licenses.md (Spanish 2026-10-17/18, Portuguese 2026-10-18)",
     "sourceSha256": "a5d3c1b50366a0b15f1ffc5706b41d514d7711357cb4e44dbd6d63b1fdaa9ca2"
   },
+  "words_known_fa.txt": {
+    "sha256": "bc6a976af9188cfc9f82d2079311ba8b0f5d2ec5d54a4774ff68331ef570dd36",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/fa/fa_full.txt (OpenSubtitles 2018) and Persian Wikipedia, fawiki-20261101-pages-articles1.xml-p1p1500000.bz2 (https://dumps.wikimedia.org/fawiki/, SHA-1 9d23e9df1e2f3344bd53826666e3dcd91e020bd3); model/arabic_script_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Subtitle counts under the same project, commit and content terms as the Hebrew lists; Wikipedia text is CC BY-SA 4.0, so the combined counts are too. Checked 2026-11-10. Not read by a native speaker",
+    "sourceSha256": "bc6a976af9188cfc9f82d2079311ba8b0f5d2ec5d54a4774ff68331ef570dd36"
+  },
   "words_known_ga.txt": {
     "sha256": "adb858cc30a7bc906bbb3b5bcb97437b7838f16b3d3686b080b714cc9cd1f272",
     "status": "reviewed-grant",
@@ -235,6 +325,24 @@
     "notice": "licenses/wordlists-NOTICE.txt",
     "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Not read by a native speaker",
     "sourceSha256": "adb858cc30a7bc906bbb3b5bcb97437b7838f16b3d3686b080b714cc9cd1f272"
+  },
+  "words_known_gd.txt": {
+    "sha256": "c8f9f5cd9171f031ba6dd3b1aa37dea5bc7fc4538df624b3f66fe41cfa105f07",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "Scottish Gaelic Wikipedia, gdwiki-20261101 pages-articles dump (https://dumps.wikimedia.org/gdwiki/); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Checked 2026-11-10. Not read by a native speaker",
+    "sourceSha256": "c8f9f5cd9171f031ba6dd3b1aa37dea5bc7fc4538df624b3f66fe41cfa105f07"
+  },
+  "words_known_gl.txt": {
+    "sha256": "8563492392b17463e2197b646246020bfdfec7e88acb8671e9e1575a34d9d652",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "Galician Wikipedia, glwiki-20261101 pages-articles dump (https://dumps.wikimedia.org/glwiki/); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Checked 2026-11-10. Not read by a native speaker",
+    "sourceSha256": "8563492392b17463e2197b646246020bfdfec7e88acb8671e9e1575a34d9d652"
   },
   "words_known_haw.txt": {
     "sha256": "c3cb9206e0dcf4de07d467760359b2851c2d6f9f1afbeea33ea13f077655cd79",
@@ -263,6 +371,15 @@
     "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Not read by a native speaker",
     "sourceSha256": "adf6734c135ab119923c9d3be55ccf349c47f6a3350e9e05114306c82feb81ba"
   },
+  "words_known_nv.txt": {
+    "sha256": "2d119cae4f25f5fff1dbb07e608bc8e6a54e0329354fe0e1954d959cf3e00c9b",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "Navajo Wikipedia, nvwiki-20261101 pages-articles dump (https://dumps.wikimedia.org/nvwiki/, SHA-1 58463e0b2d96f6c3c0a44468fd2afbb577242fac); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Checked 2026-11-10. Not read by a Navajo speaker and not reviewed by the Navajo Nation",
+    "sourceSha256": "2d119cae4f25f5fff1dbb07e608bc8e6a54e0329354fe0e1954d959cf3e00c9b"
+  },
   "words_known_pt.txt": {
     "sha256": "15d3bb57b439459637472faecd1f3b0db38fd7f4d191afd42a3a100d65a8f95d",
     "status": "reviewed-grant",
@@ -289,6 +406,24 @@
     "notice": "licenses/wordlists-NOTICE.txt",
     "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Not read by a native speaker",
     "sourceSha256": "606719469f9565f067ac9fc9ee3814052e8bb8c8f8468fb66aa8f0efd2dc8a2f"
+  },
+  "words_nv.txt": {
+    "sha256": "d56be95184d10668cad7f9764f1acc3b3f6b9e24a44e5b6718730e9ff89934df",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "Navajo Wikipedia, nvwiki-20261101 pages-articles dump (https://dumps.wikimedia.org/nvwiki/, SHA-1 58463e0b2d96f6c3c0a44468fd2afbb577242fac); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Checked 2026-11-10. Not read by a Navajo speaker and not reviewed by the Navajo Nation",
+    "sourceSha256": "d56be95184d10668cad7f9764f1acc3b3f6b9e24a44e5b6718730e9ff89934df"
+  },
+  "words_nv_profanity.txt": {
+    "sha256": "120d7e54b7f1b1432018b8a2f4e03a12c4d6b97c1b3c3b02bcd9117829afc0ff",
+    "status": "reviewed-grant",
+    "license": "CC-BY-SA-4.0",
+    "source": "Navajo Wikipedia, nvwiki-20261101 pages-articles dump (https://dumps.wikimedia.org/nvwiki/, SHA-1 58463e0b2d96f6c3c0a44468fd2afbb577242fac); model/small_language_lists.py",
+    "notice": "licenses/wordlists-NOTICE.txt",
+    "review": "Header names the dump; Wikipedia text is CC BY-SA 4.0, so the derived counts are too. Checked 2026-11-10. Not read by a Navajo speaker and not reviewed by the Navajo Nation",
+    "sourceSha256": "120d7e54b7f1b1432018b8a2f4e03a12c4d6b97c1b3c3b02bcd9117829afc0ff"
   },
   "words_pt.txt": {
     "sha256": "120f4083dd09a6167de304c3914988a4d0e51cfdbe7d52515478d36f775aa5fb",

@@ -88,4 +88,19 @@ class InlineRowRulesTest {
         assertEquals(emptyList<Pair<String, Boolean>>(), empty.ordered())
         assertFalse(empty.giveUp())
     }
+
+    @Test
+    fun `the panel lays chips out in lines at their drawn sizes`() {
+        // Three chips of 120, 100 and 90 in 300 wide with 10 between: two on the first line, the third wraps.
+        val flow = InlineRowRules.flow(listOf(120 to 36, 100 to 36, 90 to 40), width = 300, gap = 10)
+        assertEquals(listOf(0 to 0, 130 to 0, 0 to 46), flow.places)
+        assertEquals(86, flow.height)
+    }
+
+    @Test
+    fun `a chip wider than the panel has a line of its own, and none takes no room`() {
+        val flow = InlineRowRules.flow(listOf(400 to 36, 50 to 36), width = 300, gap = 10)
+        assertEquals(listOf(0 to 0, 0 to 46), flow.places)
+        assertEquals(0, InlineRowRules.flow(emptyList(), width = 300, gap = 10).height)
+    }
 }

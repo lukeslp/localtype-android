@@ -28,6 +28,7 @@ object KeyboardSettings {
     private const val KEY_SHAPES = "key_shapes"
     private const val SPACE_BAR = "space_bar"
     private const val ONE_HANDED = "one_handed"
+    private const val WIDE_KEYS = "wide_keys"
     private const val BRITISH_SPELLING = "british_spelling"
     private const val CURRENCY = "currency"
     private const val COMMON_SYMBOL_HOLDS = "common_symbol_holds"
@@ -39,6 +40,7 @@ object KeyboardSettings {
     private const val DWELL_MS = "dwell_ms"
     private const val STEADY_KEYS = "steady_keys"
     private const val AIM_FROM_TOUCHES = "aim_from_touches"
+    const val INACTIVE_GAPS = "inactive_gaps"
     private const val GESTURE_PREFIX = "gesture_"
     private const val PASSWORD_MANAGER_SUGGESTIONS = "password_manager_suggestions"
     private const val CLEAN_PASTED_LINKS = "clean_pasted_links"
@@ -170,6 +172,10 @@ object KeyboardSettings {
     fun oneHanded(context: Context): OneHanded = OneHanded.of(prefs(context).getString(ONE_HANDED, null))
     fun setOneHanded(context: Context, value: OneHanded) = prefs(context).edit().putString(ONE_HANDED, value.name).apply()
 
+    /** Keys on a window 600 dp wide or more ([WideKeys], [KeyWidthRules]): centered at a maximum width by default. Read once per field. */
+    fun wideKeys(context: Context): WideKeys = WideKeys.of(prefs(context).getString(WIDE_KEYS, null))
+    fun setWideKeys(context: Context, value: WideKeys) = prefs(context).edit().putString(WIDE_KEYS, value.name).apply()
+
     /** How tall the suggestion strip is, and how large its words may grow; read once per field. */
     fun stripHeight(context: Context): StripHeight = StripHeight.of(prefs(context).getString(STRIP_HEIGHT, null))
     fun setStripHeight(context: Context, value: StripHeight) = prefs(context).edit().putString(STRIP_HEIGHT, value.name).apply()
@@ -189,6 +195,10 @@ object KeyboardSettings {
     fun setDwellMs(context: Context, ms: Int) = prefs(context).edit().putInt(DWELL_MS, ms).apply()
     fun setSteadyKeys(context: Context, on: Boolean) = prefs(context).edit().putBoolean(STEADY_KEYS, on).apply()
     fun setAimFromTouches(context: Context, on: Boolean) = prefs(context).edit().putBoolean(AIM_FROM_TOUCHES, on).apply()
+
+    /** Physical row margins and the band below suggestions reject touches. Existing choices stay off. */
+    fun inactiveGaps(context: Context) = prefs(context).getBoolean(INACTIVE_GAPS, false)
+    fun setInactiveGaps(context: Context, on: Boolean) = prefs(context).edit().putBoolean(INACTIVE_GAPS, on).apply()
 
     /** English letter swipe prototype; a new or existing installation starts off. */
     fun experimentalSwipe(context: Context) = prefs(context).getBoolean(EXPERIMENTAL_SWIPE, false)
@@ -244,6 +254,15 @@ object KeyboardSettings {
     fun hawaiian(context: Context) = prefs(context).getBoolean(HAWAIIAN, false)
     fun setHawaiian(context: Context, on: Boolean) = setOffered(context, HAWAIIAN, LanguageProfile.HAWAIIAN, on)
 
+    /**
+     * The languages added from November 2026 ([LanguageProfile.EXTRA]: Arabic, Persian and those after them) share one
+     * pair of functions; each one's switch is `language_<code>`, experimental and off for a new or existing installation.
+     */
+    fun extraKey(language: LanguageProfile) = "language_${language.code}"
+    val EXTRA_KEYS: Set<String> = LanguageProfile.EXTRA.mapTo(HashSet()) { extraKey(it) }
+    fun extraLanguage(context: Context, language: LanguageProfile) = prefs(context).getBoolean(extraKey(language), false)
+    fun setExtraLanguage(context: Context, language: LanguageProfile, on: Boolean) = setOffered(context, extraKey(language), language, on)
+
     /** The IPA keyboard in the hold-Space chooser, off for a new or existing installation. */
     fun ipa(context: Context) = prefs(context).getBoolean(IPA, false)
     fun setIpa(context: Context, on: Boolean) = setOffered(context, IPA, LanguageProfile.IPA, on)
@@ -259,7 +278,8 @@ object KeyboardSettings {
     /** What the chooser offers, English first and the IPA keyboard last; always at least one language with words. */
     fun languages(context: Context): List<LanguageProfile> =
         LanguageChoice.offered(english(context), spanish(context), portuguese(context), ipa(context), hebrew(context),
-            welsh = welsh(context), irish = irish(context), maori = maori(context), hawaiian = hawaiian(context))
+            welsh = welsh(context), irish = irish(context), maori = maori(context), hawaiian = hawaiian(context),
+            extra = LanguageProfile.EXTRA.filter { extraLanguage(context, it) })
 
     /** The language being typed, switched by hand; the first one offered unless another is on and chosen. */
     fun language(context: Context): LanguageProfile {

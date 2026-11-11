@@ -5,10 +5,12 @@ suggests words, predicts with Chime, and has saved text, emoji and an optional
 swipe experiment. Typing runs on the phone, every correction can be undone, and
 the typing log is optional and starts off.
 
-LocalType isn't in F-Droid's main catalog yet. Signed builds of this source are
-on the [releases](https://github.com/lukeslp/localtype-android/releases) page.
-The independent F-Droid repository **LocalType releases** is separate from the
-main catalog.
+LocalType isn't in F-Droid's main catalog yet. The
+[releases](https://github.com/lukeslp/localtype-android/releases) page has two
+signed catalog builds, 0.5.41 and 0.5.42. The source on `main` is newer than
+both, and the `fdroid` build's version in `app/build.gradle.kts` changes only
+when I cut a catalog release. The independent F-Droid repository **LocalType
+releases** is separate from the main catalog.
 
 ## Two builds
 
@@ -25,11 +27,16 @@ The `full` distribution on my
 Gemini Nano through ML Kit and optional Gemma through LiteRT-LM. ML Kit can send
 Google feature-usage statistics.
 
-Both use the package `dev.localtype.keyboard`, my existing signing key, and the
-same storage and preference keys. Installing the `fdroid` build over the full
-one keeps your data and drops the model features. Every new APK, from either
-distribution, gets a higher version code than the last. No signing
-keys are in this repository.
+Android treats the two as different apps. The `full` build's package is
+`dev.localtype.keyboard` and the `fdroid` build's is
+`dev.localtype.keyboard.fdroid`, so neither installs over the other and an
+F-Droid client can't replace one with the other. You can have both installed.
+Learned words and settings don't carry from one to the other, and each has its
+own version codes. Both are signed with my existing key. No signing keys are in
+this repository.
+
+The two builds on the releases page were made before this split, so their
+package is `dev.localtype.keyboard`.
 
 ## Licenses and data
 
@@ -43,8 +50,9 @@ Apache-2.0, with separate word-list terms and documented reproduction limits.
 
 ## Where this source comes from
 
-This repository began as an export of my private source. `SOURCE-MANIFEST.json`
-records that export's file hashes and provenance; later changes are in this
-repository's Git history. It contains no private Git history, research records,
+This repository is an export of my private source, and I refresh it from there.
+`SOURCE-MANIFEST.json` records the latest export's file hashes and the private
+commit it came from; each export is a commit in this repository's Git history.
+It contains no private Git history, research records,
 real typing logs, corpus text, signing keys or device fixtures. `CONTRIBUTING.md`
 covers building, reproducing a release and checking the bundled data.

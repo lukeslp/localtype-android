@@ -9,6 +9,8 @@ object LanguageChoice {
     fun offered(
         english: Boolean, spanish: Boolean, portuguese: Boolean, ipa: Boolean, hebrew: Boolean = false,
         welsh: Boolean = false, irish: Boolean = false, maori: Boolean = false, hawaiian: Boolean = false,
+        /** The languages of [LanguageProfile.EXTRA] that are switched on, in any order; they are offered in that list's order. */
+        extra: Collection<LanguageProfile> = emptyList(),
     ): List<LanguageProfile> = buildList {
         if (english) add(LanguageProfile.ENGLISH)
         if (spanish) add(LanguageProfile.SPANISH)
@@ -18,6 +20,7 @@ object LanguageChoice {
         if (irish) add(LanguageProfile.IRISH)
         if (maori) add(LanguageProfile.MAORI)
         if (hawaiian) add(LanguageProfile.HAWAIIAN)
+        LanguageProfile.EXTRA.forEach { if (it in extra) add(it) }
         if (isEmpty()) add(LanguageProfile.ENGLISH)
         if (ipa) add(LanguageProfile.IPA)
     }

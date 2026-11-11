@@ -6,8 +6,9 @@ package dev.localtype.keyboard
  * adds the rules that depend on Android's field types.
  */
 object TextRules {
-    private val SENTENCE_END = setOf('.', '!', '?')
-    private val ATTACHING_PUNCTUATION = setOf('.', ',', '!', '?', ':', ';')
+    private val SENTENCE_END = setOf('.', '!', '?', '؟')
+    // With the comma, semicolon and question mark of Arabic script, which no Latin-script layout types.
+    private val ATTACHING_PUNCTUATION = setOf('.', ',', '!', '?', ':', ';', '،', '؛', '؟')
     private const val ZWJ = 0x200D
 
     /** Two quick spaces after a word become ". ", like most phone keyboards. */
@@ -46,9 +47,14 @@ object TextRules {
     /**
      * What [value] types with shift on. Only a single character up to Latin Extended-B is capitalized,
      * as in the long-press popup, so IPA and Greek alternates are typed exactly as shown ("ə" stays "ə"),
-     * and so are the domain keys, whose faces stay lowercase (".com", never ".COM").
+     * and so are the domain keys, whose faces stay lowercase (".com", never ".COM"). A letter followed only by
+     * combining marks is still one letter (Navajo "ą́" is "ą" and an acute), so it is capitalized too.
      */
-    fun shifted(value: String): String = if (value.length == 1 && value[0].code <= 0x024F) value.uppercase() else value
+    fun shifted(value: String): String = when {
+        value.length == 1 && value[0].code <= 0x024F -> value.uppercase()
+        value.length > 1 && value[0].isLetter() && value[0].code <= 0x024F && value.drop(1).all { it.code in 0x0300..0x036F } -> value.uppercase()
+        else -> value
+    }
 
     /**
      * UTF-16 length of the last character a person sees in [text], which delete removes whole: an

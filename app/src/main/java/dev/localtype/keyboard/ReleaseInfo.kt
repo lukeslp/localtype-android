@@ -12,6 +12,7 @@ data class ReleaseInfo(val versionCode: Int, val versionName: String, val abis: 
 
     companion object {
         const val PAGE_URL = "https://dr.eamer.dev/downloads/apps/localtype/"
+        const val CHANGELOG_URL = PAGE_URL + "changelog.html"
         /** Settings → About links. Opened in the browser on a tap only. */
         const val SITE_URL = "https://lukesteuber.com/"
         const val SUPPORT_URL = "https://lukesteuber.com/#contact"

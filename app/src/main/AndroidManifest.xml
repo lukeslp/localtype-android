@@ -23,6 +23,10 @@
         <intent>
             <action android:name="android.intent.action.TTS_SERVICE" />
         </intent>
+        <!-- Passwords & cards opens the selected autofill service's app; Android 11 and later hide that app without this. -->
+        <intent>
+            <action android:name="android.service.autofill.AutofillService" />
+        </intent>
         <!-- The Tools panel's Send to app lists the apps that take text, as a selection menu does. -->
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT" />

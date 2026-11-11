@@ -16,6 +16,7 @@ import android.view.inputmethod.InlineSuggestionsRequest
 import android.view.inputmethod.InlineSuggestionsResponse
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.inline.InlinePresentationSpec
 import androidx.annotation.RequiresApi
 import androidx.autofill.inline.UiVersions
@@ -36,6 +37,8 @@ class InlineAutofill(
     private val context: Context,
     private val dp: (Int) -> Int,
     private val onChanged: () -> Unit,
+    /** A chip was tapped. Android fills the field itself; this only hears that a tap happened, never what it filled. */
+    private val onTapped: () -> Unit = {},
 ) {
     /** The answer being shown and its chips as Android hands them over. */
     private var answer = InlineAnswer<View>(emptyList())
@@ -53,6 +56,8 @@ class InlineAutofill(
     /** Chips the current answer has or still expects: the row is theirs from the moment the answer arrives. */
     val count: Int get() = answer.count
     val unpinned: Int get() = answer.unpinned
+    /** Chips Android has drawn so far: what the Passwords & cards panel can hold, and what its tile's dot means. */
+    val drawn: Int get() = answer.ordered().size
 
     // What dumpsys prints. Counts and sizes only: there is nothing else here to print.
     var requests = 0
@@ -98,7 +103,11 @@ class InlineAutofill(
             // Each suggestion can be drawn once.
             suggestion.inflate(context, size, context.mainExecutor) { view ->
                 if (current != batch) return@inflate
-                if (view != null) inflated++
+                if (view != null) {
+                    inflated++
+                    // Android calls this after it has handled the tap; the listener learns only that one happened.
+                    view.setOnClickListener { onTapped() }
+                }
                 answer.drawn(index, view)
                 onChanged()
             }
@@ -122,18 +131,31 @@ class InlineAutofill(
      * theme change replaced are moved over.
      */
     fun attach(row: InlineChipRow) {
+        attachTo(row.chips) { width, height -> LinearLayout.LayoutParams(width, height).apply { marginEnd = dp(CHIP_GAP_DP) } }
+        if (answer.ordered().isEmpty()) row.scrollTo(0, 0)
+    }
+
+    /**
+     * Brings [column], the Passwords & cards panel's place for the chips, to the chips drawn so far, moving them out
+     * of the strip's row. Each suggestion can be drawn only once (Android refuses a second inflate), so the panel holds
+     * the same views, never copies of them; [attach] puts them back when the panel closes.
+     */
+    fun attach(column: InlineChipColumn) {
+        attachTo(column.flow) { width, height -> ViewGroup.LayoutParams(width, height) }
+        if (answer.ordered().isEmpty()) column.scrollTo(0, 0)
+    }
+
+    /** [container] gets exactly the drawn chips in order, each at the size Android drew it, from wherever they were. */
+    private fun attachTo(container: ViewGroup, params: (Int, Int) -> ViewGroup.LayoutParams) {
         val wanted = answer.ordered().map { it.first }
-        for (index in row.chips.childCount - 1 downTo 0) if (row.chips.getChildAt(index) !in wanted) row.chips.removeViewAt(index)
+        for (index in container.childCount - 1 downTo 0) if (container.getChildAt(index) !in wanted) container.removeViewAt(index)
         wanted.forEachIndexed { index, view ->
-            if (row.chips.getChildAt(index) === view) return@forEachIndexed
+            if (container.getChildAt(index) === view) return@forEachIndexed
             (view.parent as? ViewGroup)?.removeView(view)
             // Android hands each chip over with the size it drew it at; the view cannot measure its own content.
             val drawn = view.layoutParams
-            row.chips.addView(view, index, LinearLayout.LayoutParams(drawn?.width ?: ViewGroup.LayoutParams.WRAP_CONTENT, drawn?.height ?: ViewGroup.LayoutParams.WRAP_CONTENT).apply {
-                marginEnd = dp(CHIP_GAP_DP)
-            })
+            container.addView(view, index, params(drawn?.width ?: ViewGroup.LayoutParams.WRAP_CONTENT, drawn?.height ?: ViewGroup.LayoutParams.WRAP_CONTENT))
         }
-        if (wanted.isEmpty()) row.scrollTo(0, 0)
     }
 
     /** Starts over with an answer of [next] chips, none drawn yet; views still to arrive for the one before are dropped. */
@@ -206,6 +228,79 @@ class InlineChipRow(context: Context) : HorizontalScrollView(context) {
             val from = (scrollX - chip.left).coerceIn(0, chip.width)
             val to = (scrollX + width - chip.left).coerceIn(0, chip.width)
             chip.clipBounds = Rect(from, 0, to, chip.height)
+        }
+    }
+}
+
+/**
+ * The Passwords & cards panel's chips: laid out in lines ([InlineChipFlow]) and scrolled up and down. As in
+ * [InlineChipRow], each chip is a surface another process draws, which its parent does not cut off, so each one is told
+ * which part of itself is inside the column.
+ */
+class InlineChipColumn(context: Context) : ScrollView(context) {
+    val flow = InlineChipFlow(context)
+
+    init {
+        overScrollMode = View.OVER_SCROLL_NEVER
+        addView(flow, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
+    }
+
+    override fun onScrollChanged(left: Int, top: Int, oldLeft: Int, oldTop: Int) {
+        super.onScrollChanged(left, top, oldLeft, oldTop)
+        clip()
+    }
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        clip()
+    }
+
+    private fun clip() {
+        for (index in 0 until flow.childCount) {
+            val chip = flow.getChildAt(index)
+            val top = flow.top + chip.top
+            val from = (scrollY - top).coerceIn(0, chip.height)
+            val to = (scrollY + height - top).coerceIn(0, chip.height)
+            chip.clipBounds = Rect(0, from, chip.width, to)
+        }
+    }
+}
+
+/** Chips in lines from the start edge, each at the size it was drawn ([InlineRowRules.flow]), [gap] apart. */
+class InlineChipFlow(context: Context) : ViewGroup(context) {
+    private var placed = InlineRowRules.Flow(emptyList(), 0)
+
+    var gap = 0
+        set(value) {
+            if (field == value) return
+            field = value
+            requestLayout()
+        }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val inner = (width - paddingLeft - paddingRight).coerceAtLeast(0)
+        val sizes = (0 until childCount).map(::getChildAt).filter { it.visibility != View.GONE }.map { chip ->
+            val params = chip.layoutParams
+            val across = if (params.width > 0) MeasureSpec.makeMeasureSpec(params.width, MeasureSpec.EXACTLY)
+                else MeasureSpec.makeMeasureSpec(inner, MeasureSpec.AT_MOST)
+            val down = if (params.height > 0) MeasureSpec.makeMeasureSpec(params.height, MeasureSpec.EXACTLY)
+                else MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+            chip.measure(across, down)
+            chip.measuredWidth to chip.measuredHeight
+        }
+        placed = InlineRowRules.flow(sizes, inner, gap)
+        setMeasuredDimension(width, resolveSize(placed.height + paddingTop + paddingBottom, heightMeasureSpec))
+    }
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        val inner = right - left - paddingLeft - paddingRight
+        val rtl = layoutDirection == View.LAYOUT_DIRECTION_RTL
+        (0 until childCount).map(::getChildAt).filter { it.visibility != View.GONE }.zip(placed.places).forEach { (chip, place) ->
+            val x = if (rtl) inner - place.first - chip.measuredWidth else place.first
+            val l = paddingLeft + x
+            val t = paddingTop + place.second
+            chip.layout(l, t, l + chip.measuredWidth, t + chip.measuredHeight)
         }
     }
 }

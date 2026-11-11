@@ -36,6 +36,7 @@
     <string name="neural_predictions_body">Sugere as próximas palavras e completa palavras enquanto você digita. O Chime vem incluído (cerca de 2 MB, sem download) e funciona neste celular sem salvar seu texto nem treinar com ele. Começa ativado e lembra sua escolha; quando desativado, as sugestões do dicionário e de palavras aprendidas continuam. As mudanças entram em vigor no próximo campo de texto comum. Os testes de digitação cotidiana continuam em andamento.</string>
     <string name="emoji_insert_description">Substituir por %1$s</string>
     <string name="expansion_saved_text_description">Inserir texto salvo: %1$s</string>
+    <string name="expansion_symbol_description">Inserir %1$s, %2$s</string>
     <string name="expansion_host_description">Completar o endereço: %1$s</string>
     <string name="emoji_description_variants">Substituir por %1$s. Toque e segure para ver mais emojis</string>
     <string name="emoji_variants_action">Mais emojis</string>
@@ -231,6 +232,7 @@
         <item>Toque e segure uma letra|Os acentos e símbolos IPA dela aparecem acima. Deslize até o que você quer ou levante o dedo no primeiro.</item>
         <item>Toque e segure uma tecla da fileira superior|Digita o número dela quando a fileira de números está desativada.</item>
         <item>Toque e segure o ponto|Oferece ? ! , ; : … e aspas.</item>
+        <item>Toque e segure o 0 ou o ponto no teclado numérico|Digita um sinal de menos ou uma vírgula, em campos que aceitam decimais.</item>
         <item>Toque e segure a vírgula|Oferece um apóstrofo, aspas, um traço, @ e &amp;.</item>
         <item>Toque em Shift duas vezes|Bloqueia as maiúsculas. Toque de novo para desativar. Com TalkBack, toque e segure Shift.</item>
         <item>Toque em Espaço duas vezes|Termina a frase com um ponto e um espaço.</item>
@@ -549,6 +551,7 @@
     <string name="clearance_large">Muito</string>
     <string name="updates_client_managed">Use o aplicativo que instalou esta versão para verificar atualizações.</string>
     <string name="about_download_page">Página de download do LocalType</string>
+    <string name="about_release_notes">Notas da versão</string>
     <string name="about_download_page_summary">A versão mais recente e como instalar</string>
     <string name="about_support">Obter ajuda ou enviar comentários</string>
     <string name="about_support_summary">Conte o que não funciona ou o que você gostaria</string>
@@ -584,6 +587,16 @@
     <string name="maori_body">Adiciona o maori, com as teclas QWERTY: toque e segure uma vogal para o mácron (ā ē ī ō ū). Toque e segure Espaço para alternar; a barra de espaço mostra o idioma em que você digita. É um teste inicial: as listas de palavras vêm da Wikipédia em maori e nenhum falante nativo as revisou, então algumas sugestões e correções vão errar, e ainda não há modelo da próxima palavra, então as sugestões vêm da lista e do que você digita. Insultos discriminatórios ficam de fora. As palavras são aprendidas separadamente dos outros idiomas. Chime, os modelos extras, a revisão, a digitação deslizando e o registro de digitação continuam só em inglês.</string>
     <string name="hawaiian_summary">Havaiano experimental: tecla ʻokina, kahakō</string>
     <string name="hawaiian_body">Adiciona o havaiano, com as teclas QWERTY e uma tecla ʻokina ao lado do L: toque e segure uma vogal para o kahakō (ā ē ī ō ū). Toque e segure Espaço para alternar; a barra de espaço mostra o idioma em que você digita. É um teste inicial: as listas de palavras vêm das contagens do Hawaiian Corpus Project sobre textos do Ulukau e nenhum falante nativo as revisou, então algumas sugestões e correções vão errar, e ainda não há modelo da próxima palavra, então as sugestões vêm da lista e do que você digita. Insultos discriminatórios ficam de fora. As palavras são aprendidas separadamente dos outros idiomas. Chime, os modelos extras, a revisão, a digitação deslizando e o registro de digitação continuam só em inglês.</string>
+    <string name="arabic_summary">Árabe experimental: fileiras de 11 teclas</string>
+    <string name="arabic_body">Adiciona o árabe, com o layout do teclado árabe do Android: onze letras em cada uma das duas fileiras de cima, dez e apagar embaixo, e sem Shift, pois o árabe não tem maiúsculas. Toque e segure ا para أ إ آ, ي para ئ, ل para لا, e o ponto para ؟ ؛ e os sinais de vogal; a tecla de vírgula digita ، e segurar um dígito mostra a forma árabe. Uma palavra digitada sem a hamza, com ه no lugar de ة ou sem o tanwin ainda é completada e corrigida para a grafia completa. Toque e segure Espaço para alternar; a barra de espaço mostra o idioma em que você digita. É um teste inicial: as listas de palavras em árabe vêm de legendas de filmes e nenhum falante nativo as revisou, então algumas sugestões e correções vão falhar, e ainda não há modelo de próxima palavra, de modo que as sugestões vêm da lista e do que você digita. Os insultos discriminatórios que consegui identificar ficam de fora, e os palavrões seguem Sugerir palavrões. As palavras em árabe são aprendidas à parte dos outros idiomas. Chime, os modelos extras, a revisão, a digitação por deslize e o registro de digitação continuam só em inglês.</string>
+    <string name="persian_summary">Persa experimental: tecla de meio espaço</string>
+    <string name="persian_body">Adiciona o persa, com o layout persa do Android: as fileiras árabes com ی e ک persas, e پ چ ژ گ em teclas próprias. A tecla ‹› ao lado da barra de espaço digita o meio espaço (نیم‌فاصله, o separador de largura zero) dentro de palavras como می‌رود; uma palavra digitada sem ele ainda é completada e corrigida para a grafia que o tem. A tecla de vírgula digita ، e segurar um dígito mostra a forma persa. Toque e segure Espaço para alternar; a barra de espaço mostra o idioma em que você digita. É um teste inicial: as listas de palavras em persa vêm de legendas de filmes, com grafias de meio espaço da Wikipédia em persa, e nenhum falante nativo as revisou, então algumas sugestões e correções vão falhar, e ainda não há modelo de próxima palavra, de modo que as sugestões vêm da lista e do que você digita. Os insultos discriminatórios que consegui identificar ficam de fora, e os palavrões seguem Sugerir palavrões. As palavras em persa são aprendidas à parte dos outros idiomas. Chime, os modelos extras, a revisão, a digitação por deslize e o registro de digitação continuam só em inglês.</string>
+    <string name="galician_summary">Galego experimental: tecla ñ e acentos</string>
+    <string name="galician_body">Adiciona o galego, com o layout espanhol e a tecla ñ na fileira do meio: toque e segure uma vogal para o acento, e o i ou o u para ï e ü. Uma palavra digitada sem os acentos ainda é completada e corrigida para a grafia acentuada. Toque e segure Espaço para alternar; a barra de espaço mostra o idioma em que você digita. É um teste inicial: as listas de palavras vêm da Wikipédia em galego e nenhum falante nativo as revisou, então algumas sugestões e correções vão falhar, e ainda não há modelo de próxima palavra. Os insultos discriminatórios das listas em espanhol e português ficam de fora, e os palavrões seguem Sugerir palavrões. As palavras em galego são aprendidas à parte dos outros idiomas. Chime, os modelos extras, a revisão, a digitação por deslize e o registro de digitação continuam só em inglês.</string>
+    <string name="gaelic_summary">Gaélico escocês experimental: acentos graves</string>
+    <string name="gaelic_body">Adiciona o gaélico escocês (Gàidhlig), com as teclas QWERTY: toque e segure uma vogal para o acento grave (à è ì ò ù) e depois o agudo da ortografia antiga. Uma palavra digitada sem os acentos ainda é completada e corrigida para a grafia acentuada. Toque e segure Espaço para alternar; a barra de espaço mostra o idioma em que você digita. É um teste inicial: as listas de palavras vêm da Wikipédia em gaélico escocês e nenhum falante nativo as revisou, então algumas sugestões e correções vão falhar, e ainda não há modelo de próxima palavra. Não tem lista própria de insultos discriminatórios além da que todos os idiomas compartilham, e os palavrões seguem Sugerir palavrões. As palavras em gaélico escocês são aprendidas à parte dos outros idiomas. Chime, os modelos extras, a revisão, a digitação por deslize e o registro de digitação continuam só em inglês.</string>
+    <string name="navajo_summary">Navajo muito experimental: tecla ʼ e marcas</string>
+    <string name="navajo_body">Adiciona o navajo (Diné bizaad), com as teclas QWERTY e uma tecla de oclusiva glotal (ʼ) ao lado do L: toque e segure uma vogal para as formas de tom alto, nasal e nasal alta (á ą ą́), o l para ł e o n para ń. Uma palavra digitada sem as marcas ainda é completada para a grafia marcada, e um apóstrofo digitado no lugar da oclusiva glotal é lido como ela. Em navajo nada é corrigido automaticamente: as correções são apenas oferecidas, porque a lista de palavras cobre só uma parte do idioma. Toque e segure Espaço para alternar; a barra de espaço mostra o idioma em que você digita. É um teste muito inicial, menos acabado que os outros idiomas experimentais: a lista de palavras vem da Wikipédia em navajo, formada principalmente por artigos curtos sobre animais, plantas e lugares, e não foi revisada por nenhum falante de navajo nem pela Nação Navajo. Não há modelo de próxima palavra nem lista de insultos discriminatórios em navajo além da que todos os idiomas compartilham. As palavras em navajo são aprendidas à parte dos outros idiomas. Chime, os modelos extras, a revisão, a digitação por deslize e o registro de digitação continuam só em inglês.</string>
     <string name="tools_title">Ferramentas</string>
     <string name="tools_all">Todas as ferramentas</string>
     <string name="tools_open">Aberto</string>
@@ -647,12 +660,17 @@
     <string name="one_handed_left">Esquerda</string>
     <string name="one_handed_right">Direita</string>
     <string name="one_handed_body">Estreita as teclas para uma borda para o polegar alcançá-las. A ferramenta Uma mão liga e desliga isso, e os botões ao lado das teclas as movem para o outro lado ou voltam à largura total. A barra e os painéis mantêm a largura total.</string>
+    <string name="wide_keys_title">Teclas em telas largas</string>
+    <string name="wide_keys_centered">Centralizadas</string>
+    <string name="wide_keys_full">Largura total</string>
+    <string name="wide_keys_body">Em um tablet, um Fold aberto ou uma janela de computador com pelo menos 600 dp de largura, Centralizadas deixa as teclas com cerca de 600 dp no meio, para cada letra ter um bom tamanho para o polegar. Largura total as espalha pela janela inteira, para digitar com todos os dedos em um tablet apoiado. Um celular, em pé ou deitado, sempre usa a largura total, e Teclas para uma mão vêm primeiro quando estão ligadas. Entra em vigor no próximo campo que você abrir.</string>
     <string name="one_handed_swap_left">Mover as teclas para a esquerda</string>
     <string name="one_handed_swap_right">Mover as teclas para a direita</string>
     <string name="one_handed_full">Teclas na largura total</string>
     <string name="one_handed_left_notice">Teclas para uma mão, à esquerda</string>
     <string name="one_handed_right_notice">Teclas para uma mão, à direita</string>
     <string name="one_handed_off_notice">Teclas na largura total</string>
+    <string name="one_handed_centered">Teclas centralizadas</string>
     <string name="contacts_title_for">Contatos para “%1$s”</string>
     <string name="contacts_why">Permita os contatos para inserir um nome, número ou endereço. Eles ficam neste telefone, só na memória, e nunca são aprendidos nem enviados. Os nomes dos seus contatos nunca são corrigidos.</string>
     <string name="contacts_allow">Permitir contatos</string>
@@ -697,4 +715,64 @@
     <string name="currency_dollar">Dólar ($)</string>
     <string name="currency_pound">Libra (£)</string>
     <string name="currency_body">Escolha $ ou £ sem mudar a ortografia. Seguir a ortografia usa £ com inglês britânico e $ nos demais casos. Vale para o próximo campo que você abrir.</string>
+    <string name="tool_passwords">Senhas e cartões</string>
+    <string name="tool_suggestions_waiting">%1$s, há sugestões</string>
+    <string name="passwords_waiting">Aguardando seu gerenciador de senhas…</string>
+    <string name="passwords_none">Seu gerenciador de senhas não ofereceu nada para este campo.</string>
+    <string name="passwords_off">As sugestões do gerenciador de senhas estão desativadas nas configurações do LocalType, então seu gerenciador mostra a própria lista abaixo do campo.</string>
+    <string name="passwords_talkback">Com o TalkBack ativado, seu gerenciador de senhas mostra a própria lista abaixo do campo.</string>
+    <string name="passwords_no_manager">Nenhum gerenciador de senhas está escolhido para o preenchimento automático neste telefone.</string>
+    <string name="passwords_open">Abrir %1$s</string>
+    <string name="passwords_open_manager">Abrir o gerenciador de senhas</string>
+    <string name="passwords_autofill_settings">Configurações de preenchimento automático do Android</string>
+    <string name="passwords_not_opened">O Android não abriu</string>
+    <string name="inactive_gaps_title">Espaços inativos entre linhas</string>
+    <string name="inactive_gaps_summary">Ignorar toques entre linhas e sob sugestões</string>
+    <string name="inactive_gaps_body">Os toques nos espaços estreitos entre linhas não fazem nada. Um espaço adicional sob as sugestões ajuda a evitar toques acidentais. A digitação deslizando continua atravessando os espaços. Desativado mantém as áreas de toque atuais.</string>
+    <string name="blocked_words_title">Palavras bloqueadas</string>
+    <string name="blocked_words_summary">Nunca sugerir nem aprender estas palavras</string>
+    <string name="blocked_words_details">Bloqueia até 256 palavras no idioma selecionado, sem diferenciar maiúsculas. Acentos continuam distintos. Oculta sugestões comuns e impede novos aprendizados; não altera seu texto nem apaga o histórico. Esquecer remove o aprendizado, mas mantém esta lista. Desbloquear permite sugerir e aprender novamente. Textos salvos, ditado e revisão explícita não mudam. A lista fica neste dispositivo, fora dos backups. Enquanto houver palavras bloqueadas, o registro de digitação fica pausado para não incluir exclusões privadas nem alterar sua reprodução. Registros existentes permanecem; a coleta pode voltar em outro campo após desbloquear todas as palavras.</string>
+    <string name="blocked_words_input">Palavra para bloquear</string>
+    <string name="blocked_words_block">Bloquear</string>
+    <string name="blocked_words_unblock">Desbloquear</string>
+    <string name="blocked_words_unblock_named">Desbloquear %1$s</string>
+    <string name="blocked_words_count">%1$d palavras bloqueadas</string>
+    <string name="blocked_words_invalid">Digite uma palavra de até 80 caracteres.</string>
+    <string name="blocked_words_exists">Esta palavra já está bloqueada.</string>
+    <string name="blocked_words_full">A lista aceita até %1$d palavras.</string>
+    <string name="blocked_words_unblock_first">Desbloqueie esta palavra primeiro ou espere a lista carregar.</string>
+    <string name="blocked_words_loading">Carregando ou salvando palavras bloqueadas…</string>
+    <string name="blocked_words_save_failed">Não foi possível salvar a alteração. A lista anterior continua ativa. Tente carregar novamente ou redefina a lista.</string>
+    <string name="blocked_words_load_failed">Não foi possível ler as palavras bloqueadas. Sugestões e aprendizado estão pausados; você pode digitar. Tente novamente ou redefina a lista.</string>
+    <string name="blocked_words_retry">Tentar carregar novamente</string>
+    <string name="blocked_words_reset">Redefinir lista bloqueada</string>
+    <string name="blocked_words_reset_confirm">Remover todas as palavras bloqueadas deste idioma? Isso substitui a lista ilegível ou com falha. O histórico aprendido e seu texto permanecem.</string>
+    <string name="blocked_words_keyboard_error">Palavras bloqueadas indisponíveis. Toque para abrir Configurações.</string>
+    <!-- Local character tools: available in More, unpinned by default. -->
+    <string name="symbol_tool_title">Símbolos</string>
+    <string name="text_effects_title">Efeitos de texto</string>
+    <string name="local_tool_search">Buscar</string>
+    <string name="local_tool_edit">Editar original</string>
+    <string name="local_tool_done">Concluído</string>
+    <string name="local_tool_insert">Inserir</string>
+    <string name="local_tool_copy">Copiar</string>
+    <string name="local_tool_copied">Copiado</string>
+    <string name="local_tool_no_results">Nenhum símbolo encontrado</string>
+    <string name="local_tool_source">Original: %1$s</string>
+    <string name="local_tool_preview">Prévia: %1$s</string>
+    <string name="local_tool_empty">Digite seu próprio texto</string>
+    <string name="local_tool_insert_named">Inserir %1$s</string>
+    <string name="local_tool_selected">%1$s, selecionado</string>
+    <string name="symbol_tool_text">Texto</string>
+    <string name="symbol_tool_emoji">Emoji</string>
+    <string name="symbol_tool_presentation">Símbolos de texto não incluem seletor de emoji. Outro app ainda pode mostrá-los como emoji. As entradas Emoji são variantes explícitas.</string>
+    <string name="text_effects_caution">Muda caracteres, não fontes. Os leitores de tela podem lê-los de outra forma.</string>
+    <string name="text_effects_unavailable">Digite até 256 caracteres. Caracteres de controle ou mais de duas marcas combinantes seguidas não são aceitos.</string>
+    <string name="text_effects_source_changed">O texto selecionado mudou. Selecione-o novamente antes de inserir um efeito.</string>
+    <string name="effect_small_caps">Versaletes</string>
+    <string name="effect_superscript">Sobrescrito</string>
+    <string name="effect_monospace">Monoespaçado</string>
+    <string name="effect_fullwidth">Largura completa</string>
+    <string name="effect_cursed">Amaldiçoado</string>
+    <string name="local_tool_copy_failed">O Android recusou a cópia</string>
 </resources>

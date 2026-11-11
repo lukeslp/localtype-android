@@ -70,6 +70,20 @@ data class AimShift(val dx: Float, val dy: Float)
 /** One letter key that a touch may be aimed at: its cell, the width of one key in its row, and its learned shift. */
 data class AimTarget(val box: Box, val keyWidth: Float, val shift: AimShift?)
 
+/** Optional physical no-touch bands. Cells and swipe coordinates keep their original pitch. */
+object InactiveGaps {
+    const val BELOW_STRIP_DP = 8
+
+    /** Keep short number rows and compressed rows usable: never remove more than a fifth of a cell. */
+    fun inset(cellHeight: Float, drawnInset: Float): Float =
+        min(drawnInset.coerceAtLeast(0f), (cellHeight / 10f).coerceAtLeast(0f))
+
+    fun accepts(y: Float, top: Float, bottom: Float, drawnInset: Float): Boolean {
+        val inset = inset(bottom - top, drawnInset)
+        return y.isFinite() && y >= top + inset && y < bottom - inset
+    }
+}
+
 /** The pure decisions behind [MotorSettings], so the view only feeds them times and positions. */
 object MotorRules {
     /** How far past a key's edge a steady finger may wander and keep it, as a fraction of a key. */

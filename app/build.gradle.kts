@@ -20,16 +20,19 @@ android {
         applicationId = "dev.localtype.keyboard"
         minSdk = 26
         targetSdk = 35
-        versionCode = 61
-        versionName = "0.5.40"
+        versionCode = 69
+        versionName = "0.5.48"
+        testInstrumentationRunner = "dev.localtype.keyboard.ToolsReflowChecks"
         // Phones only. The x86_64 copy of the model runtime's native library was 26 MB that only emulators loaded.
         // Here and not in release {}: benchmark and the verification variant copy release before that block runs.
         ndk { abiFilters += "arm64-v8a" }
     }
 
-    // Both distributions keep the application ID, storage and signing identity. Only the full
-    // distribution packages ML Kit and Gemma (modelkit, LiteRT-LM); the F-Droid one has no
+    // Only the full distribution packages ML Kit and Gemma (modelkit, LiteRT-LM); the F-Droid one has no
     // Nano/Gemma integration or network use. Bundled Chime remains. F-Droid clients own updates.
+    // The two are different apps to Android: full keeps the issued identity, and the catalog build has
+    // its own application ID, so no repository client can replace one with the other in either direction.
+    // Both are signed with the same key. See docs/catalog-application-id-2026-11-10.md.
     flavorDimensions += "distribution"
     productFlavors {
         create("full") {
@@ -37,15 +40,18 @@ android {
             buildConfigField("boolean", "INCLUDES_NANO", "true")
             buildConfigField("boolean", "INCLUDES_GEMMA", "true")
             buildConfigField("boolean", "DIRECT_UPDATES", "true")
+            buildConfigField("boolean", "MODEL_LAB", "false")
         }
         create("fdroid") {
             dimension = "distribution"
+            applicationId = "dev.localtype.keyboard.fdroid"
             // Private catalog candidate approved November 6. Full keeps its issued identity.
             versionCode = 63
             versionName = "0.5.42"
             buildConfigField("boolean", "INCLUDES_NANO", "false")
             buildConfigField("boolean", "INCLUDES_GEMMA", "false")
             buildConfigField("boolean", "DIRECT_UPDATES", "false")
+            buildConfigField("boolean", "MODEL_LAB", "false")
         }
     }
 
@@ -70,7 +76,7 @@ android {
         release {
             // No shrinking: the model runtime loads native code by reflection.
             isMinifyEnabled = false
-            // Rebuild the exact Git commit that will be tagged; keep its VCS record.
+            // Release candidates are built from their final prospective public Git commit.
             vcsInfo.include = true
             if (keystoreProperties.isNotEmpty()) signingConfig = signingConfigs.getByName("release")
         }
@@ -91,6 +97,13 @@ android {
         unitTests.isReturnDefaultValues = true
     }
 
+    // Java 17 bytecode from whatever JDK runs Gradle (17 or newer): no toolchain, so no second JDK has to be
+    // installed, and F-Droid's build server can use its default JDK 21 and still reproduce the APK.
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
     lint {
         // minSdk is 26, where a newer API called without a version check crashes, so this fails the
         // release build. Lint 8.8 doesn't see such calls inside apply {} blocks; check those by hand.
@@ -99,7 +112,9 @@ android {
 }
 
 kotlin {
-    jvmToolchain(17)
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
 }
 
 dependencyLocking {
