@@ -21,7 +21,8 @@ class LearnedPairState(entries: List<Triple<String, String, Int>> = emptyList())
     fun record(previous: String, next: String) {
         require(validWord(previous) && validWord(next))
         val followers = touch(previous)
-        if (next !in followers && followers.size >= MAX_FOLLOWERS) {
+        val limit = followerLimit(previous)
+        if (next !in followers && followers.size >= limit) {
             // A new follower at a full row is a chance for old habits to fade. Halving releases
             // singleton slots immediately; one weakest survivor goes if every old pair survives.
             val old = followers.entries.iterator()
@@ -30,7 +31,7 @@ class LearnedPairState(entries: List<Triple<String, String, Int>> = emptyList())
                 val decayed = entry.value / 2
                 if (decayed == 0) old.remove() else entry.setValue(decayed)
             }
-            if (followers.size >= MAX_FOLLOWERS) evictWeakest(followers)
+            if (followers.size >= limit) evictWeakest(followers)
         }
         followers[next] = ((followers[next] ?: 0) + 1).coerceAtMost(MAX_COUNT)
     }
@@ -48,8 +49,11 @@ class LearnedPairState(entries: List<Triple<String, String, Int>> = emptyList())
         if (!validWord(previous) || !validWord(next) || count <= 0) return
         val followers = touch(previous)
         followers[next] = count.coerceAtMost(MAX_COUNT)
-        if (followers.size > MAX_FOLLOWERS) evictWeakest(followers)
+        if (followers.size > followerLimit(previous)) evictWeakest(followers)
     }
+
+    /** Added words are a list the person keeps, not a row of habits, so their reserved row has its own bound. */
+    private fun followerLimit(previous: String): Int = if (previous == AddedWords.CONTEXT) AddedWords.MAX_WORDS else MAX_FOLLOWERS
 
     private fun touch(previous: String): MutableMap<String, Int> {
         val followers = rows.remove(previous) ?: HashMap()

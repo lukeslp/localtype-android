@@ -6,7 +6,8 @@ package dev.localtype.keyboard
  * suggestion is shown. Asked for on 2026-10-29 ("can learned words preserve capitalization / camel case?").
  */
 object WordSpellings {
-    const val MAX_WORDS = 512
+    /** Room for every added word to keep its capitals ([AddedWords.MAX_WORDS]) beside 512 learned from typing. */
+    const val MAX_WORDS = 512 + AddedWords.MAX_WORDS
     private val LETTERS = Regex("\\p{L}+(?:['’]\\p{L}+)*")
 
     sealed interface Change {
@@ -58,6 +59,22 @@ object WordSpellings {
         }
         while (out.size > MAX_WORDS) out.remove(out.keys.first())
         return out
+    }
+
+    /** [apply] for a list in its order, as an import records its capitals; null when nothing changed. */
+    fun applyAll(spellings: Map<String, String>, changes: List<Pair<String, Change>>): Map<String, String>? {
+        val out = LinkedHashMap(spellings)
+        var changed = false
+        for ((word, change) in changes) {
+            val key = AdaptiveNgramModel.normalize(word)
+            when (change) {
+                is Change.Record -> if (out[key] != change.display) { out.remove(key); out[key] = change.display; changed = true }
+                Change.Forget -> if (out.remove(key) != null) changed = true
+                Change.Unchanged -> Unit
+            }
+        }
+        while (out.size > MAX_WORDS) out.remove(out.keys.first())
+        return if (changed) out else null
     }
 
     /** [spellings] with [change] applied to [word]; the newest spelling moves to the end and the oldest leaves past [MAX_WORDS]. */

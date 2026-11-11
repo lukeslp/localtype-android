@@ -188,6 +188,23 @@
         <item quantity="other">%1$d palavras adicionadas (limite: %2$d).</item>
     </plurals>
     <string name="added_words_remove">Remover palavra adicionada %1$s</string>
+    <string name="added_words_import">Importar uma lista de palavras</string>
+    <string name="added_words_import_hint">Um arquivo de texto com uma palavra por linha, ou o dicionário exportado do Gboard. Palavras já adicionadas, bloqueadas ou que não sejam uma única palavra ficam de fora.</string>
+    <string name="added_words_import_none">Nenhuma palavra nova nesse arquivo.</string>
+    <plurals name="added_words_imported">
+        <item quantity="one">%1$d palavra adicionada.</item>
+        <item quantity="other">%1$d palavras adicionadas.</item>
+    </plurals>
+    <plurals name="added_words_import_skipped">
+        <item quantity="one">%1$d linha ficou de fora: já adicionada, bloqueada ou não é uma única palavra.</item>
+        <item quantity="other">%1$d linhas ficaram de fora: já adicionadas, bloqueadas ou não são uma única palavra.</item>
+    </plurals>
+    <plurals name="added_words_import_full">
+        <item quantity="one">Mais %1$d não coube: o limite é de %2$d palavras.</item>
+        <item quantity="other">Mais %1$d não couberam: o limite é de %2$d palavras.</item>
+    </plurals>
+    <string name="added_words_import_too_large">Esse arquivo é grande demais para uma lista de palavras (o limite é 1 MB).</string>
+    <string name="added_words_import_unreadable">Não foi possível ler uma lista de palavras desse arquivo.</string>
     <string name="learned_words_start">Início de uma frase → %1$s</string>
     <string name="learned_words_forget_one">Esquecer %1$s</string>
     <string name="learned_words_more">E mais %1$d, menos usadas.</string>
@@ -532,6 +549,9 @@
     <string name="profanity_summary">Palavrões comuns; nunca ofensas</string>
     <string name="password_manager_summary">Seu gerenciador de senhas acima das teclas</string>
     <string name="model_on_tap_summary">Só quando você toca no brilho</string>
+    <string name="sparkle_button_title">Mostrar o botão de brilho</string>
+    <string name="sparkle_button_summary">Na barra, com um modelo configurado</string>
+    <string name="sparkle_button_body">O brilho no início da barra de sugestões pede palavras ao Gemini Nano ou ao Gemma quando você toca nele e revisa a frase quando você o mantém pressionado. Ele só aparece quando um deles está configurado abaixo. Desative para ocultá-lo. Colar e Desfazer continuam aparecendo no lugar dele, e Revisar texto continua na fila de ferramentas.</string>
     <string name="keep_model_loaded_summary">Fica carregado; usa cerca de 2 GB de memória</string>
     <string name="triple_space_proofread_summary">Três toques rápidos no Espaço revisam a frase</string>
     <string name="number_row_summary">De 1 a 0 acima das letras</string>

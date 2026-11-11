@@ -188,6 +188,23 @@
         <item quantity="other">%1$d palabras agregadas (límite: %2$d).</item>
     </plurals>
     <string name="added_words_remove">Quitar palabra agregada %1$s</string>
+    <string name="added_words_import">Importar una lista de palabras</string>
+    <string name="added_words_import_hint">Un archivo de texto con una palabra por línea, o el diccionario exportado de Gboard. Se omiten las palabras ya agregadas, las bloqueadas y lo que no sea una sola palabra.</string>
+    <string name="added_words_import_none">No hay palabras nuevas en ese archivo.</string>
+    <plurals name="added_words_imported">
+        <item quantity="one">Se agregó %1$d palabra.</item>
+        <item quantity="other">Se agregaron %1$d palabras.</item>
+    </plurals>
+    <plurals name="added_words_import_skipped">
+        <item quantity="one">Se omitió %1$d línea: ya agregada, bloqueada o no es una sola palabra.</item>
+        <item quantity="other">Se omitieron %1$d líneas: ya agregadas, bloqueadas o no son una sola palabra.</item>
+    </plurals>
+    <plurals name="added_words_import_full">
+        <item quantity="one">%1$d más no cupo: el límite es de %2$d palabras.</item>
+        <item quantity="other">%1$d más no cupieron: el límite es de %2$d palabras.</item>
+    </plurals>
+    <string name="added_words_import_too_large">Ese archivo es demasiado grande para una lista de palabras (el límite es 1 MB).</string>
+    <string name="added_words_import_unreadable">No se pudo leer una lista de palabras de ese archivo.</string>
     <string name="learned_words_start">Inicio de una oración → %1$s</string>
     <string name="learned_words_forget_one">Olvidar %1$s</string>
     <string name="learned_words_more">Y %1$d más, menos usadas.</string>
@@ -532,6 +549,9 @@
     <string name="profanity_summary">Groserías comunes; nunca insultos</string>
     <string name="password_manager_summary">Tu gestor de contraseñas sobre las teclas</string>
     <string name="model_on_tap_summary">Solo cuando tocas el destello</string>
+    <string name="sparkle_button_title">Mostrar el botón de destello</string>
+    <string name="sparkle_button_summary">En la barra, con un modelo configurado</string>
+    <string name="sparkle_button_body">El destello al inicio de la barra de sugerencias le pide palabras a Gemini Nano o Gemma cuando lo tocas y revisa la oración cuando lo mantienes presionado. Solo aparece cuando uno de ellos está configurado abajo. Desactívalo para ocultarlo. Pegar y Deshacer siguen apareciendo en su lugar, y Revisar texto sigue en la fila de herramientas.</string>
     <string name="keep_model_loaded_summary">Queda cargado; usa unos 2 GB de memoria</string>
     <string name="triple_space_proofread_summary">Tres toques rápidos en Espacio revisan la oración</string>
     <string name="number_row_summary">Del 1 al 0 encima de las letras</string>

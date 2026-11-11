@@ -181,6 +181,23 @@
         <item quantity="other">%1$d words added (limit: %2$d).</item>
     </plurals>
     <string name="added_words_remove">Remove added word %1$s</string>
+    <string name="added_words_import">Import a word list</string>
+    <string name="added_words_import_hint">A text file with one word on each line, or Gboard’s dictionary export. Words that are already added, blocked or not a single word are left out.</string>
+    <string name="added_words_import_none">No new words in that file.</string>
+    <plurals name="added_words_imported">
+        <item quantity="one">Added %1$d word.</item>
+        <item quantity="other">Added %1$d words.</item>
+    </plurals>
+    <plurals name="added_words_import_skipped">
+        <item quantity="one">%1$d line was left out: already added, blocked, or not a single word.</item>
+        <item quantity="other">%1$d lines were left out: already added, blocked, or not a single word.</item>
+    </plurals>
+    <plurals name="added_words_import_full">
+        <item quantity="one">%1$d more didn’t fit: the limit is %2$d words.</item>
+        <item quantity="other">%1$d more didn’t fit: the limit is %2$d words.</item>
+    </plurals>
+    <string name="added_words_import_too_large">That file is too large for a word list (the limit is 1 MB).</string>
+    <string name="added_words_import_unreadable">Couldn’t read a word list from that file.</string>
     <string name="learned_words_start">Start of a sentence → %1$s</string>
     <string name="learned_words_forget_one">Forget %1$s</string>
     <string name="learned_words_more">And %1$d more, less used.</string>
@@ -524,6 +541,9 @@
     <string name="profanity_summary">Common swear words; never slurs</string>
     <string name="password_manager_summary">Your password manager’s chips above the keys</string>
     <string name="model_on_tap_summary">Only when you tap the sparkle</string>
+    <string name="sparkle_button_title">Show the sparkle button</string>
+    <string name="sparkle_button_summary">In the strip, once a model is set up</string>
+    <string name="sparkle_button_body">The sparkle at the start of the suggestion strip asks Gemini Nano or Gemma for words when you tap it and proofreads the sentence when you hold it. It appears only once one of them is set up below. Turn this off to hide it. Paste and Undo still appear in its place, and Proofread stays in the tools row.</string>
     <string name="keep_model_loaded_summary">Stays loaded, using about 2 GB of memory</string>
     <string name="triple_space_proofread_summary">Three quick taps of space check the sentence</string>
     <string name="number_row_summary">1 to 0 above the letters</string>

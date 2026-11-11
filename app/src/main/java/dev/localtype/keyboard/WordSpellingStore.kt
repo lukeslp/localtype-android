@@ -20,6 +20,13 @@ class WordSpellingStore private constructor(private val preferences: SharedPrefe
         preferences.edit().putString(KEY, WordSpellings.encode(next)).apply()
     }
 
+    /** Many changes, one write: an imported word list's capitals. */
+    fun changeAll(changes: List<Pair<String, WordSpellings.Change>>) {
+        val next = WordSpellings.applyAll(spellings, changes) ?: return
+        spellings = next
+        preferences.edit().putString(KEY, WordSpellings.encode(next)).apply()
+    }
+
     fun clear() {
         spellings = emptyMap()
         preferences.edit().clear().apply()

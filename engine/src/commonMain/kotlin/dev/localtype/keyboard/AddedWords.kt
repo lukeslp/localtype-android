@@ -5,7 +5,11 @@ object AddedWords {
     // A nonword context can never be inferred from editor text. Existing snapshots retain it.
     const val CONTEXT = AdaptiveNgramModel.ADDED_WORDS_CONTEXT
     const val VERSION = "added-words-v1"
-    const val MAX_WORDS = LearnedPairState.MAX_FOLLOWERS
+    /**
+     * Its own bound, above an ordinary row's [LearnedPairState.MAX_FOLLOWERS], so a personal word list can be
+     * imported whole (64 through 0.5.48). [LearnedPairState] holds the reserved row to this instead.
+     */
+    const val MAX_WORDS = 1_000
     // Letters, with the marks and the non-joiner some languages write inside a word ([WordRule]).
     private val WORD = Regex("\\p{L}[\\p{L}\\p{Mn}\u200C]*(?:['-]\\p{L}[\\p{L}\\p{Mn}\u200C]*)*'?")
 
@@ -32,5 +36,44 @@ object AddedWords {
         if (existing.size >= MAX_WORDS) return Result.FULL
         store.record(CONTEXT, word)
         return Result.ADDED
+    }
+
+    /** What an import did with each line it was given; [added] pairs each new word with the spelling it came in. */
+    data class Import(val added: List<Pair<String, String>>, val existing: Int, val invalid: Int, val blocked: Int, val full: Int) {
+        val skipped: Int get() = existing + invalid + blocked + full
+    }
+
+    /**
+     * [add] for a whole list, in its order: the same validation word by word, one read of the store, and nothing
+     * past [MAX_WORDS]. A word [isBlocked] names stays out, as the Add button keeps it out, and a spelling given
+     * twice counts once as added and then as existing.
+     */
+    fun addAll(
+        store: AdaptiveNgramModel.LearningStore,
+        inputs: List<String>,
+        language: LanguageProfile = LanguageProfile.ENGLISH,
+        isBlocked: (String) -> Boolean = { false },
+    ): Import {
+        val known = words(store.entries()).toHashSet()
+        val added = ArrayList<Pair<String, String>>()
+        var existing = 0
+        var invalid = 0
+        var blocked = 0
+        var full = 0
+        for (input in inputs) {
+            val word = normalize(input, language)
+            when {
+                word == null -> invalid++
+                word in known -> existing++
+                isBlocked(word) -> blocked++
+                known.size >= MAX_WORDS -> full++
+                else -> {
+                    store.record(CONTEXT, word)
+                    known += word
+                    added += word to input.trim()
+                }
+            }
+        }
+        return Import(added, existing, invalid, blocked, full)
     }
 }

@@ -48,10 +48,11 @@ class WordSpellingsTest {
         assertEquals(mapOf("iphone" to "iPhone"), WordSpellings.decode("iphone\tiPhone\nother\tLocalType\nbroken\n\tX"))
         var many: Map<String, String> = emptyMap()
         for (i in 0..WordSpellings.MAX_WORDS) {
-            val word = "Word" + "abcdefghijklmnopqrstuvwxyz"[i % 26] + "abcdefghijklmnopqrstuvwxyz"[i / 26 % 26]
+            // Three letters: 17,576 different words, more than the limit (two letters stopped at 676).
+            val word = "Word" + "abcdefghijklmnopqrstuvwxyz"[i % 26] + "abcdefghijklmnopqrstuvwxyz"[i / 26 % 26] + "abcdefghijklmnopqrstuvwxyz"[i / 676 % 26]
             many = WordSpellings.apply(many, word, WordSpellings.Change.Record(word)) ?: many
         }
         assertEquals(WordSpellings.MAX_WORDS, many.size)
-        assertNull(WordSpellings.display(many, "wordaa"))
+        assertNull(WordSpellings.display(many, "wordaaa"))
     }
 }

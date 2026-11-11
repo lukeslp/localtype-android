@@ -17,6 +17,8 @@ object KeyboardSettings {
     private const val THEME = "theme"
     private const val MODEL_ON_TAP = "model_on_tap"
     private const val KEEP_MODEL_LOADED = "keep_model_loaded"
+    const val SPARKLE_BUTTON = "sparkle_button"
+    const val MODEL_SET_UP = "model_set_up"
     private const val TRIPLE_SPACE_PROOFREAD = "triple_space_proofread"
     private const val LEARNED_GENERATION = "learned_generation"
     private const val PREDICTION_LOG = "prediction_log"
@@ -115,6 +117,22 @@ object KeyboardSettings {
     /** When on, the model only runs after tapping the ✦ button in the suggestion strip. */
     fun modelOnTap(context: Context) = prefs(context).getBoolean(MODEL_ON_TAP, false)
     fun setModelOnTap(context: Context, on: Boolean) = prefs(context).edit().putBoolean(MODEL_ON_TAP, on).apply()
+
+    /**
+     * The sparkle in the suggestion strip, on by default. Off, the lead button never shows it; the paste chip and
+     * the Undo arrow stay. On, it still shows only where a model is set up ([SparkleRules]). Applied at once.
+     */
+    fun sparkleButton(context: Context) = prefs(context).getBoolean(SPARKLE_BUTTON, true)
+    fun setSparkleButton(context: Context, on: Boolean) = prefs(context).edit().putBoolean(SPARKLE_BUTTON, on).apply()
+
+    /**
+     * The last answer to "is a model set up" ([SparkleRules.modelSetUp]), kept so a new keyboard process draws the
+     * strip right before it has asked. Not a choice: the keyboard and settings write what they find.
+     */
+    fun modelSetUp(context: Context) = prefs(context).getBoolean(MODEL_SET_UP, false)
+    fun rememberModelSetUp(context: Context, setUp: Boolean) {
+        if (!prefs(context).contains(MODEL_SET_UP) || modelSetUp(context) != setUp) prefs(context).edit().putBoolean(MODEL_SET_UP, setUp).apply()
+    }
 
     /** Explicit sentence review; double-space punctuation works independently of this choice. */
     fun tripleSpaceProofread(context: Context) = prefs(context).getBoolean(TRIPLE_SPACE_PROOFREAD, false)

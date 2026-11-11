@@ -147,6 +147,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             key == KeyboardSettings.WELSH || key == KeyboardSettings.IRISH || key == KeyboardSettings.MAORI ||
             key == KeyboardSettings.HAWAIIAN || key == KeyboardSettings.IPA || key == KeyboardSettings.LANGUAGE ||
             key in KeyboardSettings.EXTRA_KEYS) handler.post { if (!destroyed) followLanguageSetting() }
+        // The sparkle goes or comes back at once: its switch, or a model set up or removed in settings.
+        if (key == KeyboardSettings.SPARKLE_BUTTON || key == KeyboardSettings.MODEL_SET_UP) handler.post { if (!destroyed) readSparkle(recheck = false) }
         // Vibration goes off or on at once, without waiting for the next field.
         if (key == KeyboardSettings.VIBRATE_ON_KEY_PRESS) handler.post { KeyHaptics.enabled = KeyboardSettings.vibrateOnKeyPress(this) }
         if (key in setOf("autocorrect", "web_autocorrect", "auto_capitalize", "profanity", "emoji", "neural_predictions", "number_row", "theme", "model_on_tap", "triple_space_proofread", "prediction_log", "learned_generation", "experimental_swipe")) {
@@ -231,6 +233,11 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private var leadHoldLabel = 0
     private var leadPulse: android.animation.ObjectAnimator? = null
     private var modelOnTap = false
+    /** Settings' Sparkle button switch, and whether a model is set up behind it ([SparkleRules]). */
+    private var sparkleWanted = true
+    private var modelSetUp = false
+    private var modelSetUpCheckedAt: Long? = null
+    private var modelSetUpJob: Job? = null
     /** An explicit foundation-model tap may temporarily override neural suggestions for this word. */
     private var manualFoundationContext: String? = null
     /** True while any model request (tapped or automatic) is running. */
@@ -1053,6 +1060,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         autoCapitalize = KeyboardSettings.autoCapitalize(this)
         applySymbolsPolicy()
         modelOnTap = KeyboardSettings.modelOnTap(this)
+        readSparkle(recheck = true)
         tripleSpaceProofread = KeyboardSettings.tripleSpaceProofread(this)
         val keepLoaded = KeyboardSettings.keepModelLoaded(this)
         foundationModel.setKeepLoaded(keepLoaded)
@@ -3767,7 +3775,9 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private fun onLeadHeld() {
         if (recentCorrection.hasUndo(SystemClock.uptimeMillis())) {
             val popup = android.widget.PopupMenu(this, leadButton)
-            popup.menu.add(if (pasteClip != null) R.string.paste_description else R.string.model_trigger).setOnMenuItemClickListener { onLeadOriginalTapped(); true }
+            if (pasteClip != null || sparkleShown()) {
+                popup.menu.add(if (pasteClip != null) R.string.paste_description else R.string.model_trigger).setOnMenuItemClickListener { onLeadOriginalTapped(); true }
+            }
             popup.menu.add(R.string.proofread_action).setOnMenuItemClickListener { proofreadSentence(); true }
             popup.menu.add(R.string.saved_text).setOnMenuItemClickListener { openSavedPanel(); true }
             popup.show()
@@ -4107,7 +4117,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             toolRow?.visibility == View.VISIBLE -> null to null
             recentCorrection.hasUndo(SystemClock.uptimeMillis()) && !proofreading && proposal == null -> R.drawable.ic_regenerate to R.string.correction_undo
             pasteClip != null -> R.drawable.ic_paste to pasteDescription()
-            !modelWordsOnTap() -> null to null
+            !sparkleShown() -> null to null
             modelRunning -> R.drawable.ic_generating to R.string.model_generating
             showingModelWords -> R.drawable.ic_regenerate to R.string.model_showing
             neuralEnabled && neuralReady && shownNeuralWords.isNotEmpty() -> R.drawable.ic_predict to R.string.model_trigger_chime
@@ -4147,13 +4157,43 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         updateLead()
     }
 
-    /** Tap-to-suggest: waits for the model to load if needed, then shows its words for this spot. */
     /** A tap on the sparkle may ask for words here: the strip offers words, and an address bar's token is a word. */
     private fun modelWordsOnTap(): Boolean = suggestionsEnabled && foundationAllowed &&
         TypingRules.offersModelWordsOnTap(currentInputEditorInfo?.inputType ?: 0) && !(addressBar && !addressProse)
 
+    /** The sparkle is drawn: a tap may ask here, the person hasn't hidden it, and a model is set up to answer. */
+    private fun sparkleShown(): Boolean = modelWordsOnTap() && SparkleRules.shows(sparkleWanted, modelSetUp)
+
+    /**
+     * Reads the sparkle's switch and the last answer about the models, and with [recheck] asks again when that
+     * answer is over a minute old. The question only peeks (Nano's feature status, Gemma's files, LocalLauncher's
+     * copy): it never loads a model, and the F-Droid build, which has none, never asks.
+     */
+    private fun readSparkle(recheck: Boolean) {
+        sparkleWanted = KeyboardSettings.sparkleButton(this)
+        modelSetUp = BuildConfig.MODEL_LAB || KeyboardSettings.modelSetUp(this)
+        updateLead()
+        if (!recheck || !sparkleWanted || !(BuildConfig.INCLUDES_NANO || BuildConfig.INCLUDES_GEMMA)) return
+        val now = SystemClock.uptimeMillis()
+        if (modelSetUpJob?.isActive == true || !SparkleRules.due(modelSetUpCheckedAt, now)) return
+        modelSetUpCheckedAt = now
+        modelSetUpJob = uiScope.launch {
+            val setUp = runCatching {
+                withContext(Dispatchers.Default) {
+                    val nano = if (BuildConfig.INCLUDES_NANO) FoundationModelProviderFactory.systemDownloader(this@LocalTypeInputMethodService).status() else null
+                    val installer = FoundationModelProviderFactory.installer(this@LocalTypeInputMethodService)
+                    val installed = installer.installedModel() != null
+                    SparkleRules.modelSetUp(nano, installed, borrowed = !installed && BuildConfig.INCLUDES_GEMMA && installer.sharedFromPeer())
+                }
+            }.getOrNull() ?: return@launch
+            // The preference listener redraws the lead button when the answer changed.
+            if (!destroyed) KeyboardSettings.rememberModelSetUp(this@LocalTypeInputMethodService, setUp)
+        }
+    }
+
+    /** Tap-to-suggest: waits for the model to load if needed, then shows its words for this spot. */
     private fun generateOnTap() {
-        if (!modelWordsOnTap() || modelRunning || foundationJob?.isActive == true) return
+        if (!sparkleShown() || modelRunning || foundationJob?.isActive == true) return
         KeyHaptics.perform(keyboardView, android.view.HapticFeedbackConstants.KEYBOARD_TAP)
         val context = currentContext()
         val prefix = localModel.activePrefix(context)

@@ -1065,6 +1065,7 @@ class SettingsActivity : Activity() {
 
     private lateinit var addedInput: EditText
     private lateinit var addedButton: Button
+    private lateinit var addedImport: Button
     private lateinit var addedSummary: TextView
     private lateinit var addedToggle: Button
     private lateinit var addedList: LinearLayout
@@ -1305,6 +1306,9 @@ class SettingsActivity : Activity() {
         }
         entry.addView(addedButton, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(48)).apply { marginStart = dp(8) })
         parent.addView(entry, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        addedImport = button(getString(R.string.added_words_import), primary = false).apply { setOnClickListener { chooseWordList() } }
+        parent.addView(addedImport, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(48)).apply { topMargin = dp(4) })
+        parent.addView(text(getString(R.string.added_words_import_hint), 13f, R.color.on_surface_variant).apply { setPadding(0, dp(2), 0, 0) })
         addedSummary = text("", 13f, R.color.on_surface_variant).apply { setPadding(0, dp(8), 0, dp(4)) }
         parent.addView(addedSummary)
         addedList = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
@@ -1313,6 +1317,68 @@ class SettingsActivity : Activity() {
             addedExpanded = !addedExpanded
             refreshAddedWords()
         }
+    }
+
+    /** The system's file picker, for a word list to add: nothing is read until a file is chosen. */
+    private fun chooseWordList() {
+        startActivityForResult(
+            Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                // Any type: file managers give word lists and exports all sorts of types. The reader checks the contents.
+                type = "*/*"
+                putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(DOWNLOADS_URI))
+            },
+            REQUEST_WORD_LIST,
+        )
+    }
+
+    /**
+     * Adds the words of the chosen file to the language being shown, as the Add button would one at a time: the
+     * same validation, blocked words left out, capitals kept. The file is read off the main thread and never kept.
+     */
+    private fun importWordList(source: Uri) {
+        val language = dataLanguage
+        addedImport.isEnabled = false
+        screenScope.launch {
+            val read = withContext(Dispatchers.IO) {
+                runCatching { contentResolver.openInputStream(source)?.use(WordListFile::read) }.getOrNull() ?: WordListFile.Read.Unreadable
+            }
+            if (isDestroyed) return@launch
+            addedImport.isEnabled = true
+            val store = JournalLearningStore.get(this@SettingsActivity, language)
+            val blocked = BlockedWordStore.get(this@SettingsActivity, language)
+            val message = when {
+                read is WordListFile.Read.TooLarge -> getString(R.string.added_words_import_too_large)
+                read !is WordListFile.Read.Text || !store.ready || !blocked.ready -> getString(R.string.added_words_import_unreadable)
+                else -> {
+                    val result = AddedWords.addAll(store, WordListImport.parse(read.text), language) { BlockedWords.contains(blocked.words, it) }
+                    if (result.added.isNotEmpty()) {
+                        WordSpellingStore.get(this@SettingsActivity, language)
+                            .changeAll(result.added.map { (word, typed) -> word to WordSpellings.added(typed) })
+                        KeyboardSettings.bumpLearnedGeneration(this@SettingsActivity)
+                        refreshAddedWords()
+                        refreshLearnedSummary()
+                    }
+                    importSummary(result)
+                }
+            }
+            android.app.AlertDialog.Builder(this@SettingsActivity)
+                .setTitle(R.string.added_words_import)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show()
+        }
+    }
+
+    /** What an import did, in up to three sentences: added, left out, and what the limit turned away. */
+    private fun importSummary(result: AddedWords.Import): String {
+        val left = result.existing + result.invalid + result.blocked
+        return listOfNotNull(
+            if (result.added.isEmpty()) getString(R.string.added_words_import_none)
+            else resources.getQuantityString(R.plurals.added_words_imported, result.added.size, result.added.size),
+            if (left > 0) resources.getQuantityString(R.plurals.added_words_import_skipped, left, left) else null,
+            if (result.full > 0) resources.getQuantityString(R.plurals.added_words_import_full, result.full, result.full, AddedWords.MAX_WORDS) else null,
+        ).joinToString(" ")
     }
 
     /** Show all (n) or Show fewer under a list that shows its first three rows. */
@@ -1808,6 +1874,10 @@ class SettingsActivity : Activity() {
         modelsSection = section("models", R.string.extra_models_title, openByDefault = false) { modelsSummary }
         val controls = modelsSection.body
         controls.addView(text(getString(R.string.extra_models_intro), 14f, R.color.on_surface_variant).apply { setPadding(0, dp(6), 0, dp(4)) })
+        addSwitch(controls, R.string.sparkle_button_title, R.string.sparkle_button_summary, R.string.sparkle_button_body,
+            KeyboardSettings.sparkleButton(this)) {
+            KeyboardSettings.setSparkleButton(this, it)
+        }
         addSwitch(controls, R.string.model_on_tap_title, R.string.model_on_tap_summary, R.string.model_on_tap_body, KeyboardSettings.modelOnTap(this)) {
             KeyboardSettings.setModelOnTap(this, it)
         }
@@ -2007,6 +2077,7 @@ class SettingsActivity : Activity() {
         val uri: Uri = data?.data ?: return
         when (requestCode) {
             REQUEST_MODEL_FILE -> importModelFile(uri)
+            REQUEST_WORD_LIST -> importWordList(uri)
             REQUEST_LOG_EXPORT -> PredictionLog.export(this, uri) { ok ->
                 runOnUiThread {
                     Toast.makeText(this, if (ok) R.string.prediction_log_exported else R.string.prediction_log_export_failed, Toast.LENGTH_SHORT).show()
@@ -2137,6 +2208,9 @@ class SettingsActivity : Activity() {
                 else -> "Discard partial download"
             }
             gemmaRemove?.let { if (it.text.toString() != removeLabel) it.text = removeLabel }
+            // What the keyboard's sparkle goes by: it shows once there is a model to ask, and settings knows first.
+            if (lastNanoState != null || !BuildConfig.INCLUDES_NANO) KeyboardSettings.rememberModelSetUp(this@SettingsActivity,
+                SparkleRules.modelSetUp(lastNanoState, gemmaInstalled = model != null, borrowed = borrowed))
             val nano = lastNanoState == FoundationModelStatus.READY
             modelsSummary = getString(when {
                 progress.state == ModelDownloadState.DOWNLOADING -> R.string.models_summary_downloading
@@ -2421,6 +2495,7 @@ class SettingsActivity : Activity() {
         const val REQUEST_LOG_EXPORT = 412
         const val REQUEST_MICROPHONE = 413
         const val REQUEST_MODEL_CHAT = 414
+        const val REQUEST_WORD_LIST = 415
         /** How long the version line shows "2 more taps" before going back to the version. */
         const val HINT_MS = 2_000L
         const val DOWNLOADS_URI = "content://com.android.externalstorage.documents/document/primary%3ADownload"

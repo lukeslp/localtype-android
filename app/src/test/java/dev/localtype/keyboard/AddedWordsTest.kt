@@ -20,7 +20,7 @@ class AddedWordsTest {
     fun `duplicates and a full dictionary neither inflate counts nor evict words`() {
         val store = Store()
         repeat(AddedWords.MAX_WORDS) { n ->
-            assertEquals(AddedWords.Result.ADDED, AddedWords.add(store, "zorp" + "a".repeat(n + 1)))
+            assertEquals(AddedWords.Result.ADDED, AddedWords.add(store, "zorp" + letters(n)))
         }
         val original = store.entries()
         assertEquals(AddedWords.Result.EXISTS, AddedWords.add(store, "ZORPA"))
@@ -77,6 +77,12 @@ class AddedWordsTest {
         assertEquals(listOf("zorpquill"), AddedWords.words(loaded.entries()))
         model(store).clearLearned(emptyList())
         assertTrue(AddedWords.words(store.entries()).isEmpty())
+    }
+
+    /** A different run of letters for each number: 0 is "a", 26 is "ab". */
+    private fun letters(n: Int): String = buildString {
+        var value = n
+        do { append('a' + value % 26); value /= 26 } while (value > 0)
     }
 
     private fun model(store: Store) = AdaptiveNgramModel(store, emptyList(), WordDictionary.EMPTY, emptyList())
