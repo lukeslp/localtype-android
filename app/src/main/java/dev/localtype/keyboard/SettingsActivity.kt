@@ -1871,6 +1871,8 @@ class SettingsActivity : Activity() {
     private var lastNanoState: FoundationModelStatus? = null
     private var modelsSummary = ""
     private var nanoPrepare: Button? = null
+    /** False once the phone is found to have too little memory for the Gemma download ([GemmaFit]). */
+    private var gemmaFits = true
     private var gemmaState: TextView? = null
     private var gemmaImport: Button? = null
     private var gemmaDownload: Button? = null
@@ -2184,6 +2186,13 @@ class SettingsActivity : Activity() {
             val partialBytes = withContext(Dispatchers.IO) { installer.partialDownloadBytes() }
             val modelFilesRemain = withContext(Dispatchers.IO) { installer.hasModelFiles() }
             val pinned = installer.downloadableModel
+            // A phone without the memory for the download is told so, and is not offered a button that can only fail.
+            val memory = android.app.ActivityManager.MemoryInfo()
+            val activityManager = getSystemService(android.app.ActivityManager::class.java)
+            activityManager.getMemoryInfo(memory)
+            val fits = pinned == null || GemmaFit.fits(pinned.bytes, memory.totalMem, activityManager.isLowRamDevice)
+            gemmaFits = fits
+            if (includeNano && BuildConfig.INCLUDES_NANO) lastNanoState?.let { nanoState?.text = nanoMessage(it) }
             val kept = if (pinned != null && partialBytes > 0) {
                 "${ModelKitBridge.formatBytes(partialBytes)} of ${ModelKitBridge.formatBytes(pinned.bytes)} downloaded"
             } else null
@@ -2206,16 +2215,17 @@ class SettingsActivity : Activity() {
                 progress.state == ModelDownloadState.FAILED ->
                     (progress.message ?: "The download failed. Try again.") + (kept?.let { " $it; Download picks up from there." } ?: "")
                 kept != null -> "$kept. Download picks up from there, or discard it to free the space."
+                pinned != null && !fits -> GemmaFit.tooSmall(pinned.displayName, pinned.bytes, memory.totalMem)
                 pinned != null -> "Optional. Download Gemma to use it for extra suggestions and proofreading."
                 else -> "Not installed."
             }
             val failure = listOfNotNull(modelSharingError, modelRemovalError).joinToString(" ")
             showGemmaState(if (failure.isEmpty()) message else "$failure $message",
                 if (progress.state == ModelDownloadState.DOWNLOADING && failure.isEmpty()) Ongoing.DOWNLOAD else null)
-            gemmaDownload?.visibility = if (model == null && !borrowed && !progress.isActive) View.VISIBLE else View.GONE
+            gemmaDownload?.visibility = if (model == null && !borrowed && !progress.isActive && fits) View.VISIBLE else View.GONE
             gemmaCancel?.visibility = if (progress.isActive) View.VISIBLE else View.GONE
             gemmaImport?.visibility = if (progress.isActive) View.GONE else View.VISIBLE
-            val importLabel = if (model != null) "Replace Gemma" else "Use a model file instead"
+            val importLabel = if (model != null) "Replace Gemma" else if (!fits) "Use a smaller model file" else "Use a model file instead"
             gemmaImport?.let { if (it.text.toString() != importLabel) it.text = importLabel }
             // Remove deletes the partial file too, so the same button discards a download nobody will finish.
             gemmaRemove?.visibility = if ((modelFilesRemain || partialBytes > 0) && !progress.isActive) View.VISIBLE else View.GONE
@@ -2245,8 +2255,8 @@ class SettingsActivity : Activity() {
         FoundationModelStatus.SYSTEM_MODEL_DOWNLOADABLE -> "Supported on this phone but not downloaded yet."
         FoundationModelStatus.INITIALIZING -> "Downloading through Android…"
         FoundationModelStatus.NOT_SUPPORTED ->
-            "Android does not offer Gemini Nano to apps on this phone. You can use Gemma below."
-        else -> "Not available right now. You can use Gemma below."
+            "Android does not offer Gemini Nano to apps on this phone." + if (gemmaFits) " You can use Gemma below." else ""
+        else -> "Not available right now." + if (gemmaFits) " You can use Gemma below." else ""
     }
 
     private fun openModelChat() {

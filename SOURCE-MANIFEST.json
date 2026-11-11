@@ -1,5 +1,5 @@
 {
-  "sourceCommit": "f69939413e1c1e609e290556677fa7e84353d089",
+  "sourceCommit": "5f3627d91548fdaa53cab75dd98754de5793757c",
   "files": [
     {
       "path": "LICENSE",
@@ -15,8 +15,8 @@
     },
     {
       "path": "app/build.gradle.kts",
-      "sourceSha256": "b69e24551a60e93080d614061bc6f02d22ba6c86873b2e9794c617b997e79057",
-      "sha256": "a9cea2cd73ce93e9499c6de88021e167753b7ff483eab81a69c259f16d3f9c36",
+      "sourceSha256": "994d05145c5f518394c558a759230341bdec23438d30aa08925b052615362c14",
+      "sha256": "e41a083a1b18421d6340ee77bb90949e9f55924021b210881e6f44e74cc8f852",
       "transformed": true
     },
     {
@@ -638,6 +638,12 @@
       "transformed": false
     },
     {
+      "path": "app/src/main/java/dev/localtype/keyboard/GemmaFit.kt",
+      "sourceSha256": "8104c1da864e9632ae0a76c1d7b173cb8d7b44d67acfcd411ba144655e95ded6",
+      "sha256": "8104c1da864e9632ae0a76c1d7b173cb8d7b44d67acfcd411ba144655e95ded6",
+      "transformed": false
+    },
+    {
       "path": "app/src/main/java/dev/localtype/keyboard/GestureActions.kt",
       "sourceSha256": "2a1c1ac0e17860a6acf98fe6326842f8f9f1e3eb322271e4efc4779c5e15a201",
       "sha256": "2a1c1ac0e17860a6acf98fe6326842f8f9f1e3eb322271e4efc4779c5e15a201",
@@ -945,8 +951,8 @@
     },
     {
       "path": "app/src/main/java/dev/localtype/keyboard/SettingsActivity.kt",
-      "sourceSha256": "44db27895c6d9b738310d14172fb5033c60bff55328b9dc619846750bfb3e32e",
-      "sha256": "44db27895c6d9b738310d14172fb5033c60bff55328b9dc619846750bfb3e32e",
+      "sourceSha256": "c95874cd10e9e7fbca908db0d69a64d8ece0e7b08391787eb33bc797ecd1da52",
+      "sha256": "c95874cd10e9e7fbca908db0d69a64d8ece0e7b08391787eb33bc797ecd1da52",
       "transformed": false
     },
     {
@@ -1895,6 +1901,12 @@
       "path": "app/src/test/java/dev/localtype/keyboard/FoundationModelProviderTest.kt",
       "sourceSha256": "a174702041b0b25464fc72e11df0931255e8cbd4e798638d1f04be1b35870278",
       "sha256": "a174702041b0b25464fc72e11df0931255e8cbd4e798638d1f04be1b35870278",
+      "transformed": false
+    },
+    {
+      "path": "app/src/test/java/dev/localtype/keyboard/GemmaFitTest.kt",
+      "sourceSha256": "f8bb7ccc2a31ec17a5b5f430583ef278872acac4cbbb9c7070ac980720287246",
+      "sha256": "f8bb7ccc2a31ec17a5b5f430583ef278872acac4cbbb9c7070ac980720287246",
       "transformed": false
     },
     {
