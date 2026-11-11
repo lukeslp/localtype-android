@@ -345,6 +345,75 @@ object KeyboardSettings {
     fun updateDismissedCode(context: Context) = prefs(context).getInt(UPDATE_DISMISSED_CODE, 0)
     fun setUpdateDismissedCode(context: Context, code: Int) = prefs(context).edit().putInt(UPDATE_DISMISSED_CODE, code).apply()
 
+    /**
+     * The settings that travel in a copy to another phone ([KeyboardCopy]), by how each is stored. Every key in
+     * this file is either here or in [STAYS]; `CopyMergeTest` fails when a new one is in neither.
+     */
+    private val PORTABLE_BOOLEANS: Set<String> = setOf(
+        AUTOCORRECT, WEB_AUTOCORRECT, AUTO_CAPITALIZE, PROFANITY, EMOJI, NEURAL_PREDICTIONS, NUMBER_ROW, VIBRATE_ON_KEY_PRESS,
+        MODEL_ON_TAP, KEEP_MODEL_LOADED, SPARKLE_BUTTON, TRIPLE_SPACE_PROOFREAD, VOICE_INPUT, SLIDE_GESTURES, KEY_SHAPES,
+        BRITISH_SPELLING, COMMON_SYMBOL_HOLDS, EXPERIMENTAL_SWIPE, TWO_FINGER_GESTURES, STEADY_KEYS, AIM_FROM_TOUCHES,
+        INACTIVE_GAPS, PASSWORD_MANAGER_SUGGESTIONS, CLEAN_PASTED_LINKS, REMEMBER_DOMAINS, AUTO_UPDATE_CHECK,
+        ENGLISH, SPANISH, IPA, PORTUGUESE, HEBREW, WELSH, IRISH, MAORI, HAWAIIAN,
+    ) + LanguageProfile.EXTRA.map(::extraKey)
+    private val PORTABLE_INTS: Map<String, IntRange> = mapOf(
+        BOTTOM_CLEARANCE to 0..48, IGNORE_REPEAT_MS to 0..10_000, KEY_HOLD_MS to 0..10_000, DWELL_MS to 0..10_000,
+    )
+    private val PORTABLE_STRINGS: Set<String> = setOf(
+        THEME, VOICE_KEY, SLIDE_SPEED, TOOLS_ROW, SPACE_BAR, ONE_HANDED, WIDE_KEYS, CURRENCY, STRIP_HEIGHT, LANGUAGE, SETTINGS_LANGUAGE,
+    ) + TwoFingerSwipe.entries.map { GESTURE_PREFIX + it.id }
+
+    /**
+     * What stays on the phone it was set on: whether a model is set up here, the counters and marks of this
+     * install, what the update check last saw, and the typing log's switch, which is turned on by hand on each phone.
+     */
+    private val STAYS: Set<String> = setOf(
+        MODEL_SET_UP, LEARNED_GENERATION, PREDICTION_LOG, UPDATE_CHECKED_AT, UPDATE_LATEST_CODE, UPDATE_LATEST_NAME,
+        UPDATE_INSTALLABLE, UPDATE_DISMISSED_CODE, SETUP_COMPLETE, SETUP_STEP, TOUR_SEEN,
+    )
+    /** Names, codes and comma-separated ids: nothing a setting holds needs more than this. */
+    private val PORTABLE_VALUE = Regex("[A-Za-z0-9_,.-]{0,256}")
+
+    internal val portableKeys: Set<String> get() = PORTABLE_BOOLEANS + PORTABLE_INTS.keys + PORTABLE_STRINGS
+    internal val stayingKeys: Set<String> get() = STAYS
+
+    /** The portable settings among [stored], only those the person has set: a default stays a default on the new phone. */
+    internal fun portableFrom(stored: Map<String, *>): List<KeyboardCopy.Setting> = stored.entries.sortedBy { it.key }.mapNotNull { (key, value) ->
+        when {
+            key in PORTABLE_BOOLEANS && value is Boolean -> KeyboardCopy.Setting('b', key, if (value) "1" else "0")
+            key in PORTABLE_INTS && value is Int -> KeyboardCopy.Setting('i', key, value.toString())
+            key in PORTABLE_STRINGS && value is String && PORTABLE_VALUE.matches(value) -> KeyboardCopy.Setting('s', key, value)
+            else -> null
+        }
+    }
+
+    /** The value [setting] would store, or null when its key does not travel or its value is not one a setting holds. */
+    internal fun portableValue(setting: KeyboardCopy.Setting): Any? = when {
+        setting.type == 'b' && setting.key in PORTABLE_BOOLEANS -> when (setting.value) { "1" -> true; "0" -> false; else -> null }
+        setting.type == 'i' && setting.key in PORTABLE_INTS -> setting.value.toIntOrNull()?.takeIf { it in PORTABLE_INTS.getValue(setting.key) }
+        setting.type == 's' && setting.key in PORTABLE_STRINGS -> setting.value.takeIf { PORTABLE_VALUE.matches(it) }
+        else -> null
+    }
+
+    fun portable(context: Context): List<KeyboardCopy.Setting> = portableFrom(prefs(context).all)
+
+    /** Stores the settings of a copy that pass [portableValue], in one write. Returns how many were taken. */
+    fun applyPortable(context: Context, settings: List<KeyboardCopy.Setting>): Int {
+        val edit = prefs(context).edit()
+        var taken = 0
+        for (setting in settings) {
+            when (val value = portableValue(setting)) {
+                is Boolean -> edit.putBoolean(setting.key, value)
+                is Int -> edit.putInt(setting.key, value)
+                is String -> edit.putString(setting.key, value)
+                else -> continue
+            }
+            taken++
+        }
+        if (taken > 0) edit.apply()
+        return taken
+    }
+
     fun learnedGeneration(context: Context) = prefs(context).getInt(LEARNED_GENERATION, 0)
 
     /** Called after learned words change in settings so a running keyboard reloads them. */

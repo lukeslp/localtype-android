@@ -138,6 +138,53 @@ class PersonalLearningState(
         }
     }
 
+    /**
+     * Takes in evidence from a copy made on another phone. Nothing held here is lost to it: a row held here and
+     * there keeps the larger counts and this phone's recency, so reading the same copy twice changes nothing;
+     * behind a context this phone already has followers for, the copy adds new followers only into the room left,
+     * strongest first; and rows only the copy has come in as the oldest, the first to leave at a bound. The copy's
+     * own recency is kept only as an order, never as numbers, so no file can move this phone's clock. Like
+     * [restore], this ends every undo receipt.
+     */
+    fun merge(incoming: List<Entry>) {
+        val existing = entries()
+        val held = HashMap<List<String>, MutableSet<String>>()
+        existing.forEach { held.getOrPut(it.context) { HashSet() }.add(it.word) }
+        val copy = LinkedHashMap<Pair<List<String>, String>, Entry>()
+        for (entry in incoming.sortedBy { it.lastObserved }) {
+            // A longer context is not cut down to fit: it is not a row this store could have written.
+            if (entry.context.size !in 1..3 || entry.observations <= 0) continue
+            val context = normalizedContext(entry.context) ?: continue
+            val word = normalizedWord(entry.word, offerable = true) ?: continue
+            val count = entry.observations.coerceAtMost(maxCount)
+            copy[context to word] = entry.copy(context = context, word = word, observations = count,
+                explicitObservations = entry.explicitObservations.coerceIn(0, count))
+        }
+        val merged = ArrayList<Entry>()
+        if (existing.isEmpty()) {
+            // A new phone keeps the order the other one learned in, counted from one.
+            copy.values.forEachIndexed { rank, entry -> merged += entry.copy(lastObserved = rank + 1L) }
+        } else {
+            val room = HashMap<List<String>, Int>()
+            copy.values.filter { it.word !in held[it.context].orEmpty() }
+                .sortedWith(compareByDescending<Entry> { it.observations }.thenBy { it.word })
+                .forEach { entry ->
+                    val left = room.getOrPut(entry.context) { maxFollowers - held[entry.context].orEmpty().size }
+                    if (left <= 0) return@forEach
+                    room[entry.context] = left - 1
+                    merged += entry.copy(lastObserved = 0L)
+                }
+            existing.forEach { entry ->
+                val other = copy[entry.context to entry.word]
+                merged += if (other == null) entry else entry.copy(
+                    observations = maxOf(entry.observations, other.observations),
+                    explicitObservations = maxOf(entry.explicitObservations, other.explicitObservations),
+                )
+            }
+        }
+        restore(merged)
+    }
+
     fun clear() {
         rows.clear()
         receipts.clear()

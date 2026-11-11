@@ -40,6 +40,9 @@ class JournalLearningStore private constructor(
     override fun entries() = buffer.entries()
     override fun record(previous: String, next: String) = buffer.record(previous, next)
     fun remove(previous: String, next: String) = buffer.remove(previous, next)
+
+    /** Pairs from a copy made on another phone. Added words do not come this way ([LearnedPairState.merge]). */
+    fun merge(entries: List<Triple<String, String, Int>>) = buffer.merge(entries)
     override fun clear() {
         // On disk before this returns, so a process killed before the worker deletes the files still forgets.
         synchronized(forgetLock) {
@@ -125,6 +128,7 @@ class JournalLearningStore private constructor(
                 is LearnedPairBuffer.Mutation.Increment -> file.record(mutation.previous, mutation.next)
                 is LearnedPairBuffer.Mutation.Remove -> file.remove(mutation.previous, mutation.next)
                 LearnedPairBuffer.Mutation.Clear -> file.clear()
+                is LearnedPairBuffer.Mutation.Merge -> file.merge(mutation.entries)
             }
             releaseForgetMarker()
         } catch (_: IOException) {
@@ -172,9 +176,16 @@ class JournalLearningStore private constructor(
         // Main thread only, shared by settings and every service instance; one per language.
         private val shared = HashMap<String, JournalLearningStore>()
 
+        private fun fileName(language: LanguageProfile) = if (language.english) FILE_NAME else "learned_pairs_${language.code}.bin"
+
+        /** Whether this language has ever kept pairs here, without opening its store (which would create its file). */
+        fun exists(context: Context, language: LanguageProfile): Boolean =
+            language.code in shared || File(context.noBackupFilesDir, fileName(language)).exists() ||
+                (language.english && context.getSharedPreferences(LEGACY_PREFS, Context.MODE_PRIVATE).all.isNotEmpty())
+
         fun get(context: Context, language: LanguageProfile = LanguageProfile.ENGLISH): JournalLearningStore = shared.getOrPut(language.code) {
             if (language.english) JournalLearningStore(context.applicationContext)
-            else JournalLearningStore(context.applicationContext, "learned_pairs_${language.code}.bin", legacyPrefs = null)
+            else JournalLearningStore(context.applicationContext, fileName(language), legacyPrefs = null)
         }
     }
 }

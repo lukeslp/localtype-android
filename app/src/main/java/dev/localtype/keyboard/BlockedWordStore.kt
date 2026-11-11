@@ -69,6 +69,19 @@ class BlockedWordStore private constructor(context: Context, val language: Langu
         work(done) { persistence.save(next) }
     }
 
+    /**
+     * Blocks every valid word of [incoming] in one write, for a copy made on another phone. [done] gets how many
+     * were new, or null when the list was busy, not loaded or could not be written. Words past the limit are left out.
+     */
+    fun addAll(incoming: Collection<String>, done: (Int?) -> Unit) {
+        checkMain()
+        if (busy || !ready) { done(null); return }
+        val fresh = incoming.mapNotNull(BlockedWords::normalize).distinct().filter { it !in words }.take(BlockedWords.MAX_WORDS - words.size)
+        if (fresh.isEmpty()) { done(0); return }
+        val next = words + fresh
+        work({ ok -> done(if (ok) fresh.size else null) }) { persistence.save(next) }
+    }
+
     private fun work(done: (Boolean) -> Unit = {}, action: () -> Set<String>) {
         busy = true
         worker.post {
@@ -92,6 +105,12 @@ class BlockedWordStore private constructor(context: Context, val language: Langu
         private val worker by lazy { Handler(HandlerThread("localtype-blocked-words").apply { start() }.looper) }
         private val main by lazy { Handler(Looper.getMainLooper()) }
         private val stores = HashMap<String, BlockedWordStore>()
+        /** Whether this language has a blocked-words file or an open store, without opening one. */
+        fun exists(context: Context, language: LanguageProfile): Boolean {
+            val file = File(context.applicationContext.noBackupFilesDir, "blocked_words_${language.code}.txt")
+            return language.code in stores || file.exists() || File(file.path + ".bak").exists()
+        }
+
         fun get(context: Context, language: LanguageProfile): BlockedWordStore {
             check(Looper.myLooper() == Looper.getMainLooper())
             return stores.getOrPut(language.code) { BlockedWordStore(context, language) }

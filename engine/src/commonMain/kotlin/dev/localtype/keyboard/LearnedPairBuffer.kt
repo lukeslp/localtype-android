@@ -20,6 +20,9 @@ class LearnedPairBuffer(private val write: (Mutation) -> Unit) : AdaptiveNgramMo
 
     override fun clear() = mutate(Mutation.Clear)
 
+    /** Pairs from a copy made on another phone ([LearnedPairState.merge]). */
+    fun merge(entries: List<Triple<String, String, Int>>) = mutate(Mutation.Merge(entries.toList()))
+
     private fun mutate(mutation: Mutation) {
         apply(state, mutation)
         if (!ready) pending += mutation
@@ -57,6 +60,7 @@ class LearnedPairBuffer(private val write: (Mutation) -> Unit) : AdaptiveNgramMo
         data class Increment(val previous: String, val next: String) : Mutation
         data class Remove(val previous: String, val next: String) : Mutation
         data object Clear : Mutation
+        data class Merge(val entries: List<Triple<String, String, Int>>) : Mutation
     }
 
     private fun apply(target: LearnedPairState, mutation: Mutation) {
@@ -64,6 +68,7 @@ class LearnedPairBuffer(private val write: (Mutation) -> Unit) : AdaptiveNgramMo
             is Mutation.Increment -> target.record(mutation.previous, mutation.next)
             is Mutation.Remove -> target.remove(mutation.previous, mutation.next)
             Mutation.Clear -> target.clear()
+            is Mutation.Merge -> target.merge(mutation.entries)
         }
     }
 }

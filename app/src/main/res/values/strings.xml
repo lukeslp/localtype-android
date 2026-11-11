@@ -788,4 +788,33 @@
     <string name="effect_fullwidth">Fullwidth</string>
     <string name="effect_cursed">Cursed</string>
     <string name="local_tool_copy_failed">Copy was refused by Android</string>
+    <!-- Move to another phone: one file with the parts the person ticks. -->
+    <string name="copy_title">Move to another phone</string>
+    <string name="copy_details">Save a copy writes one plain-text file through Android’s file picker, with the parts you tick: settings, added and blocked words, saved text and shortcuts, and what the keyboard has learned (words, word pairs, capitals, sites and recent emoji, in every language). On the other phone, install LocalType and use Read a copy. Reading adds to what is there, and settings in the copy replace the same settings. The typing log, downloaded models and what this phone has learned about your touches stay behind. The keyboard sends the file nowhere; it is only where you put it.</string>
+    <string name="copy_body">Save your keyboard to a file, then read it on the other phone.</string>
+    <string name="copy_save">Save a copy</string>
+    <string name="copy_read">Read a copy</string>
+    <string name="copy_save_body">Choose what goes in the file. It is plain text. Learned words are words and word pairs you have typed, so keep the file somewhere private.</string>
+    <string name="copy_part_settings">Settings</string>
+    <string name="copy_part_words">Added and blocked words</string>
+    <string name="copy_part_saved">Saved text and shortcuts</string>
+    <string name="copy_part_learned">Learned words, sites and recent emoji</string>
+    <string name="copy_left_out">Not in the copy: the typing log, downloaded models and what this phone has learned about your touches.</string>
+    <string name="copy_save_action">Choose where</string>
+    <string name="copy_saved">Copy saved</string>
+    <string name="copy_save_failed">Could not save the copy</string>
+    <string name="copy_read_unreadable">Could not read that file.</string>
+    <string name="copy_read_not_copy">That file is not a LocalType copy.</string>
+    <string name="copy_read_newer">That copy was saved by a newer LocalType. Update this one, then read it again.</string>
+    <string name="copy_read_damaged">That copy is incomplete or was changed, so none of it was read.</string>
+    <string name="copy_read_empty">That copy holds nothing.</string>
+    <string name="copy_read_body">Saved on %1$s by LocalType %2$s. Choose what to take. What is already on this phone stays, and settings in the copy replace the same settings here.</string>
+    <string name="copy_read_body_plain">Choose what to take. What is already on this phone stays, and settings in the copy replace the same settings here.</string>
+    <string name="copy_count_settings">Settings: %1$d</string>
+    <string name="copy_count_words">Added words: %1$d. Blocked words: %2$d</string>
+    <string name="copy_count_saved">Saved text: %1$d</string>
+    <string name="copy_count_learned">Learned word pairs: %1$d. Sites: %2$d</string>
+    <string name="copy_read_action">Read it</string>
+    <string name="copy_read_taken">Taken from the copy:</string>
+    <string name="copy_read_incomplete">Some of it could not be taken in. Try reading the copy again.</string>
 </resources>

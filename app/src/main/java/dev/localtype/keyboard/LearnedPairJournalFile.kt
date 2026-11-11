@@ -83,6 +83,15 @@ class LearnedPairJournalFile(
         persist(LearnedPairJournal.remove(previous, next))
     }
 
+    /** Pairs from a copy made on another phone: one rewrite of the whole file, not a record for each. */
+    fun merge(entries: List<Triple<String, String, Int>>) {
+        check(loaded) { "Load learned pairs before merging" }
+        state.merge(entries)
+        // flush() first finishes a forget that is still waiting, then writes only the new state.
+        rewritePending = true
+        flush()
+    }
+
     /** Can run before load: forgetting must never read or migrate the words being forgotten. */
     fun clear() {
         state.clear()

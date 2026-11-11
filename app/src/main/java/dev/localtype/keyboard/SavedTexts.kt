@@ -72,6 +72,29 @@ class SavedTexts(private val store: Store) {
         return true
     }
 
+    /**
+     * Adds saved items from a copy made on another phone, below the ones already here and in the copy's order, up
+     * to [MAX]. An item already saved is left where it is. A shortcut comes with its item when it is valid and no
+     * item here has that word. Returns how many items were added.
+     */
+    fun merge(incoming: List<Entry>): Int {
+        val next = items.toMutableList()
+        var taken = codes
+        var added = 0
+        for (entry in incoming) {
+            if (!fits(entry.text) || entry.text in next) continue
+            if (next.size >= MAX) break
+            next += entry.text
+            added++
+            val code = entry.code?.let(::normalizeCode) ?: continue
+            if (validCode(code) && code !in taken.values) taken = taken + (entry.text to code)
+        }
+        if (added == 0) return 0
+        codes = taken
+        update(next, change = null)
+        return added
+    }
+
     /** Settings' Remove all saved text. */
     fun clear() {
         if (items.isEmpty()) return

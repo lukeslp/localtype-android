@@ -79,6 +79,7 @@ class LearnedPairBufferTest {
                 is LearnedPairBuffer.Mutation.Increment -> worker.record(mutation.previous, mutation.next)
                 is LearnedPairBuffer.Mutation.Remove -> worker.remove(mutation.previous, mutation.next)
                 LearnedPairBuffer.Mutation.Clear -> worker.clear()
+                is LearnedPairBuffer.Mutation.Merge -> worker.merge(mutation.entries)
             }
         }
 

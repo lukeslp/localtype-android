@@ -125,6 +125,7 @@ class SettingsActivity : Activity() {
         savedExpanded = savedInstanceState?.getBoolean("savedTextExpanded") ?: false
         sitesExpanded = savedInstanceState?.getBoolean("sitesExpanded") ?: false
         learnedExpanded = savedInstanceState?.getBoolean("learnedExpanded") ?: false
+        copyParts = savedInstanceState?.getStringArrayList("copyParts")?.mapNotNull { name -> CopyTransfer.Part.entries.firstOrNull { it.name == name } }?.toSet()
         addHeader()
         addUpdateBanner()
         addTourCard()
@@ -159,6 +160,7 @@ class SettingsActivity : Activity() {
         outState.putBoolean("sitesExpanded", sitesExpanded)
         outState.putBoolean("learnedExpanded", learnedExpanded)
         outState.putBoolean("modelProgressChecked", modelProgressChecked)
+        copyParts?.let { parts -> outState.putStringArrayList("copyParts", ArrayList(parts.map { it.name })) }
         super.onSaveInstanceState(outState)
     }
 
@@ -1092,6 +1094,8 @@ class SettingsActivity : Activity() {
         divider(body)
         addRememberedSites(body)
         divider(body)
+        addMoveCopy(body)
+        divider(body)
         addPredictionLog(body)
         divider(body)
         addForgetLearnedWords(body)
@@ -1583,6 +1587,180 @@ class SettingsActivity : Activity() {
                 sitesList.addView(row)
             }
         }
+    }
+
+    private lateinit var copySave: Button
+    private lateinit var copyRead: Button
+    /** What was ticked in Save a copy, kept while Android's file picker is open. Null when nothing is being saved. */
+    private var copyParts: Set<CopyTransfer.Part>? = null
+
+    /**
+     * One file that carries the keyboard to another phone ([KeyboardCopy]). Both ways go through Android's file
+     * picker, so the file is only ever where the person put it; nothing is written or read until they choose.
+     */
+    private fun addMoveCopy(parent: LinearLayout) {
+        subhead(parent, getString(R.string.copy_title), getString(R.string.copy_details), topMargin = 4)
+        parent.addView(text(getString(R.string.copy_body), 13f, R.color.on_surface_variant))
+        copySave = button(getString(R.string.copy_save), primary = false).apply { setOnClickListener { chooseCopyParts() } }
+        parent.addView(copySave, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(8) })
+        copyRead = button(getString(R.string.copy_read), primary = false).apply { setOnClickListener { chooseCopyFile() } }
+        parent.addView(copyRead, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(8) })
+    }
+
+    /** A dialog's sentence and one tick for each part, all on; the dialog scrolls at large text sizes. */
+    private fun copyDialog(sentence: String, parts: List<Pair<CopyTransfer.Part, String>>, note: String?): Pair<View, Map<CopyTransfer.Part, android.widget.CheckBox>> {
+        val body = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(24), dp(8), dp(24), 0)
+        }
+        body.addView(text(sentence, 15f, R.color.on_surface_variant))
+        val checks = LinkedHashMap<CopyTransfer.Part, android.widget.CheckBox>()
+        parts.forEach { (part, label) ->
+            checks[part] = android.widget.CheckBox(this).apply {
+                text = speak(label)
+                isChecked = true
+                minHeight = dp(48)
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+                setTextColor(getColor(R.color.on_surface))
+                setPadding(dp(4), 0, 0, 0)
+            }.also { body.addView(it, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)) }
+        }
+        note?.let { body.addView(text(it, 13f, R.color.on_surface_variant).apply { setPadding(0, dp(8), 0, 0) }) }
+        return android.widget.ScrollView(this).apply { addView(body) } to checks
+    }
+
+    /** The action stays off while nothing is ticked. */
+    private fun followTicks(dialog: android.app.AlertDialog, checks: Map<CopyTransfer.Part, android.widget.CheckBox>) {
+        val action = dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE)
+        checks.values.forEach { box -> box.setOnCheckedChangeListener { _, _ -> action.isEnabled = checks.values.any { it.isChecked } } }
+    }
+
+    private fun chooseCopyParts() {
+        val (view, checks) = copyDialog(
+            getString(R.string.copy_save_body),
+            listOf(
+                CopyTransfer.Part.SETTINGS to getString(R.string.copy_part_settings),
+                CopyTransfer.Part.WORDS to getString(R.string.copy_part_words),
+                CopyTransfer.Part.SAVED to getString(R.string.copy_part_saved),
+                CopyTransfer.Part.LEARNED to getString(R.string.copy_part_learned),
+            ),
+            getString(R.string.copy_left_out),
+        )
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setTitle(R.string.copy_save)
+            .setView(view)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.copy_save_action) { _, _ ->
+                copyParts = checks.filterValues { it.isChecked }.keys.toSet()
+                val stamp = SimpleDateFormat("yyyyMMdd", Locale.US).format(Date())
+                startActivityForResult(
+                    Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                        addCategory(Intent.CATEGORY_OPENABLE)
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TITLE, "localtype-copy-$stamp.txt")
+                        putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(DOWNLOADS_URI))
+                    },
+                    REQUEST_COPY_SAVE,
+                )
+            }
+            .show()
+        followTicks(dialog, checks)
+    }
+
+    /** Hands the ticked parts and the chosen file to [CopyTransfer.save], which finishes even if this screen closes. */
+    private fun saveCopy(target: Uri) {
+        val parts = copyParts
+        copyParts = null
+        if (parts.isNullOrEmpty()) {
+            // The screen was rebuilt without the ticks. Nothing is written rather than more than was chosen.
+            CopyTransfer.discard(this, target)
+            Toast.makeText(this, R.string.copy_save_failed, Toast.LENGTH_LONG).show()
+            return
+        }
+        copySave.isEnabled = false
+        val app = applicationContext
+        CopyTransfer.save(this, target, parts, SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())) { ok ->
+            if (!isDestroyed) copySave.isEnabled = true
+            Toast.makeText(app, if (ok) R.string.copy_saved else R.string.copy_save_failed, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun chooseCopyFile() {
+        startActivityForResult(
+            Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                // Any type: a file that came through a chat app or a cable may have lost its type. The reader checks the contents.
+                type = "*/*"
+                putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(DOWNLOADS_URI))
+            },
+            REQUEST_COPY_READ,
+        )
+    }
+
+    /** Reads and checks the whole file before anything is offered; nothing reaches the keyboard until Read it is tapped. */
+    private fun readCopy(source: Uri) {
+        copyRead.isEnabled = false
+        val app = applicationContext
+        screenScope.launch {
+            val read = withContext(Dispatchers.IO) { CopyTransfer.read(app, source) }
+            if (isDestroyed) return@launch
+            copyRead.isEnabled = true
+            when (read) {
+                is KeyboardCopy.Read.Ok -> confirmCopy(read.copy)
+                is KeyboardCopy.Read.Newer -> copyMessage(getString(R.string.copy_read_newer))
+                KeyboardCopy.Read.NotACopy -> copyMessage(getString(R.string.copy_read_not_copy))
+                KeyboardCopy.Read.Damaged -> copyMessage(getString(R.string.copy_read_damaged))
+                null -> copyMessage(getString(R.string.copy_read_unreadable))
+            }
+        }
+    }
+
+    private fun copyMessage(message: String, onClose: (() -> Unit)? = null) {
+        android.app.AlertDialog.Builder(this)
+            .setTitle(R.string.copy_read)
+            .setMessage(message)
+            .setPositiveButton(android.R.string.ok, null)
+            .setOnDismissListener { onClose?.invoke() }
+            .show()
+    }
+
+    /** What the copy holds, part by part with counts, each with a tick. Text from the file is shown only when it has the expected shape. */
+    private fun confirmCopy(copy: KeyboardCopy) {
+        val labels = listOfNotNull(
+            copy.settings?.let { CopyTransfer.Part.SETTINGS to getString(R.string.copy_count_settings, it.values.size) },
+            copy.words?.let { CopyTransfer.Part.WORDS to getString(R.string.copy_count_words, copy.addedCount, copy.blockedCount) },
+            copy.saved?.let { CopyTransfer.Part.SAVED to getString(R.string.copy_count_saved, it.size) },
+            copy.learned?.let { CopyTransfer.Part.LEARNED to getString(R.string.copy_count_learned, copy.pairCount, it.sites.size) },
+        )
+        if (labels.isEmpty()) return copyMessage(getString(R.string.copy_read_empty))
+        val made = copy.made.takeIf { COPY_DAY.matches(it) }
+        val version = copy.versionName.takeIf { COPY_VERSION.matches(it) }
+        val sentence = if (made != null && version != null) getString(R.string.copy_read_body, made, version) else getString(R.string.copy_read_body_plain)
+        val (view, checks) = copyDialog(sentence, labels, null)
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setTitle(R.string.copy_read)
+            .setView(view)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.copy_read_action) { _, _ ->
+                copyRead.isEnabled = false
+                CopyTransfer.apply(this, copy, checks.filterValues { it.isChecked }.keys.toSet()) { applied ->
+                    if (isDestroyed) return@apply
+                    copyRead.isEnabled = true
+                    val parts = checks.filterValues { it.isChecked }.keys
+                    val lines = listOfNotNull(
+                        getString(R.string.copy_read_taken),
+                        if (CopyTransfer.Part.SETTINGS in parts) getString(R.string.copy_count_settings, applied.settings) else null,
+                        if (CopyTransfer.Part.WORDS in parts) getString(R.string.copy_count_words, applied.added, applied.blocked) else null,
+                        if (CopyTransfer.Part.SAVED in parts) getString(R.string.copy_count_saved, applied.saved) else null,
+                        if (CopyTransfer.Part.LEARNED in parts) getString(R.string.copy_count_learned, applied.pairs, applied.sites) else null,
+                        if (applied.incomplete) getString(R.string.copy_read_incomplete) else null,
+                    )
+                    // The screen is drawn again so every switch and list shows what is now on the phone.
+                    copyMessage(lines.joinToString("\n")) { if (!isDestroyed) recreate() }
+                }
+            }
+            .show()
+        followTicks(dialog, checks)
     }
 
     private lateinit var logStatus: TextView
@@ -2097,6 +2275,8 @@ class SettingsActivity : Activity() {
         when (requestCode) {
             REQUEST_MODEL_FILE -> importModelFile(uri)
             REQUEST_WORD_LIST -> importWordList(uri)
+            REQUEST_COPY_SAVE -> saveCopy(uri)
+            REQUEST_COPY_READ -> readCopy(uri)
             REQUEST_LOG_EXPORT -> PredictionLog.export(this, uri) { ok ->
                 runOnUiThread {
                     Toast.makeText(this, if (ok) R.string.prediction_log_exported else R.string.prediction_log_export_failed, Toast.LENGTH_SHORT).show()
@@ -2525,8 +2705,12 @@ class SettingsActivity : Activity() {
         const val REQUEST_MICROPHONE = 413
         const val REQUEST_MODEL_CHAT = 414
         const val REQUEST_WORD_LIST = 415
+        const val REQUEST_COPY_SAVE = 416
+        const val REQUEST_COPY_READ = 417
         /** How long the version line shows "2 more taps" before going back to the version. */
         const val HINT_MS = 2_000L
+        private val COPY_DAY = Regex("\\d{4}-\\d{2}-\\d{2}")
+        private val COPY_VERSION = Regex("[0-9A-Za-z.-]{1,24}")
         const val DOWNLOADS_URI = "content://com.android.externalstorage.documents/document/primary%3ADownload"
     }
 }

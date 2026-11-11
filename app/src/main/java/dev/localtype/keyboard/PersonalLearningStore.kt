@@ -54,6 +54,7 @@ class PersonalLearningStore private constructor(
         data class Clear(val generation: Long) : Action()
         data class RemovePair(val previous: String, val next: String) : Action()
         data class RemoveWord(val word: String) : Action()
+        data class Merge(val entries: List<PersonalLearningState.Entry>) : Action()
     }
 
     init { worker.post { load() } }
@@ -124,6 +125,20 @@ class PersonalLearningStore private constructor(
         enqueue(action)
     }
 
+    /** Evidence from a copy made on another phone ([PersonalLearningState.merge]). It ends every pending undo. */
+    fun merge(entries: List<PersonalLearningState.Entry>) {
+        checkMain()
+        val action = Action.Merge(entries.toList())
+        apply(cache, cacheReceipts, action)
+        enqueue(action)
+    }
+
+    /** Every row held, for a copy to take to another phone. */
+    fun entries(): List<PersonalLearningState.Entry> {
+        checkMain()
+        return cache.entries()
+    }
+
     private fun enqueue(action: Action) {
         if (!ready) beforeReady += action
         worker.post {
@@ -145,6 +160,7 @@ class PersonalLearningStore private constructor(
             }
             is Action.Undo -> receipts.remove(action.id)?.let { state.undo(it) }
             is Action.Clear -> { state.clear(); receipts.clear() }
+            is Action.Merge -> { state.merge(action.entries); receipts.clear() }
             is Action.RemovePair, is Action.RemoveWord -> {
                 val retained = state.entries().filterNot { entry ->
                     when (action) {
@@ -267,11 +283,17 @@ class PersonalLearningStore private constructor(
         private const val TAG = "LocalTypePersonalLearning"
         private val shared = HashMap<String, PersonalLearningStore>()
 
+        private fun fileName(language: LanguageProfile) = if (language.english) "personal_learning.bin" else "personal_learning_${language.code}.bin"
+
+        /** Whether this language has a store open or a file here, without opening one (which starts its thread). */
+        fun exists(context: Context, language: LanguageProfile): Boolean =
+            language.code in shared || File(context.noBackupFilesDir, fileName(language)).exists()
+
         fun get(context: Context, language: LanguageProfile = LanguageProfile.ENGLISH): PersonalLearningStore {
             check(Looper.myLooper() == Looper.getMainLooper())
             return shared.getOrPut(language.code) {
                 if (language.english) PersonalLearningStore(context.applicationContext)
-                else PersonalLearningStore(context.applicationContext, "personal_learning_${language.code}.bin", language.oneLetterWords)
+                else PersonalLearningStore(context.applicationContext, fileName(language), language.oneLetterWords)
             }
         }
 

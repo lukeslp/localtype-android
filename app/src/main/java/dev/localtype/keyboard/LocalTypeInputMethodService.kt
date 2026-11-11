@@ -4815,6 +4815,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         // Forget learned words empties the recent emoji too; forgetting one pair leaves them, and this rereads either way.
         // An open emoji panel keeps showing its Recent row until it next opens.
         recentEmoji.reload()
+        // A copy read in settings can bring skin-tone choices; nothing else changes them from outside the keyboard.
+        emojiTones.reload()
         modelMutated = false
         learnedBaselineImported = false
         snapshotClean = false

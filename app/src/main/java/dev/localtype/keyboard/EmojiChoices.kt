@@ -56,6 +56,13 @@ class EmojiTones(private val store: EmojiChoiceStore) {
     var defaultTone: Int = valid(store.defaultTone())
         private set
 
+    /** Reads the choices again, after a copy from another phone put some in. */
+    fun reload() {
+        chosen.clear()
+        chosen.putAll(store.tones())
+        defaultTone = valid(store.defaultTone())
+    }
+
     fun toneFor(emoji: EmojiInventory.Emoji): Int =
         if (emoji.tones.isEmpty()) 0 else valid(chosen[emoji.value] ?: defaultTone)
 

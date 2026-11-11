@@ -52,6 +52,34 @@ class LearnedPairState(entries: List<Triple<String, String, Int>> = emptyList())
         if (followers.size > followerLimit(previous)) evictWeakest(followers)
     }
 
+    /**
+     * Takes in pairs from a copy made on another phone. Nothing held here is lost to it: a pair held here and
+     * there keeps the larger count, so reading the same copy twice changes nothing; after a word this phone
+     * already has followers for, the copy adds new followers only into the room that row has left, strongest
+     * first; and the copy's rows count as the oldest, so at the bound on previous words they are the ones that
+     * leave. The added-words row is never taken this way; added words go through [AddedWords], which checks each one.
+     */
+    fun merge(incoming: List<Triple<String, String, Int>>) {
+        val existing = entries()
+        val held = HashMap<String, MutableSet<String>>()
+        existing.forEach { (previous, next, _) -> held.getOrPut(previous) { HashSet() }.add(next) }
+        val copy = LinkedHashMap<String, MutableMap<String, Int>>()
+        for ((previous, next, count) in incoming) {
+            if (previous == AddedWords.CONTEXT || !validWord(previous) || !validWord(next) || count <= 0) continue
+            val followers = copy.getOrPut(previous) { HashMap() }
+            followers[next] = maxOf(followers[next] ?: 0, count.coerceAtMost(MAX_COUNT))
+        }
+        rows.clear()
+        for ((previous, followers) in copy) {
+            val here = held[previous].orEmpty()
+            val room = followerLimit(previous) - here.size
+            followers.entries.filter { it.key !in here }
+                .sortedWith(compareByDescending<Map.Entry<String, Int>> { it.value }.thenBy { it.key }).take(maxOf(room, 0))
+                .forEach { restore(previous, it.key, it.value) }
+        }
+        existing.forEach { (previous, next, count) -> restore(previous, next, maxOf(count, copy[previous]?.get(next) ?: 0)) }
+    }
+
     /** Added words are a list the person keeps, not a row of habits, so their reserved row has its own bound. */
     private fun followerLimit(previous: String): Int = if (previous == AddedWords.CONTEXT) AddedWords.MAX_WORDS else MAX_FOLLOWERS
 

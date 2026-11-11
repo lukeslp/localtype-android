@@ -796,4 +796,33 @@
     <string name="effect_fullwidth">Ancho completo</string>
     <string name="effect_cursed">Maldito</string>
     <string name="local_tool_copy_failed">Android rechazó la copia</string>
+    <!-- Move to another phone: one file with the parts the person ticks. -->
+    <string name="copy_title">Pasar a otro teléfono</string>
+    <string name="copy_details">Guardar una copia escribe un solo archivo de texto con el selector de archivos de Android, con las partes que marques: ajustes, palabras añadidas y bloqueadas, texto guardado y atajos, y lo que el teclado ha aprendido (palabras, pares de palabras, mayúsculas, sitios y emojis recientes, en todos los idiomas). En el otro teléfono, instala LocalType y usa Leer una copia. Leer añade a lo que ya hay, y los ajustes de la copia sustituyen a los mismos ajustes. El registro de escritura, los modelos descargados y lo que este teléfono ha aprendido de tus toques se quedan aquí. El teclado no envía el archivo a ningún sitio; solo está donde tú lo pongas.</string>
+    <string name="copy_body">Guarda tu teclado en un archivo y léelo en el otro teléfono.</string>
+    <string name="copy_save">Guardar una copia</string>
+    <string name="copy_read">Leer una copia</string>
+    <string name="copy_save_body">Elige qué va en el archivo. Es texto sin formato. Las palabras aprendidas son palabras y pares de palabras que has escrito, así que guarda el archivo en un lugar privado.</string>
+    <string name="copy_part_settings">Ajustes</string>
+    <string name="copy_part_words">Palabras añadidas y bloqueadas</string>
+    <string name="copy_part_saved">Texto guardado y atajos</string>
+    <string name="copy_part_learned">Palabras aprendidas, sitios y emojis recientes</string>
+    <string name="copy_left_out">No va en la copia: el registro de escritura, los modelos descargados y lo que este teléfono ha aprendido de tus toques.</string>
+    <string name="copy_save_action">Elegir dónde</string>
+    <string name="copy_saved">Copia guardada</string>
+    <string name="copy_save_failed">No se pudo guardar la copia</string>
+    <string name="copy_read_unreadable">No se pudo leer ese archivo.</string>
+    <string name="copy_read_not_copy">Ese archivo no es una copia de LocalType.</string>
+    <string name="copy_read_newer">Esa copia la guardó un LocalType más nuevo. Actualiza este y vuelve a leerla.</string>
+    <string name="copy_read_damaged">Esa copia está incompleta o fue modificada, así que no se leyó nada de ella.</string>
+    <string name="copy_read_empty">Esa copia no contiene nada.</string>
+    <string name="copy_read_body">Guardada el %1$s con LocalType %2$s. Elige qué tomar. Lo que ya hay en este teléfono se queda, y los ajustes de la copia sustituyen a los mismos ajustes de aquí.</string>
+    <string name="copy_read_body_plain">Elige qué tomar. Lo que ya hay en este teléfono se queda, y los ajustes de la copia sustituyen a los mismos ajustes de aquí.</string>
+    <string name="copy_count_settings">Ajustes: %1$d</string>
+    <string name="copy_count_words">Palabras añadidas: %1$d. Palabras bloqueadas: %2$d</string>
+    <string name="copy_count_saved">Texto guardado: %1$d</string>
+    <string name="copy_count_learned">Pares de palabras aprendidos: %1$d. Sitios: %2$d</string>
+    <string name="copy_read_action">Leerla</string>
+    <string name="copy_read_taken">Tomado de la copia:</string>
+    <string name="copy_read_incomplete">Parte de la copia no se pudo tomar. Intenta leerla otra vez.</string>
 </resources>

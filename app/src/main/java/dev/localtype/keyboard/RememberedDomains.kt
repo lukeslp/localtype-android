@@ -54,6 +54,35 @@ class RememberedDomains(private val store: Store) {
         if (byHost.remove(host) != null) changed()
     }
 
+    /**
+     * Takes in hosts from a copy made on another phone. A host held here and there keeps the larger count and the
+     * later day; a new one is added while there is room, and never pushes out one this phone already holds. Only
+     * a host typing could have left here comes in: its shape, and an ending in [endings]. A day after [today] (a
+     * clock that was wrong, or a file that was edited) counts as today, so it cannot outlast what is typed here.
+     * Returns how many hosts were added.
+     */
+    fun merge(incoming: List<Entry>, today: Long, endings: Set<String>): Int {
+        var added = 0
+        var dirty = false
+        for (entry in incoming) {
+            if (!DomainCodec.validHost(entry.host) || entry.host.substringAfterLast('.') !in endings || entry.count < 1 || entry.day < 0) continue
+            val count = entry.count.coerceAtMost(MAX_COUNT)
+            val day = entry.day.coerceAtMost(today)
+            val known = byHost[entry.host]
+            if (known == null) {
+                if (byHost.size >= MAX) continue
+                byHost[entry.host] = Entry(entry.host, count, day)
+                added++
+                dirty = true
+            } else if (count > known.count || day > known.day) {
+                byHost[entry.host] = Entry(entry.host, maxOf(count, known.count), maxOf(day, known.day))
+                dirty = true
+            }
+        }
+        if (dirty) changed()
+        return added
+    }
+
     /** Forget learned words. */
     fun clear() {
         if (byHost.isEmpty()) return
@@ -107,4 +136,7 @@ object DomainCodec {
     }
 
     private val HOST = Regex("[a-z0-9-]{1,63}(\\.[a-z0-9-]{1,63})+")
+
+    /** Only something [DomainHosts] could have produced. */
+    fun validHost(host: String): Boolean = host.length <= 253 && HOST.matches(host)
 }
