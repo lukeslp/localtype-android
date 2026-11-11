@@ -133,7 +133,7 @@
     <string name="keep_model_loaded_body">Loads Gemma when you open the keyboard and keeps it ready, using about 2 GB of memory. Otherwise it unloads after a few quiet minutes. If Gemini Nano is ready, Nano is tried first and Gemma loads only as a fallback.</string>
     <string name="share_model_title">Share Gemma with LocalLauncher</string>
     <string name="share_model_summary">LocalLauncher may ask it for short lines</string>
-    <string name="share_model_body">LocalLauncher, the home screen made to go with LocalType, can ask Gemma on this phone for one short line under its Today note. The note’s text goes to Gemma here in LocalType and is never kept or logged. LocalLauncher never loads Gemma itself, and its requests wait behind your typing. Off unless you turn it on.</string>
+    <string name="share_model_body">LocalLauncher, the home screen made to go with LocalType, can ask Gemma on this phone for one short line under its Today note. The note’s text goes to Gemma here in LocalType and is never kept or logged. When you open its Brief, LocalLauncher may load Gemma here, which takes up to a minute and about 2 GB of memory. It never loads Gemma at any other time, and its requests wait behind your typing. Off unless you turn it on.</string>
     <string name="model_trigger">Ask Gemini Nano or Gemma for suggestions</string>
     <string name="model_trigger_chime">Chime suggestions active. Ask Gemini Nano or Gemma for other suggestions</string>
     <string name="model_generating">Asking Gemini Nano or Gemma</string>

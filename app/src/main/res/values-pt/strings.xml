@@ -137,7 +137,7 @@
     <string name="keep_model_loaded_body">Carrega o Gemma ao abrir o teclado e o mantém pronto, usando cerca de 2 GB de memória. Caso contrário, ele é descarregado da memória após alguns minutos sem atividade. Se o Gemini Nano estiver pronto, o Nano é tentado primeiro e o Gemma só é carregado como alternativa.</string>
     <string name="share_model_title">Compartilhar o Gemma com o LocalLauncher</string>
     <string name="share_model_summary">O LocalLauncher pode pedir frases curtas</string>
-    <string name="share_model_body">O LocalLauncher, a tela inicial feita para acompanhar o LocalType, pode pedir ao Gemma neste telefone uma frase curta abaixo da nota Hoje. O texto da nota vai para o Gemma aqui no LocalType e nunca é guardado nem registrado. O LocalLauncher nunca carrega o Gemma sozinho, e os pedidos dele esperam o que você digita. Desativado, a menos que você ative.</string>
+    <string name="share_model_body">O LocalLauncher, a tela inicial feita para acompanhar o LocalType, pode pedir ao Gemma neste telefone uma frase curta abaixo da nota Hoje. O texto da nota vai para o Gemma aqui no LocalType e nunca é guardado nem registrado. Quando você abre o Brief dele, o LocalLauncher pode carregar o Gemma aqui, o que leva até um minuto e ocupa cerca de 2 GB de memória. Ele não carrega o Gemma em nenhum outro momento, e os pedidos dele esperam o que você digita. Desativado, a menos que você ative.</string>
     <string name="model_trigger">Pedir sugestões ao Gemini Nano ou Gemma</string>
     <string name="model_trigger_chime">Sugestões do Chime ativas. Peça outras sugestões ao Gemini Nano ou Gemma</string>
     <string name="model_generating">Consultando o Gemini Nano ou Gemma</string>

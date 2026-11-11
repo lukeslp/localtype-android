@@ -1,5 +1,5 @@
 {
-  "sourceCommit": "9d2128b4ea5841789cc599dc257d9f8256f7827f",
+  "sourceCommit": "43ef336d07518d6d8a0d210b3795b5e581631cc3",
   "files": [
     {
       "path": "LICENSE",
@@ -15,8 +15,8 @@
     },
     {
       "path": "app/build.gradle.kts",
-      "sourceSha256": "3cf86629555217d19e1ce77f0842bcac2825ebeee09c0b2259d3ced619bf6752",
-      "sha256": "5df8aaf7f65e6583c624b3e102bb5e908d5f7e9e745b948b8d5334db5f2485ba",
+      "sourceSha256": "ec87995ff864bf851fef3f45835b675619ed50661967901b9f360b1273c9c5d7",
+      "sha256": "50e0d4f754a7e768cf95c5cf8ade7c5521f26da485f064e864094b73fb3e43ff",
       "transformed": true
     },
     {
@@ -1479,8 +1479,8 @@
     },
     {
       "path": "app/src/main/res/values-es/strings.xml",
-      "sourceSha256": "01b04a70e30a5e02049375de9e85bd8209d6a979227cc3865bb236bfb2ab1385",
-      "sha256": "01b04a70e30a5e02049375de9e85bd8209d6a979227cc3865bb236bfb2ab1385",
+      "sourceSha256": "461f5f5b0d05272098918b307dda6c7fa8901669c97a0dc5a11c47492e98b6cf",
+      "sha256": "461f5f5b0d05272098918b307dda6c7fa8901669c97a0dc5a11c47492e98b6cf",
       "transformed": false
     },
     {
@@ -1503,8 +1503,8 @@
     },
     {
       "path": "app/src/main/res/values-pt/strings.xml",
-      "sourceSha256": "82cfe44d972ce402c8fedbea88c438ce4916798a1b10ede753985b772e238aa5",
-      "sha256": "82cfe44d972ce402c8fedbea88c438ce4916798a1b10ede753985b772e238aa5",
+      "sourceSha256": "3fd9fedb99795d135785c891947b7f210594dbb5b0de44a1462590c4548aee4f",
+      "sha256": "3fd9fedb99795d135785c891947b7f210594dbb5b0de44a1462590c4548aee4f",
       "transformed": false
     },
     {
@@ -1545,8 +1545,8 @@
     },
     {
       "path": "app/src/main/res/values/strings.xml",
-      "sourceSha256": "4f691b667e36725329959a2ab6ded4d84f0cc0c694fd44cb1841c9a3120c6e17",
-      "sha256": "4f691b667e36725329959a2ab6ded4d84f0cc0c694fd44cb1841c9a3120c6e17",
+      "sourceSha256": "391fc86e098521b4af134232f8c291ffd0177598dc19089210be771c1a39e678",
+      "sha256": "391fc86e098521b4af134232f8c291ffd0177598dc19089210be771c1a39e678",
       "transformed": false
     },
     {
