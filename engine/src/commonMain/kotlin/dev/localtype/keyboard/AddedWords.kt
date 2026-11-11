@@ -38,6 +38,19 @@ object AddedWords {
         return Result.ADDED
     }
 
+    /** The settings list when it is long: the words starting with [query], and the first [limit] of them to draw. */
+    data class Shown(val rows: List<String>, val matching: Int)
+
+    /**
+     * A thousand words is too many rows to draw or to scroll for one. [query] is whatever is in the Add word box:
+     * its start narrows the list, so a word can be found and removed. A blank query matches every word.
+     */
+    fun shown(words: List<String>, query: String, limit: Int): Shown {
+        val start = AdaptiveNgramModel.normalize(query.trim())
+        val matching = if (start.isEmpty()) words else words.filter { it.startsWith(start) }
+        return Shown(matching.take(limit), matching.size)
+    }
+
     /** What an import did with each line it was given; [added] pairs each new word with the spelling it came in. */
     data class Import(val added: List<Pair<String, String>>, val existing: Int, val invalid: Int, val blocked: Int, val full: Int) {
         val skipped: Int get() = existing + invalid + blocked + full

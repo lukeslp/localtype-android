@@ -5,10 +5,12 @@
 [![iPhone beta](https://img.shields.io/badge/iPhone-TestFlight_beta-blue?style=flat-square)](https://testflight.apple.com/join/cz7zh9xm)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-green?style=flat-square)](LICENSE)
 
-LocalType is an English Android keyboard. It corrects typos on the phone,
-suggests words, predicts with Chime, and has saved text, emoji and an optional
-swipe experiment. Typing runs on the phone, every correction can be undone, and
-the typing log is optional and starts off.
+LocalType is an Android keyboard. It corrects typos on the phone, suggests
+words, predicts with Chime, and has saved text, emoji, a row of tools and an
+optional swipe experiment. English is the main language; twelve others, from
+Spanish to Navajo, are early experiments that start off. Typing runs on the
+phone, every correction can be undone, and the typing log is optional and
+starts off.
 
 LocalType isn't in F-Droid's main catalog yet. The
 [releases](https://github.com/lukeslp/localtype-android/releases) page has two

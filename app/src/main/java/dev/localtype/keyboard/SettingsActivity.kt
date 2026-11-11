@@ -1269,6 +1269,14 @@ class SettingsActivity : Activity() {
                     true
                 } else false
             }
+            // With a long list open, the box also finds a word in it.
+            addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    if (addedExpanded && addedCount > MAX_ADDED_ROWS) refreshAddedWords()
+                }
+            })
         }
         val entry = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -1292,7 +1300,9 @@ class SettingsActivity : Activity() {
                     AddedWords.Result.EXISTS -> addedInput.error = getString(R.string.added_words_exists)
                     AddedWords.Result.ADDED -> {
                         // "LocalType" is kept as typed, so it is suggested with its capitals.
-                        WordSpellingStore.get(this@SettingsActivity, dataLanguage).change(word.orEmpty(), WordSpellings.added(addedInput.text.toString()))
+                        val added = AddedWords.words(store.entries()).toHashSet()
+                        WordSpellingStore.get(this@SettingsActivity, dataLanguage)
+                            .change(word.orEmpty(), WordSpellings.added(addedInput.text.toString())) { it in added }
                         KeyboardSettings.bumpLearnedGeneration(this@SettingsActivity)
                         addedInput.text.clear()
                         addedInput.error = null
@@ -1353,8 +1363,9 @@ class SettingsActivity : Activity() {
                 else -> {
                     val result = AddedWords.addAll(store, WordListImport.parse(read.text), language) { BlockedWords.contains(blocked.words, it) }
                     if (result.added.isNotEmpty()) {
+                        val added = AddedWords.words(store.entries()).toHashSet()
                         WordSpellingStore.get(this@SettingsActivity, language)
-                            .changeAll(result.added.map { (word, typed) -> word to WordSpellings.added(typed) })
+                            .changeAll(result.added.map { (word, typed) -> word to WordSpellings.added(typed) }) { it in added }
                         KeyboardSettings.bumpLearnedGeneration(this@SettingsActivity)
                         refreshAddedWords()
                         refreshLearnedSummary()
@@ -1410,7 +1421,13 @@ class SettingsActivity : Activity() {
         showToggle(addedToggle, words.size, addedExpanded)
         addedList.removeAllViews()
         addedList.visibility = if (words.isNotEmpty()) View.VISIBLE else View.GONE
-        (if (addedExpanded) words else words.take(LIST_PREVIEW)).forEach { word ->
+        // A long list is narrowed by what is in the Add word box, and never draws more than MAX_ADDED_ROWS rows.
+        val long = addedExpanded && words.size > MAX_ADDED_ROWS
+        val shown = if (long) AddedWords.shown(words, addedInput.text.toString(), MAX_ADDED_ROWS)
+            else AddedWords.Shown(if (addedExpanded) words else words.take(LIST_PREVIEW), words.size)
+        if (long) addedList.addView(text(getString(R.string.added_words_showing, shown.rows.size, shown.matching), 13f, R.color.on_surface_variant)
+            .apply { setPadding(0, 0, 0, dp(4)) })
+        shown.rows.forEach { word ->
             val row = LinearLayout(this).apply {
                 orientation = LinearLayout.HORIZONTAL
                 gravity = Gravity.CENTER_VERTICAL
@@ -2491,6 +2508,8 @@ class SettingsActivity : Activity() {
         const val MAX_LEARNED_ROWS = 150
         /** Rows a list shows before Show all. */
         const val LIST_PREVIEW = 3
+        /** Rows the Added words list draws at most; a longer list is searched from the Add word box. */
+        const val MAX_ADDED_ROWS = 100
         const val REQUEST_NOTIFICATIONS = 411
         const val REQUEST_LOG_EXPORT = 412
         const val REQUEST_MICROPHONE = 413

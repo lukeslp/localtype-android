@@ -101,6 +101,40 @@ class WordListImportTest {
         assertEquals(one, WordSpellings.applyAll(emptyMap(), listOf("McKenzie" to WordSpellings.added("McKenzie"))))
     }
 
+    @Test
+    fun `an added word's capitals are never the ones dropped to make room`() {
+        var spellings: Map<String, String> = mapOf("mckenzie" to "McKenzie")
+        val keep: (String) -> Boolean = { it == "mckenzie" }
+        for (i in 0 until WordSpellings.MAX_WORDS + 20) {
+            val word = "Typed" + letters(i)
+            spellings = WordSpellings.apply(spellings, word, WordSpellings.Change.Record(word), keep) ?: spellings
+        }
+        assertEquals(WordSpellings.MAX_WORDS, spellings.size)
+        assertEquals("McKenzie", WordSpellings.display(spellings, "mckenzie"))
+        // The oldest learned ones went instead, and without a keeper the oldest of all goes.
+        assertEquals(null, WordSpellings.display(spellings, "typed" + letters(0)))
+        var plain: Map<String, String> = mapOf("mckenzie" to "McKenzie")
+        for (i in 0 until WordSpellings.MAX_WORDS) {
+            val word = "Typed" + letters(i)
+            plain = WordSpellings.apply(plain, word, WordSpellings.Change.Record(word)) ?: plain
+        }
+        assertEquals(null, WordSpellings.display(plain, "mckenzie"))
+        // Every slot kept: the oldest still goes, so the store never grows past its bound.
+        val full = (0 until WordSpellings.MAX_WORDS).associate { ("kept" + letters(it)) to ("Kept" + letters(it)) }
+        val over = WordSpellings.apply(full, "Newer", WordSpellings.Change.Record("Newer")) { true }!!
+        assertEquals(WordSpellings.MAX_WORDS, over.size)
+        assertEquals("Newer", WordSpellings.display(over, "newer"))
+    }
+
+    @Test
+    fun `a long list is narrowed by the start of a word and drawn up to a limit`() {
+        val words = listOf("mckenzie", "quill", "zorp", "zorpquill", "zorpquilla")
+        assertEquals(AddedWords.Shown(listOf("mckenzie", "quill"), 5), AddedWords.shown(words, "", 2))
+        assertEquals(AddedWords.Shown(listOf("zorp", "zorpquill"), 3), AddedWords.shown(words, " ZORP ", 2))
+        assertEquals(AddedWords.Shown(emptyList(), 0), AddedWords.shown(words, "x", 2))
+        assertEquals(AddedWords.Shown(listOf("mckenzie"), 1), AddedWords.shown(words, "McK", 100))
+    }
+
     /** Letters only, so each is a valid word: 0 → "a", 27 → "bb". */
     private fun letters(n: Int): String = buildString {
         var value = n

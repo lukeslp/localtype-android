@@ -3,9 +3,12 @@
 <ul>
 <li>Correct clear typos and undo a correction when it is wrong.</li>
 <li>Choose word suggestions, save useful text and manage learned word pairs.</li>
+<li>Add your own words one at a time or import a word list, and block words you never want suggested.</li>
+<li>Open a row of tools above the keys: the clipboard, emoji, voice input, undo, an arrow pad, symbols and more.</li>
 <li>Reach accents, IPA symbols, emoji and optional common symbols by holding keys or opening their panels.</li>
 <li>Choose British spelling and currency symbols separately.</li>
 <li>Adjust the space bar, suggestion bar, one-handed mode, number row and cursor sliding.</li>
+<li>Turn on touch and timing options for a tremor or limited reach, and use every key with TalkBack.</li>
 </ul>
 
 <p>English is the main language. Spanish, Portuguese, Galician, Hebrew, Arabic, Persian, Welsh, Irish, Scottish Gaelic, Māori, Hawaiian and swipe typing are early experiments and start off. Navajo is a very early experiment that corrects nothing automatically. A dedicated IPA layout is also available. These features still need wider testing.</p>

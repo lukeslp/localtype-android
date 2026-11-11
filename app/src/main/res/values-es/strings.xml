@@ -188,6 +188,7 @@
         <item quantity="other">%1$d palabras agregadas (límite: %2$d).</item>
     </plurals>
     <string name="added_words_remove">Quitar palabra agregada %1$s</string>
+    <string name="added_words_showing">Mostrando %1$d de %2$d. Escribe el comienzo de una palabra en el cuadro de arriba para encontrarla.</string>
     <string name="added_words_import">Importar una lista de palabras</string>
     <string name="added_words_import_hint">Un archivo de texto con una palabra por línea, o el diccionario exportado de Gboard. Se omiten las palabras ya agregadas, las bloqueadas y lo que no sea una sola palabra.</string>
     <string name="added_words_import_none">No hay palabras nuevas en ese archivo.</string>

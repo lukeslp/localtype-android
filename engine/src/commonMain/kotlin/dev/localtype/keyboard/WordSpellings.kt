@@ -6,7 +6,7 @@ package dev.localtype.keyboard
  * suggestion is shown. Asked for on 2026-10-29 ("can learned words preserve capitalization / camel case?").
  */
 object WordSpellings {
-    /** Room for every added word to keep its capitals ([AddedWords.MAX_WORDS]) beside 512 learned from typing. */
+    /** Room for every added word to keep its capitals ([AddedWords.MAX_WORDS]) beside 512 learned from typing ([trim]). */
     const val MAX_WORDS = 512 + AddedWords.MAX_WORDS
     private val LETTERS = Regex("\\p{L}+(?:['’]\\p{L}+)*")
 
@@ -61,8 +61,17 @@ object WordSpellings {
         return out
     }
 
+    /**
+     * Makes room past [MAX_WORDS]: the oldest spelling goes, but never one [keep] names while another can go.
+     * [keep] is the person's added words, whose capitals they typed on purpose; a spelling learned from typing
+     * comes back the next time the word is typed that way.
+     */
+    private fun trim(out: LinkedHashMap<String, String>, keep: (String) -> Boolean) {
+        while (out.size > MAX_WORDS) out.remove(out.keys.firstOrNull { !keep(it) } ?: out.keys.first())
+    }
+
     /** [apply] for a list in its order, as an import records its capitals; null when nothing changed. */
-    fun applyAll(spellings: Map<String, String>, changes: List<Pair<String, Change>>): Map<String, String>? {
+    fun applyAll(spellings: Map<String, String>, changes: List<Pair<String, Change>>, keep: (String) -> Boolean = { false }): Map<String, String>? {
         val out = LinkedHashMap(spellings)
         var changed = false
         for ((word, change) in changes) {
@@ -73,18 +82,21 @@ object WordSpellings {
                 Change.Unchanged -> Unit
             }
         }
-        while (out.size > MAX_WORDS) out.remove(out.keys.first())
+        trim(out, keep)
         return if (changed) out else null
     }
 
-    /** [spellings] with [change] applied to [word]; the newest spelling moves to the end and the oldest leaves past [MAX_WORDS]. */
-    fun apply(spellings: Map<String, String>, word: String, change: Change): Map<String, String>? {
+    /**
+     * [spellings] with [change] applied to [word]; the newest spelling moves to the end and the oldest leaves past
+     * [MAX_WORDS], passing over the ones [keep] names.
+     */
+    fun apply(spellings: Map<String, String>, word: String, change: Change, keep: (String) -> Boolean = { false }): Map<String, String>? {
         val key = AdaptiveNgramModel.normalize(word)
         return when (change) {
             is Change.Record -> if (spellings[key] == change.display) null else LinkedHashMap(spellings).apply {
                 remove(key)
                 put(key, change.display)
-                while (size > MAX_WORDS) remove(keys.first())
+                trim(this, keep)
             }
             Change.Forget -> if (key in spellings) LinkedHashMap(spellings).apply { remove(key) } else null
             Change.Unchanged -> null

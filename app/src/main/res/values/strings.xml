@@ -181,6 +181,7 @@
         <item quantity="other">%1$d words added (limit: %2$d).</item>
     </plurals>
     <string name="added_words_remove">Remove added word %1$s</string>
+    <string name="added_words_showing">Showing %1$d of %2$d. Type the start of a word in the box above to find it.</string>
     <string name="added_words_import">Import a word list</string>
     <string name="added_words_import_hint">A text file with one word on each line, or Gboard’s dictionary export. Words that are already added, blocked or not a single word are left out.</string>
     <string name="added_words_import_none">No new words in that file.</string>

@@ -1,5 +1,5 @@
 {
-  "sourceCommit": "487b7a4663250522827b97f17bffef7a1b12eb54",
+  "sourceCommit": "f69939413e1c1e609e290556677fa7e84353d089",
   "files": [
     {
       "path": "LICENSE",
@@ -15,8 +15,8 @@
     },
     {
       "path": "app/build.gradle.kts",
-      "sourceSha256": "8427ca47ce0eeaf612eb52b8d43d8e62e47e9cce6bbe803639de486db2aed0b0",
-      "sha256": "3a8094aa38af15676ddbb7937f1f7c9a330c575cec7b903855674403c6112170",
+      "sourceSha256": "b69e24551a60e93080d614061bc6f02d22ba6c86873b2e9794c617b997e79057",
+      "sha256": "a9cea2cd73ce93e9499c6de88021e167753b7ff483eab81a69c259f16d3f9c36",
       "transformed": true
     },
     {
@@ -735,8 +735,8 @@
     },
     {
       "path": "app/src/main/java/dev/localtype/keyboard/LocalTypeInputMethodService.kt",
-      "sourceSha256": "b4372f6b9b1e72ca4f737e1c6f1b1c8e86c790fd39780291ea3af6f7b945b745",
-      "sha256": "b4372f6b9b1e72ca4f737e1c6f1b1c8e86c790fd39780291ea3af6f7b945b745",
+      "sourceSha256": "abcd92136000e9f343e171f0ad8fc1bc906a84013034800a2f7df222dea0308f",
+      "sha256": "abcd92136000e9f343e171f0ad8fc1bc906a84013034800a2f7df222dea0308f",
       "transformed": false
     },
     {
@@ -945,8 +945,8 @@
     },
     {
       "path": "app/src/main/java/dev/localtype/keyboard/SettingsActivity.kt",
-      "sourceSha256": "9cc97649094bd00906bc0c374d27fae29e0bb5fb811e1e734f9646642aafacb4",
-      "sha256": "9cc97649094bd00906bc0c374d27fae29e0bb5fb811e1e734f9646642aafacb4",
+      "sourceSha256": "44db27895c6d9b738310d14172fb5033c60bff55328b9dc619846750bfb3e32e",
+      "sha256": "44db27895c6d9b738310d14172fb5033c60bff55328b9dc619846750bfb3e32e",
       "transformed": false
     },
     {
@@ -1113,8 +1113,8 @@
     },
     {
       "path": "app/src/main/java/dev/localtype/keyboard/WordSpellingStore.kt",
-      "sourceSha256": "c430b05c58cbb3ba52ff0950a6f2130af5356bd32a79ccf461deb655e784f55b",
-      "sha256": "c430b05c58cbb3ba52ff0950a6f2130af5356bd32a79ccf461deb655e784f55b",
+      "sourceSha256": "4410f6986c1ddf2235a55d361ab98c92abb0a9cfa7984d1a0b2aeec0faeec97a",
+      "sha256": "4410f6986c1ddf2235a55d361ab98c92abb0a9cfa7984d1a0b2aeec0faeec97a",
       "transformed": false
     },
     {
@@ -1467,8 +1467,8 @@
     },
     {
       "path": "app/src/main/res/values-es/strings.xml",
-      "sourceSha256": "d1336ab64a7f64ddbecfa28db2d531c6b2207b93677cbfd7eabcc8f16f18d502",
-      "sha256": "d1336ab64a7f64ddbecfa28db2d531c6b2207b93677cbfd7eabcc8f16f18d502",
+      "sourceSha256": "1c1dc0bf42c8ad2986c5089b0c9b0c8a69828e32709d02d10ffe5172c0554386",
+      "sha256": "1c1dc0bf42c8ad2986c5089b0c9b0c8a69828e32709d02d10ffe5172c0554386",
       "transformed": false
     },
     {
@@ -1491,8 +1491,8 @@
     },
     {
       "path": "app/src/main/res/values-pt/strings.xml",
-      "sourceSha256": "601d3cea3ff5dc622775f8aa0f2aa3b3b2ed3e19f49de6e8626483f124451cd8",
-      "sha256": "601d3cea3ff5dc622775f8aa0f2aa3b3b2ed3e19f49de6e8626483f124451cd8",
+      "sourceSha256": "a022a77bafbc8c41333cdef1170993f7bfd8d5199108d4f4320958ab31010929",
+      "sha256": "a022a77bafbc8c41333cdef1170993f7bfd8d5199108d4f4320958ab31010929",
       "transformed": false
     },
     {
@@ -1533,8 +1533,8 @@
     },
     {
       "path": "app/src/main/res/values/strings.xml",
-      "sourceSha256": "435c97ecb5f781c5ae0dc50419ed8533c657e3d8bb778a20de14c39ddfef13ef",
-      "sha256": "435c97ecb5f781c5ae0dc50419ed8533c657e3d8bb778a20de14c39ddfef13ef",
+      "sourceSha256": "a46b2910e209b86ec5fdbe97803eba6a3606ab304415ce4e4e87f63aafe827f1",
+      "sha256": "a46b2910e209b86ec5fdbe97803eba6a3606ab304415ce4e4e87f63aafe827f1",
       "transformed": false
     },
     {
@@ -2463,8 +2463,8 @@
     },
     {
       "path": "app/src/test/java/dev/localtype/keyboard/WordListImportTest.kt",
-      "sourceSha256": "f6b1d050aa3b3635c6e7b8b62b196beb4a2365a249c379411afc675cad5af0e0",
-      "sha256": "f6b1d050aa3b3635c6e7b8b62b196beb4a2365a249c379411afc675cad5af0e0",
+      "sourceSha256": "de45cb8ad7cc519ad81c55943bfab9caaf5212532268136a79ae93aee076147c",
+      "sha256": "de45cb8ad7cc519ad81c55943bfab9caaf5212532268136a79ae93aee076147c",
       "transformed": false
     },
     {
@@ -2547,8 +2547,8 @@
     },
     {
       "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/AddedWords.kt",
-      "sourceSha256": "3971d4fbecb51ceb2da6e037fe26c819d4d3ec3416685561ec74c33bef8dbf68",
-      "sha256": "3971d4fbecb51ceb2da6e037fe26c819d4d3ec3416685561ec74c33bef8dbf68",
+      "sourceSha256": "38d22867723bc0c6b7c0483756f359b778ffb72e8b8cdff4b43ea2e5b93a56b9",
+      "sha256": "38d22867723bc0c6b7c0483756f359b778ffb72e8b8cdff4b43ea2e5b93a56b9",
       "transformed": false
     },
     {
@@ -2871,8 +2871,8 @@
     },
     {
       "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/WordSpellings.kt",
-      "sourceSha256": "e184af5f5c0144ee8d023b17cf91c617f1286911b998f1a0d3e9bb3794bcc264",
-      "sha256": "e184af5f5c0144ee8d023b17cf91c617f1286911b998f1a0d3e9bb3794bcc264",
+      "sourceSha256": "e90769af6c7c82f7abd9ff3a24f37fc2bb48db2c70b47968b42b92e9a4dc232e",
+      "sha256": "e90769af6c7c82f7abd9ff3a24f37fc2bb48db2c70b47968b42b92e9a4dc232e",
       "transformed": false
     },
     {
@@ -2913,8 +2913,8 @@
     },
     {
       "path": "fastlane/metadata/android/en-US/full_description.txt",
-      "sourceSha256": "2130b45a18204f49e03caa551920474b35d9a9af678ce909bd3a9cb9914a5ef9",
-      "sha256": "2130b45a18204f49e03caa551920474b35d9a9af678ce909bd3a9cb9914a5ef9",
+      "sourceSha256": "cbe219e71f687db4ddfd74232594a6e1055096359ffdf905a19e6eb74e70f859",
+      "sha256": "cbe219e71f687db4ddfd74232594a6e1055096359ffdf905a19e6eb74e70f859",
       "transformed": false
     },
     {
@@ -3057,7 +3057,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "42ede5d8ab6692c7c1b32f44e88ca8e8883c1ab7cc20ad0476b41aa2ca470f9e",
+      "sha256": "a8fc42e52eaf01c51921eac212696d40cac3936748bb013ea3361bfb9b8becd5",
       "template": "README.public.md"
     },
     {

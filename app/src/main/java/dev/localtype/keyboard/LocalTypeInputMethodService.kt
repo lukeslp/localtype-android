@@ -4734,7 +4734,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         // Even when its pair is blocked, a verified completed word starts the own tail for the next word.
         if (wordVerified && !edit.corrected && localModel.learnable(before, isKept)) {
             val common = dictionary.score(AdaptiveNgramModel.normalize(edit.prefix)) >= COMMON_WORD_SCORE
-            spellings().change(edit.prefix, WordSpellings.change(edit.prefix, localModel.isSentenceStart(beforeWord), capsLockUsedForWord, common))
+            spellings().change(edit.prefix, WordSpellings.change(edit.prefix, localModel.isSentenceStart(beforeWord), capsLockUsedForWord, common), localModel::isAddedWord)
         }
         if (wordVerified && localModel.learnable(before, isKept)) {
             completedPersonal = if (sentenceContext != null)
@@ -5203,7 +5203,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         // Private fields and unverified edits keep a spelling only for this field.
         if (keptWords.add(key) && !persist) fieldKeptWords += key
         // A kept spelling with a capital inside it ("LocalType") is how the person writes it.
-        if (persist && word.drop(1).any { it.isUpperCase() }) spellings().change(word, WordSpellings.added(word))
+        if (persist && word.drop(1).any { it.isUpperCase() }) spellings().change(word, WordSpellings.added(word), localModel::isAddedWord)
         corrector.forgetRecentAnswers()
     }
 

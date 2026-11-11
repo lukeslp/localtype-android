@@ -14,15 +14,16 @@ class WordSpellingStore private constructor(private val preferences: SharedPrefe
 
     fun display(word: String): String? = WordSpellings.display(spellings, word)
 
-    fun change(word: String, change: WordSpellings.Change) {
-        val next = WordSpellings.apply(spellings, word, change) ?: return
+    /** [keep] names the added words, whose capitals are never the ones dropped to make room. */
+    fun change(word: String, change: WordSpellings.Change, keep: (String) -> Boolean = { false }) {
+        val next = WordSpellings.apply(spellings, word, change, keep) ?: return
         spellings = next
         preferences.edit().putString(KEY, WordSpellings.encode(next)).apply()
     }
 
     /** Many changes, one write: an imported word list's capitals. */
-    fun changeAll(changes: List<Pair<String, WordSpellings.Change>>) {
-        val next = WordSpellings.applyAll(spellings, changes) ?: return
+    fun changeAll(changes: List<Pair<String, WordSpellings.Change>>, keep: (String) -> Boolean = { false }) {
+        val next = WordSpellings.applyAll(spellings, changes, keep) ?: return
         spellings = next
         preferences.edit().putString(KEY, WordSpellings.encode(next)).apply()
     }
