@@ -17,10 +17,16 @@ object Expansions {
      */
     data class Offer(val kind: Kind, val label: String, val replace: Int, val text: String, val host: String? = null)
 
-    /** The saved text whose shortcut is exactly the word being typed. */
-    fun shortcut(prefix: String, saved: SavedTexts?): Offer? {
-        val text = saved?.expansion(prefix) ?: return null
-        return Offer(Kind.SHORTCUT, SavedTexts.preview(text, LABEL_CHARS), prefix.length, text)
+    /**
+     * The saved text whose shortcut ends at the word being typed: that word alone, or a phrase ending in it
+     * ("on my way", with "way" being typed). [before] is the text up to the caret, [prefix] included.
+     */
+    fun shortcut(before: String, prefix: String, saved: SavedTexts?): Offer? {
+        if (prefix.isEmpty() || !before.endsWith(prefix)) return null
+        val (text, length) = saved?.expansionEnding(before) ?: return null
+        // A shortcut that ends inside the word being typed is not this word's: "way" must not fire in "away".
+        if (length < prefix.length) return null
+        return Offer(Kind.SHORTCUT, SavedTexts.preview(text, LABEL_CHARS), length, text)
     }
 
     /** A symbol for the cue or name typed just before the caret ([SymbolCues]): `(c)` or "copyright" offers ©. */

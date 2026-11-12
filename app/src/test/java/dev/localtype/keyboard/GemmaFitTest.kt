@@ -4,6 +4,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.w3c.dom.Element
+import java.io.File
+import javax.xml.parsers.DocumentBuilderFactory
 
 class GemmaFitTest {
     private val gemma = 2_588_147_712L
@@ -35,10 +38,21 @@ class GemmaFitTest {
     }
 
     @Test fun theMessageNamesBothSizesAndWhatStillWorks() {
+        val sizes = GemmaFit.tooSmall(gemma, gib(3.6))
+        assertEquals(GemmaFit.Sizes(neededGb = 8, phoneGb = 4), sizes)
+        // Settings fills the English resource with those two sizes; the sentence is unchanged from when it was built here.
         assertEquals(
             "Gemma 4 E2B needs a phone with 8 GB of memory, and this one has 4 GB, so it can't be downloaded here. " +
                 "Typing, word predictions and corrections don't use it.",
-            GemmaFit.tooSmall("Gemma 4 E2B", gemma, gib(3.6)),
+            String.format(english("models_gemma_too_small"), "Gemma 4 E2B", sizes.neededGb, sizes.phoneGb),
         )
+    }
+
+    /** One English string as Android reads it, with the file's escaped apostrophes undone. */
+    private fun english(name: String): String {
+        val root = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(File("src/main/res/values/strings.xml")).documentElement
+        val strings = root.getElementsByTagName("string")
+        val element = (0 until strings.length).map { strings.item(it) as Element }.single { it.getAttribute("name") == name }
+        return element.textContent.replace("\\'", "'")
     }
 }

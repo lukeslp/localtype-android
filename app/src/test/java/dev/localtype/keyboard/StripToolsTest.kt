@@ -25,14 +25,28 @@ class StripToolsTest {
     private val plain = GestureRules.State(enabled = false)
 
     @Test
-    fun `with the lead button hidden a 360 dp strip fits five tools and More, a 411 dp Pixel six`() {
+    fun `with the lead button hidden a 360 dp strip fits four tools, settings and More, a 411 dp Pixel five`() {
         assertEquals(6, StripTools.cells(360))
-        assertEquals(listOf(StripTool.CLIPBOARD, StripTool.PASSWORDS, StripTool.EMOJI, StripTool.VOICE, StripTool.UNDO), StripTools.row(360, everything))
+        assertEquals(listOf(StripTool.CLIPBOARD, StripTool.PASSWORDS, StripTool.EMOJI, StripTool.VOICE, StripTool.SETTINGS), StripTools.row(360, everything))
         assertEquals(7, StripTools.cells(411))
         assertEquals(
-            listOf(StripTool.CLIPBOARD, StripTool.PASSWORDS, StripTool.EMOJI, StripTool.VOICE, StripTool.UNDO, StripTool.PROOFREAD),
+            listOf(StripTool.CLIPBOARD, StripTool.PASSWORDS, StripTool.EMOJI, StripTool.VOICE, StripTool.UNDO, StripTool.SETTINGS),
             StripTools.row(411, everything),
         )
+    }
+
+    @Test
+    fun `Keyboard settings always ends the row, once, whatever the saved order holds`() {
+        for (width in listOf(150, 320, 360, 411, 600, 900)) {
+            for (order in listOf(StripTools.ROW_ORDER, emptyList(), listOf(StripTool.SETTINGS, StripTool.UNDO), StripTool.entries.take(8))) {
+                val row = StripTools.row(width, everything, order)
+                assertEquals(StripTool.SETTINGS, row.last())
+                assertEquals(1, row.count { it == StripTool.SETTINGS })
+                assertTrue(row.size <= StripTools.cells(width) - 1)
+            }
+        }
+        // It can be opened in every field, a password box included.
+        assertTrue(StripTools.allowed(StripTool.SETTINGS, plain.copy(sensitive = true)))
     }
 
     @Test
@@ -45,19 +59,19 @@ class StripToolsTest {
 
     @Test
     fun `before Android 11 there is no Passwords and cards tile, and the row is as it was`() {
-        assertEquals(listOf(StripTool.CLIPBOARD, StripTool.EMOJI, StripTool.VOICE, StripTool.UNDO, StripTool.PROOFREAD), StripTools.row(360, beforeAndroid11))
-        assertEquals(StripTool.SELECT_ALL, StripTools.row(411, beforeAndroid11).last())
+        assertEquals(listOf(StripTool.CLIPBOARD, StripTool.EMOJI, StripTool.VOICE, StripTool.UNDO, StripTool.SETTINGS), StripTools.row(360, beforeAndroid11))
+        assertEquals(StripTool.PROOFREAD, StripTools.row(411, beforeAndroid11).dropLast(1).last())
         assertFalse(StripTools.offered(StripTool.PASSWORDS, beforeAndroid11))
         assertFalse(StripTools.panel(beforeAndroid11).flatMap { it.second }.contains(StripTool.PASSWORDS))
         // Pinned in a saved row, it still stays out where chips can't come.
-        assertEquals(listOf(StripTool.UNDO), StripTools.row(411, beforeAndroid11, listOf(StripTool.PASSWORDS, StripTool.UNDO)))
+        assertEquals(listOf(StripTool.UNDO, StripTool.SETTINGS), StripTools.row(411, beforeAndroid11, listOf(StripTool.PASSWORDS, StripTool.UNDO)))
     }
 
     @Test
     fun `a row someone saved is kept as it was, without the new tile`() {
         val saved = StripTools.rowOrder(listOf("clipboard", "emoji", "undo"))
         assertEquals(listOf(StripTool.CLIPBOARD, StripTool.EMOJI, StripTool.UNDO), saved)
-        assertEquals(saved, StripTools.row(411, everything, saved))
+        assertEquals(saved + StripTool.SETTINGS, StripTools.row(411, everything, saved))
     }
 
     @Test
@@ -73,13 +87,13 @@ class StripToolsTest {
     @Test
     fun `a tool the field does not offer leaves its place to the next one`() {
         val noVoice = StripTools.row(360, StripTools.Field(voice = false, proofread = true))
-        assertEquals(listOf(StripTool.CLIPBOARD, StripTool.EMOJI, StripTool.UNDO, StripTool.PROOFREAD, StripTool.SELECT_ALL), noVoice)
+        assertEquals(listOf(StripTool.CLIPBOARD, StripTool.EMOJI, StripTool.UNDO, StripTool.PROOFREAD, StripTool.SETTINGS), noVoice)
     }
 
     @Test
-    fun `a very narrow strip still has one tool and More`() {
+    fun `a very narrow strip still has settings and More`() {
         assertEquals(2, StripTools.cells(150))
-        assertEquals(1, StripTools.row(150, everything).size)
+        assertEquals(listOf(StripTool.SETTINGS), StripTools.row(150, everything))
     }
 
     @Test

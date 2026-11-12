@@ -38,10 +38,13 @@ object WordEdits {
         if (quick && !selected && letters && !(autoSpaced && punctuationSpace(before)) &&
             TextRules.shouldInsertPeriodOnSpace(before)) Replacement(1, 0, ". ") else null
 
+    /** Closing brackets, which take a completion's space the way sentence punctuation does. */
+    private const val CLOSERS = ")]}"
+
     private fun punctuationSpace(before: String): Boolean {
         if (!before.endsWith(" ") || before.length < 2) return false
         val preceding = before[before.length - 2]
-        return TextRules.attachesToPreviousWord(preceding) || preceding in "\"”"
+        return TextRules.attachesToPreviousWord(preceding) || preceding in "\"”" || preceding in CLOSERS
     }
 
     fun attachPunctuation(before: String, value: String, autoSpaced: Boolean, selected: Boolean): Replacement? {
@@ -55,8 +58,17 @@ object WordEdits {
         }
         if (value[0] in "\"”" && before.length > 1 && before[before.length - 2].isLetter()) {
             // A straight mark closes a quotation only when one is open on this line. Otherwise it opens one, and
-            // the space stays where it is: He said "hello", not He said" hello.
-            if (value[0] == '"' && before.substringAfterLast('\n').count { it == '"' } % 2 == 0) return null
+            // the space stays where it is: He said "hello", not He said" hello. An app that turns the opening mark
+            // into a curly one leaves no straight mark to count, so an unmatched curly opener counts too.
+            if (value[0] == '"') {
+                val line = before.substringAfterLast('\n')
+                val open = line.count { it == '"' } % 2 == 1 || line.count { it == '“' } > line.count { it == '”' }
+                if (!open) return null
+            }
+            return Replacement(1, 0, "$value ", autoSpaced = true)
+        }
+        // A closing bracket sits against the word, as a comma does: "(see below) " and not "(see below ) ".
+        if (value[0] in CLOSERS && before.length > 1 && !before[before.length - 2].isWhitespace()) {
             return Replacement(1, 0, "$value ", autoSpaced = true)
         }
         if (value == ".") return Replacement(1, 0, ".")

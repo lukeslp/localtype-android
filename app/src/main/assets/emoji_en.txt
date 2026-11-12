@@ -363,3 +363,86 @@ grateful	🙏 🥹 🫶
 appreciate it	🙏 🫶
 well played	👏 🫡
 you got this	💪 🙌
+
+# Chat shorthand and everyday reactions, added November 11, 2026 after "rofl" showed nothing.
+lmfao	🤣 😂 💀
+lolz	😂 🤣
+omfg	😱 🤯
+wtf	🤨 😳 🤯
+ugh	😩 🙄 😫
+yikes	😬 😳
+whoa	😮 🤯
+hmm	🤔
+idk	🤷
+idc	🤷
+brb	🏃 ⏳
+gtg	👋 🏃
+ttyl	👋
+omw	🏃 🚗
+gg	🏆 🎮 👏
+ftw	🏆
+glhf	🍀 🎮
+ily	❤️ 🥰 😘
+xoxo	😘 💋 🤗
+zzz	😴 💤
+yolo	🤪 🎉
+fml	🤦 😩
+rip	🪦 🕊️ 💀
+bff	👯 💕
+tgif	🎉 🍻
+thx	🙏 😊
+ty	🙏 😊
+np	👍 😊
+pls	🙏 🥺
+plz	🙏 🥺
+sry	😅 🙏
+jk	😜 😂
+ikr	💯 😂
+hbd	🎂 🎉 🥳
+gn	🌙 😴
+gm	☀️ 👋
+tmi	🙈
+woohoo	🎉 🙌 🥳
+bravo	👏
+goodbye	👋
+cringe	😬
+bruh	🤦 😑
+sus	🤨
+slay	💅 🔥
+yass	🙌
+sheesh	😮‍💨 🥶
+vibes	✨
+goat	🐐
+no cap	🧢
+yum	😋 🤤
+yummy	😋 🤤
+rich	🤑 💰
+broke	💸 😩
+blessed	🙏 😇
+praying	🙏
+lit	🔥
+study	📚 ✍️
+studying	📚 ✍️
+king	👑 🤴
+queen	👑 👸
+clown	🤡
+skull	💀
+poop	💩
+devil	😈
+angel	😇 👼
+bomb	💣
+wink	😉
+smile	😊 😄 🙂
+grin	😁
+blush	😊 ☺️
+smirk	😏
+sunglasses	😎
+nerd	🤓
+hundred	💯
+deal	🤝
+respect	🫡 🙏
+victory	✌️ 🏆
+kisses	😘 💋
+laugh	😂 🤣
+miss u	🥺 💕
+thank u	🙏 😊

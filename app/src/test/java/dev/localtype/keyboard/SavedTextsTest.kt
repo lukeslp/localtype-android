@@ -266,13 +266,14 @@ class SavedTextsTest {
     }
 
     @Test
-    fun `a shortcut is letters only, two to twenty-four, and belongs to one item`() {
+    fun `a shortcut is letters only, up to three words, two to twenty-four characters, and belongs to one item`() {
         val texts = SavedTexts(FileStore())
         texts.save("first")
         texts.save("second")
         assertEquals(SavedTexts.CodeResult.INVALID, texts.setCode("first", "a"))
         assertEquals(SavedTexts.CodeResult.INVALID, texts.setCode("first", "addr1"))
-        assertEquals(SavedTexts.CodeResult.INVALID, texts.setCode("first", "my addr"))
+        // A short phrase is a shortcut from 0.5.55; a fourth word is one too many.
+        assertEquals(SavedTexts.CodeResult.INVALID, texts.setCode("first", "my own home addr"))
         assertEquals(SavedTexts.CodeResult.INVALID, texts.setCode("first", "it's"))
         assertEquals(SavedTexts.CodeResult.INVALID, texts.setCode("first", "x".repeat(SavedTexts.MAX_CODE + 1)))
         assertEquals(SavedTexts.CodeResult.NOT_SAVED, texts.setCode("never saved", "addr"))

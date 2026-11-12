@@ -20,8 +20,9 @@ class EmojiSuggestions private constructor(private val byPhrase: Map<String, Lis
 
     /**
      * Matches the longest phrase (up to [MAX_PHRASE_WORDS] words) ending at the word being typed
-     * ([prefix]) or, with nothing being typed, at the word just finished by a space. [lookupAs] reads
-     * the current word as another spelling, so a misspelling can offer the emoji of its correction.
+     * ([prefix]) or, with nothing being typed, at the word just finished by a space. [lookupAs] also
+     * reads the current word as another spelling, so a misspelling can offer the emoji of its
+     * correction; the word as typed is tried first.
      */
     fun match(beforeCursor: String, prefix: String, limit: Int = 2, lookupAs: String? = null): Match? {
         val trailing = if (prefix.isEmpty()) beforeCursor.takeLastWhile { it == ' ' } else ""
@@ -39,12 +40,16 @@ class EmojiSuggestions private constructor(private val byPhrase: Map<String, Lis
             text.substring(offset + words[first - 1].range.last + 1, offset + words[first].range.first).let { gap -> gap.isNotEmpty() && gap.all { it == ' ' } }
         ) first--
         for (start in first..words.lastIndex) {
-            val parts = words.subList(start, words.size).map { it.value }.toMutableList()
-            if (lookupAs != null) parts[parts.lastIndex] = lookupAs
-            val key = parts.joinToString(" ") { normalize(it) }
-            if (parts.size == 1 && key.length < MIN_WORD_LENGTH) continue
-            val options = byPhrase[key] ?: continue
-            return Match(options.take(limit), text.length - (offset + words[start].range.first), trailing)
+            val parts = words.subList(start, words.size).map { it.value }
+            // The word as typed first: "rofl" has an emoji of its own, whatever the corrector would make of it
+            // (through 0.5.53 only the correction was looked up, so "rofl", offered "of", showed nothing).
+            val spellings = if (lookupAs == null) listOf(parts) else listOf(parts, parts.dropLast(1) + lookupAs)
+            for (spelling in spellings) {
+                val key = spelling.joinToString(" ") { normalize(it) }
+                if (spelling.size == 1 && key.length < MIN_WORD_LENGTH) continue
+                val options = byPhrase[key] ?: continue
+                return Match(options.take(limit), text.length - (offset + words[start].range.first), trailing)
+            }
         }
         return null
     }

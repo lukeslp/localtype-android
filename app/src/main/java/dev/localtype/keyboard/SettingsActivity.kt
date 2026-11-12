@@ -182,7 +182,7 @@ class SettingsActivity : Activity() {
             val resumed = withContext(Dispatchers.IO) { ModelKitBridge.repairQueuedDownload(this@SettingsActivity) }
             resumed.fold(
                 onSuccess = { refreshModelState() },
-                onFailure = { showGemmaState(it.message ?: "Couldn't resume the download.") },
+                onFailure = { showGemmaState(it.message ?: getString(R.string.models_download_resume_failed)) },
             )
         }
     }
@@ -2107,7 +2107,7 @@ class SettingsActivity : Activity() {
                     sharingRow.switch.isChecked = actual
                     sharingRow.row.isEnabled = true
                     if (result.isFailure) {
-                        modelSharingError = "Couldn't save sharing. Sharing is ${if (actual) "on" else "off"}. Try again."
+                        modelSharingError = getString(if (actual) R.string.models_sharing_failed_on else R.string.models_sharing_failed_off)
                         Toast.makeText(this@SettingsActivity, modelSharingError, Toast.LENGTH_LONG).show()
                     }
                     refreshModelState()
@@ -2122,13 +2122,13 @@ class SettingsActivity : Activity() {
 
         if (BuildConfig.INCLUDES_NANO) {
             subhead(controls, "Gemini Nano")
-            nanoState = text("Checking…", 14f, R.color.on_surface_variant)
+            nanoState = text(getString(R.string.models_checking), 14f, R.color.on_surface_variant)
             controls.addView(nanoState)
-            nanoPrepare = button("Download Gemini Nano", primary = false).apply {
+            nanoPrepare = button(getString(R.string.models_nano_download), primary = false).apply {
                 visibility = View.GONE
                 setOnClickListener {
                     isEnabled = false
-                    nanoState?.text = "Downloading through Android. This can take a few minutes on Wi-Fi."
+                    nanoState?.text = getString(R.string.models_nano_downloading_wifi)
                     screenScope.launch {
                         withContext(Dispatchers.Default) { downloader.download() }
                         isEnabled = true
@@ -2140,18 +2140,20 @@ class SettingsActivity : Activity() {
         }
 
         subhead(controls, "Gemma")
-        gemmaState = text("Checking…", 14f, R.color.on_surface_variant).apply {
+        gemmaState = text(getString(R.string.models_checking), 14f, R.color.on_surface_variant).apply {
             setLineSpacing(dp(2).toFloat(), 1f)
             accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
         }
         controls.addView(gemmaState)
         val buttons = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         installer.downloadableModel?.let { pinned ->
-            gemmaDownload = button("Download ${pinned.displayName} (${ModelKitBridge.formatBytes(pinned.bytes)})", primary = true).apply {
+            gemmaDownload = button(
+                getString(R.string.models_gemma_download, pinned.displayName, ModelKitBridge.formatBytes(pinned.bytes)), primary = true,
+            ).apply {
                 setOnClickListener { confirmDownload(pinned) }
             }
             buttons.addView(gemmaDownload, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(10) })
-            gemmaCancel = button("Cancel download", primary = false).apply {
+            gemmaCancel = button(getString(R.string.models_gemma_cancel), primary = false).apply {
                 visibility = View.GONE
                 setOnClickListener {
                     FoundationModelProviderFactory.installer(this@SettingsActivity).cancelDownload(this@SettingsActivity)
@@ -2160,21 +2162,21 @@ class SettingsActivity : Activity() {
             }
             buttons.addView(gemmaCancel, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(8) })
         }
-        gemmaImport = button("Use a model file instead", primary = false).apply {
+        gemmaImport = button(getString(R.string.models_gemma_import), primary = false).apply {
             setOnClickListener { chooseModelFile() }
         }
         buttons.addView(gemmaImport, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(8) })
-        gemmaRemove = button("Remove Gemma", primary = false).apply {
+        gemmaRemove = button(getString(R.string.models_gemma_remove), primary = false).apply {
             visibility = View.GONE
             setOnClickListener {
                 isEnabled = false
                 modelRemovalError = null
-                showGemmaState("Removing Gemma…")
+                showGemmaState(getString(R.string.models_gemma_removing))
                 screenScope.launch {
                     val result = withContext(Dispatchers.IO) {
                         runCatching { FoundationModelProviderFactory.installer(this@SettingsActivity).remove() }
                     }
-                    modelRemovalError = if (result.isFailure) "Some Gemma files couldn't be removed. Try Remove again." else null
+                    modelRemovalError = if (result.isFailure) getString(R.string.models_gemma_remove_failed) else null
                     gemmaRemove?.isEnabled = true
                     refreshModelState()
                 }
@@ -2187,30 +2189,33 @@ class SettingsActivity : Activity() {
 
     private fun confirmDownload(pinned: PinnedModel) {
         val wifiOnly = android.widget.CheckBox(this).apply {
-            text = "Unmetered network"
+            text = getString(R.string.models_download_unmetered)
             isChecked = true
             setPadding(dp(4), 0, 0, 0)
         }
         // Only the Android 14+ user-initiated job has a notification; earlier versions run an ordinary job.
         val notified = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE
-        val background = if (notified) "The download continues in the background with a notification, "
-        else "The download continues in the background when Android allows it (progress shows here), "
+        val background = getString(
+            if (notified) R.string.models_download_body_notified else R.string.models_download_body_unnotified,
+        )
         val body = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(24), dp(8), dp(24), 0)
             addView(text(
-                "This downloads ${ModelKitBridge.formatBytes(pinned.bytes)} from Hugging Face (${pinned.displayName}, Apache 2.0). " +
-                    "Nothing you type is sent anywhere. " + background +
-                    "resumes if it's interrupted, and is checked before use.",
+                listOf(
+                    getString(R.string.models_download_body_source, ModelKitBridge.formatBytes(pinned.bytes), pinned.displayName),
+                    getString(R.string.models_download_body_private),
+                    background,
+                ).joinToString(" "),
                 15f, R.color.on_surface_variant,
             ))
             addView(wifiOnly, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(48)).apply { topMargin = dp(8) })
         }
         android.app.AlertDialog.Builder(this)
-            .setTitle("Download ${pinned.displayName}?")
+            .setTitle(getString(R.string.models_download_confirm_title, pinned.displayName))
             .setView(body)
-            .setNegativeButton("Not now", null)
-            .setPositiveButton("Download") { _, _ ->
+            .setNegativeButton(R.string.models_not_now, null)
+            .setPositiveButton(R.string.models_download_action) { _, _ ->
                 // Only the Android 14+ job posts a progress notification, and it needs this permission;
                 // the download runs either way.
                 if (notified &&
@@ -2218,7 +2223,7 @@ class SettingsActivity : Activity() {
                 ) {
                     requestPermissions(arrayOf("android.permission.POST_NOTIFICATIONS"), REQUEST_NOTIFICATIONS)
                 }
-                showGemmaState("Starting…")
+                showGemmaState(getString(R.string.models_gemma_starting))
                 screenScope.launch {
                     val result = withContext(Dispatchers.IO) {
                         FoundationModelProviderFactory.installer(this@SettingsActivity).startDownload(this@SettingsActivity, wifiOnly.isChecked)
@@ -2226,7 +2231,7 @@ class SettingsActivity : Activity() {
                     when (val error = result.exceptionOrNull()) {
                         null -> refreshModelState()
                         is NetworkPermissionDenied -> showNetworkPermissionHelp(error.message.orEmpty())
-                        else -> showGemmaState(error.message ?: "Couldn't start the download.")
+                        else -> showGemmaState(error.message ?: getString(R.string.models_download_start_failed))
                     }
                 }
             }
@@ -2236,10 +2241,10 @@ class SettingsActivity : Activity() {
     private fun showNetworkPermissionHelp(message: String) {
         showGemmaState(message)
         android.app.AlertDialog.Builder(this)
-            .setTitle("Can't reach Hugging Face")
-            .setMessage("$message\n\nThis download needs network access. LocalType also goes online when you tap Check for updates. Neither sends your typing.")
-            .setNegativeButton("Not now", null)
-            .setPositiveButton("Open App info") { _, _ ->
+            .setTitle(R.string.models_network_help_title)
+            .setMessage("$message\n\n${getString(R.string.models_network_help_body)}")
+            .setNegativeButton(R.string.models_not_now, null)
+            .setPositiveButton(R.string.models_network_help_open) { _, _ ->
                 startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null)))
             }
             .show()
@@ -2308,7 +2313,7 @@ class SettingsActivity : Activity() {
                     gemmaImport?.isEnabled = true
                     result.fold(
                         onSuccess = { refreshModelState() },
-                        onFailure = { showGemmaState(it.message ?: "Import failed.") },
+                        onFailure = { showGemmaState(it.message ?: getString(R.string.models_import_failed)) },
                     )
                 }
             },
@@ -2317,7 +2322,8 @@ class SettingsActivity : Activity() {
 
     /** A running import's status; [percent] is 0 while the file is still being checked. */
     private fun showImportProgress(percent: Int) {
-        if (percent <= 0) showGemmaState("Checking the file…") else showGemmaState("Importing… $percent%", Ongoing.IMPORT)
+        if (percent <= 0) showGemmaState(getString(R.string.models_import_checking))
+        else showGemmaState(getString(R.string.models_import_progress, percent), Ongoing.IMPORT)
         gemmaImport?.isEnabled = false
         gemmaDownload?.visibility = View.GONE
         gemmaRemove?.visibility = View.GONE
@@ -2381,31 +2387,40 @@ class SettingsActivity : Activity() {
             val fits = pinned == null || GemmaFit.fits(pinned.bytes, memory.totalMem, activityManager.isLowRamDevice)
             gemmaFits = fits
             if (includeNano && BuildConfig.INCLUDES_NANO) lastNanoState?.let { nanoState?.text = nanoMessage(it) }
+            // What a stopped download has saved, and the whole size, when there is a partial file to resume.
             val kept = if (pinned != null && partialBytes > 0) {
-                "${ModelKitBridge.formatBytes(partialBytes)} of ${ModelKitBridge.formatBytes(pinned.bytes)} downloaded"
+                ModelKitBridge.formatBytes(partialBytes) to ModelKitBridge.formatBytes(pinned.bytes)
             } else null
             val message = when {
-                progress.state == ModelDownloadState.DOWNLOADING ->
-                    "Downloading ${ModelKitBridge.formatBytes(progress.bytes)} of ${ModelKitBridge.formatBytes(progress.totalBytes)} " +
-                        "(${progress.bytes * 100 / progress.totalBytes.coerceAtLeast(1)}%). You can leave this screen."
+                progress.state == ModelDownloadState.DOWNLOADING -> getString(
+                    R.string.models_gemma_downloading,
+                    ModelKitBridge.formatBytes(progress.bytes), ModelKitBridge.formatBytes(progress.totalBytes),
+                    progress.bytes * 100 / progress.totalBytes.coerceAtLeast(1),
+                )
                 progress.state == ModelDownloadState.WAITING_FOR_NETWORK ->
-                    "Waiting for a connection" + if (partialBytes > 0) " (${ModelKitBridge.formatBytes(partialBytes)} saved so far)." else "."
-                progress.state == ModelDownloadState.VERIFYING -> "Checking the download…"
-                model != null ->
-                    "Ready: ${model.name} (${ModelKitBridge.formatBytes(model.sizeBytes)}). " +
-                        (if (lastNanoState == FoundationModelStatus.READY) "Used only when Gemini Nano has no answer."
-                        else if (KeyboardSettings.modelOnTap(this@SettingsActivity)) "Loads when you tap the sparkle."
-                        else "Loads when you pause while typing or tap the sparkle.") +
-                        if (twoCopies) " LocalLauncher has the same Gemma, so this phone keeps two copies. One is enough: " +
-                            "after Remove Gemma, LocalType uses LocalLauncher's." else ""
-                modelFilesRemain -> "Gemma files remain on this phone. Remove Gemma files retries deleting them."
-                borrowed -> "Using LocalLauncher's copy of Gemma on this phone, so there's nothing to download."
+                    if (partialBytes > 0) getString(R.string.models_gemma_waiting_saved, ModelKitBridge.formatBytes(partialBytes))
+                    else getString(R.string.models_gemma_waiting)
+                progress.state == ModelDownloadState.VERIFYING -> getString(R.string.models_gemma_verifying)
+                model != null -> listOfNotNull(
+                    getString(R.string.models_gemma_ready, model.name, ModelKitBridge.formatBytes(model.sizeBytes)),
+                    getString(
+                        if (lastNanoState == FoundationModelStatus.READY) R.string.models_gemma_ready_after_nano
+                        else if (KeyboardSettings.modelOnTap(this@SettingsActivity)) R.string.models_gemma_ready_on_tap
+                        else R.string.models_gemma_ready_on_pause,
+                    ),
+                    if (twoCopies) getString(R.string.models_gemma_two_copies) else null,
+                ).joinToString(" ")
+                modelFilesRemain -> getString(R.string.models_gemma_files_remain)
+                borrowed -> getString(R.string.models_gemma_borrowed)
                 progress.state == ModelDownloadState.FAILED ->
-                    (progress.message ?: "The download failed. Try again.") + (kept?.let { " $it; Download picks up from there." } ?: "")
-                kept != null -> "$kept. Download picks up from there, or discard it to free the space."
-                pinned != null && !fits -> GemmaFit.tooSmall(pinned.displayName, pinned.bytes, memory.totalMem)
-                pinned != null -> "Optional. Download Gemma to use it for extra suggestions and proofreading."
-                else -> "Not installed."
+                    (progress.message ?: getString(R.string.models_gemma_failed)) +
+                        (kept?.let { (saved, total) -> " " + getString(R.string.models_gemma_failed_kept, saved, total) } ?: "")
+                kept != null -> getString(R.string.models_gemma_kept, kept.first, kept.second)
+                pinned != null && !fits -> GemmaFit.tooSmall(pinned.bytes, memory.totalMem).let { sizes ->
+                    getString(R.string.models_gemma_too_small, pinned.displayName, sizes.neededGb, sizes.phoneGb)
+                }
+                pinned != null -> getString(R.string.models_gemma_optional)
+                else -> getString(R.string.models_gemma_not_installed)
             }
             val failure = listOfNotNull(modelSharingError, modelRemovalError).joinToString(" ")
             showGemmaState(if (failure.isEmpty()) message else "$failure $message",
@@ -2413,15 +2428,19 @@ class SettingsActivity : Activity() {
             gemmaDownload?.visibility = if (model == null && !borrowed && !progress.isActive && fits) View.VISIBLE else View.GONE
             gemmaCancel?.visibility = if (progress.isActive) View.VISIBLE else View.GONE
             gemmaImport?.visibility = if (progress.isActive) View.GONE else View.VISIBLE
-            val importLabel = if (model != null) "Replace Gemma" else if (!fits) "Use a smaller model file" else "Use a model file instead"
+            val importLabel = getString(
+                if (model != null) R.string.models_gemma_replace
+                else if (!fits) R.string.models_gemma_import_smaller
+                else R.string.models_gemma_import,
+            )
             gemmaImport?.let { if (it.text.toString() != importLabel) it.text = importLabel }
             // Remove deletes the partial file too, so the same button discards a download nobody will finish.
             gemmaRemove?.visibility = if ((modelFilesRemain || partialBytes > 0) && !progress.isActive) View.VISIBLE else View.GONE
-            val removeLabel = when {
-                model != null -> "Remove Gemma"
-                modelFilesRemain -> "Remove Gemma files"
-                else -> "Discard partial download"
-            }
+            val removeLabel = getString(when {
+                model != null -> R.string.models_gemma_remove
+                modelFilesRemain -> R.string.models_gemma_remove_files
+                else -> R.string.models_gemma_discard_partial
+            })
             gemmaRemove?.let { if (it.text.toString() != removeLabel) it.text = removeLabel }
             // What the keyboard's sparkle goes by: it shows once there is a model to ask, and settings knows first.
             if (lastNanoState != null || !BuildConfig.INCLUDES_NANO) KeyboardSettings.rememberModelSetUp(this@SettingsActivity,
@@ -2439,13 +2458,16 @@ class SettingsActivity : Activity() {
     }
 
     private fun nanoMessage(state: FoundationModelStatus): String = when (state) {
-        FoundationModelStatus.READY -> "Ready. Gemini Nano is used first."
-        FoundationModelStatus.SYSTEM_MODEL_DOWNLOADABLE -> "Supported on this phone but not downloaded yet."
-        FoundationModelStatus.INITIALIZING -> "Downloading through Android…"
-        FoundationModelStatus.NOT_SUPPORTED ->
-            "Android does not offer Gemini Nano to apps on this phone." + if (gemmaFits) " You can use Gemma below." else ""
-        else -> "Not available right now." + if (gemmaFits) " You can use Gemma below." else ""
+        FoundationModelStatus.READY -> getString(R.string.models_nano_ready)
+        FoundationModelStatus.SYSTEM_MODEL_DOWNLOADABLE -> getString(R.string.models_nano_downloadable)
+        FoundationModelStatus.INITIALIZING -> getString(R.string.models_nano_downloading)
+        FoundationModelStatus.NOT_SUPPORTED -> withGemmaHint(getString(R.string.models_nano_not_supported))
+        else -> withGemmaHint(getString(R.string.models_nano_unavailable))
     }
+
+    /** A Nano line that offers nothing, followed by the pointer to Gemma where this phone can run it. */
+    private fun withGemmaHint(line: String): String =
+        if (gemmaFits) line + " " + getString(R.string.models_nano_use_gemma) else line
 
     private fun openModelChat() {
         startActivityForResult(Intent(this, ModelChatActivity::class.java), REQUEST_MODEL_CHAT)

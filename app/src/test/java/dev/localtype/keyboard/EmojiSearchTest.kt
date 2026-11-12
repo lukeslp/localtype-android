@@ -1,6 +1,7 @@
 package dev.localtype.keyboard
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -124,5 +125,27 @@ class EmojiSearchTest {
         assertEquals(full, EmojiSearch.edit(full, KeyAction.Text("b")))
         assertEquals(full, EmojiSearch.edit(full, KeyAction.Space))
         assertEquals(full.dropLast(1), EmojiSearch.edit(full, KeyAction.Backspace))
+    }
+
+    @Test
+    fun `the word at the cursor is the one to search for`() {
+        assertEquals("pizza", EmojiSearch.wordAtCursor("want some pizza"))
+        assertEquals("pizza", EmojiSearch.wordAtCursor("want some pizza "))
+        assertEquals("pizza", EmojiSearch.wordAtCursor("Pizza"))
+        assertEquals("don't", EmojiSearch.wordAtCursor("I don’t".replace('’', '\'')))
+        // Not after two spaces, punctuation, a digit, an emoji, a lone letter or nothing at all.
+        for (text in listOf("pizza  ", "pizza.", "pizza. ", "pizza 2", "pizza 🍕", "a", "I ", "", " ", "x".repeat(41))) {
+            assertEquals(text, null, EmojiSearch.wordAtCursor(text))
+        }
+    }
+
+    @Test
+    fun `only a word that names an emoji opens the panel on a search`() {
+        // By CLDR keyword, or by the strip's own list ("rofl" has no keyword).
+        for (word in listOf("pizza", "love", "rofl", "Coffee", "dog", "lmao", "happy birthday")) assertTrue(word, shipped.names(word))
+        // Words that only start a keyword ("the" starts "theater") would open a search after nearly every word.
+        for (word in listOf("the", "to", "so", "and", "was", "going", "", "  ")) assertFalse(word, shipped.names(word))
+        // And a word it names does find something.
+        for (word in listOf("pizza", "rofl")) assertTrue(word, shipped.search(word).isNotEmpty())
     }
 }

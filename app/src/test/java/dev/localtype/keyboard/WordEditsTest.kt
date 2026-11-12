@@ -584,4 +584,26 @@ class WordEditsTest {
         assertEquals(WordEdits.Replacement(1, 0, "” ", autoSpaced = true), WordEdits.attachPunctuation("He said ", "”", true, false))
     }
 
+    @Test fun `an opening mark the app made curly still lets the straight one close`() {
+        // An editor that turns the first mark into a curly one leaves no straight mark to count.
+        assertEquals(WordEdits.Replacement(1, 0, "\" ", autoSpaced = true), WordEdits.attachPunctuation("He said “hello ", "\"", true, false))
+        // Once that quotation is closed, the next straight mark opens another.
+        assertNull(WordEdits.attachPunctuation("He said “hello” and ", "\"", true, false))
+    }
+
+    @Test fun `a closing bracket after a completion's space sits against the word`() {
+        for (closer in listOf(")", "]", "}")) {
+            val attached = WordEdits.attachPunctuation("(see below ", closer, true, false)
+            assertEquals(WordEdits.Replacement(1, 0, "$closer ", autoSpaced = true), attached)
+            // Only the completion's own space is taken: a typed space, a selection, or a space after a space stay.
+            assertNull(WordEdits.attachPunctuation("(see below ", closer, false, false))
+            assertNull(WordEdits.attachPunctuation("(see below ", closer, true, true))
+            assertNull(WordEdits.attachPunctuation("(see  ", closer, true, false))
+        }
+        // An opening bracket is typed where it is.
+        assertNull(WordEdits.attachPunctuation("see below ", "(", true, false))
+        // Like a comma, the bracket's own space is provisional: two quick spaces after it are not a period.
+        assertNull(WordEdits.doubleSpace(") ", true, false, true, autoSpaced = true))
+    }
+
 }

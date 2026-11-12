@@ -477,11 +477,28 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private var savedTexts: SavedTexts? = null
     /** Redraws an open Saved text panel when the list changes, here or in settings. */
     private val savedTextListener: () -> Unit = {
+        emojiBoostsMade = null
         renderSavedPanel()
         // A shortcut may have been set or removed: it is offered, and left alone by correction, from now.
         if (this::corrector.isInitialized) corrector.forgetRecentAnswers()
         scheduleRefresh()
     }
+    /** [emojiBoosts] as last built, kept so the panel's search is built once per list; null after Saved text changes. */
+    private var emojiBoostsMade: Map<String, List<String>>? = null
+    /** The strip's list [emojiBoostsMade] was built from: a language change swaps it. */
+    private var emojiBoostsFrom: Map<String, List<String>>? = null
+    /**
+     * What the emoji search ranks first: the strip's word-to-emoji list, then the person's own shortcuts, so a
+     * shortcut saved for an emoji finds it. A shortcut wins over the list's phrase of the same spelling, and the
+     * search drops any whose saved text is not an emoji.
+     */
+    private val emojiBoosts: Map<String, List<String>>
+        get() {
+            val listed = emojiSuggestions.phrases
+            emojiBoostsMade?.takeIf { emojiBoostsFrom === listed }?.let { return it }
+            emojiBoostsFrom = listed
+            return (listed + savedTexts?.shortcuts.orEmpty().mapValues { listOf(it.value) }).also { emojiBoostsMade = it }
+        }
     /** What was copied in the last hour, in memory only. */
     private val recentCopies = RecentCopies()
     /** Where the clip now on the clipboard was copied; holding the paste chip won't save one from a password or incognito field. */
@@ -628,6 +645,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         SavedTextStore.open(this) { texts ->
             if (destroyed) return@open
             savedTexts = texts
+            emojiBoostsMade = null
             texts.onChange = savedTextListener
             renderSavedPanel()
         }
@@ -653,7 +671,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             emojiInventory = inventory
             // Opened before the load finished: fill it now (or say it failed), and a search already under way looks again.
             if (panel == KeyboardPanel.EMOJI && emojiPanel?.isEmpty == true) emojiPanel?.show(inventory, recentEmoji.items, loading = false)
-            emojiQuery?.let { emojiPanel?.showSearch(it, emojiSuggestions.phrases) }
+            emojiQuery?.let { emojiPanel?.showSearch(it, emojiBoosts) }
         }
     }
 
@@ -1557,8 +1575,13 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         val first = value[0]
         lastAutocorrect = null
         if (value == ")") {
-            typeClosingParenthesis()
-            return
+            // After a completion's own space the bracket takes that space, as a comma does (WordEdits.attachPunctuation,
+            // below). Everywhere else it is committed once, and only a verified own parenthetical run is cleaned.
+            if (!autoSpaced || selected) {
+                typeClosingParenthesis()
+                return
+            }
+            ownedSpacing.reset()
         }
         val finishesWord = value.length == 1 && (!autoSpaced || selected) && TypingRules.attachesToPreviousWord(first)
         if (finishesWord) {
@@ -1752,6 +1775,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             autoSpaced = false
             trace.finish()
             if (action != null) { cancelRecentCorrection(); resetNeuralSession(); ic.performEditorAction(action) }
+            if (onSymbols() && !replayingKeys) setMode(fieldLayer())
             updateShiftFromEditor()
             return
         }
@@ -1783,6 +1807,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             resetNeuralSession()
             ic.performEditorAction(action)
         }
+        // Return ends what was being typed as a space does, so a symbols page gives the field's own keys back.
+        if (onSymbols() && !replayingKeys) setMode(fieldLayer())
         updateShiftFromEditor()
     }
 
@@ -1837,7 +1863,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
 
     private fun onSymbols(): Boolean = mode == KeyboardLayout.Mode.SYMBOLS || mode == KeyboardLayout.Mode.MORE_SYMBOLS
 
-    /** The keys this field starts on, which a symbols page returns to after a space or an apostrophe ([TypingRules.layerAfterSymbol]). */
+    /** The keys this field starts on, which a symbols page returns to after a space, an apostrophe or Return ([TypingRules.layerAfterSymbol]). */
     private fun fieldLayer(): KeyboardLayout.Mode =
         TypingRules.layerAfterSymbol(currentInputEditorInfo?.inputType ?: InputType.TYPE_CLASS_TEXT)
 
@@ -1934,8 +1960,21 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
 
     // region Panels
 
+    /**
+     * The emoji tool, from the tools row or a gesture. With the cursor right after a word that
+     * names an emoji ("pizza|", "rofl |"; not "the", which only starts a name), the panel opens on a search for that word, already filled in: the matches are one tap away, Delete edits the query, and Done or
+     * ✕ shows the whole grid. The word stays in the field and the emoji goes in after it. Anything else opens the
+     * grid as before. Never in a password field or with text selected, and only what is before the cursor is read.
+     */
     private fun toggleEmojiPanel() {
-        if (panel == KeyboardPanel.EMOJI) closePanel() else openPanel(KeyboardPanel.EMOJI)
+        if (panel == KeyboardPanel.EMOJI) closePanel() else openEmojiPanel()
+    }
+
+    private fun openEmojiPanel() {
+        val word = if (inputIsSensitive || selectionActive) null
+            else currentInputConnection?.getTextBeforeCursor(EmojiSearch.MAX_QUERY_CHARS + 2, 0)?.toString()?.let(EmojiSearch::wordAtCursor)
+        openPanel(KeyboardPanel.EMOJI)
+        if (word != null && panel == KeyboardPanel.EMOJI && emojiPanel?.names(word, emojiBoosts) == true) startEmojiSearch(word)
     }
 
     /**
@@ -3063,11 +3102,11 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     }
 
     /**
-     * 🔍 in the emoji header: the grid gives way to the letter keys at their own height, and the
-     * strip becomes the search bar. The query starts lowercase whatever the field asks, and Enter
+     * 🔍 in the emoji header, or the emoji button beside a word ([initial]): the grid gives way to the letter keys
+     * at their own height, and the strip becomes the search bar. The query starts lowercase whatever the field asks, and Enter
      * shows Done, because it goes back to the grid rather than acting on the field.
      */
-    private fun startEmojiSearch() {
+    private fun startEmojiSearch(initial: String = "") {
         val emoji = emojiPanel ?: return
         val header = panelHeader ?: return
         if (panel != KeyboardPanel.EMOJI || emojiQuery != null) return
@@ -3075,7 +3114,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         emojiSearchMode = mode
         emojiSearchShift = shiftState
         emojiSearchHeight = keyArea?.pinnedHeight?.takeIf { it > 0 } ?: keyboardView?.height ?: 0
-        emojiQuery = ""
+        emojiQuery = initial
         emojiPanelRoot?.visibility = View.GONE
         keyArea?.pinnedHeight = 0
         setKeysVisible(true)
@@ -3084,7 +3123,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         keyboardView?.enterLabel = enterLabel(currentInputEditorInfo)
         header.removeAllViews()
         header.addView(emoji.searchBar, android.widget.FrameLayout.LayoutParams(android.widget.FrameLayout.LayoutParams.MATCH_PARENT, android.widget.FrameLayout.LayoutParams.MATCH_PARENT))
-        emoji.showSearch("", emojiSuggestions.phrases)
+        emoji.showSearch(initial, emojiBoosts)
         // 🔍 went with the tabs: TalkBack's focus goes to the query instead of nowhere.
         TalkBackFocus.moveTo(emoji.queryView)
     }
@@ -3143,7 +3182,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
                 val edited = EmojiSearch.edit(query, typed) ?: return
                 if (action is KeyAction.Text && shiftState == KeyboardView.ShiftState.ON) setShift(KeyboardView.ShiftState.OFF)
                 emojiQuery = edited
-                emojiPanel?.showSearch(edited, emojiSuggestions.phrases)
+                emojiPanel?.showSearch(edited, emojiBoosts)
             }
         }
     }
@@ -4608,7 +4647,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         // A link standing right before the caret that still carries tracking: pasted from the app's own menu, typed,
         // or there before. Only where words show, since the offer takes the last word slot.
         if (cleanLinks && suggestionsEnabled) linkOffer(context)?.let { return it }
-        if (suggestionsEnabled && prefix.isNotEmpty()) Expansions.shortcut(prefix, savedTexts)?.let { return it }
+        if (suggestionsEnabled && prefix.isNotEmpty()) Expansions.shortcut(context, prefix, savedTexts)?.let { return it }
         // A typed cue or a sign's name: (c) or "copyright" offers ©, -> offers →. After saved texts, so a shortcut wins.
         if (suggestionsEnabled && !addressBar) Expansions.symbol(Expansions.run(context), prefix)?.let { return it }
         if (!hostsAllowed) return null
@@ -5973,7 +6012,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             GestureAction.SELECT_ALL -> gestureSelectAll()
             GestureAction.PASTE -> gesturePaste()
             GestureAction.HIDE_KEYBOARD -> { explicitHideRequests++; requestHideSelf(0) }
-            GestureAction.EMOJI -> openPanel(KeyboardPanel.EMOJI)
+            GestureAction.EMOJI -> openEmojiPanel()
             GestureAction.SAVED_TEXT -> openSavedPanel()
             GestureAction.SYMBOLS -> setMode(if (mode == KeyboardLayout.Mode.SYMBOLS || mode == KeyboardLayout.Mode.MORE_SYMBOLS)
                 TypingRules.layoutFor(currentInputEditorInfo?.inputType ?: InputType.TYPE_CLASS_TEXT) else KeyboardLayout.Mode.SYMBOLS)

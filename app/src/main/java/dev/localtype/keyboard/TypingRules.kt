@@ -154,7 +154,7 @@ object TypingRules {
     }
 
     /**
-     * Where a symbols page goes back to once a space or an apostrophe has been typed from it: the field's own keys.
+     * Where a symbols page goes back to once a space, an apostrophe or Return has been typed from it: the field's own keys.
      * In a text field that is the letters; in a number, phone or date field it is that field's pad, never letters the
      * field did not ask for.
      */

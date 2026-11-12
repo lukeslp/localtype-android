@@ -266,6 +266,9 @@ class EmojiPanel(
         searchBar.visibility = View.VISIBLE
     }
 
+    /** Whether [query] is a name for an emoji here ([EmojiSearch.names]), without showing anything. False while nothing is loaded. */
+    fun names(query: String, boosts: Map<String, List<String>>): Boolean = ready && searchOver(boosts).names(query)
+
     /** Hides and empties [searchBar], ready for the next search. */
     fun hideSearch() {
         searchBar.visibility = View.GONE

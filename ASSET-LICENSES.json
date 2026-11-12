@@ -41,14 +41,14 @@
     "sourceSha256": "505dd3be2a5d5aebefaa5892269eed7e55848c718ae24d3ae45425adfb20fd0d"
   },
   "emoji_en.txt": {
-    "sha256": "89056fda23a7ee22cbcb69d6ce281acda29993143c5052b2a840f40a2ded11ad",
+    "sha256": "bc3d2278d8bffd75a983d4e5bee9630eff4be74bd597b446e7e611f52c2b520a",
     "status": "reviewed-grant",
     "license": "CC-BY-SA-4.0",
     "source": "https://github.com/lukeslp/chime-pipeline",
     "matchesPublishedCopy": false,
     "notice": "licenses/wordlists-NOTICE.txt",
     "review": "Later first-party aliases extend the existing CC BY-SA 4.0 grant; no third-party text copied",
-    "sourceSha256": "89056fda23a7ee22cbcb69d6ce281acda29993143c5052b2a840f40a2ded11ad"
+    "sourceSha256": "bc3d2278d8bffd75a983d4e5bee9630eff4be74bd597b446e7e611f52c2b520a"
   },
   "emoji_inventory.txt": {
     "sha256": "d74b1a29fb9ce37278826b4cd521e1fa6a9f5168740d441b1dc43232a8edc8f7",

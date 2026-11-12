@@ -31,8 +31,8 @@ class ToolsPinTest {
     @Test
     fun `the row follows the saved order and still fits the width`() {
         val order = listOf(StripTool.REDO, StripTool.UNDO, StripTool.TODAY, StripTool.COUNT, StripTool.HIDE, StripTool.ARROWS)
-        assertEquals(listOf(StripTool.REDO, StripTool.UNDO, StripTool.TODAY, StripTool.COUNT, StripTool.HIDE), StripTools.row(360, field, order))
-        assertEquals(listOf(StripTool.UNDO), StripTools.row(360, StripTools.Field(voice = false, proofread = false), listOf(StripTool.VOICE, StripTool.UNDO)))
+        assertEquals(listOf(StripTool.REDO, StripTool.UNDO, StripTool.TODAY, StripTool.COUNT, StripTool.SETTINGS), StripTools.row(360, field, order))
+        assertEquals(listOf(StripTool.UNDO, StripTool.SETTINGS), StripTools.row(360, StripTools.Field(voice = false, proofread = false), listOf(StripTool.VOICE, StripTool.UNDO)))
     }
 
     @Test

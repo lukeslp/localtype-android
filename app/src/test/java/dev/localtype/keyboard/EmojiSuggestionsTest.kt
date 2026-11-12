@@ -60,6 +60,41 @@ class EmojiSuggestionsTest {
     }
 
     @Test
+    fun `a word with an emoji of its own keeps it when the corrector offers something else`() {
+        // Through 0.5.53 only the correction was looked up: "rofl", offered "of", showed no emoji.
+        assertEquals(EmojiSuggestions.Match(listOf("🤣"), 4, ""), emoji.match("rofl", "rofl", limit = 1, lookupAs = "of"))
+        assertEquals("🎆", emoji.match("newyear", "newyear", lookupAs = "near")?.options?.first())
+        assertEquals("🙄", emoji.match("eyeroll", "eyeroll", lookupAs = "yell")?.options?.first())
+        // A phrase too: its last word as typed, then as corrected.
+        assertEquals(EmojiSuggestions.Match(listOf("🙄"), 8, ""), emoji.match("eye roll", "roll", limit = 1, lookupAs = "role"))
+        assertEquals(EmojiSuggestions.Match(listOf("🙄"), 7, ""), emoji.match("eye rol", "rol", limit = 1, lookupAs = "roll"))
+        // Whatever the corrector says, no word on the list loses its emoji.
+        for ((phrase, options) in emoji.phrases) {
+            val last = phrase.substringAfterLast(' ')
+            if (!phrase.contains(' ') && last.length < 2) continue
+            assertEquals(phrase, options.first(), emoji.match(phrase, last, lookupAs = "zzzzzz")?.options?.first())
+        }
+    }
+
+    @Test
+    fun `chat shorthand has emoji`() {
+        for ((word, first) in listOf("rofl" to "🤣", "lmao" to "😂", "lmfao" to "🤣", "omg" to "😱", "smh" to "🤦", "idk" to "🤷",
+            "brb" to "🏃", "ily" to "❤️", "thx" to "🙏", "hbd" to "🎂", "gg" to "🏆", "ugh" to "😩", "hmm" to "🤔", "yikes" to "😬")) {
+            assertEquals(word, first, emoji.forContext(word, word).firstOrNull())
+            assertEquals(word, first, emoji.forContext("$word ", "").firstOrNull())
+        }
+    }
+
+    @Test
+    fun `every emoji on the list is one the panel can draw`() {
+        val inventory = File("src/main/assets/emoji_inventory.txt").readLines().filter { it.isNotBlank() && !it.startsWith("#") }
+            .map { it.split('\t')[1].replace("\uFE0F", "") }.toSet()
+        for ((phrase, options) in emoji.phrases) for (option in options) {
+            assertTrue("$phrase: $option", option.replace("\uFE0F", "") in inventory)
+        }
+    }
+
+    @Test
     fun `reaction phrases replace only the matching phrase and keep spacing`() {
         assertEquals(EmojiSuggestions.Match(listOf("🙄"), 15, "  "),
             emoji.match("I am rolling my eyes  ", "", limit = 1))

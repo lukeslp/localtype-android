@@ -109,7 +109,7 @@ class CopyMergeTest {
         fun ok(word: String, follower: Boolean = true) = KeyboardCopy.learnedWord(word, english, follower)
         assertTrue(ok("hello") && ok("don't") && ok("naïve") && ok("a") && ok("i"))
         assertFalse(ok("Hello"))
-        assertFalse(ok("two words"))
+        assertFalse(ok("has a digit2"))
         assertFalse(ok("https://example.org"))
         assertFalse(ok("tab\there"))
         assertFalse(ok("abc123"))
@@ -198,7 +198,7 @@ class CopyMergeTest {
                 SavedTexts.Entry("other address", "ADDR"),
                 SavedTexts.Entry("signature", " Sig "),
                 SavedTexts.Entry("   "),
-                SavedTexts.Entry("bad code", "two words"),
+                SavedTexts.Entry("bad code", "has a digit2"),
             ),
         )
         assertEquals(3, added)

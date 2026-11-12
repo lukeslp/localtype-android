@@ -67,6 +67,18 @@ class EmojiSearch(inventory: EmojiInventory, boosts: Map<String, List<String>> =
         return matches.map { entries[it.index].emoji }
     }
 
+    /**
+     * Whether [query] is a name for some emoji: a keyword or a phrase of the strip's list equal to it, not one
+     * that merely starts with it. "pizza" and "rofl" are; "the" is not, though it starts "theater". This decides
+     * whether the panel opens on a search for the word at the cursor, where a looser match would open one after
+     * nearly every word.
+     */
+    fun names(query: String): Boolean {
+        val normalized = normalize(query)
+        if (normalized.isEmpty()) return false
+        return boosted.any { it.first == normalized } || entries.any { entry -> entry.keywords.any { it == normalized } }
+    }
+
     private fun tierOf(entry: Entry, query: String, terms: List<String>): Int = when {
         entry.keywords.any { it == query } -> EXACT
         entry.keywords.any { it.startsWith(query) } -> PREFIX
@@ -92,6 +104,18 @@ class EmojiSearch(inventory: EmojiInventory, boosts: Map<String, List<String>> =
         fun normalize(text: String): String =
             Normalizer.normalize(text.replace('’', '\''), Normalizer.Form.NFD).replace(MARKS, "")
                 .lowercase(Locale.ROOT).trim().split(WHITESPACE).filter { it.isNotEmpty() }.joinToString(" ")
+
+        /**
+         * The word to search for when the emoji panel opens: the word the cursor sits right after, or right
+         * after one space past it ("pizza|" and "pizza |"), lowercase; null with anything else there, with
+         * a word of one letter, or with one too long to be a query. Only what is before the cursor counts.
+         */
+        fun wordAtCursor(beforeCursor: String): String? {
+            val text = if (beforeCursor.endsWith(' ') && !beforeCursor.endsWith("  ")) beforeCursor.dropLast(1) else beforeCursor
+            val word = text.takeLastWhile { it.isLetter() || it == '\'' || it == '’' }.trim('\'', '’')
+            if (word.length < 2 || word.length > MAX_QUERY_CHARS || !text.endsWith(word)) return null
+            return word.lowercase(Locale.ROOT)
+        }
 
         /**
          * The query after [action], or null for a key that doesn't edit it (Enter, shift, the layer

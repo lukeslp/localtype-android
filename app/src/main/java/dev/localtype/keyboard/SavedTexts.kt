@@ -5,7 +5,7 @@ package dev.localtype.keyboard
  * Save adds anything (holding the paste chip, Save on a recent copy, or typing one in settings), and
  * saving text that's already here moves it to the top. [lastChange] lets the panel say "Saved" or
  * offer Undo for a removal, until the next change or until the panel closes ([forgetLastChange]).
- * An item can have a shortcut word ([codes]): typing that word offers the item in the strip. Main
+ * An item can have a shortcut ([codes]), a word or a short phrase: typing it offers the item in the strip. Main
  * thread only; the [Store] does the writing.
  */
 class SavedTexts(private val store: Store) {
@@ -133,6 +133,23 @@ class SavedTexts(private val store: Store) {
         return codes.entries.firstOrNull { it.value == word }?.key
     }
 
+    /**
+     * The saved item whose shortcut ends [before], the text up to the caret, and how many of its last characters
+     * the shortcut takes up: "on my way" at the end of "I'm on my way". The shortcut has to start a word there, and
+     * its words are told apart by single spaces, as they are stored. The longest shortcut wins, so "my way" never
+     * hides "on my way". Null when none ends there.
+     */
+    fun expansionEnding(before: String): Pair<String, Int>? {
+        if (codes.isEmpty()) return null
+        val lower = before.lowercase(java.util.Locale.ROOT)
+        return codes.entries.filter { (_, code) ->
+            lower.endsWith(code) && (lower.length == code.length || !lower[lower.length - code.length - 1].isLetterOrDigit())
+        }.maxByOrNull { it.value.length }?.let { it.key to it.value.length }
+    }
+
+    /** Each shortcut with its saved text, for the emoji search, where a shortcut for an emoji finds it. */
+    val shortcuts: Map<String, String> get() = codes.entries.associate { it.value to it.key }
+
     /** Whether [word] is some item's shortcut: such a word is the person's own and is never corrected. */
     fun isCode(word: String): Boolean = codes.isNotEmpty() && normalizeCode(word) in codes.values
 
@@ -172,15 +189,25 @@ class SavedTexts(private val store: Store) {
 
         const val MIN_CODE = 2
         const val MAX_CODE = 24
+        /** A shortcut can be a short phrase ("on my way"), from 0.5.55: this many words at most. */
+        const val MAX_CODE_WORDS = 3
 
-        /** A shortcut as it is stored and compared: trimmed and lowercase. */
-        fun normalizeCode(code: String): String = code.trim().lowercase(java.util.Locale.ROOT)
+        /** A shortcut as it is stored and compared: trimmed, lowercase, one space between its words. */
+        fun normalizeCode(code: String): String = code.trim().lowercase(java.util.Locale.ROOT).split(CODE_SPACES).joinToString(" ")
+
+        private val CODE_SPACES = Regex(" +")
 
         /**
-         * Letters only. The keyboard reads the word being typed with its own word rule, where a digit or a
-         * symbol ends the word, so a shortcut with one in it could never be typed as a single word.
+         * One to [MAX_CODE_WORDS] words of letters only, [MIN_CODE] to [MAX_CODE] characters in all, with one space
+         * between words. The keyboard reads the word being typed with its own word rule, where a digit or a symbol
+         * ends the word, so a shortcut with one in it could never be typed. A build before 0.5.55 knows one-word
+         * shortcuts only: it reads a phrase's line as plain text, escape and all.
          */
-        fun validCode(code: String): Boolean = code.length in MIN_CODE..MAX_CODE && code.all { it.isLetter() }
+        fun validCode(code: String): Boolean {
+            if (code.length !in MIN_CODE..MAX_CODE) return false
+            val words = code.split(' ')
+            return words.size <= MAX_CODE_WORDS && words.all { word -> word.isNotEmpty() && word.all { it.isLetter() } }
+        }
 
         private val WHITESPACE = Regex("\\s+")
 

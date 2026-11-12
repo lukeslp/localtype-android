@@ -19,14 +19,49 @@ class ExpansionsTest {
         val saved = SavedTexts(Memory())
         saved.save("221B Baker Street, London NW1 6XE, United Kingdom")
         saved.setCode("221B Baker Street, London NW1 6XE, United Kingdom", "addr")
-        val offer = Expansions.shortcut("Addr", saved)!!
+        val offer = Expansions.shortcut("Send to Addr", "Addr", saved)!!
         assertEquals(Expansions.Kind.SHORTCUT, offer.kind)
         assertEquals(4, offer.replace)
         assertEquals("221B Baker Street, London NW1 6XE, United Kingdom", offer.text)
         assertEquals("221B Baker Stree…", offer.label)
-        assertNull(Expansions.shortcut("add", saved))
-        assertNull(Expansions.shortcut("", saved))
-        assertNull(Expansions.shortcut("addr", null))
+        assertNull(Expansions.shortcut("add", "add", saved))
+        assertNull(Expansions.shortcut("", "", saved))
+        assertNull(Expansions.shortcut("addr", "addr", null))
+        // Inside a longer word it is not the shortcut.
+        assertNull(Expansions.shortcut("baddr", "baddr", saved))
+    }
+
+    @Test
+    fun `a phrase shortcut is offered at its last word and replaces the whole phrase`() {
+        val saved = SavedTexts(Memory())
+        saved.save("🚗")
+        saved.save("way out")
+        assertEquals(SavedTexts.CodeResult.SET, saved.setCode("🚗", "On  my Way"))
+        assertEquals("on my way", saved.codes["🚗"])
+        val offer = Expansions.shortcut("I'm on my way", "way", saved)!!
+        assertEquals(9, offer.replace)
+        assertEquals("🚗", offer.text)
+        // Not until the last word is whole, and not when the phrase starts inside a word.
+        assertNull(Expansions.shortcut("I'm on my wa", "wa", saved))
+        assertNull(Expansions.shortcut("salmon my way", "way", saved))
+        // The longest shortcut ending there wins.
+        saved.setCode("way out", "way")
+        assertEquals("🚗", Expansions.shortcut("on my way", "way", saved)!!.text)
+        assertEquals("way out", Expansions.shortcut("the way", "way", saved)!!.text)
+        assertEquals(mapOf("on my way" to "🚗", "way" to "way out"), saved.shortcuts)
+    }
+
+    @Test
+    fun `a shortcut is one to three words of letters`() {
+        assertTrue(SavedTexts.validCode("omw"))
+        assertTrue(SavedTexts.validCode("on my way"))
+        assertFalse(SavedTexts.validCode("on my way home"))
+        assertFalse(SavedTexts.validCode("on  my"))
+        assertFalse(SavedTexts.validCode("on my2"))
+        assertFalse(SavedTexts.validCode(" on"))
+        assertFalse(SavedTexts.validCode("a"))
+        val entries = listOf(SavedTexts.Entry("🚗", "on my way"), SavedTexts.Entry("plain"))
+        assertEquals(entries, SavedTextCodec.decodeEntries(SavedTextCodec.encodeEntries(entries)))
     }
 
     private fun offer(run: String, list: List<RememberedDomains.Entry>, field: Expansions.Field = Expansions.Field.TEXT, completes: Boolean = false) =

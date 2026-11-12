@@ -47,7 +47,8 @@ object StripTools {
     }
 
     /**
-     * The built-in row: the first ones that are offered in the field and fit, then More. Holding a tile changes it,
+     * The built-in row: the first ones that are offered in the field and fit, then Keyboard settings and More ([row]).
+     * Holding a tile changes it,
      * and a row someone has changed is kept as they left it ([rowOrder]), so a tool added here never moves into it.
      */
     val ROW_ORDER = listOf(
@@ -107,9 +108,13 @@ object StripTools {
         else -> true
     }
 
-    /** The tools the row shows before More, at a strip [widthDp] wide. */
+    /**
+     * The tools the row shows before More, at a strip [widthDp] wide. Keyboard settings is always the last of them,
+     * whatever the row's order holds, so the gear is one tap from the arrow in every field; the others fill the cells
+     * before it.
+     */
     fun row(widthDp: Int, field: Field, order: List<StripTool> = ROW_ORDER): List<StripTool> =
-        order.filter { offered(it, field) }.take(cells(widthDp) - 1)
+        order.filter { it != StripTool.SETTINGS && offered(it, field) }.take(cells(widthDp) - 2) + StripTool.SETTINGS
 
     /** The Tools panel's sections, in [Group] order, with the tools each offers in this field. */
     fun panel(field: Field): List<Pair<Group, List<StripTool>>> = Group.entries.map { group ->
