@@ -13,17 +13,19 @@ class ProvisionalSpaceTest {
     private fun apply(before: String, edit: WordEdits.Replacement) = before.dropLast(edit.before) + edit.text
 
     @Test fun `space confirms the separator after attached punctuation once`() {
+        // The word sits inside an open quotation, so the straight mark in the list is one that closes it.
+        val before = "\"hello "
         for (punctuation in listOf(",", "!", "?", ":", ";", "\"", "”")) {
-            val attached = WordEdits.attachPunctuation("hello ", punctuation, true, false)!!
-            val text = apply("hello ", attached)
+            val attached = WordEdits.attachPunctuation(before, punctuation, true, false)!!
+            val text = apply(before, attached)
             assertTrue(attached.autoSpaced)
             assertNull(WordEdits.doubleSpace(text.takeLast(2), true, false, true, autoSpaced = true))
             val confirmed = boundary(text, " ", attached.autoSpaced)
-            assertEquals("hello$punctuation ", apply(text, confirmed.replacement))
+            assertEquals("\"hello$punctuation ", apply(text, confirmed.replacement))
             assertFalse(confirmed.learningEligible)
             assertFalse(confirmed.corrected)
             // Once confirmed, another deliberate space remains literal.
-            assertEquals("hello$punctuation  ", apply(text, boundary(text, " ", false).replacement))
+            assertEquals("\"hello$punctuation  ", apply(text, boundary(text, " ", false).replacement))
         }
     }
 

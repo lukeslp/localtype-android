@@ -30,17 +30,30 @@ object SwipeInsertion {
         return letter.takeIf { previous == null || previous.isWhitespace() || previous in OPENERS }
     }
 
+    /**
+     * A straight quotation mark ending [before] that closes a quotation: it follows a letter, a digit or the
+     * punctuation that ends a quoted sentence. The same mark opens one after a space, an opening mark or the start
+     * of the field, and after anything else ("class=") it is left as an opening mark too.
+     */
+    fun closingQuote(before: String): Boolean {
+        if (before.lastOrNull() != '"') return false
+        val previous = before.getOrNull(before.length - 2) ?: return false
+        return previous.isLetterOrDigit() || previous in ".,!?…)"
+    }
+
     /** What a swipe replaces before the caret, and the text it puts ahead of the word. */
     data class Lead(val replace: Int, val text: String)
 
     /**
-     * A space after a lone "a" or "I", or after a swiped word that got none ([afterSwipe], see [mayStart]); a lone
-     * "i" also becomes "I" where [capitalizeI] allows, as a typed space would. Where words run together ([joined]: an
-     * address, a password) nothing goes ahead, so a swipe straight after a swiped word runs on ("correct" "horse").
+     * A space after a lone "a" or "I", after a swiped word that got none ([afterSwipe], see [mayStart]), or after a
+     * straight quotation mark that closes a quotation ([closingQuote]: [mayStart] takes the mark as an opening one,
+     * and the word would run into it); a lone "i" also becomes "I" where [capitalizeI] allows, as a typed space
+     * would. Where words run together ([joined]: an address, a password) nothing goes ahead, so a swipe straight
+     * after a swiped word runs on ("correct" "horse").
      */
     fun lead(before: String, capitalizeI: Boolean, afterSwipe: Boolean = false, joined: Boolean = false): Lead =
         if (joined) Lead(0, "") else when (loneLetter(before)) {
-            null -> if (afterSwipe && before.lastOrNull()?.isWhitespace() == false) Lead(0, " ") else Lead(0, "")
+            null -> if ((afterSwipe && before.lastOrNull()?.isWhitespace() == false) || closingQuote(before)) Lead(0, " ") else Lead(0, "")
             'i' -> if (capitalizeI) Lead(1, "I ") else Lead(0, " ")
             else -> Lead(0, " ")
         }

@@ -81,6 +81,8 @@ class EmojiPanel(
     private val popup: SuggestionPopup,
     private val tones: EmojiTones,
     private val onInsert: (String) -> Unit,
+    /** False in a field where nothing is learned (password, incognito, Private for now): a tone picked there is not kept. */
+    private val remembersTone: () -> Boolean,
     private val onSearch: () -> Unit,
     private val onSearchDone: () -> Unit,
 ) {
@@ -362,7 +364,10 @@ class EmojiPanel(
         if (ValueAnimator.areAnimatorsEnabled()) header.smoothScrollTo(target, 0) else header.scrollTo(target, 0)
     }
 
-    /** Offers the base and its five tones above [anchor]; the pick inserts and becomes the remembered tone. */
+    /**
+     * Offers the base and its five tones above [anchor]; the pick inserts and becomes the remembered tone. Where
+     * nothing is learned it only inserts: the choice would otherwise be written to disk from a private field.
+     */
     private fun showTones(anchor: View, cell: EmojiPanelLayout.Cell?): Boolean {
         val emoji = cell?.emoji?.takeIf { it.tones.isNotEmpty() } ?: return false
         KeyHaptics.perform(anchor, HapticFeedbackConstants.LONG_PRESS)
@@ -374,7 +379,7 @@ class EmojiPanel(
             // The options run base, then tones 1 to 5, so the cell's own tone is the index of the one it shows.
             selected = EmojiInventory.toneOf(cell.text),
             onPick = { picked ->
-                tones.choose(emoji, EmojiInventory.toneOf(picked))
+                if (remembersTone()) tones.choose(emoji, EmojiInventory.toneOf(picked))
                 onInsert(picked)
                 // The pick is also the new default, so every emoji without its own choice redraws.
                 rebuild()

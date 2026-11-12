@@ -120,4 +120,16 @@ class PendingKeysTest {
         assertFalse(TypingRules.sameEditorRestart(restarting = false, identity = editor, previous = editor))
         assertFalse(TypingRules.sameEditorRestart(restarting = true, identity = editor, previous = null))
     }
+
+    @Test
+    fun `Private for now lasts through a restart and a hide in its own field and ends in any other`() {
+        // The field it was turned on in: restarting, or shown again after the keyboard was only hidden.
+        assertTrue(TypingRules.staysPrivate(restarting = true, identity = editor, privateField = editor))
+        assertTrue(TypingRules.staysPrivate(restarting = false, identity = editor, privateField = editor))
+        // Another field takes the keyboard.
+        assertFalse(TypingRules.staysPrivate(restarting = false, identity = other, privateField = editor))
+        assertFalse(TypingRules.staysPrivate(restarting = false, identity = editor, privateField = null))
+        // Android calls a start a restart only for the editor already open, so that one keeps it whatever it reports.
+        assertTrue(TypingRules.staysPrivate(restarting = true, identity = other, privateField = editor))
+    }
 }

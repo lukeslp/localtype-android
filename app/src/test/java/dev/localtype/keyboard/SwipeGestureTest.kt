@@ -124,6 +124,60 @@ class SwipeGestureTest {
         assertFalse(SwipeInsertion.mayStart(snapshot("say hello").copy(selection = EditorEditState.Selection(4, 9)), afterSwipe = true))
     }
 
+    /**
+     * Two swipes in a row from "[before]|[after]", as onSwipeStart and commitSwipe run them: the service keeps the
+     * first swipe's receipt (afterSwipe) only where no space went after its word, which is where text follows it.
+     */
+    private fun twoSwipes(before: String, after: String = ""): String {
+        val start = snapshot(before, after)
+        assertTrue("$before|$after", SwipeInsertion.mayStart(start))
+        val next = snapshot(swiped(start, "hello"), after)
+        assertTrue("${next.before}|$after", SwipeInsertion.mayStart(next, afterSwipe = after.isNotEmpty()))
+        return swiped(next, "world", afterSwipe = after.isNotEmpty()) + "|" + after
+    }
+
+    @Test fun twoSwipesAfterAnOpeningMarkSitAgainstItWithOneSpaceBetweenThem() {
+        // At the end of the text, the first word gets its space and the second follows it.
+        assertEquals("say \"hello world |", twoSwipes("say \""))
+        assertEquals("\"hello world |", twoSwipes("\""))
+        assertEquals("say “hello world |", twoSwipes("say “"))
+        assertEquals("say (hello world |", twoSwipes("say ("))
+        assertEquals("(\"hello world |", twoSwipes("(\""))
+        // Between a pair the editor closed for me, the second swipe puts the space in first.
+        assertEquals("say \"hello world|\"", twoSwipes("say \"", "\""))
+        assertEquals("say “hello world|”", twoSwipes("say “", "”"))
+        assertEquals("say (hello world|)", twoSwipes("say (", ")"))
+    }
+
+    @Test fun aSwipeAfterAClosingStraightQuoteGetsASpaceFirst() {
+        // The straight mark opens and closes. After a word or the punctuation that ends a quoted sentence it closes,
+        // so the next swiped word is a new word after it, not one inside the quotation.
+        for (before in listOf("say \"hello\"", "\"hello.\"", "\"hello,\"", "\"really?\"", "\"no!\"", "the \"2\"", "(\"so\")\"")) {
+            assertTrue(before, SwipeInsertion.closingQuote(before))
+            assertTrue(before, SwipeInsertion.mayStart(snapshot(before)))
+            assertEquals(before, SwipeInsertion.Lead(0, " "), SwipeInsertion.lead(before, capitalizeI = true))
+        }
+        assertEquals("say \"hello\" world ", swiped(snapshot("say \"hello\""), "world"))
+        assertEquals("\"hello.\" world ", swiped(snapshot("\"hello.\""), "world"))
+        assertEquals("\"hello\" world more", swiped(snapshot("\"hello\"", " more"), "world") + " more")
+        // The pair the editor closed: one swipe inside, the caret moved past the closing mark, one swipe after it.
+        val inside = swiped(snapshot("say \"", "\""), "hello")
+        assertEquals("say \"hello", inside)
+        assertEquals("say \"hello\" world ", swiped(snapshot(inside + "\""), "world"))
+        // After a space, an opening mark or the start of the text it opens, and anything unclear is left as it was.
+        for (before in listOf("\"", "say \"", "(\"", "“\"", "say:\n\"", "class=\"", "say \"hello \"", "say -\"")) {
+            assertFalse(before, SwipeInsertion.closingQuote(before))
+            assertTrue(before, SwipeInsertion.mayStart(snapshot(before)))
+            assertEquals(before, SwipeInsertion.Lead(0, ""), SwipeInsertion.lead(before, capitalizeI = true))
+        }
+        assertFalse(SwipeInsertion.closingQuote("say hello"))
+        assertFalse(SwipeInsertion.closingQuote(""))
+        // Where words run together (a password, an address) nothing goes ahead of the word.
+        assertEquals(SwipeInsertion.Lead(0, ""), SwipeInsertion.lead("pass\"", capitalizeI = true, joined = true))
+        // A lone "a" or "I" inside the quotation still gets only its own space.
+        assertEquals("say \"I think ", swiped(snapshot("say \"i"), "think"))
+    }
+
     @Test fun inAPasswordOrAddressASwipeAfterASwipedWordRunsOn() {
         // Words run together there, so the first swipe gets no space after it, even at the end of the text...
         val first = "say " + SwipeInsertion.lead("say ", capitalizeI = true, joined = true).text +

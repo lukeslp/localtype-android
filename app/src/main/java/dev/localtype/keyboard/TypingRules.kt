@@ -189,6 +189,15 @@ object TypingRules {
     fun sameEditorRestart(restarting: Boolean, identity: String, previous: String?): Boolean =
         restarting && identity == previous
 
+    /**
+     * Whether Private for now stays on when an input view starts: through a restart of its field, and when the
+     * keyboard was only hidden and comes back to the field it was turned on in ([privateField], that field's
+     * identity). Any other field ends it. Fields without a view id share an identity inside one app and one field
+     * type, so there it can outlast a move to a like field, which errs toward learning less.
+     */
+    fun staysPrivate(restarting: Boolean, identity: String, privateField: String?): Boolean =
+        restarting || identity == privateField
+
     /** Keys that change the editor's text, which [PendingKeys] holds while a restart has retired the connection. */
     fun editsText(action: KeyAction): Boolean =
         action is KeyAction.Text || action == KeyAction.Space || action == KeyAction.Backspace || action == KeyAction.Enter

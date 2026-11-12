@@ -62,6 +62,9 @@
     </plurals>
     <string name="saved_text_none">Aún no hay nada guardado.</string>
     <string name="saved_text_clear">Quitar todo el texto guardado</string>
+    <string name="saved_text_clear_confirm_title">¿Eliminar todo el texto guardado?</string>
+    <string name="saved_text_clear_confirm_body">Se eliminarán todos los elementos guardados y sus atajos. No se puede deshacer.</string>
+    <string name="saved_text_clear_confirm_action">Eliminar todo</string>
     <string name="saved_text_remove_confirm_title">¿Quitar este texto guardado?</string>
     <string name="saved_text_remove_confirm_keep">Conservar</string>
     <string name="saved_text_remove_confirm_action">Quitar</string>
@@ -270,6 +273,7 @@
         <item>Toca el destello a la izquierda de la barra de sugerencias|Pide palabras a Gemini Nano o Gemma, una vez que configures uno en Sugerencias.</item>
         <item>Mantén presionado el destello|Revisa la oración actual.</item>
         <item>Selecciona una oración|Toca Revisar selección en la barra de sugerencias.</item>
+        <item>Escribe (c), -> o 1/2|El último espacio sobre las teclas ofrece ©, → o ½. Tócalo para poner el símbolo.</item>
     </string-array>
     <string name="tips_group_saved">Copiar y guardar texto</string>
     <string-array name="tips_saved">
@@ -823,6 +827,6 @@
     <string name="copy_count_saved">Texto guardado: %1$d</string>
     <string name="copy_count_learned">Pares de palabras aprendidos: %1$d. Sitios: %2$d</string>
     <string name="copy_read_action">Leerla</string>
-    <string name="copy_read_taken">Tomado de la copia:</string>
+    <string name="copy_read_taken">Leído de la copia:</string>
     <string name="copy_read_incomplete">Parte de la copia no se pudo tomar. Intenta leerla otra vez.</string>
 </resources>

@@ -557,19 +557,31 @@ class WordEditsTest {
         assertTrue(records.filterIsInstance<LogRecord.Typed>().isEmpty())
         assertTrue(records.filterIsInstance<LogRecord.Mutation>().isEmpty())
     }
-    @Test fun `reused prediction space attaches quotes but preserves deliberate extra whitespace`() {
-        for (marked in listOf("doesnt| next", "[doesnt] next")) {
+    @Test fun `reused prediction space attaches a closing quote but preserves deliberate extra whitespace`() {
+        for (marked in listOf("\"it doesnt| next", "\"it [doesnt] next")) {
             val editor = Editor(marked)
             val plan = suggestion(editor, "doesn't")!!
             editor.apply(plan.replacement)
-            assertEquals("doesn't |next", editor.marked())
+            assertEquals("\"it doesn't |next", editor.marked())
             editor.apply(WordEdits.attachPunctuation(editor.before(limit), "\"", plan.replacement.autoSpaced, false)!!)
-            assertEquals("doesn't\" |next", editor.marked())
+            assertEquals("\"it doesn't\" |next", editor.marked())
         }
         val editor = Editor("[hello]  next")
         editor.apply(suggestion(editor, "help")!!.replacement)
         assertEquals("help | next", editor.marked())
         assertNull(WordEdits.attachPunctuation("hello ", "\"", false, false))
+    }
+
+    @Test fun `a straight quote after a completion's space opens a quotation unless one is open on the line`() {
+        // No quotation open: the mark opens one, so nothing attaches and the space stays before it.
+        assertNull(WordEdits.attachPunctuation("He said ", "\"", true, false))
+        assertNull(WordEdits.attachPunctuation("\"Yes,\" she said ", "\"", true, false))
+        // One open on this line: the mark closes it and takes the completion's space.
+        assertEquals(WordEdits.Replacement(1, 0, "\" ", autoSpaced = true), WordEdits.attachPunctuation("He said \"hello ", "\"", true, false))
+        // A quotation left open on an earlier line does not turn this one into a closing mark.
+        assertNull(WordEdits.attachPunctuation("\"unfinished\nHe said ", "\"", true, false))
+        // A curly closing mark says which it is.
+        assertEquals(WordEdits.Replacement(1, 0, "” ", autoSpaced = true), WordEdits.attachPunctuation("He said ", "”", true, false))
     }
 
 }

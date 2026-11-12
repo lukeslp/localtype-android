@@ -60,6 +60,9 @@
     </plurals>
     <string name="saved_text_none">Nothing saved yet.</string>
     <string name="saved_text_clear">Remove all saved text</string>
+    <string name="saved_text_clear_confirm_title">Remove all saved text?</string>
+    <string name="saved_text_clear_confirm_body">Every saved item and its shortcut will be removed. This can\'t be undone.</string>
+    <string name="saved_text_clear_confirm_action">Remove all</string>
     <string name="saved_text_remove_confirm_title">Remove this saved text?</string>
     <string name="saved_text_remove_confirm_keep">Keep it</string>
     <string name="saved_text_remove_confirm_action">Remove</string>
@@ -262,6 +265,7 @@
         <item>Tap the sparkle at the left of the strip|Asks Gemini Nano or Gemma for words, once one is set up under Suggestions.</item>
         <item>Hold the sparkle|Proofreads the sentence you’re in.</item>
         <item>Select a sentence|Tap Proofread selection in the strip.</item>
+        <item>Type (c), -> or 1/2|The last slot above the keys offers ©, → or ½. Tap it to swap the symbol in.</item>
     </string-array>
     <string name="tips_group_saved">Copying and saved text</string>
     <string-array name="tips_saved">
@@ -815,6 +819,6 @@
     <string name="copy_count_saved">Saved text: %1$d</string>
     <string name="copy_count_learned">Learned word pairs: %1$d. Sites: %2$d</string>
     <string name="copy_read_action">Read it</string>
-    <string name="copy_read_taken">Taken from the copy:</string>
+    <string name="copy_read_taken">Read from the copy:</string>
     <string name="copy_read_incomplete">Some of it could not be taken in. Try reading the copy again.</string>
 </resources>

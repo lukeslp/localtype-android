@@ -936,12 +936,15 @@ class KeyboardView(context: Context) : View(context) {
         super.onDetachedFromWindow()
     }
 
-    /** Filler resolves to the nearest key. Optional vertical no-touch bands are rejected before learned aim. */
-    private fun keyAt(x: Float, y: Float): Key? {
+    /**
+     * Filler resolves to the nearest key. Optional vertical no-touch bands are rejected before learned aim, for
+     * touches only ([gaps]): TalkBack's explore by touch reads the nearest key everywhere, bands included.
+     */
+    private fun keyAt(x: Float, y: Float, gaps: Boolean = inactiveGaps): Key? {
         if (bounds.isEmpty()) return null
         // Rows can differ in height (a shorter number row), so find the row by its bounds.
         val row = bounds.indexOfFirst { cells -> cells.isNotEmpty() && y < cells[0].bottom }.let { if (it < 0) bounds.lastIndex else it }
-        if (inactiveGaps && bounds[row].firstOrNull()?.let {
+        if (gaps && bounds[row].firstOrNull()?.let {
                 InactiveGaps.accepts(y, it.top, it.bottom, gapY / 2)
             } != true) return null
         return layout.rows[row].withIndex()
@@ -979,7 +982,7 @@ class KeyboardView(context: Context) : View(context) {
     /** Exposes each key as a virtual view so TalkBack can explore and type. */
     private inner class KeyAccessibilityHelper : ExploreByTouchHelper(this) {
         override fun getVirtualViewAt(x: Float, y: Float): Int {
-            val key = keyAt(x, y) ?: return INVALID_ID
+            val key = keyAt(x, y, gaps = false) ?: return INVALID_ID
             return flatKeys().indexOfFirst { it.first === key }.takeIf { it >= 0 } ?: INVALID_ID
         }
 

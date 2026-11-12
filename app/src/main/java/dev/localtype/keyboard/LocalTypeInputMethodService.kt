@@ -368,6 +368,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private var contactsQuery = ""
     /** Private for now: this field learns and logs nothing until a new field starts. A restart of it keeps that. */
     private var privateNow = false
+    /** The identity of the field Private for now was turned on in, so hiding the keyboard there does not end it. */
+    private var privateField: String? = null
     /** Read aloud's speech engine, started on its first use and kept for the service. */
     private var speech: android.speech.tts.TextToSpeech? = null
     private var speechReady = false
@@ -1042,8 +1044,9 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         fieldWantsSuggestions = TypingRules.wantsSuggestions(inputType)
         fieldAllowsAutocorrect = TypingRules.allowsAutocorrect(inputType, KeyboardSettings.webAutocorrect(this))
         learningAllowed = TypingRules.allowsLearning(info.imeOptions, inputType)
-        // Private for now lasts for the field: a new one clears it, the same one restarting keeps it.
-        if (!restarting) privateNow = false
+        // Private for now lasts for the field: another field clears it; the same one restarting, or the keyboard
+        // hiding and coming back to it, keeps it.
+        if (privateNow && !TypingRules.staysPrivate(restarting, identity, privateField)) { privateNow = false; privateField = null }
         if (privateNow) learningAllowed = false
         resetNeuralSession()
         addressBar = TypingRules.predictsInAddressBar(inputType)
@@ -2641,6 +2644,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private fun privateForNow() {
         if (privateNow) return showGestureNotice(getString(R.string.tool_private_already))
         privateNow = true
+        privateField = fieldIdentity
         learningAllowed = false
         personalLearning.reset(PersonalContextTrace.ResetReason.FIELD)
         personalWordOwned = false
@@ -2680,6 +2684,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         KeyboardPanel.EMOJI -> {
             val emoji = emojiPanel ?: EmojiPanel(
                 this, emojiPopup, emojiTones, ::insertPanelEmoji,
+                remembersTone = { learningAllowed },
                 onSearch = ::startEmojiSearch,
                 onSearchDone = ::endEmojiSearch,
             ).also { emojiPanel = it }

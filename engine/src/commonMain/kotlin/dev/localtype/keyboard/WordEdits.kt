@@ -54,6 +54,9 @@ object WordEdits {
             return Replacement(1, 0, value)
         }
         if (value[0] in "\"”" && before.length > 1 && before[before.length - 2].isLetter()) {
+            // A straight mark closes a quotation only when one is open on this line. Otherwise it opens one, and
+            // the space stays where it is: He said "hello", not He said" hello.
+            if (value[0] == '"' && before.substringAfterLast('\n').count { it == '"' } % 2 == 0) return null
             return Replacement(1, 0, "$value ", autoSpaced = true)
         }
         if (value == ".") return Replacement(1, 0, ".")

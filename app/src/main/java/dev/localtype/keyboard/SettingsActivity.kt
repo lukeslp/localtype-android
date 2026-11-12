@@ -1850,13 +1850,21 @@ class SettingsActivity : Activity() {
         }
         savedClear = button(getString(R.string.saved_text_clear), primary = false).apply {
             setOnClickListener {
-                // The keyboard shares this list, so an open Saved text panel empties too.
-                SavedTextStore.open(this@SettingsActivity) { texts ->
-                    texts.clear()
-                    if (isDestroyed) return@open
-                    refreshSavedSummary()
-                    Toast.makeText(this@SettingsActivity, R.string.saved_text_cleared, Toast.LENGTH_SHORT).show()
-                }
+                // Removing one asks first, and this removes them all with no way back, so it asks too.
+                android.app.AlertDialog.Builder(this@SettingsActivity)
+                    .setTitle(R.string.saved_text_clear_confirm_title)
+                    .setMessage(R.string.saved_text_clear_confirm_body)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(R.string.saved_text_clear_confirm_action) { _, _ ->
+                        // The keyboard shares this list, so an open Saved text panel empties too.
+                        SavedTextStore.open(this@SettingsActivity) { texts ->
+                            texts.clear()
+                            if (isDestroyed) return@open
+                            refreshSavedSummary()
+                            Toast.makeText(this@SettingsActivity, R.string.saved_text_cleared, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    .show()
             }
         }
         parent.addView(savedClear, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(8) })
