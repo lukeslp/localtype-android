@@ -53,6 +53,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private var touchOffsets = TouchOffsets()
     private lateinit var foundationModel: FoundationModelProvider
     @Volatile private var dictionary = WordDictionary.EMPTY
+    /** For [NeuralRanking]: one of the language's commonest words, whose place in the personal slot needs Chime's backing. */
+    private val commonWord: (String) -> Boolean = { dictionary.score(it) >= NeuralRanking.COMMON_SCORE }
     private var sharedVocabulary = CurrentVocabulary.EMPTY
     private var fieldVocabulary = CurrentVocabulary.EMPTY
     /**
@@ -4087,6 +4089,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
                     added = localModel.addedWords(prefix).filter { !it.equals(correction, ignoreCase = true) },
                     shared = shared.filter { !it.equals(correction, ignoreCase = true) },
                     followers = followers.filter { !it.word.equals(correction, ignoreCase = true) }, language = language,
+                    common = commonWord,
                 )
             } else null
             val others = (neuralChoices?.map { it.word } ?: ranked.filter {
@@ -4109,7 +4112,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             val hasEmoji = expansionFor(context, prefix) != null ||
                 (emojiEnabled && !addressBar && emojiSuggestions.match(context, prefix, limit = EMOJI_VARIANTS) != null)
             NeuralRanking.rankWithSources(neural.orEmpty(), ranked, learned, prefix, blocked, if (hasEmoji) 2 else CANDIDATE_COUNT,
-                added = localModel.addedWords(prefix), shared = shared, followers = followers, language = language)
+                added = localModel.addedWords(prefix), shared = shared, followers = followers, language = language,
+                common = commonWord)
         } else null
         val merged = neuralChoices?.map { it.word } ?: mergeCandidates(cached, ranked, CANDIDATE_COUNT + 3)
         if (merged.isEmpty() && prefix.isNotEmpty() && mode == KeyboardLayout.Mode.LETTERS) {

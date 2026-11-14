@@ -340,7 +340,6 @@ abençoem
 abençoes
 abençoo
 abençoou
-abençôe
 abençôo
 abençõe
 aber
@@ -4457,13 +4456,11 @@ alguã
 algué
 alguém
 alguéns
-alguêm
 algy
 algébrica
 algém
 algéria
 algúem
-algúm
 alhada
 alhambra
 alheia
@@ -5164,7 +5161,6 @@ alérgicas
 alérgico
 alérgicos
 alê
-alêm
 alí
 alícia
 alípio
@@ -5420,7 +5416,6 @@ amava
 amavam
 amavas
 amavelmente
-amavél
 amaya
 amazed
 amazing
@@ -5914,10 +5909,8 @@ américas
 américo
 amêijoa
 amêijoas
-amêm
 amêndoa
 amêndoas
-amêrica
 amídala
 amídalas
 amígdala
@@ -7053,7 +7046,6 @@ anãozinho
 anãs
 anãzinha
 anéis
-anél
 anêmica
 anêmico
 anêmona
@@ -10518,7 +10510,6 @@ atenuar
 atenuação
 atenã
 atençao
-atençâo
 atenção
 atenções
 ateou
@@ -11499,7 +11490,6 @@ autografasse
 autografe
 autografei
 autografou
-autográfo
 autoimagem
 autoimune
 automail
@@ -12181,7 +12171,6 @@ aéreas
 aéreo
 aéreos
 aê
-aêrea
 aí
 aída
 aíi
@@ -13773,7 +13762,6 @@ bateristas
 batermos
 baterá
 baterão
-batería
 bates
 bateson
 batesse
@@ -14160,7 +14148,6 @@ bebop
 bebum
 bebuns
 beby
-bebâdo
 bebé
 bebés
 bebê
@@ -19174,7 +19161,6 @@ bêbe
 bêbeda
 bêbedo
 bêbedos
-bêbes
 bêbê
 bênção
 bênçãos
@@ -19210,11 +19196,8 @@ bósnios
 bóson
 bósons
 bótons
-bôbo
-bôca
 bôer
 bôeres
-bôlo
 bônus
 bú
 búfala
@@ -20262,10 +20245,8 @@ camundongos
 camurate
 camurça
 camus
-camâra
 camélia
 camélias
-camêra
 camêras
 camões
 can
@@ -20728,7 +20709,6 @@ capitulou
 capitán
 capitânea
 capitânia
-capitâo
 capitã
 capitães
 capitão
@@ -22286,9 +22266,7 @@ caídas
 caído
 caídos
 caímos
-caíndo
 caíque
-caír
 caíra
 caíram
 caírem
@@ -22549,7 +22527,6 @@ cemil
 cemile
 cemitério
 cemitérios
-cemitêrio
 cempaka
 cena
 cenas
@@ -22818,7 +22795,6 @@ cerzir
 cerâmica
 cerâmicas
 cerâmico
-cerébro
 cerúleo
 ces
 cesar
@@ -23245,7 +23221,6 @@ chapéis
 chapéu
 chapéus
 chapéuzinho
-chapêu
 char
 character
 charada
@@ -24537,13 +24512,11 @@ chyler
 chyna
 chá
 chácara
-chápeu
 chás
 chávena
 chávenas
 chávez
 châlons
-châo
 château
 châtelet
 chã
@@ -25000,7 +24973,6 @@ civilização
 civilizações
 civis
 civismo
-civíl
 civís
 ciática
 ciático
@@ -26352,7 +26324,6 @@ colã
 colégio
 colégios
 colérico
-colêgio
 colírio
 colírios
 colón
@@ -26804,7 +26775,6 @@ companheiro
 companheiros
 companhia
 companhias
-companhía
 compania
 companias
 companion
@@ -28140,9 +28110,6 @@ confuso
 confusos
 confusão
 confusões
-confía
-confíe
-confío
 confúcio
 cong
 conga
@@ -28455,7 +28422,6 @@ conseguistes
 conseguiu
 conseguí
 conseguíamos
-conseguímos
 conseguíssemos
 conselheira
 conselheiras
@@ -28804,7 +28770,6 @@ construídas
 construído
 construídos
 construímos
-construíndo
 construíram
 construírem
 construísse
@@ -29911,7 +29876,6 @@ corazon
 corazón
 coraã
 coraçao
-coraçâo
 coração
 coraçãozinho
 corações
@@ -30849,7 +30813,6 @@ coçava
 coçe
 coço
 coçou
-coísa
 cp
 cpa
 cpap
@@ -31726,16 +31689,13 @@ créditos
 crédula
 crédulo
 crédulos
-créme
 créu
 crê
-crêdito
 crêem
 crêpes
 crêr
 crês
 crêspo
-crímes
 críquete
 crítica
 críticas
@@ -32559,9 +32519,6 @@ cãibras
 cãimbra
 cãimbras
 cãmara
-cãmera
-cãmeras
-cãncer
 cão
 cãozinho
 cécile
@@ -32606,10 +32563,7 @@ cêntimo
 cêntimos
 cêra
 cêrco
-cêrebro
 cês
-cêsar
-cêu
 cêus
 cícero
 cíclica
@@ -32632,7 +32586,6 @@ cítrica
 cítricas
 cítrico
 cítricos
-cíumes
 cíveis
 cível
 cívica
@@ -32655,7 +32608,6 @@ cólicas
 cólon
 cólquida
 cómico
-cómo
 cómoda
 cónego
 cópia
@@ -33423,7 +33375,6 @@ davos
 davros
 davus
 davy
-davíd
 daw
 dawa
 dawai
@@ -37802,7 +37753,6 @@ destruído
 destruídos
 destruímos
 destruíndo
-destruír
 destruíra
 destruíram
 destruírem
@@ -37810,7 +37760,6 @@ destruísse
 destruíssem
 destruíssemos
 destruíste
-destruíu
 destry
 destróem
 destrói
@@ -38341,9 +38290,7 @@ devry
 devu
 devyani
 devyn
-devéssemos
 devêssemos
-devía
 devíamos
 devíeis
 dew
@@ -38689,7 +38636,6 @@ difíceis
 difícieis
 difícies
 difícil
-difícilmente
 difícl
 difíicil
 difíícil
@@ -39200,7 +39146,6 @@ dirty
 dirá
 dirás
 dirão
-diría
 diríamos
 dis
 disa
@@ -41897,7 +41842,6 @@ dyson
 dyxtendent
 dzi
 dziga
-dà
 dá
 dádiva
 dádivas
@@ -41911,8 +41855,6 @@ dániel
 dário
 dás
 dávamos
-dávid
-dâ
 dâmocles
 dândi
 dã
@@ -41945,7 +41887,6 @@ déja
 déjame
 déjà
 déjá
-déle
 délhi
 déli
 délia
@@ -41957,24 +41898,20 @@ dê
 dêem
 dêle
 dêm
-dêmonio
 dês
 día
 díade
 días
 díaz
 díficil
-díga
 dígito
 dígitos
 dínamo
 dínamos
 díspares
-dísse
 dístico
 dívida
 dívidas
-dízer
 dízimo
 dízimos
 dó
@@ -41988,9 +41925,7 @@ dónde
 dórica
 dóris
 dô
-dôlares
 dôo
-dôr
 dúbia
 dúbio
 dúnedain
@@ -42212,7 +42147,6 @@ económica
 económicas
 económico
 económicos
-econômia
 econômica
 econômicas
 econômico
@@ -43898,7 +43832,6 @@ empresário
 empresários
 empréstimo
 empréstimos
-emprêstimo
 empson
 empton
 empty
@@ -44621,7 +44554,6 @@ energética
 energéticas
 energético
 energéticos
-energía
 energúmeno
 enerva
 enervado
@@ -45824,8 +45756,6 @@ entusiástica
 entusiástico
 entwhistle
 entwistle
-entào
-entâo
 entã
 então
 enuka
@@ -47058,7 +46988,6 @@ escriturário
 escriturários
 escritório
 escritórios
-escritôrio
 escrivaninha
 escrivaninhas
 escrivã
@@ -48020,7 +47949,6 @@ espécime
 espécimes
 espéculo
 espéria
-espêcie
 espírita
 espíritas
 espírito
@@ -48028,7 +47956,6 @@ espíritos
 espólio
 espólios
 espósito
-espôsa
 esq
 esquadra
 esquadras
@@ -48685,7 +48612,6 @@ estivessemos
 estivesses
 estiveste
 estivestes
-estivémos
 estivéssemos
 esto
 estoca
@@ -48857,7 +48783,6 @@ estratégicamente
 estratégicas
 estratégico
 estratégicos
-estratêgia
 estravagante
 estraçalha
 estraçalhada
@@ -49088,7 +49013,6 @@ estuários
 estva
 està
 estàs
-estàvamos
 está
 estábulo
 estábulos
@@ -49109,7 +49033,6 @@ estático
 estáticos
 estátua
 estátuas
-estáva
 estávam
 estávamos
 estáveis
@@ -49117,7 +49040,6 @@ estável
 estâ
 estância
 estâncias
-estâo
 estã
 estão
 estãos
@@ -49131,7 +49053,6 @@ estético
 estéticos
 estévez
 estêncil
-estêve
 estêvão
 estímulo
 estímulos
@@ -49763,7 +49684,6 @@ excelsior
 excelsis
 excelência
 excelências
-excelênte
 excentricidade
 excentricidades
 excepcionais
@@ -50669,7 +50589,6 @@ exécito
 exéquias
 exército
 exércitos
-exêrcito
 exílio
 exímia
 exímio
@@ -51507,7 +51426,6 @@ fará
 farás
 farão
 farça
-faría
 faríamos
 faróis
 fasceíte
@@ -51740,7 +51658,6 @@ fazias
 fazil
 fazio
 fazê
-fazêr
 fazíamos
 faã
 faça
@@ -52802,7 +52719,6 @@ filosofar
 filosofia
 filosofias
 filosoficamente
-filosofía
 filosófica
 filosóficas
 filosófico
@@ -53269,7 +53185,6 @@ fizeste
 fizestes
 fizz
 fizzy
-fizémos
 fizéssemos
 fiáveis
 fiável
@@ -53731,7 +53646,6 @@ flâmulas
 flã
 flórida
 flô
-flôr
 flôres
 flúor
 fm
@@ -53969,7 +53883,6 @@ follows
 folly
 folsom
 foltrigg
-folêgo
 folículo
 folículos
 fom
@@ -54404,7 +54317,6 @@ fossilizados
 fossilização
 fosso
 fossos
-fossêmos
 fost
 foste
 foster
@@ -54438,14 +54350,12 @@ fotografia
 fotografias
 fotografo
 fotografou
-fotografía
 fotograma
 fotogramas
 fotográfica
 fotográficas
 fotográfico
 fotográficos
-fotográfo
 fotogênica
 fotogênico
 fotojornalista
@@ -55260,11 +55170,9 @@ frédérick
 frédérique
 frére
 frésias
-fría
 frígida
 frígidas
 frígido
-frío
 frívola
 frívolas
 frívolo
@@ -55814,7 +55722,6 @@ fuçando
 fuçar
 fuças
 fuçou
-fuí
 fv
 fve
 fw
@@ -55826,7 +55733,6 @@ fyi
 fylingdales
 fynch
 fyodor
-fàcil
 fá
 fábio
 fábrica
@@ -55870,7 +55776,6 @@ fêmeas
 fêmur
 fêmures
 fênix
-fêrias
 fêz
 fíbula
 fícus
@@ -55885,7 +55790,6 @@ físicos
 físsil
 fístula
 fístulas
-fóda
 fólico
 fólio
 fórceps
@@ -55898,11 +55802,9 @@ fóruns
 fósforo
 fósforos
 fósseis
-fóssemos
 fóssil
 fóton
 fótons
-fôda
 fôlego
 fôr
 fôra
@@ -60256,7 +60158,6 @@ gévaudan
 gê
 gêiser
 gêiseres
-gêlo
 gêmea
 gêmeas
 gêmeo
@@ -61373,7 +61274,6 @@ havoc
 havok
 havre
 havva
-havía
 havíamos
 haw
 hawahawai
@@ -62713,7 +62613,6 @@ históricas
 histórico
 históricos
 histórinha
-histôria
 hit
 hitch
 hitchcock
@@ -63956,10 +63855,8 @@ hádrons
 hálito
 hárpias
 hás
-hâ
 hã
 hãm
-hãn
 hão
 hé
 hébridas
@@ -64283,8 +64180,6 @@ idéa
 idéia
 idéiafix
 idéias
-idêia
-idêias
 idêntica
 idênticas
 idêntico
@@ -64712,7 +64607,6 @@ imbrie
 imbuída
 imbuído
 imbuídos
-imbécil
 imc
 imdb
 ime
@@ -66180,7 +66074,6 @@ indício
 indícios
 indígena
 indígenas
-indíviduo
 indômita
 indústria
 indústrias
@@ -66614,7 +66507,6 @@ inglewood
 inglés
 inglês
 inglêsa
-inglêses
 ingmar
 ingo
 ingolstadt
@@ -68473,7 +68365,6 @@ irlandesa
 irlandesas
 irlandeses
 irlandês
-irlândes
 irm
 irmandade
 irmandades
@@ -68481,7 +68372,6 @@ irmaozão
 irmgard
 irmos
 irmâ
-irmâo
 irmã
 irmão
 irmãos
@@ -68649,7 +68539,6 @@ irás
 irã
 irão
 iré
-iría
 iríamos
 irídio
 irónico
@@ -69017,9 +68906,7 @@ izzi
 izzie
 izzy
 iá
-iâ
 iâmbico
-iã
 iça
 içada
 içadas
@@ -69416,7 +69303,6 @@ japoneses
 japonesinha
 japonica
 japonês
-japonêses
 japp
 japão
 jaq
@@ -69783,7 +69669,6 @@ jerrys
 jersei
 jersey
 jerusalém
-jerusalêm
 jerusha
 jervis
 jeryline
@@ -70913,7 +70798,6 @@ juwanna
 jux
 juz
 juzo
-juán
 juárez
 juça
 juíz
@@ -70941,10 +70825,7 @@ jyuu
 jà
 já
 jános
-jásper
-jâ
 jânio
-jã
 jão
 jé
 jéfão
@@ -70955,7 +70836,6 @@ jérsia
 jérémie
 jérémy
 jérôme
-jéss
 jéssica
 jó
 jóhann
@@ -73844,7 +73724,6 @@ laboratório
 laboratórios
 laborde
 laboriosa
-laborátorio
 labradoodle
 labrador
 labradores
@@ -76910,7 +76789,6 @@ lizi
 lizzi
 lizzie
 lizzy
-liçao
 liçenca
 lição
 liçãozinha
@@ -78241,7 +78119,6 @@ lyz
 lz
 lzna
 lzzy
-là
 lá
 lábia
 lábio
@@ -78264,7 +78141,6 @@ látex
 lático
 láudano
 lázaro
-lâ
 lâmina
 lâminas
 lâmpada
@@ -78288,7 +78164,6 @@ léna
 lénsce
 léo
 léon
-léonard
 léopold
 lépido
 lésbica
@@ -78321,7 +78196,6 @@ lídia
 lígia
 lílian
 límbico
-límites
 límpida
 límpido
 límpidos
@@ -78874,7 +78748,6 @@ magnificent
 magnificente
 magnificência
 magnifique
-magnifíco
 magnitude
 magno
 magnolia
@@ -79062,7 +78935,6 @@ maiores
 maioria
 maiorias
 maioridade
-maioría
 mair
 mairaleao
 maire
@@ -79246,7 +79118,6 @@ maldivas
 maldizem
 maldizendo
 maldizer
-maldiçao
 maldição
 maldições
 maldon
@@ -79537,7 +79408,6 @@ mamária
 mamárias
 mamário
 mamários
-mamâe
 mamã
 mamãe
 mamães
@@ -81253,7 +81123,6 @@ matarmos
 matará
 matarás
 matarão
-mataría
 mataríamos
 matas
 matasse
@@ -81482,7 +81351,6 @@ matássemos
 matávamos
 matéria
 matérias
-matêria
 matías
 mau
 mauazera
@@ -82627,7 +82495,6 @@ memsahib
 memso
 memória
 memórias
-memôria
 men
 mena
 menace
@@ -84167,7 +84034,6 @@ ministros
 ministrou
 ministério
 ministérios
-ministêrio
 minivan
 minivans
 miniver
@@ -84246,7 +84112,6 @@ minx
 minya
 minério
 minérios
-miníma
 minímo
 minóico
 minúcia
@@ -86955,7 +86820,6 @@ muçulmana
 muçulmanas
 muçulmano
 muçulmanos
-muíto
 mv
 mva
 mvp
@@ -87032,7 +86896,6 @@ mácula
 máculas
 máfia
 máfias
-mágia
 mágica
 mágicas
 mágico
@@ -87040,14 +86903,12 @@ mágicos
 mágoa
 mágoas
 máiquel
-máis
 málaga
 máquina
 máquinas
 márcia
 márcio
 mário
-márk
 mármore
 mármores
 márquez
@@ -87067,18 +86928,13 @@ máxima
 máximas
 máximo
 máximos
-mâe
 mâle
 mântua
-mâo
-mâos
 mã
 mãe
 mães
 mãezinha
 mãezona
-mãmae
-mãmãe
 mão
 mãos
 mãozinha
@@ -87115,15 +86971,10 @@ métrico
 méxico
 mézeray
 mê
-mêdia
-mêdica
-mêdico
-mêdicos
 mêdo
 même
 mês
 mêses
-mêxico
 mí
 mía
 míchkin
@@ -87133,13 +86984,11 @@ mícrons
 mídia
 mídian
 mídias
-mím
 mímica
 mímicas
 mímico
 mímicos
 míngua
-mínha
 míni
 mínima
 mínimas
@@ -87185,8 +87034,6 @@ mô
 môn
 mônaco
 mônica
-môça
-môças
 mú
 múltipla
 múltiplas
@@ -88388,8 +88235,6 @@ negã
 negão
 negócio
 negócios
-negôcio
-negôcios
 negões
 neh
 neha
@@ -89085,7 +88930,6 @@ ninguã
 ningué
 ninguém
 ninguéns
-ninguêm
 ningém
 ningúem
 ninha
@@ -89668,7 +89512,6 @@ noticias
 noticiou
 noticiário
 noticiários
-noticías
 notifica
 notificada
 notificadas
@@ -89950,7 +89793,6 @@ numérica
 numéricas
 numérico
 numéricos
-numéro
 nun
 nuna
 nunavut
@@ -90115,8 +89957,6 @@ né
 nébula
 nécessaire
 néctar
-négocio
-négocios
 ném
 némesis
 néon
@@ -90160,7 +90000,6 @@ nórdicos
 nós
 nômade
 nômades
-nôs
 nõ
 nõs
 nú
@@ -90176,7 +90015,6 @@ núria
 nús
 núsica
 núvem
-núvens
 o
 oa
 oab
@@ -90366,7 +90204,6 @@ obrigue
 obriguei
 obriguem
 obrigues
-obrígado
 obs
 obscena
 obscenamente
@@ -90560,7 +90397,6 @@ oceânica
 oceânicas
 oceânico
 oceânicos
-oceâno
 och
 ochaco
 ocher
@@ -92500,7 +92336,6 @@ ouvistes
 ouviu
 ouví
 ouvíamos
-ouvír
 ouvíssemos
 ouyang
 ouzo
@@ -92721,7 +92556,6 @@ pacifista
 pacifistas
 pacino
 paciência
-paciênte
 pack
 package
 packard
@@ -93708,7 +93542,6 @@ parecida
 parecidas
 parecido
 parecidos
-parecía
 parecíamos
 parede
 paredes
@@ -94185,7 +94018,6 @@ passporte
 password
 passy
 passámos
-passáro
 passáros
 passássemos
 passávamos
@@ -94428,7 +94260,6 @@ patrulheiro
 patrulheiros
 patrulhem
 patrulho
-patrâo
 patrão
 patrãozinho
 patrícia
@@ -94459,7 +94290,6 @@ patético
 patéticos
 patê
 patês
-patêtico
 patíbulo
 patógeno
 patógenos
@@ -95637,9 +95467,7 @@ perdêssemos
 perdí
 perdíamos
 perdón
-perdôe
 perdôo
-perdõe
 perdões
 pere
 pereba
@@ -96270,8 +96098,6 @@ pesadelos
 pesado
 pesados
 pesadão
-pesadêlo
-pesadêlos
 pesagem
 pesam
 pesamos
@@ -97970,7 +97796,6 @@ poderá
 poderás
 poderã
 poderão
-podería
 poderíam
 poderíamos
 poderíeis
@@ -97997,7 +97822,6 @@ podridão
 podría
 pods
 podéssemos
-podía
 podíamos
 podíeis
 podólogo
@@ -98256,7 +98080,6 @@ polícia
 políciais
 polícial
 polícias
-polícía
 polígamo
 polígamos
 polígono
@@ -98512,7 +98335,6 @@ popô
 poque
 poquinho
 poquito
-poquêr
 por
 pora
 porca
@@ -98961,7 +98783,6 @@ potus
 potássio
 potável
 potência
-potêncial
 potências
 pou
 poubelle
@@ -99499,7 +99320,6 @@ preferirem
 preferiria
 prefeririam
 preferirá
-preferiría
 preferiríamos
 preferisse
 preferissem
@@ -100345,7 +100165,6 @@ prisoner
 priss
 prissy
 pristina
-prisâo
 prisã
 prisão
 prisões
@@ -101521,7 +101340,6 @@ práticar
 práticas
 prático
 práticos
-prã
 pré
 prédio
 prédios
@@ -101533,7 +101351,6 @@ prévia
 prévias
 prévio
 prévios
-prêdio
 prêmio
 prêmios
 príamo
@@ -101577,10 +101394,6 @@ próximas
 próximo
 próximos
 prô
-prôpria
-prôprio
-prôxima
-prôximo
 prússia
 prússico
 ps
@@ -101799,7 +101612,6 @@ pudores
 pudovkin
 pudésseis
 pudéssemos
-pudêssemos
 pue
 puebla
 pueblo
@@ -102247,7 +102059,6 @@ python
 pythons
 pyung
 pyxis
-pàra
 pá
 pádua
 pág
@@ -102264,17 +102075,14 @@ pálpebras
 páprica
 pára
 páraquedas
-páre
 párea
 páreas
-párem
 páreo
 páreos
 pária
 párias
 páris
 pármeno
-páro
 pároco
 párocos
 pás
@@ -102294,7 +102102,6 @@ pâncreas
 pânico
 pântano
 pântanos
-pâo
 pâquerette
 pâté
 pã
@@ -102307,7 +102114,6 @@ pégaso
 pégasus
 pélias
 pélissier
-pélo
 pélvica
 pélvico
 pélvicos
@@ -102355,8 +102161,6 @@ pês
 pêsames
 pêssego
 pêssegos
-pêssima
-pêssimo
 pía
 pícaros
 píer
@@ -102401,8 +102205,6 @@ pônei
 pôneis
 pôquer
 pôr
-pôrno
-pôrra
 pôs
 pôster
 pôsteres
@@ -102411,7 +102213,6 @@ pôxa
 põe
 põem
 pões
-põr
 púbica
 púbico
 púbicos
@@ -102870,7 +102671,6 @@ querosene
 querra
 querubim
 querubins
-quería
 queríamos
 ques
 quesada
@@ -102918,7 +102718,6 @@ questionável
 questo
 questor
 quests
-questâo
 questão
 questões
 queta
@@ -104310,7 +104109,6 @@ razzaq
 razzel
 razzle
 razzmatazz
-razâo
 razã
 razão
 razón
@@ -104320,7 +104118,6 @@ raças
 ração
 rações
 raí
-raínha
 raíz
 raízes
 raúl
@@ -105954,7 +105751,6 @@ refutação
 refutou
 refém
 reféns
-refêm
 refêns
 refúgio
 refúgios
@@ -106726,7 +106522,6 @@ remy
 remzi
 remédio
 remédios
-remêdio
 ren
 rena
 renae
@@ -108656,7 +108451,6 @@ revolución
 revolucão
 revolution
 revolutionsms
-revoluçâo
 revolução
 revoluções
 revolve
@@ -110745,7 +110539,6 @@ ruídos
 ruím
 ruína
 ruínas
-ruíns
 ruíram
 rv
 rwanda
@@ -110817,7 +110610,6 @@ ryuuku
 ryuuzaki
 ryuzaki
 ryuzo
-ràpido
 rá
 rábano
 rábula
@@ -110827,10 +110619,8 @@ rádios
 rápida
 rápidamente
 rápidas
-rápidinho
 rápido
 rápidos
-râpido
 rã
 rão
 rãs
@@ -111057,7 +110847,6 @@ sabádo
 sabática
 sabático
 sabão
-sabía
 sabíamos
 sabíeis
 sabões
@@ -112477,7 +112266,6 @@ satânicos
 satã
 satélite
 satélites
-satêlite
 satírica
 satírico
 satúrnia
@@ -112654,7 +112442,6 @@ saído
 saídos
 saímos
 saíndo
-saír
 saíra
 saíram
 saírem
@@ -112669,7 +112456,6 @@ saíste
 saíu
 saúda
 saúdam
-saúdavel
 saúde
 saúdem
 saúdo
@@ -113355,7 +113141,6 @@ segregar
 segregação
 segrego
 segreto
-segrêdo
 segs
 segu
 segue
@@ -113771,7 +113556,6 @@ senhoritas
 senhorito
 senhorr
 senhorzinho
-senhoría
 senil
 senilidade
 senior
@@ -113940,14 +113724,12 @@ sentox
 sentássemos
 sentávamos
 sentí
-sentía
 sentíamos
 sentíssemos
 senzaki
 senzala
 senzu
 senzus
-senâo
 senão
 senén
 senõr
@@ -114419,7 +114201,6 @@ seymour
 seyyit
 seção
 seções
-seí
 seúl
 sf
 sforza
@@ -116168,7 +115949,6 @@ situar
 situation
 situava
 situaçao
-situaçâo
 situação
 situações
 situção
@@ -119557,7 +119337,6 @@ suficiente
 suficientemente
 suficientes
 suficiência
-suficiênte
 sufiente
 sufis
 sufixo
@@ -119590,7 +119369,6 @@ sufragista
 sufragistas
 sufrágio
 sufuciente
-sufíciente
 sug
 suga
 sugada
@@ -120412,7 +120190,6 @@ surpreso
 surpresos
 surprise
 surprised
-surprêsa
 surra
 surrada
 surradas
@@ -120731,7 +120508,6 @@ suéter
 suéteres
 suéters
 suícida
-suícidio
 suína
 suíno
 suínos
@@ -120995,7 +120771,6 @@ sátiros
 sátur
 sáude
 sávio
-sân
 sândalo
 sânscrito
 sâo
@@ -121041,7 +120816,6 @@ séverin
 séverine
 sê
 sêca
-sêculo
 sêde
 sêder
 sêmem
@@ -121051,8 +120825,6 @@ sêneca
 sênior
 sêniores
 sêniors
-sêrie
-sêrio
 sí
 sífilis
 sílaba
@@ -121062,7 +120834,6 @@ sílica
 sílio
 sílvia
 sílvio
-sím
 símbolo
 símbolos
 símia
@@ -121110,7 +120881,6 @@ sólida
 sólidas
 sólido
 sólidos
-sólo
 sólon
 sómente
 sónia
@@ -121577,7 +121347,6 @@ talve
 talves
 talvez
 talvés
-talvéz
 talvêz
 talwar
 talya
@@ -122314,7 +122083,6 @@ tecnodromo
 tecnologia
 tecnologias
 tecnologicamente
-tecnología
 tecnológica
 tecnológicas
 tecnológico
@@ -122941,7 +122709,6 @@ teorizam
 teorizando
 teorizar
 teorizou
-teoría
 teosófica
 teotihuacan
 teotihuacán
@@ -124231,11 +123998,8 @@ tivestes
 tivkom
 tivo
 tivoli
-tivémos
-tivésse
 tivésseis
 tivéssemos
-tivêssemos
 tivô
 tiwari
 tix
@@ -125432,7 +125196,6 @@ traguei
 traguinho
 tragédia
 tragédias
-tragêdia
 trahern
 trai
 traia
@@ -126181,17 +125944,14 @@ traíam
 traída
 traídas
 traído
-traídor
 traídos
 traímos
-traíndo
 traíra
 traíram
 traíras
 traírem
 traísse
 traíste
-traíu
 tre
 treacy
 tread
@@ -126770,7 +126530,6 @@ troels
 troféis
 troféu
 troféus
-trofêu
 trog
 troglitas
 troglodita
@@ -127713,7 +127472,6 @@ tânia
 tântalo
 tântrica
 tântrico
-tâo
 tã
 tão
 té
@@ -127740,7 +127498,6 @@ térreo
 tétano
 tétis
 tê
-têcnico
 têem
 têm
 têmis
@@ -127751,14 +127508,12 @@ tênia
 tênis
 tênue
 tênues
-têr
 tês
 têtas
 tête
 têxteis
 têxtil
 tí
-tía
 tíbia
 tíbias
 tília
@@ -127770,10 +127525,7 @@ tímpano
 tímpanos
 tíndaro
 tíner
-tínha
-tínham
 tínhamos
-tío
 típica
 típicas
 típico
@@ -127782,8 +127534,6 @@ tíquete
 tíquetes
 título
 títulos
-tívemos
-tívessemos
 tó
 tókio
 tónica
@@ -128682,7 +128432,6 @@ uzumoreta
 uzuuzu
 uzwil
 uá
-uáu
 ué
 uê
 uísque
@@ -129462,7 +129211,6 @@ vazo
 vazou
 vazquez
 vazão
-vaí
 vc
 vci
 vcoê
@@ -131307,7 +131055,6 @@ vivst
 vivência
 vivêssemos
 viví
-vivía
 vivíamos
 vix
 vixe
@@ -131333,7 +131080,6 @@ viário
 viáveis
 viável
 viço
-viémos
 viés
 viéssemos
 viúva
@@ -131769,7 +131515,6 @@ voçês
 voê
 voês
 voô
-voôu
 vp
 vpn
 vps
@@ -131849,10 +131594,8 @@ vyse
 vytas
 vyxsin
 vzor
-và
 vá
 vácuo
-vái
 válida
 válidas
 válido
@@ -131868,11 +131611,9 @@ vários
 vás
 vásquez
 vázquez
-vâ
 vândalo
 vândalos
 vânia
-vâo
 vã
 vão
 vãos
@@ -131885,7 +131626,6 @@ véio
 vém
 vénia
 vénus
-véra
 véro
 véronique
 vértebra
@@ -131898,16 +131638,13 @@ véu
 véus
 vê
 vêem
-vêja
 vêm
 vênia
 vênus
-vêr
 vês
 vêz
 vêzes
 ví
-vía
 víamos
 víbora
 víboras
@@ -133564,7 +133301,6 @@ wyrley
 wyrm
 wyse
 wysocki
-wé
 xa
 xabi
 xadrez
@@ -135292,7 +135028,6 @@ zôo
 águas
 águia
 águias
-ái
 ájax
 álamo
 álamos
@@ -135321,8 +135056,6 @@ zôo
 ánimas
 ápice
 áquela
-áquele
-áqueles
 áquila
 árabe
 árabes
@@ -135376,7 +135109,6 @@ zôo
 ávidos
 ávila
 ázimo
-âgua
 âmago
 âmbar
 âmbito
@@ -135396,9 +135128,6 @@ zôo
 ânsia
 ânsias
 ânus
-ârea
-âs
-ãh
 ãhn
 ãnh
 ão
@@ -135458,7 +135187,6 @@ zôo
 ésquilo
 éssa
 ésta
-éste
 éster
 éstá
 était
@@ -135483,10 +135211,7 @@ zôo
 ênfase
 ênio
 êpa
-êpoca
-êramos
 êrro
-ês
 êsse
 êstase
 êste
@@ -135525,7 +135250,6 @@ zôo
 ímãs
 íncrivel
 índia
-índiana
 índiano
 índianos
 índias
@@ -135555,7 +135279,6 @@ zôo
 íon
 íons
 íria
-íriamos
 íris
 ísis
 ísso
@@ -135568,7 +135291,6 @@ zôo
 óbitos
 óbolo
 óbvia
-óbviamente
 óbvias
 óbvio
 óbvios
@@ -135580,7 +135302,6 @@ zôo
 óh
 ói
 óia
-óla
 óleo
 óleos
 ónibus
@@ -135597,7 +135318,6 @@ zôo
 óptimos
 órbita
 órbitas
-órdens
 óregon
 órfã
 órfão
@@ -135640,8 +135360,6 @@ zôo
 ônus
 ôoa
 ôpa
-ôtima
-ôtimo
 ôô
 ões
 úbere

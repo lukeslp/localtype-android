@@ -44,6 +44,12 @@ interface CorpusRanker {
      * state and answer every prefix from it.
      */
     fun rank(context: String, prefix: String, limit: Int): List<String>
+
+    /**
+     * The target after [context] was [word], told to the ranker once every prefix of that target has been asked,
+     * offerable or not. A ranker that learns as a person types ([CorpusStripRanker]) learns here; the rest ignore it.
+     */
+    fun typed(context: String, word: String) {}
 }
 
 /**
@@ -142,6 +148,19 @@ class CorpusCifgRanker(
     override fun rank(context: String, prefix: String, limit: Int): List<String> = session.predict(context + prefix, limit).map { it.word }
 
     companion object {
+        /** The name [shipped] goes by in `-Dlocaltype.corpusRankers` and in the report. */
+        const val SHIPPED = "chime-shipped"
+
+        /**
+         * Chime as the app bundles it: `src/main/assets/cifg_int8.bin`, refused unless it is the file [NeuralAsset] pins,
+         * asked cold as every corpus ranker is. It is scored only when named in `-Dlocaltype.corpusRankers`, so the
+         * default dev list is what it was.
+         */
+        fun shipped(file: File = File("src/main/assets/${NeuralAsset.FILE_NAME}")) = CorpusCifgRanker(
+            name = SHIPPED,
+            description = "the bundled ${NeuralAsset.FILE_NAME} (SHA-256 ${NeuralAsset.SHA256}) through the Kotlin int8 port, nothing learned",
+        ) { file.inputStream().use { NeuralAsset.load(it) } }
+
         /** smoke-10min-v2's int8 export, under `LOCALTYPE_MODEL_DATA` or the Galactus default. */
         fun smokeV2File(): File = File(
             System.getenv("LOCALTYPE_MODEL_DATA") ?: (System.getProperty("user.home") + "/.local/share/localtype-model"),
@@ -349,6 +368,9 @@ object CorpusText {
  * Columns are the human-written sources (every NUS SMS and every Taskmaster line of the split) and a
  * seeded 5,000-line pooled sample. The pooled sample is drawn with Kotlin's generator, so it isn't
  * the same 5,000 lines as cifg.py's numpy sample; the human columns are the same lines.
+ * `-Dlocaltype.corpusColumns` names other columns by source label, `-Dlocaltype.corpusRankers` scores a
+ * chosen few of the dev rankers, and `-Dlocaltype.corpusMissBins` sorts a ranker's next-word misses into
+ * [MissBins]. All three are dev only, and without them the run is what it was.
  *
  * [sourceCounts] gives, per source of the split, the counts no ranker affects, in the line format
  * `python -m model.corpus_counts` prints, so parity with `model/tokenize.py` is a plain diff, and
@@ -364,11 +386,50 @@ object CorpusEvaluation {
 
     val SPLITS = listOf("dev", "test")
 
-    /** Where the split comes from: `-Dlocaltype.corpus` or `LOCALTYPE_CORPUS`, `-Dlocaltype.corpusSplit`, `-Dlocaltype.corpusLines`. */
-    class Settings(val dir: File, val split: String = "dev", val maxLines: Int? = null) {
+    /** The column that is a seeded sample of the whole split rather than one source's lines. */
+    const val POOLED = "pooled"
+
+    /** The columns scored when none are named: the two human-written sources and the pooled sample. */
+    val DEFAULT_COLUMNS = listOf("nus", "taskmaster", POOLED)
+
+    /**
+     * What the report calls a column. A source with no entry here goes by its label in `<split>.sources.txt`.
+     * `mobiletext` is the Mobile Text development portion (Vertanen and Kristensson 2019), which is scored and never
+     * trained on (docs/chime-retrain-plan-2026-11-13.md).
+     */
+    val COLUMN_LABELS = mapOf("nus" to "NUS SMS", "taskmaster" to "Taskmaster-1", POOLED to "pooled sample", "mobiletext" to "phone-written",
+        "own" to "own messages")
+
+    /** How many of a ranker's next words [MissBins] looks through: the twelve the keyboard asks Chime for (NeuralPredictionWorker). */
+    const val MISS_BIN_LIMIT = 12
+
+    /**
+     * Where the split comes from: `-Dlocaltype.corpus` or `LOCALTYPE_CORPUS`, `-Dlocaltype.corpusSplit`, `-Dlocaltype.corpusLines`.
+     * Three more choose what a dev run scores, each a comma-separated list of names; left out, the run is the one it
+     * always was. [columns] (`-Dlocaltype.corpusColumns`) replaces [DEFAULT_COLUMNS] with the lines of each named source
+     * label, [POOLED] being the seeded sample. [rankers] (`-Dlocaltype.corpusRankers`) scores only the named ones of the
+     * dev list and [CorpusCifgRanker.shipped]. [missBins] (`-Dlocaltype.corpusMissBins`) sorts those rankers' next-word
+     * misses into [MissBins]. The test split takes none of them: it scores the preregistered pair on the columns it was
+     * spent on and nothing else.
+     */
+    class Settings(
+        val dir: File,
+        val split: String = "dev",
+        val maxLines: Int? = null,
+        val columns: List<String>? = null,
+        val rankers: List<String>? = null,
+        val missBins: List<String> = emptyList(),
+    ) {
         init {
             require(split in SPLITS) { "localtype.corpusSplit must be one of $SPLITS, not $split" }
             require(maxLines == null || maxLines > 0) { "localtype.corpusLines must be positive" }
+            require(split != "test" || (columns == null && rankers == null && missBins.isEmpty())) {
+                "the test split takes no column, ranker or miss-bin choice: it scores only the preregistered pair on the columns it was spent on"
+            }
+            for ((what, names) in listOf("localtype.corpusColumns" to columns, "localtype.corpusRankers" to rankers)) {
+                require(names == null || (names.isNotEmpty() && names.toSet().size == names.size)) { "$what must name each choice once, not $names" }
+            }
+            require(missBins.toSet().size == missBins.size) { "localtype.corpusMissBins must name each ranker once, not $missBins" }
         }
 
         companion object {
@@ -378,8 +439,17 @@ object CorpusEvaluation {
                     ?.trim()?.takeIf { it.isNotEmpty() } ?: return null
                 val split = System.getProperty("localtype.corpusSplit")?.trim()?.lowercase(Locale.ROOT)?.takeIf { it.isNotEmpty() } ?: "dev"
                 val lines = System.getProperty("localtype.corpusLines")?.trim()?.takeIf { it.isNotEmpty() }?.toInt()
-                return Settings(File(dir), split, lines)
+                return Settings(
+                    File(dir), split, lines,
+                    columns = names("localtype.corpusColumns"),
+                    rankers = names("localtype.corpusRankers"),
+                    missBins = names("localtype.corpusMissBins").orEmpty(),
+                )
             }
+
+            /** A comma-separated system property as its names, or null when it is unset or blank. */
+            private fun names(property: String): List<String>? =
+                System.getProperty(property)?.split(',')?.map(String::trim)?.filter(String::isNotEmpty)?.takeIf { it.isNotEmpty() }
         }
     }
 
@@ -440,6 +510,18 @@ object CorpusEvaluation {
             listOfNotNull(CorpusCifgRanker.smokeV2(), CorpusCifgRanker.v3()) + CorpusCifgRanker.named()
     }
 
+    /**
+     * The rankers a run with [settings] scores: the split's whole list ([rankers] by split, with the test split's
+     * refusal as it stands), or on dev the ones [Settings.rankers] names, in that order, out of the dev list and
+     * [CorpusCifgRanker.shipped]. A name that matches none fails rather than being skipped.
+     */
+    fun rankers(settings: Settings): List<CorpusRanker> {
+        val all = rankers(settings.split)
+        val names = settings.rankers ?: return all
+        val known = all + CorpusCifgRanker.shipped()
+        return names.map { name -> known.firstOrNull { it.name == name } ?: error("no ranker named $name; the dev rankers are ${known.map { it.name }}") }
+    }
+
     /** `<split>.txt` and its line-parallel `<split>.sources.txt`. */
     private fun read(settings: Settings): Pair<List<String>, List<String>> {
         val text = File(settings.dir, "${settings.split}.txt")
@@ -449,25 +531,39 @@ object CorpusEvaluation {
         return text.readLines() to sources.readLines()
     }
 
-    /** Reads the split and builds the nus, taskmaster and pooled columns. */
-    fun columns(settings: Settings): List<Column> = read(settings).let { (lines, sources) -> columns(lines, sources, settings.maxLines) }
+    /**
+     * Reads the split and builds its columns: nus, taskmaster and pooled, or the ones [Settings.columns] names. A source
+     * column named there must hold a line, because an empty one would mean a wrong label, not a score.
+     */
+    fun columns(settings: Settings): List<Column> = read(settings).let { (lines, sources) ->
+        columns(lines, sources, settings.maxLines, names = settings.columns ?: DEFAULT_COLUMNS).onEach { column ->
+            require(settings.columns == null || column.lines.isNotEmpty()) { "no line of ${settings.split}.sources.txt is labelled ${column.name}" }
+        }
+    }
 
     /**
-     * Every NUS SMS line, every Taskmaster line and a seeded [pooledLines]-line sample of the whole split.
-     * With [maxLines], each human column keeps its first [maxLines] lines and the pooled column draws
+     * One column per name in [names]: every line of the source labelled so (by default every NUS SMS and every
+     * Taskmaster line), and for [POOLED] a seeded [pooledLines]-line sample of the whole split.
+     * With [maxLines], each source column keeps its first [maxLines] lines and the pooled column draws
      * [maxLines] instead: the partial shuffle makes the same first picks, so that is a random subset of
      * the full sample rather than its first lines, which in a split grouped by source would be the human ones.
      */
-    fun columns(lines: List<String>, sources: List<String>, maxLines: Int? = null, pooledLines: Int = POOLED_LINES, seed: Long = SEED): List<Column> {
+    fun columns(
+        lines: List<String>, sources: List<String>, maxLines: Int? = null, pooledLines: Int = POOLED_LINES, seed: Long = SEED,
+        names: List<String> = DEFAULT_COLUMNS,
+    ): List<Column> {
         require(lines.size == sources.size) { "${lines.size} corpus lines but ${sources.size} source labels" }
         // As train.sample_lines: only lines with a token are eligible, and each source column takes all of its own.
         val eligible = lines.indices.filter { CorpusText.hasToken(lines[it]) }
         fun of(ids: List<Int>) = ids.let { if (maxLines != null) it.take(maxLines) else it }.map { lines[it] }
-        return listOf(
-            Column("nus", "NUS SMS", of(eligible.filter { sources[it] == "nus" })),
-            Column("taskmaster", "Taskmaster-1", of(eligible.filter { sources[it] == "taskmaster" })),
-            Column("pooled", "pooled sample", sample(eligible, maxLines?.let { minOf(it, pooledLines) } ?: pooledLines, seed).map { lines[it] }),
-        )
+        return names.map { name ->
+            val label = COLUMN_LABELS[name] ?: name
+            if (name == POOLED) {
+                Column(name, label, sample(eligible, maxLines?.let { minOf(it, pooledLines) } ?: pooledLines, seed).map { lines[it] })
+            } else {
+                Column(name, label, of(eligible.filter { sources[it] == name }))
+            }
+        }
     }
 
     /** [n] of [ids] chosen by a seeded partial shuffle, in file order; all of them when there are no more than [n]. */
@@ -714,8 +810,44 @@ object CorpusEvaluation {
         }
     }
 
+    /**
+     * Every word target of a column, sorted by where one ranker's next-word answer left it. The answer is the
+     * ranker's [limit] best at prefix 0 (twelve, the list the keyboard asks Chime for), filtered as every answer
+     * here is: a word the strip could never show leaves its slot empty. Nothing is left out of [targets], which
+     * is the column's word-target count and the denominator of next-word hit@3, so [hits] over [targets] is that
+     * hit rate and the three kinds of miss add up to the rest:
+     *
+     * - [cannotOffer]: the ranker can't produce the word at all. Either it is outside its vocabulary
+     *   ([outOfVocabulary]) or it is a one-letter word other than a and i, which no ranker may offer ([neverOffered]);
+     * - [near]: ranks 4 to [limit], so the word was in the list and not in the three slots;
+     * - [beyond]: a word the ranker knows, outside its [limit] best.
+     */
+    class MissBins(val limit: Int = MISS_BIN_LIMIT) {
+        var hits = 0
+        var near = 0
+        var beyond = 0
+        var outOfVocabulary = 0
+        var neverOffered = 0
+
+        val cannotOffer: Int get() = outOfVocabulary + neverOffered
+        val misses: Int get() = cannotOffer + near + beyond
+        val targets: Int get() = hits + misses
+
+        /** A target the ranker was asked about: [rank] is its place in the [limit] best, from 0, or -1; [known] is whether its vocabulary holds it. */
+        fun add(rank: Int, known: Boolean) {
+            when {
+                rank in 0..2 -> hits++
+                rank >= 3 -> near++
+                !known -> outOfVocabulary++
+                else -> beyond++
+            }
+        }
+    }
+
     /** One ranker on one column. */
     class Score(val ranker: CorpusRanker, val text: ColumnText) {
+        /** The ranker's misses by kind, when the run asked for them ([Settings.missBins]). */
+        var missBins: MissBins? = null
         var hit1 = 0
         var hit3 = 0
         var hit6 = 0
@@ -750,23 +882,35 @@ object CorpusEvaluation {
         val savings get() = rate(saved, baseline)
     }
 
-    /** Scores [ranker] on every target of [text]. */
-    fun score(ranker: CorpusRanker, text: ColumnText): Score {
+    /**
+     * Scores [ranker] on every target of [text]. With [missBins] it also sorts the targets into [MissBins], from one
+     * more prefix-0 answer per target, asked for with the same context straight after the first; no figure of the
+     * score reads that answer, so they are the ones a run without it gives.
+     */
+    fun score(ranker: CorpusRanker, text: ColumnText, missBins: Boolean = false): Score {
         val s = Score(ranker, text)
         val vocabulary = ranker.vocabulary
+        val bins = if (missBins) MissBins().also { s.missBins = it } else null
+        require(bins == null || vocabulary != null) { "${ranker.name} names no vocabulary, so its misses can't be told apart" }
         // A dropped candidate leaves its slot empty, so every other answer keeps the rank the ranker gave it.
-        fun ask(context: String, prefix: String, limit: Int): List<String?> {
+        fun offered(context: String, prefix: String, limit: Int, dropped: () -> Unit): List<String?> {
             val seen = HashSet<String>()
             return ranker.rank(context, prefix, limit).take(limit).map { word ->
-                if (CorpusText.offerable(word, text.oneLetterWords) && word.startsWith(prefix) && seen.add(word)) word else null.also { s.dropped++ }
+                if (CorpusText.offerable(word, text.oneLetterWords) && word.startsWith(prefix) && seen.add(word)) word else null.also { dropped() }
             }
         }
+        fun ask(context: String, prefix: String, limit: Int): List<String?> = offered(context, prefix, limit) { s.dropped++ }
         for (t in text.targets) {
             // One-letter words the strip never shows: a miss at every length, already in the baseline.
-            if (!t.offerable) continue
+            if (!t.offerable) {
+                bins?.let { it.neverOffered++ }
+                ranker.typed(t.context, t.word)
+                continue
+            }
             val known = vocabulary?.contains(t.word)
             var best = -1
             val rank = ask(t.context, "", 6).indexOf(t.word)
+            bins?.add(offered(t.context, "", bins.limit) {}.indexOf(t.word), known == true)
             if (rank >= 0) {
                 s.hit6++
                 s.reciprocal += 1.0 / (rank + 1)
@@ -793,6 +937,7 @@ object CorpusEvaluation {
                 s.instanceCompletion += ladderHits.toDouble() / ladderN
                 s.instances++
             }
+            ranker.typed(t.context, t.word)
             val saved = if (best < 0) 0 else maxOf(0, t.length - best)
             s.saved += saved
             s.savedByLine[t.line] += saved
@@ -874,19 +1019,22 @@ object CorpusEvaluation {
         }
     }
 
-    fun evaluate(settings: Settings, rankers: List<CorpusRanker> = rankers(settings.split)): Result = evaluate(columns(settings), rankers, settings)
+    fun evaluate(settings: Settings, rankers: List<CorpusRanker> = rankers(settings)): Result = evaluate(columns(settings), rankers, settings)
 
+    /** [missBins] names the rankers whose misses are sorted into [MissBins] on every column; each must be one of [rankers]. */
     fun evaluate(
         columns: List<Column>, rankers: List<CorpusRanker>, settings: Settings? = null,
         oneLetterWords: Set<String> = LanguageProfile.ENGLISH.oneLetterWords,
+        missBins: Collection<String> = settings?.missBins.orEmpty(),
     ): Result {
         require(rankers.map { it.name }.toSet().size == rankers.size) { "ranker names must be unique" }
+        (missBins - rankers.map { it.name }.toSet()).let { require(it.isEmpty()) { "miss bins asked for $it, which this run doesn't score" } }
         val seconds = LinkedHashMap<String, Double>()
         val results = columns.map { column ->
             val text = ColumnText(column, oneLetterWords)
             val scores = rankers.map { ranker ->
                 val started = System.nanoTime()
-                score(ranker, text).also { seconds.merge(ranker.name, (System.nanoTime() - started) / 1e9, Double::plus) }
+                score(ranker, text, ranker.name in missBins).also { seconds.merge(ranker.name, (System.nanoTime() - started) / 1e9, Double::plus) }
             }
             val pairs = scores.indices.flatMap { i -> (i + 1 until scores.size).map { j -> scores[i] to scores[j] } }
             val intervals = pairs.map { (a, b) -> pairedBootstrap(a.savedByLine, b.savedByLine, text.baseline, names = a.ranker.name to b.ranker.name) }
@@ -976,10 +1124,18 @@ object CorpusEvaluation {
         val settings = result.settings
         appendLine("LocalType corpus evaluation" + (settings?.let { ", ${it.split} split of ${it.dir.path}" } ?: ""))
         appendLine("scope: sentence (context = the current sentence so far, split at . ! ? …), as cifg.keyboard_metrics scope=sentence")
-        val pooled = result.results.firstOrNull { it.text.column.name == "pooled" }?.text?.column?.lines?.size ?: 0
+        val pooled = result.results.firstOrNull { it.text.column.name == POOLED }?.text?.column?.lines?.size ?: 0
         val cap = settings?.maxLines
+        val named = settings?.columns
         appendLine(
-            if (cap == null) {
+            if (named != null) {
+                // Columns chosen with -Dlocaltype.corpusColumns: say which labels, since they aren't the usual three.
+                val sources = named.filter { it != POOLED }.joinToString(", ") { "$it (${COLUMN_LABELS[it] ?: it})" }
+                listOfNotNull(
+                    sources.takeIf { it.isNotEmpty() }?.let { (if (cap == null) "every line" else "the first ${count(cap)} lines") + " of the split labelled $it" },
+                    "pooled = ${count(pooled)} lines sampled from the whole split with seed $SEED".takeIf { POOLED in named },
+                ).joinToString("; ", prefix = "columns: ")
+            } else if (cap == null) {
                 "columns: every NUS SMS and Taskmaster-1 line of the split; pooled = ${count(pooled)} lines sampled with seed $SEED (not cifg.py's numpy sample)"
             } else {
                 "columns: the first ${count(cap)} NUS SMS and Taskmaster-1 lines of the split; pooled = a seeded ${count(pooled)}-line subsample of the " +
@@ -991,6 +1147,14 @@ object CorpusEvaluation {
         for (r in rankers) appendLine("ranker ${r.name}: ${r.description}")
         appendLine("caveat: the corpus keeps no NUS sender id, so one sender's messages can sit on both sides of a split; NUS senders and Taskmaster")
         appendLine("  dialogues are also resampled line by line, so intervals are narrower than a sender- or dialogue-level resample")
+        if (result.results.any { it.text.column.name == "mobiletext" }) {
+            appendLine("caveat: the phone-written lines are single sentences from forum and blog posts (Mobile Text, development portion), not text messages;")
+            appendLine("  sentences of one post or one writer are resampled line by line too. They are scored and never trained on")
+        }
+        if (result.results.any { it.text.column.name == "own" }) {
+            appendLine("caveat: the own-messages lines are the keyboard owner's sent text messages, scored on the owner's Mac and never trained on;")
+            appendLine("  they are resampled message by message, so the intervals describe these messages, not other writers")
+        }
         for (column in result.results) {
             val text = column.text
             appendLine()
@@ -1016,7 +1180,34 @@ object CorpusEvaluation {
                     appendLine("    ${i.b} minus ${i.a}: savings ${show(i)}$hit3")
                 }
             }
+            for (s in column.scores) {
+                val bins = s.missBins ?: continue
+                appendLine("  next-word answers of ${s.ranker.name} by where the target sat in its ${bins.limit} best at prefix 0 " +
+                    "(the keyboard asks Chime for ${MISS_BIN_LIMIT}), over all ${count(bins.targets)} word targets:")
+                val rows = listOf(
+                    Triple("hit, ranks 1-3", bins.hits, false),
+                    Triple("miss", bins.misses, false),
+                    Triple("  cannot offer the word", bins.cannotOffer, true),
+                    Triple("  ranks 4-${bins.limit}", bins.near, true),
+                    Triple("  outside its ${bins.limit} best", bins.beyond, true),
+                )
+                val width = rows.maxOf { it.first.length }
+                val digits = rows.maxOf { count(it.second).length }
+                for ((label, n, isMiss) in rows) {
+                    appendLine("    ${label.padEnd(width)}  ${count(n).padStart(digits)}  ${pct(s.rate(n, bins.targets)).padStart(7)} of targets" +
+                        (if (isMiss) "  ${pct(s.rate(n, bins.misses)).padStart(7)} of misses" else "") +
+                        (if (label.trim() == "cannot offer the word") {
+                            "  (outside its vocabulary ${count(bins.outOfVocabulary)}; one-letter words the strip never offers ${count(bins.neverOffered)})"
+                        } else ""))
+                }
+                if (bins.hits != s.hit3) {
+                    appendLine("    note: the ${bins.limit}-word answer has ${count(bins.hits)} targets in its first three and the 6-word answer ${count(s.hit3)}; " +
+                        "the table counts the 6-word answer")
+                }
+            }
         }
+        // The choice among the prior settings and the prior's gate read the whole dev list, so a run of chosen rankers prints neither.
+        if (settings?.rankers != null) return@buildString
         selectPrior(result)?.takeIf { settings?.split != "test" }?.let { choice ->
             appendLine()
             appendLine("prior setting by the preregistered dev rule (highest mean of NUS and Taskmaster potential savings, ties to the lower weight):")

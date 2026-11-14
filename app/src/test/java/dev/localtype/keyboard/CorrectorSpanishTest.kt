@@ -77,4 +77,35 @@ class CorrectorSpanishTest {
         println("Spanish common words changed: ${changed.size} of ${common.size}")
         assertTrue("${changed.size} of ${common.size} changed", changed.size <= common.size * 0.005)
     }
+
+    /**
+     * Subtitle files spell some words with an accent that isn't there ("vámos") and run others together with the
+     * word or mark before them ("ysi", "iqué" for "¡qué"). Until 2026-11-12 the recognized list held 544 of them, so
+     * the keyboard took each as a word and left it alone. `model/language_build.py` now takes them out
+     * (`misaccented`, `run_ons`); these are a few of each, with what they should become.
+     */
+    @Test
+    fun `subtitle slips are repaired, not recognized`() {
+        val slips = listOf(
+            "vámos" to "vamos", "quiéres" to "quieres", "díos" to "dios", "sábes" to "sabes", "estámos" to "estamos",
+            "élla" to "ella", "álguien" to "alguien", "entónces" to "entonces", "estába" to "estaba", "núnca" to "nunca",
+            "naríz" to "nariz", "história" to "historia", "grácias" to "gracias", "fuímos" to "fuimos", "tán" to "tan",
+        )
+        val joined = listOf("iqué", "ysi", "ivamos", "yahora", "ihola", "igracias")
+        assertTrue((slips.map { it.first } + joined).none { known(it) })
+        val result = tally(slips)
+        println("Spanish subtitle slips: $result")
+        assertTrue("$result", result.fixed >= slips.size - 1 && result.wrong == 0)
+        // Words the same filters must leave alone: verb endings news has no use for, and real words that start with i or y.
+        val real = listOf("mentirás", "importé", "hablé", "ida", "yate", "ilegal", "está", "mí", "dé", "sólo", "papá")
+        assertTrue(real.filter { !known(it) }.toString(), real.all { known(it) })
+
+        // Everything a build took out, when pointed at it (-Dlocaltype.spanishBuild=<model-data>/languages/es/<build>):
+        // how many of those entries the corrector now turns into the word they stood for.
+        val build = System.getProperty("localtype.spanishBuild")?.trim()?.takeIf { it.isNotEmpty() } ?: return
+        val dropped = File(build, "dropped.tsv").takeIf { it.isFile } ?: return
+        val rows = dropped.readLines().drop(1).map { it.split('\t') }.filter { it[1].toInt() >= 20 && it[4] == "0" }
+        val all = rows.map { it[0] to it[3].substringBefore('(') }
+        println("Spanish entries taken out of the recognized list: ${tally(all)}; still recognized: ${all.count { known(it.first) }}")
+    }
 }

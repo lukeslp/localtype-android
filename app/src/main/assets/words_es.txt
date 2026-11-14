@@ -18215,7 +18215,6 @@ participó	942
 recomendar	942
 renuncias	942
 scouts	942
-vá	942
 agradecérselo	941
 correré	941
 curro	941
@@ -19961,3 +19960,4 @@ antártida	823
 colateral	823
 descafeinado	823
 difundir	823
+doradas	823

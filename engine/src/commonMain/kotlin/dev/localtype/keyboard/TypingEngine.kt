@@ -85,7 +85,8 @@ class TypingEngine(
     /**
      * As [suggestions], with Chime's words for the same text ([ChimePredictor.predict]) leading when
      * [neural] is given: the Android keyboard's [NeuralRanking], which keeps the n-gram words behind them
-     * and a slot for a word the person has typed after the previous one at least twice. Without
+     * and a slot for a word the person has typed after the previous one at least twice (one of the commonest
+     * words only when Chime ranks it too). Without
      * [capitalizeSentences] (Capitalize automatically off) a sentence start doesn't capitalize them.
      */
     fun suggestions(beforeCursor: String, limit: Int, neural: List<String>?, capitalizeSentences: Boolean = true): List<String> {
@@ -95,7 +96,8 @@ class TypingEngine(
         val words = if (neural == null) ranked.filter { offerable(it) } else {
             val learned = model.lastCompletedWord(beforeCursor.dropLast(prefix.length))?.let { model.learnedFollowers(it) }.orEmpty()
             NeuralRanking.rankWithSources(neural, ranked, learned, prefix, if (suggestSwears) emptySet() else swearWords, limit,
-                added = model.addedWords(prefix), language = language).map { it.word }
+                added = model.addedWords(prefix), language = language,
+                common = { model.dictionary.score(it) >= NeuralRanking.COMMON_SCORE }).map { it.word }
         }
         return words.take(limit).map { TextRules.applyCase(it, prefix, sentenceStart) }
     }

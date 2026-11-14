@@ -20,8 +20,8 @@ android {
         applicationId = "dev.localtype.keyboard"
         minSdk = 26
         targetSdk = 35
-        versionCode = 76
-        versionName = "0.5.55"
+        versionCode = 77
+        versionName = "0.5.56"
         testInstrumentationRunner = "dev.localtype.keyboard.ToolsReflowChecks"
         // Phones only. The x86_64 copy of the model runtime's native library was 26 MB that only emulators loaded.
         // Here and not in release {}: benchmark and the verification variant copy release before that block runs.
@@ -148,6 +148,13 @@ tasks.withType<Test>().configureEach {
         }
     }
     System.getProperty("localtype.corpusLines")?.let { systemProperty("localtype.corpusLines", it) }
+    // What a dev run of the corpus scorer covers, each a comma-separated list of names and each optional:
+    // -Dlocaltype.corpusColumns=mobiletext,nus,taskmaster (source labels, instead of nus, taskmaster and the pooled sample),
+    // -Dlocaltype.corpusRankers=device-cold,prior-w20,chime-shipped (instead of the whole dev list) and
+    // -Dlocaltype.corpusMissBins=chime-shipped (sort that ranker's next-word misses by kind).
+    listOf("corpusColumns", "corpusRankers", "corpusMissBins").forEach { name ->
+        System.getProperty("localtype.$name")?.trim()?.takeIf { it.isNotEmpty() }?.let { systemProperty("localtype.$name", it) }
+    }
     // A Spanish candidate build for CorpusSpanishEvaluationTest: -Dlocaltype.spanishBuild=<model-data>/languages/es/<build>
     // [-Dlocaltype.spanishSplit=dev|test] [-Dlocaltype.spanishLines=N]. Its split files and prior are task inputs.
     System.getProperty("localtype.spanishBuild")?.trim()?.takeIf { it.isNotEmpty() }?.let { build ->

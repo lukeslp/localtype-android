@@ -14932,7 +14932,6 @@ adicione	1157
 bolinhas	1157
 confinamento	1157
 exercer	1157
-alguêm	1156
 atrasando	1156
 bairros	1156
 cidadezinha	1156
@@ -16326,7 +16325,6 @@ carcaça	1009
 compreendeu	1009
 despertador	1009
 indefesa	1009
-ninguêm	1009
 poole	1009
 precipício	1009
 revelam	1009
@@ -19486,7 +19484,6 @@ moribundo	763
 mágoa	763
 regionais	763
 rejeita	763
-sím	763
 tratem	763
 abbie	762
 amarradas	762
@@ -19969,3 +19966,6 @@ rompido	736
 sari	736
 shifu	736
 vogue	736
+acusam	735
+altruísta	735
+autora	735

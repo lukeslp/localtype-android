@@ -8,6 +8,7 @@ that data for one language from downloads already on Galactus, and bundles nothi
     words_<lang>.txt          candidate suggestion list, ``word<TAB>count`` like words_en.txt
     words_known_<lang>.txt    candidate recognized words (not suggestions), like words_known.txt
     folds.tsv                 every spelling group that differs only by accents, with what was kept
+    dropped.tsv               entries taken out as not words of the language, with the evidence
     corpus/                   the corpus sentences as the prior counts them: train, dev and test
                               (one line in ten held out, SPLIT_RULE), with per-line sources
     corpus_prior_<lang>.bin   candidate corpus prior, model/prior.py's format and smoothing
@@ -24,6 +25,19 @@ the corrector can repair it. Subtitles hold misspellings too, so below that rati
 corpus text decides (``dominated``): "miercoles" goes, "papa" (potato, pope) stays. Pairs where
 both spellings are common ("esta", "está") keep both. The recognized-words set is the full list above ``--known-floor``, filtered the same
 way, standing in for a lexicon (Spanish Hunspell lexicons mix licences).
+
+Subtitles also carry three kinds of entry that are not words of the language, each listed in
+``dropped.tsv`` with its evidence:
+
+- A wrongly accented spelling ("vámos" beside "vamos", ``misaccented``) and a word run together
+  with the "y" before it or with an inverted mark read as "i" ("ysi", "iqué", ``run_ons``). Both
+  go from both lists, so the corrector repairs them instead of accepting them.
+- Words of another language, here English from untranslated lines and songs: "the" is otherwise
+  the 693rd Spanish suggestion (``foreign``). These leave the suggestion list only and stay
+  recognized, so a name or a title typed in English is still left alone. A word is foreign when
+  its share of the other language's counts is ``--foreign-ratio`` times its share here and the
+  edited corpus rarely shows it between two words of this language. That second test keeps the
+  words both languages spell alike ("come", "once", "use") and settled loans ("show", "ticket").
 
 The prior counts the Leipzig Corpora Collection sentences (CC BY) with the keyboard's context
 rule, after deleting ¿ and ¡: the Spanish profile's device rule ignores both marks when it
@@ -84,6 +98,10 @@ class Language:
     frequency_file: str
     frequency_source: str
     corpora: tuple[Corpus, ...]
+    # Letters a subtitle scan leaves stuck to the front of the next word (``run_ons``); none unless the language has them.
+    run_on_prefixes: tuple[str, ...] = ()
+    # Word endings whose accent marks a verb form edited text may never show (``misaccented`` leaves them alone).
+    accent_endings: tuple[str, ...] = ()
 
 
 LEIPZIG = "Leipzig Corpora Collection (https://wortschatz.uni-leipzig.de/en/download), CC BY"
@@ -103,6 +121,10 @@ SPANISH = Language(
         Corpus("spa_web_2016_1M.tar.gz", "spa_web_2016_1M-sentences.txt", "CC BY", LEIPZIG + ", Spanish web 2016, 1M sentences"),
         Corpus("spa_news_2024_1M.tar.gz", "spa_news_2024_1M-sentences.txt", "CC BY", LEIPZIG + ", Spanish news 2024, 1M sentences"),
     ),
+    # An inverted mark read as "i" by the subtitle scan; "y" (and) joined to the next word.
+    run_on_prefixes=("i", "y"),
+    # The imperfect and the conditional: "medías" beside "medias".
+    accent_endings=("ía", "ías", "ían", "íamos", "íais"),
 )
 
 # Brazilian Portuguese first: its subtitles and a Brazilian news crawl beside the 2024 news, which mixes Brazil and
@@ -122,6 +144,9 @@ PORTUGUESE = Language(
         Corpus("por-br_newscrawl_2011_1M.tar.gz", "por-br_newscrawl_2011_1M-sentences.txt", "CC BY",
                LEIPZIG + ", Portuguese (Brazil) newscrawl 2011, 1M sentences"),
     ),
+    # No run-on prefixes: Portuguese has no inverted marks and "y" is not a word, so "yalta" and "yaqui" are names.
+    # European Portuguese writes the past "pagámos" where Brazil writes "pagamos"; Brazilian news never shows it.
+    accent_endings=("ámos",),
 )
 
 LANGUAGES = {SPANISH.code: SPANISH, PORTUGUESE.code: PORTUGUESE}
@@ -129,6 +154,14 @@ LANGUAGES = {SPANISH.code: SPANISH, PORTUGUESE.code: PORTUGUESE}
 WORDS = 20_000  # the size of words_en.txt
 KNOWN_FLOOR = 20
 DOMINANCE = 20.0
+FOREIGN_WORDS = Path("app/src/main/assets/words_en.txt")  # the other language subtitles carry: English
+FOREIGN_RATIO = 10.0
+FOREIGN_CONTEXT = 0.35
+FOREIGN_EVIDENCE = 30
+# English by every count, and typed in chat in these languages all the same. Kept by hand; keep it short.
+FOREIGN_KEPT = {"es": ("okay", "bye"), "pt": ("okay", "bye")}
+JUNK_DOMINANCE = 100.0
+RUN_ON_REST = 5_000  # the rest must be one of this many commonest words
 CONTEXTS = pr.CONTEXTS
 FOLLOWERS = pr.FOLLOWERS
 
@@ -221,6 +254,108 @@ def dominated(counts: Counter, lang: Language, dominance: float, edited: Counter
         rows.append(row)
     rows.sort(key=lambda r: -sum(n for _, n in r["spellings"]))
     return drop, rows
+
+
+def misaccented(counts: Counter, lang: Language, edited: Counter, dominance: float = JUNK_DOMINANCE) -> dict[str, str]:
+    """Accented spellings that are a slip for a commoner spelling of the same letters: ``{slip: word}``.
+
+    "vámos" beside "vamos", "quiéres" beside "quieres". A spelling with an accented letter goes when
+    another spelling of its accent group is ``dominance`` times as common and edited text never has
+    it. Bare spellings are ``dominated``'s business, not this function's. Three kinds of pair are
+    left alone, because the rarer spelling can be a word that news and web text have no use for:
+
+    - an accent on the last syllable of a longer word, where verb endings carry it: "importé"
+      beside "importe", "mentirás" beside "mentiras", "tenés" (Argentina) beside "tienes";
+    - the language's ``accent_endings``: in Spanish the imperfect and the conditional ("medías" beside
+      "medias"), in Portuguese the European past ("pagámos" beside "pagamos");
+    - a pair that differs in a consonant ("seños" beside "senos" is two words, not a slip).
+
+    One-syllable entries get no such pass: "dés", "tán" and "mís" are slips.
+    """
+    vowels = set("aeiou")
+    out: dict[str, str] = {}
+    for bare, spellings in spelling_groups(counts, lang).items():
+        top = spellings[0]
+        for s in spellings[1:]:
+            if s == bare or edited[s] or counts[top] < dominance * counts[s]:
+                continue
+            if any(a != b and lang.folds.get(a, a) not in vowels for a, b in zip(s, top)):
+                continue
+            if _final_accent(s, bare, vowels) or s.endswith(lang.accent_endings):
+                continue
+            out[s] = top
+    return out
+
+
+def _final_accent(word: str, bare: str, vowels: set[str]) -> bool:
+    """Whether a word of two or more syllables ends in an accented vowel, or in one before a last "s" or "n"."""
+    groups = sum(1 for i, c in enumerate(bare) if c in vowels and (i == 0 or bare[i - 1] not in vowels))
+    at = len(word) - 1 if word[-1] != bare[-1] else len(word) - 2 if word[-1] in "sn" else -1
+    return groups >= 2 and at >= 0 and word[at] != bare[at]
+
+
+def run_ons(counts: Counter, lang: Language, edited: Counter, dominance: float = JUNK_DOMINANCE,
+            rest_rank: int = RUN_ON_REST) -> dict[str, str]:
+    """Entries that are a common word with a stray letter in front: ``{entry: word}``.
+
+    Spanish subtitle files read "¡Vamos!" as "ivamos" and join "y si" into "ysi". An entry that starts
+    with one of the language's ``run_on_prefixes`` goes when what follows that letter is one of the
+    ``rest_rank`` commonest words, ``dominance`` times as common as the entry, and edited text never
+    has the entry ("ida", "yate" and "yeso" are there). A language with no such prefixes loses nothing.
+    """
+    if not lang.run_on_prefixes:
+        return {}
+    prefixes = lang.run_on_prefixes
+    common = {w for w, _ in counts.most_common(rest_rank)}
+    out: dict[str, str] = {}
+    for w, n in counts.items():
+        rest = w[1:]
+        if w[:1] in prefixes and len(rest) >= 2 and rest in common and not edited[w] and counts[rest] >= dominance * n:
+            out[w] = rest
+    return out
+
+
+def foreign_ratios(counts: Counter, other: dict[str, int]) -> dict[str, float]:
+    """For each word both lists hold: its share of ``other``'s counts over its share of ``counts``."""
+    here, there = sum(counts.values()), sum(other.values())
+    if not here or not there:
+        return {}
+    return {w: (n / there) / (counts[w] / here) for w, n in other.items() if counts.get(w)}
+
+
+def neighbour_shares(lines: Iterable[str], candidates: set[str], home: set[str]) -> dict[str, tuple[int, int]]:
+    """For each candidate: (times seen, times seen with a ``home`` word on both sides) in ``lines``.
+
+    A word at either end of a line has no word on that side, which counts as not ``home``.
+    """
+    seen: Counter = Counter()
+    between: Counter = Counter()
+    for line in lines:
+        ws = [w for _, _, w in pr.word_spans(unicodedata.normalize("NFC", line))]
+        for i, w in enumerate(ws):
+            if w in candidates:
+                seen[w] += 1
+                if 0 < i < len(ws) - 1 and ws[i - 1] in home and ws[i + 1] in home:
+                    between[w] += 1
+    return {w: (seen[w], between[w]) for w in candidates}
+
+
+def foreign(ratios: dict[str, float], shares: dict[str, tuple[int, int]], kept: Sequence[str] = (),
+            ratio: float = FOREIGN_RATIO, context: float = FOREIGN_CONTEXT, evidence: int = FOREIGN_EVIDENCE) -> set[str]:
+    """Words of the other language: far commoner there, and not vouched for by edited text.
+
+    Edited text vouches for a word seen ``evidence`` times with at least ``context`` of those
+    between two words of this language. "come" (0.74 in Spanish) and "once" (0.67) pass; "the"
+    (0.01), which Spanish news prints in names of papers and bands, does not.
+    """
+    out = set()
+    for w, r in ratios.items():
+        if r < ratio or w in kept:
+            continue
+        seen, between = shares.get(w, (0, 0))
+        if seen < evidence or between / seen < context:
+            out.add(w)
+    return out
 
 
 def write_word_list(path: Path, words: Sequence[tuple[str, int]], header: str) -> None:
@@ -347,8 +482,32 @@ def build(args: argparse.Namespace) -> dict:
                                    "source": lang.frequency_source}
     counts, freq_info = read_frequencies(freq_path, lang)
     drop, groups = dominated(counts, lang, args.dominance, edited, args.min_dominance, args.edited_dominance)
-    ranked = sorted(((w, n) for w, n in counts.items() if w not in drop), key=lambda e: (-e[1], e[0]))
-    suggestions = ranked[:args.words]
+    # Entries that are not words: gone from both lists. Edited text is the witness, so none without it.
+    slips = misaccented(counts, lang, edited) if edited is not None else {}
+    joined = run_ons(counts, lang, edited) if edited is not None else {}
+    ranked = sorted(((w, n) for w, n in counts.items() if w not in drop and w not in slips and w not in joined),
+                    key=lambda e: (-e[1], e[0]))
+    # Words of another language: out of the suggestions, still recognized.
+    ratios: dict[str, float] = {}
+    shares: dict[str, tuple[int, int]] = {}
+    outside: set[str] = set()
+    foreign_path = Path(args.foreign) if args.foreign else None
+    if foreign_path is not None and present:
+        inputs[foreign_path.name] = {"sha256": sha256_file(foreign_path), "bytes": foreign_path.stat().st_size,
+                                     "source": "this repository's suggestion list for the other language"}
+        other: dict[str, int] = {}
+        for line in foreign_path.read_text(encoding="utf-8").splitlines():
+            if line.strip() and not line.startswith("#"):
+                w, n = line.split("\t")
+                other[w] = int(n)
+        kept_counts = Counter(dict(ranked))
+        ratios = foreign_ratios(kept_counts, other)
+        candidates = {w for w, r in ratios.items() if r >= args.foreign_ratio}
+        home = {w for w, _ in ranked[:args.words] if ratios.get(w, 0.0) < 0.5}
+        shares = neighbour_shares((line for c in present for line in corpus_lines(downloads, c)), candidates, home)
+        outside = foreign(ratios, shares, FOREIGN_KEPT.get(lang.code, ()), args.foreign_ratio,
+                          args.foreign_context, args.foreign_evidence)
+    suggestions = [e for e in ranked if e[0] not in outside][:args.words]
     known = [(w, n) for w, n in ranked if n >= args.known_floor]
     total_mass = sum(n for _, n in ranked)
     words_path = out / f"words_{lang.code}.txt"
@@ -367,6 +526,17 @@ def build(args: argparse.Namespace) -> dict:
             f.write(f"{r['bare']}\t{r['ratio']}\t{r.get('edited_ratio')}\t{int(r['bare_dropped'])}\t{int(r['last_letter_only'])}\t"
                     + " ".join(f"{w}({n})" for w, n in r["spellings"]) + "\t"
                     + " ".join(f"{w}({n})" for w, n in r.get("edited", [])) + "\n")
+    floor = suggestions[-1][1] if suggestions else 0
+    with open(out / "dropped.tsv", "w", encoding="utf-8") as f:
+        f.write("entry\tcount\twhy\tevidence\tleft_in_recognized\n")
+        for w, word in sorted(slips.items(), key=lambda e: -counts[e[0]]):
+            f.write(f"{w}\t{counts[w]}\twrong accent\t{word}({counts[word]}), never in edited text\t0\n")
+        for w, word in sorted(joined.items(), key=lambda e: -counts[e[0]]):
+            f.write(f"{w}\t{counts[w]}\trun together\t{word}({counts[word]}), never in edited text\t0\n")
+        for w in sorted(outside, key=lambda w: -counts[w]):
+            seen, between = shares.get(w, (0, 0))
+            f.write(f"{w}\t{counts[w]}\tother language\tratio {ratios[w]:.1f}, {between} of {seen} between two "
+                    f"{lang.name} words\t1\n")
     words_info = {
         "frequency_list": freq_info,
         "suggestions": {"file": words_path.name, "words": len(suggestions), "sha256": sha256_file(words_path),
@@ -384,8 +554,26 @@ def build(args: argparse.Namespace) -> dict:
                           "both_kept_examples": [r for r in groups if not r["bare_dropped"] and r["ratio"] is not None][:40],
                           "dropped_by_edited_text": [r for r in groups if r["bare_dropped"] and r["ratio"] < args.dominance][:40],
                           "dropped_examples": [r for r in groups if r["bare_dropped"]][:25]},
+        "not_words": {"file": "dropped.tsv",
+                      "wrong_accent": {"entries": len(slips), "in_known_before": sum(1 for w in slips if counts[w] >= args.known_floor),
+                                       "dominance": JUNK_DOMINANCE,
+                                       "examples": [[w, counts[w], t] for w, t in sorted(slips.items(), key=lambda e: -counts[e[0]])[:30]]},
+                      "run_together": {"entries": len(joined), "in_known_before": sum(1 for w in joined if counts[w] >= args.known_floor),
+                                       "prefixes": list(lang.run_on_prefixes),
+                                       "examples": [[w, counts[w], t] for w, t in sorted(joined.items(), key=lambda e: -counts[e[0]])[:30]]}},
+        "other_language": {"list": foreign_path.name if foreign_path else None, "ratio": args.foreign_ratio,
+                           "context": args.foreign_context, "evidence": args.foreign_evidence,
+                           "kept_by_hand": list(FOREIGN_KEPT.get(lang.code, ())),
+                           "candidates": sum(1 for r in ratios.values() if r >= args.foreign_ratio),
+                           "out_of_suggestions": sum(1 for w in outside if counts[w] >= floor),
+                           "share_of_list_count": round(sum(counts[w] for w in outside) / total_mass, 6) if total_mass else 0.0,
+                           "vouched_by_edited_text": sorted((w for w, r in ratios.items()
+                                                             if r >= args.foreign_ratio and w not in outside and counts[w] >= floor),
+                                                            key=lambda w: -counts[w]),
+                           "commonest_out": sorted(outside, key=lambda w: -counts[w])[:60]},
     }
-    print(f"words: {len(suggestions):,} suggestions, {len(known):,} known, {len(drop):,} bare spellings dropped",
+    print(f"words: {len(suggestions):,} suggestions, {len(known):,} known, {len(drop):,} bare spellings dropped, "
+          f"{len(slips):,} wrong accents, {len(joined):,} run together, {len(outside):,} of another language",
           file=sys.stderr)
 
     report: dict = {"language": lang.code, "built": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "inputs": inputs,
@@ -471,6 +659,14 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
                    help="below --dominance, the subtitle ratio from which edited text may decide")
     p.add_argument("--edited-dominance", type=float, default=50.0,
                    help="ratio in the edited corpus text that drops a bare spelling between the two subtitle ratios")
+    p.add_argument("--foreign", default=str(FOREIGN_WORDS),
+                   help="suggestion list of the other language subtitles carry; empty to skip that filter")
+    p.add_argument("--foreign-ratio", type=float, default=FOREIGN_RATIO,
+                   help="a word is a candidate when its share there is this many times its share here")
+    p.add_argument("--foreign-context", type=float, default=FOREIGN_CONTEXT,
+                   help="edited text vouches for a candidate seen this often between two words of this language")
+    p.add_argument("--foreign-evidence", type=int, default=FOREIGN_EVIDENCE,
+                   help="sightings in edited text below which nothing vouches for a candidate")
     p.add_argument("--no-prior", action="store_true", help="words and coverage only")
     p.add_argument("--contexts", type=int, default=CONTEXTS)
     p.add_argument("--followers", type=int, default=FOLLOWERS)

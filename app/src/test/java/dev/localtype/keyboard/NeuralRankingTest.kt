@@ -150,11 +150,41 @@ class NeuralRankingTest {
 
     @Test
     fun `confirmed policy uses three own context words and reserves one slot`() {
-        assertEquals("personal-learning-v2-context3-slots1-once2", NeuralRanking.PERSONAL_POLICY_ID)
+        assertEquals("personal-learning-v3-context3-slots1-once2-backed", NeuralRanking.PERSONAL_POLICY_ID)
         assertEquals(PersonalRanking.Policy(3, 1), NeuralRanking.PERSONAL_POLICY)
         assertEquals(listOf("later", "soon", "specific"), NeuralRanking.rank(
             listOf("later", "soon", "today"), emptyList(), emptyList(), "", emptySet(),
             followers = listOf(PersonalFollower("specific", 1, 1, 1, 3))))
+    }
+
+    /** v3 (docs/next-word-quality-2026-11-12.md): "one" typed twice after "the" used to hold the last slot after every "the". */
+    @Test
+    fun `a common word typed after one word needs the neural list to take the next-word slot`() {
+        val common: (String) -> Boolean = { it in setOf("one", "a", "the") }
+        val three = listOf("house", "room", "car")
+        val twelve = three + listOf("door", "one", "way")
+        fun strip(neural: List<String>, learned: List<Pair<String, Int>> = emptyList(), followers: List<PersonalFollower> = emptyList(),
+                  prefix: String = "", backed: Boolean = true) =
+            NeuralRanking.rank(neural, emptyList(), learned, prefix, emptySet(), followers = followers, backed = backed, common = common)
+        val typedTwice = listOf(PersonalFollower("one", 2, 0, 2, 1))
+        // Not in the neural list: the slot stays with the neural third, from either kind of evidence.
+        assertEquals(three, strip(three, learned = listOf("one" to 2)))
+        assertEquals(three, strip(three, followers = typedTwice))
+        // In the list, beyond its first three: it takes the slot as before.
+        assertEquals(listOf("house", "room", "one"), strip(twelve, learned = listOf("one" to 2)))
+        assertEquals(listOf("house", "room", "one"), strip(twelve, followers = typedTwice))
+        // A word that is not common keeps the slot unbacked: the person's own phrase.
+        assertEquals(listOf("house", "room", "elephant"), strip(three, learned = listOf("elephant" to 2)))
+        assertEquals(listOf("house", "room", "elephant"), strip(three, followers = listOf(PersonalFollower("elephant", 2, 0, 2, 1))))
+        // Chosen from the strip once, or typed behind two own words: no backing needed.
+        assertEquals(listOf("house", "room", "one"), strip(three, followers = listOf(PersonalFollower("one", 1, 1, 1, 1))))
+        assertEquals(listOf("house", "room", "one"), strip(three, followers = listOf(PersonalFollower("one", 1, 0, 1, 2))))
+        // With a letter typed it is a completion, and with no neural answer nothing is there to back it.
+        assertEquals(listOf("only", "once", "one"), strip(listOf("only", "once", "onto"), learned = listOf("one" to 2), prefix = "o"))
+        assertEquals(listOf("one"), strip(emptyList(), learned = listOf("one" to 2)))
+        // The v2 rule, still selectable for scoring the two side by side.
+        assertEquals(listOf("house", "room", "one"), strip(three, learned = listOf("one" to 2), backed = false))
+        assertEquals(76, NeuralRanking.COMMON_SCORE)
     }
 
     private fun rank(

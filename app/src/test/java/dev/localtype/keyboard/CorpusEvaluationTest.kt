@@ -348,6 +348,214 @@ class CorpusEvaluationTest {
     }
 
     @Test
+    fun `columns can be named by source label and the usual three stay as they were`() {
+        val lines = List(12) { "line $it" } + ""
+        val sources = List(12) { listOf("mobiletext", "nus", "taskmaster", "soda")[it % 4] } + "mobiletext"
+        val chosen = CorpusEvaluation.columns(lines, sources, names = listOf("mobiletext", "nus", "soda"))
+        assertEquals(listOf("mobiletext", "nus", "soda"), chosen.map { it.name })
+        // A source with no display name goes by its label.
+        assertEquals(listOf("phone-written", "NUS SMS", "soda"), chosen.map { it.label })
+        assertEquals(listOf("line 0", "line 4", "line 8"), chosen[0].lines)
+        val usual = CorpusEvaluation.columns(lines, sources, pooledLines = 5)
+        assertEquals(listOf("nus", "taskmaster", "pooled"), usual.map { it.name })
+        assertEquals(listOf("NUS SMS", "Taskmaster-1", "pooled sample"), usual.map { it.label })
+        // A source column holds the same lines whatever else is asked for, and the pooled sample is the same draw.
+        assertEquals(usual[0].lines, chosen[1].lines)
+        assertEquals(usual[2].lines, CorpusEvaluation.columns(lines, sources, pooledLines = 5, names = listOf("pooled", "mobiletext"))[0].lines)
+        assertEquals(listOf(2, 2), CorpusEvaluation.columns(lines, sources, maxLines = 2, names = listOf("mobiletext", "taskmaster")).map { it.lines.size })
+        assertTrue(CorpusEvaluation.columns(lines, sources, names = listOf("nowhere")).single().lines.isEmpty())
+
+        val dir = Files.createTempDirectory("corpus-columns").toFile()
+        File(dir, "dev.txt").writeText("hello there\nsee you soon\n")
+        File(dir, "dev.sources.txt").writeText("mobiletext\nnus\n")
+        val named = CorpusEvaluation.Settings(dir, columns = listOf("mobiletext", "nus"))
+        assertEquals(listOf(listOf("hello there"), listOf("see you soon")), CorpusEvaluation.columns(named).map { it.lines })
+        // A run that names a label no line carries fails; with nothing named an absent source is an empty column, as before.
+        val missing = runCatching { CorpusEvaluation.columns(CorpusEvaluation.Settings(dir, columns = listOf("mobiletext", "taskmaster"))) }
+        assertTrue(missing.exceptionOrNull()?.message.orEmpty(), "labelled taskmaster" in missing.exceptionOrNull()?.message.orEmpty())
+        assertEquals(listOf(1, 0, 2), CorpusEvaluation.columns(CorpusEvaluation.Settings(dir)).map { it.lines.size })
+        dir.deleteRecursively()
+    }
+
+    @Test
+    fun `column, ranker and miss-bin choices are for dev only and change nothing when absent`() {
+        val dir = File("unused")
+        val refused = listOf<() -> Any>(
+            { CorpusEvaluation.Settings(dir, "test", columns = listOf("mobiletext")) },
+            { CorpusEvaluation.Settings(dir, "test", rankers = listOf("device-cold")) },
+            { CorpusEvaluation.Settings(dir, "test", missBins = listOf("device-cold")) },
+            { CorpusEvaluation.Settings(dir, columns = emptyList()) },
+            { CorpusEvaluation.Settings(dir, columns = listOf("nus", "nus")) },
+            { CorpusEvaluation.Settings(dir, rankers = listOf("device-cold", "device-cold")) },
+            { CorpusEvaluation.Settings(dir, missBins = listOf("device-cold", "device-cold")) },
+        )
+        for ((i, settings) in refused.withIndex()) assertTrue("case $i", runCatching(settings).isFailure)
+        val plain = CorpusEvaluation.Settings(dir)
+        assertNull(plain.columns)
+        assertNull(plain.rankers)
+        assertTrue(plain.missBins.isEmpty())
+        // With nothing chosen each split scores its own list, and the test split's refusal is the one that was there.
+        assertEquals(CorpusEvaluation.rankers("dev").map { it.name }, CorpusEvaluation.rankers(plain).map { it.name })
+        assertEquals(
+            runCatching { CorpusEvaluation.rankers("test").map { it.name } }.getOrNull(),
+            runCatching { CorpusEvaluation.rankers(CorpusEvaluation.Settings(dir, "test")).map { it.name } }.getOrNull(),
+        )
+        // The shipped file is scored only when named, and the named rankers come in the order given.
+        assertFalse(CorpusCifgRanker.SHIPPED in CorpusEvaluation.rankers("dev").map { it.name })
+        val chosen = CorpusEvaluation.Settings(dir, rankers = listOf("chime-shipped", "prior-w20", "device-cold"))
+        assertEquals(listOf("chime-shipped", "prior-w20", "device-cold"), CorpusEvaluation.rankers(chosen).map { it.name })
+        val unknown = runCatching { CorpusEvaluation.rankers(CorpusEvaluation.Settings(dir, rankers = listOf("no-such-ranker"))) }
+        assertTrue(unknown.exceptionOrNull()?.message.orEmpty(), "no ranker named no-such-ranker" in unknown.exceptionOrNull()?.message.orEmpty())
+    }
+
+    @Test
+    fun `the shipped ranker is the app's own model file`() {
+        val ranker = CorpusCifgRanker.shipped()
+        assertEquals("chime-shipped", ranker.name)
+        assertTrue(ranker.description, NeuralAsset.SHA256 in ranker.description)
+        val model = File("src/main/assets/${NeuralAsset.FILE_NAME}").inputStream().use { NeuralAsset.load(it) }
+        for (context in listOf("", "I am on my ", "Thank ")) {
+            assertEquals(context, model.newSession().predict(context, 12).map { it.word }, ranker.rank(context, "", 12))
+        }
+        assertEquals(model.offerableCount, ranker.vocabulary.size)
+        // Another file under that name is refused before it is parsed.
+        val other = CorpusCifgRanker.shipped(File("src/test/fixtures/cifg_tiny.bin"))
+        assertTrue(runCatching { other.rank("", "", 3) }.isFailure)
+    }
+
+    @Test
+    fun `miss bins sort every word target by where the ranker left it`() {
+        val words = listOf("the", "to", "and", "of", "in", "it", "is", "on", "at", "as", "be", "by", "we", "up")
+        val ranker = FixedRanker("fixed", words, vocabulary = words.toSet())
+        // the, to: in the first three. of: rank 4. by: rank 12. up: rank 14, a word it knows outside the twelve.
+        // cat: not a word it has. u, twice: one letter, never offered.
+        val text = column("the of by up cat u", "to u")
+        val plain = CorpusEvaluation.score(ranker, text)
+        assertNull(plain.missBins)
+        val s = CorpusEvaluation.score(ranker, text, missBins = true)
+        val bins = s.missBins!!
+        assertEquals(12, bins.limit)
+        assertEquals(listOf(2, 2, 1, 1, 2), listOf(bins.hits, bins.near, bins.beyond, bins.outOfVocabulary, bins.neverOffered))
+        assertEquals(3, bins.cannotOffer)
+        assertEquals(6, bins.misses)
+        // Nothing leaves the denominator: it is the column's word targets, and the hits are the score's hit@3.
+        assertEquals(text.targets.size, bins.targets)
+        assertEquals(s.hit3, bins.hits)
+        assertEquals(s.nextHit3, bins.hits.toDouble() / bins.targets, 1e-12)
+        // The extra answer changes no figure of the score.
+        fun figures(x: CorpusEvaluation.Score) =
+            listOf(x.hit1, x.hit3, x.hit6, x.saved, x.dropped, x.inVocab, x.inVocabHit3, x.inVocabSaved) + x.completionHits.toList() + x.savedByLine.toList()
+        assertEquals(figures(plain), figures(s))
+        assertEquals(plain.mrr, s.mrr, 0.0)
+
+        // A candidate the strip could never show leaves its slot empty in the twelve too, and isn't counted as dropped twice.
+        val noisy = object : CorpusRanker {
+            override val name = "noisy"
+            override val vocabulary = setOf("the", "and")
+            override fun rank(context: String, prefix: String, limit: Int) = listOf("u", "the", "the", "and")
+        }
+        val fourth = CorpusEvaluation.score(noisy, column("and"), missBins = true)
+        assertEquals(listOf(0, 1, 0, 0, 0), fourth.missBins!!.let { listOf(it.hits, it.near, it.beyond, it.outOfVocabulary, it.neverOffered) })
+        assertEquals(CorpusEvaluation.score(noisy, column("and")).dropped, fourth.dropped)
+        // Without a vocabulary a miss can't be told from a word the ranker doesn't have.
+        assertTrue(runCatching { CorpusEvaluation.score(FixedRanker(), text, missBins = true) }.isFailure)
+        assertTrue(runCatching { CorpusEvaluation.evaluate(listOf(text.column), listOf(ranker), missBins = listOf("absent")) }.isFailure)
+    }
+
+    @Test
+    fun `miss bins on the tiny model are what asking it directly gives`() {
+        fun tiny() = File("src/test/fixtures/cifg_tiny.bin").inputStream().use { CifgModel.load(it) }
+        val ranker = CorpusCifgRanker("tiny", "the committed tiny model") { tiny() }
+        // Thirteen of its words can be offered, so one of them is outside every twelve. zebra and later are
+        // outside its vocabulary, and u is in it but is one letter.
+        val lines = listOf("Hello we don't help you", "thanks that it u", "hey zebra to the a i", "I help. You don't! hello later")
+        val columns = CorpusEvaluation.columns(lines, List(lines.size) { "mobiletext" }, names = listOf("mobiletext"))
+        val result = CorpusEvaluation.evaluate(columns, listOf(ranker, FixedRanker()), missBins = listOf("tiny"))
+        val column = result.column("mobiletext")!!
+        val s = column.score("tiny")!!
+        val bins = s.missBins!!
+        assertNull(column.score("fixed")!!.missBins)
+        assertEquals(13, ranker.vocabulary.size)
+
+        val model = tiny()
+        val expected = CorpusEvaluation.MissBins()
+        for (t in column.text.targets) {
+            if (!t.offerable) {
+                expected.neverOffered++
+                continue
+            }
+            // A new session each time: where the target sits doesn't depend on what the ranker was asked before.
+            expected.add(model.newSession().predict(t.context, 12).map { it.word }.indexOf(t.word), t.word in ranker.vocabulary)
+        }
+        fun parts(b: CorpusEvaluation.MissBins) = listOf(b.hits, b.near, b.beyond, b.outOfVocabulary, b.neverOffered)
+        assertEquals(parts(expected), parts(bins))
+        assertEquals(column.text.targets.size, bins.targets)
+        assertEquals(21, bins.targets)
+        assertEquals(1, bins.neverOffered)
+        assertEquals(2, bins.outOfVocabulary)
+        assertEquals(18, bins.hits + bins.near + bins.beyond)
+        assertEquals(s.hit3, bins.hits)
+        // The tiny model's scores without the bins are the same scores.
+        val plain = CorpusEvaluation.evaluate(columns, listOf(CorpusCifgRanker("tiny", "") { tiny() })).column("mobiletext")!!.score("tiny")!!
+        assertEquals(listOf(plain.hit1, plain.hit3, plain.hit6, plain.saved, plain.dropped), listOf(s.hit1, s.hit3, s.hit6, s.saved, s.dropped))
+
+        val report = result.report()
+        assertTrue(report, "phone-written (mobiletext): 4 lines" in report)
+        assertTrue(report, "caveat: the phone-written lines" in report)
+        assertTrue(report, "next-word answers of tiny by where the target sat in its 12 best" in report)
+        assertTrue(report, "(outside its vocabulary 2; one-letter words the strip never offers 1)" in report)
+        assertFalse(report, "next-word answers of fixed" in report)
+    }
+
+    @Test
+    fun `a run of chosen columns and rankers says so, and the usual run reads as before`() {
+        val dir = Files.createTempDirectory("corpus-chosen").toFile()
+        File(dir, "dev.txt").writeText(listOf("Thank you so much!", "I am on my way. See you soon", "ok lor... wat u doing?", "Can we talk later", "Merry Christmas").joinToString("\n") + "\n")
+        File(dir, "dev.sources.txt").writeText(listOf("nus", "mobiletext", "nus", "taskmaster", "mobiletext").joinToString("\n") + "\n")
+        val settings = CorpusEvaluation.Settings(
+            dir, columns = listOf("mobiletext", "nus", "taskmaster"),
+            rankers = listOf("device-cold", "prior-w20", "chime-shipped"), missBins = listOf("chime-shipped"),
+        )
+        val result = CorpusEvaluation.evaluate(settings)
+        assertEquals(listOf("mobiletext", "nus", "taskmaster"), result.results.map { it.text.column.name })
+        assertEquals(listOf("device-cold", "prior-w20", "chime-shipped"), result.results.first().scores.map { it.ranker.name })
+        val report = result.report()
+        assertTrue(report, "columns: every line of the split labelled mobiletext (phone-written), nus (NUS SMS), taskmaster (Taskmaster-1)\n" in report)
+        assertTrue(report, "ranker chime-shipped: the bundled cifg_int8.bin (SHA-256 ${NeuralAsset.SHA256})" in report)
+        assertTrue(report, "chime-shipped minus prior-w20: savings" in report)
+        assertEquals(3, Regex("next-word answers of chime-shipped").findAll(report).count())
+        assertFalse(report, "pooled sample" in report)
+        // The choice among the prior's settings and its gate belong to the whole dev list.
+        assertFalse(report, "preregistered" in report)
+        for (column in result.results) {
+            val bins = column.score("chime-shipped")!!.missBins!!
+            assertEquals(column.text.targets.size, bins.targets)
+            assertEquals(column.score("chime-shipped")!!.hit3, bins.hits)
+        }
+
+        // The same files with nothing chosen: the columns and the wording the report always had, and no bins.
+        val plain = CorpusEvaluation.Settings(dir)
+        val usual = CorpusEvaluation.evaluate(CorpusEvaluation.columns(plain), listOf(CorpusDeviceRanker.cold(), CorpusDeviceRanker.withPrior()), plain)
+        assertEquals(listOf("nus", "taskmaster", "pooled"), usual.results.map { it.text.column.name })
+        val before = usual.report()
+        assertTrue(before, "columns: every NUS SMS and Taskmaster-1 line of the split; pooled = 5 lines sampled with seed ${CorpusEvaluation.SEED} (not cifg.py's numpy sample)\n" in before)
+        assertTrue(before, "preregistered prior gate, prior-w20 against device-cold" in before)
+        assertFalse(before, "next-word answers of" in before)
+        assertFalse(before, "phone-written" in before)
+        // A column's figures and intervals are its own: NUS scores the same beside the phone-written column as without it.
+        val a = result.column("nus")!!
+        val b = usual.column("nus")!!
+        for (name in listOf("device-cold", "prior-w20")) {
+            assertEquals(b.score(name)!!.let { listOf(it.hit1, it.hit3, it.hit6, it.saved, it.baseline) }, a.score(name)!!.let { listOf(it.hit1, it.hit3, it.hit6, it.saved, it.baseline) })
+        }
+        val (savingsA, hit3A) = a.interval("device-cold", "prior-w20")!!
+        val (savingsB, hit3B) = b.interval("device-cold", "prior-w20")!!
+        assertEquals(listOf(savingsB.difference, savingsB.low, savingsB.high), listOf(savingsA.difference, savingsA.low, savingsA.high))
+        assertEquals(listOf(hit3B!!.difference, hit3B.low, hit3B.high), listOf(hit3A!!.difference, hit3A.low, hit3A.high))
+        dir.deleteRecursively()
+    }
+
+    @Test
     fun `per-source counts print as model corpus_counts prints them`() {
         // The same lines and lines of output as model/tests/test_corpus_counts.py. 𝑥 is one code point
         // but two UTF-16 units, so, as String.length in AdaptiveNgramModel.predict sees it, not one-letter.
@@ -441,7 +649,8 @@ class CorpusEvaluationTest {
             }
         }
         assertTrue(file.path.replace('\\', '/').endsWith("build/reports/corpus-eval/${settings.split}.txt"))
-        assertEquals(listOf("nus", "taskmaster", "pooled"), result.results.map { it.text.column.name })
+        assertEquals(settings.columns ?: listOf("nus", "taskmaster", "pooled"), result.results.map { it.text.column.name })
+        assertEquals(listOf("nus", "taskmaster", "pooled"), CorpusEvaluation.DEFAULT_COLUMNS)
         for (column in result.results) {
             assertTrue("no targets in ${column.text.column.name}", column.text.targets.isNotEmpty())
             for (s in column.scores) assertTrue("${s.ranker.name} savings ${s.savings}", s.savings in 0.0..1.0)

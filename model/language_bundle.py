@@ -17,7 +17,7 @@ experimental without one (Luke, 2026-10-18).
 
 Usage, from the repository root with Galactus mounted:
 
-    python -m model.language_bundle es --build es-candidate-2
+    python -m model.language_bundle es --build es-candidate-3-notwords
 """
 
 from __future__ import annotations

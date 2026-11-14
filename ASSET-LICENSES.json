@@ -1,11 +1,12 @@
 {
   "cifg_int8.bin": {
-    "sha256": "3255dbeaf6e7fc0922afdca42ef751a22e3ad28903ab4acc9eb0022b9a704318",
-    "status": "existing-grant",
+    "sha256": "4099fe04fb2b10597b0e1068f51aa94b9618d4f326abf72a08a6aab88b32ea7a",
+    "status": "reviewed-grant",
     "license": "CC-BY-SA-4.0",
-    "source": "https://huggingface.co/lukeslp/chime-sms-2m",
+    "source": "Chime retrain run chime-s4-f1-tatoeba-full (corpus-v3 plus Tatoeba English); docs/chime-retrain-results-2026-11-13.md",
     "notice": "licenses/cifg-NOTICE.txt",
-    "sourceSha256": "3255dbeaf6e7fc0922afdca42ef751a22e3ad28903ab4acc9eb0022b9a704318"
+    "review": "Tatoeba CC BY 2.0 FR read on its downloads page 2026-11-13; contributor list in licenses/cifg-tatoeba-contributors.txt; earlier sources as in model/licenses.md",
+    "sourceSha256": "4099fe04fb2b10597b0e1068f51aa94b9618d4f326abf72a08a6aab88b32ea7a"
   },
   "corpus_prior.bin": {
     "sha256": "5ea7038a8c99e8fdeb6813bcb57db019933261c8e3e8298b7aff62048c6f4825",
@@ -147,13 +148,13 @@
     "sourceSha256": "7ff9e84f1ef96f35a492d0973be0d9b59dd8f51f71b034910fd9cd99d44518b3"
   },
   "words_es.txt": {
-    "sha256": "fc40e7ebe4c51d30ddf8aba420794bf1e8bc3f25a1c9f7661c1a120d97040bce",
+    "sha256": "56e1f1adc00b492756d2aaa8e289c6f84dbbdced92d48d52074257237e9a3bad",
     "status": "reviewed-grant",
     "license": "CC-BY-SA-4.0",
     "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/es/ (OpenSubtitles 2018); model/language_bundle.py",
     "notice": "licenses/wordlists-NOTICE.txt",
     "review": "Sources, versions and licence pages recorded in model/licenses.md (Spanish 2026-10-17/18, Portuguese 2026-10-18)",
-    "sourceSha256": "fc40e7ebe4c51d30ddf8aba420794bf1e8bc3f25a1c9f7661c1a120d97040bce"
+    "sourceSha256": "56e1f1adc00b492756d2aaa8e289c6f84dbbdced92d48d52074257237e9a3bad"
   },
   "words_es_profanity.txt": {
     "sha256": "aee4c6d0ce1edcd581948c2794bfc4a3de9ff591add9f1897e6e36de18673b99",
@@ -300,13 +301,13 @@
     "sourceSha256": "deb627513af8e5fc3c154c8d53fcf20ceccde510bf1b678c7403a70701644efa"
   },
   "words_known_es.txt": {
-    "sha256": "a5d3c1b50366a0b15f1ffc5706b41d514d7711357cb4e44dbd6d63b1fdaa9ca2",
+    "sha256": "263add83c09f7f8e3dd1c34e20cc329da07df89805d319cafe88fd432c4d506a",
     "status": "reviewed-grant",
     "license": "CC-BY-SA-4.0",
     "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/es/ (OpenSubtitles 2018); model/language_bundle.py",
     "notice": "licenses/wordlists-NOTICE.txt",
     "review": "Sources, versions and licence pages recorded in model/licenses.md (Spanish 2026-10-17/18, Portuguese 2026-10-18)",
-    "sourceSha256": "a5d3c1b50366a0b15f1ffc5706b41d514d7711357cb4e44dbd6d63b1fdaa9ca2"
+    "sourceSha256": "263add83c09f7f8e3dd1c34e20cc329da07df89805d319cafe88fd432c4d506a"
   },
   "words_known_fa.txt": {
     "sha256": "bc6a976af9188cfc9f82d2079311ba8b0f5d2ec5d54a4774ff68331ef570dd36",
@@ -381,13 +382,13 @@
     "sourceSha256": "2d119cae4f25f5fff1dbb07e608bc8e6a54e0329354fe0e1954d959cf3e00c9b"
   },
   "words_known_pt.txt": {
-    "sha256": "15d3bb57b439459637472faecd1f3b0db38fd7f4d191afd42a3a100d65a8f95d",
+    "sha256": "c69bc1ab0249a6bd9ffe51cdbcc6f1154e5f1e253e3505a2e77db355b71b53dc",
     "status": "reviewed-grant",
     "license": "CC-BY-SA-4.0",
     "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/pt_br/ (OpenSubtitles 2018); model/language_bundle.py",
     "notice": "licenses/wordlists-NOTICE.txt",
     "review": "Sources, versions and licence pages recorded in model/licenses.md (Spanish 2026-10-17/18, Portuguese 2026-10-18)",
-    "sourceSha256": "15d3bb57b439459637472faecd1f3b0db38fd7f4d191afd42a3a100d65a8f95d"
+    "sourceSha256": "c69bc1ab0249a6bd9ffe51cdbcc6f1154e5f1e253e3505a2e77db355b71b53dc"
   },
   "words_mi.txt": {
     "sha256": "62a7f85975dcab19eb936bb0684a523401ae1a713757a655a4856ee6bf53f4c9",
@@ -426,13 +427,13 @@
     "sourceSha256": "120d7e54b7f1b1432018b8a2f4e03a12c4d6b97c1b3c3b02bcd9117829afc0ff"
   },
   "words_pt.txt": {
-    "sha256": "120f4083dd09a6167de304c3914988a4d0e51cfdbe7d52515478d36f775aa5fb",
+    "sha256": "fe9053c61aa38bbde1905a31710ca25b85b11706bbe0492669b87e813ce13ef9",
     "status": "reviewed-grant",
     "license": "CC-BY-SA-4.0",
     "source": "hermitdave/FrequencyWords commit 525f9b560de45753a5ea01069454e72e9aa541c6, content/2018/pt_br/ (OpenSubtitles 2018); model/language_bundle.py",
     "notice": "licenses/wordlists-NOTICE.txt",
     "review": "Sources, versions and licence pages recorded in model/licenses.md (Spanish 2026-10-17/18, Portuguese 2026-10-18)",
-    "sourceSha256": "120f4083dd09a6167de304c3914988a4d0e51cfdbe7d52515478d36f775aa5fb"
+    "sourceSha256": "fe9053c61aa38bbde1905a31710ca25b85b11706bbe0492669b87e813ce13ef9"
   },
   "words_pt_profanity.txt": {
     "sha256": "093b0bb1b4a15d414d90557ec6c5ecf258196369086f335218cd75941620fb0d",

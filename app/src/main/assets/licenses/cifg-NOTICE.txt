@@ -1,13 +1,16 @@
 LocalType experimental next-word model (cifg_int8.bin)
 
-Luke Steuber trained this model on the corpus-v3 training split from the five sources below.
-The source texts were filtered, normalized, deduplicated and divided into training, development
-and test splits. The English vocabulary and a CIFG-LSTM were learned from the training split;
-the model was trained for three epochs, selected on human-source development perplexity, and
-its weights were quantized to int8. NUS SMS, Taskmaster-1 and OpenAssistant prompter turns were
-oversampled eight times; Taskmaster-3 and SODA counted once. This file contains model weights
-and a vocabulary, rather than a copy of the source corpus. The source authors have not endorsed
-LocalType. The sources are provided as-is and without warranties under their respective licenses.
+Luke Steuber trained this model on the corpus-v3 training split from the five sources below,
+plus the Tatoeba English sentences in item 6. The corpus-v3 texts were filtered, normalized,
+deduplicated and divided into training, development and test splits; the English vocabulary was
+learned from that training split. The Tatoeba sentences went through the same line rules and an
+exact dedupe against corpus-v3 and the scored evaluation sets, and lines naming Tatoeba's stock
+characters were dropped. A CIFG-LSTM was then trained for 102,195 updates (about 2.6 passes),
+selected on human-source development perplexity, and its weights were quantized to int8. NUS SMS,
+Taskmaster-1 and OpenAssistant prompter turns were oversampled eight times; Taskmaster-3, SODA and
+Tatoeba counted once. This file contains model weights and a vocabulary, rather than a copy of
+the source corpus. The source authors have not endorsed LocalType. The sources are provided as-is
+and without warranties under their respective licenses.
 
 1. NUS SMS Corpus, English portion, release 2015.03.09.
    Tao Chen and Min-Yen Kan, "Creating a Live, Public Short Message Service Corpus: The NUS SMS
@@ -56,6 +59,16 @@ LocalType. The sources are provided as-is and without warranties under their res
    (InstructGPT); they are synthetic and are not counted as human-written.
    License: Creative Commons Attribution 4.0 International (CC BY 4.0).
    https://creativecommons.org/licenses/by/4.0/
+
+6. Tatoeba English sentences (https://tatoeba.org).
+   Tatoeba is a collaborative collection of example sentences maintained by Association Tatoeba.
+   English export eng_sentences.tsv.bz2, downloaded 2026-11-14 02:59 UTC, SHA-256
+   1a2d75ac07aa5d035bff4e2bf053139dfd3b1f1645f6fd3d76fc852cc9ef6020.
+   1,340,659 sentences were used, written by the 6,686 Tatoeba contributors listed by username,
+   with their sentence counts, in cifg-tatoeba-contributors.txt alongside this notice; 43,803 more
+   have no owner on record. Human-written.
+   License: Creative Commons Attribution 2.0 France (CC BY 2.0 FR).
+   https://creativecommons.org/licenses/by/2.0/fr/
 
 The vocabulary's emoji tokens come from LocalType's emoji_en.txt, a word-to-emoji list
 written for LocalType. The separate emoji panel uses Unicode and CLDR data; its attribution
