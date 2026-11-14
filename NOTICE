@@ -11,6 +11,9 @@ Bundled assets have separate terms. See distribution/source/asset-licenses.json
 app/src/main/assets/licenses/:
 
 - current_words.txt: first-party editorial vocabulary, Apache-2.0.
+- pack_medical_en.txt and pack_politics_en.txt: opt-in word packs from public-domain
+  (RxNorm, MedlinePlus, CMS, the U.S. Senate glossary) and CC0 (congress-legislators,
+  Wikidata) sources, with LocalType's selection under Apache-2.0; see word-packs-NOTICE.txt.
 - emoji_en.txt and words_en_modern.txt: first-party lists, CC BY-SA 4.0.
 - words_en.txt and words_en_profanity.txt: FrequencyWords/OpenSubtitles-derived
   lists, CC BY-SA 4.0; see wordlists-NOTICE.txt.

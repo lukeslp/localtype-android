@@ -22,6 +22,7 @@ class BundledWordListsTest {
             "words_he.txt", "words_he_profanity.txt", "words_known_he.txt",
             "words_cy.txt", "words_known_cy.txt", "words_ga.txt", "words_known_ga.txt",
             "words_mi.txt", "words_known_mi.txt", "words_haw.txt", "words_known_haw.txt") +
+            WordPackCatalog.BUNDLED.map { it.asset } +
             LanguageProfile.EXTRA.flatMap { listOf(it.wordsAsset, it.profanityAsset, it.lexiconAsset) }))
         var checked = 0
         var checkedSpanish = 0

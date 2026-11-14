@@ -24,6 +24,11 @@ class Corrector(
     private val touchOffsets: () -> TouchOffsets? = { null },
     /** The language whose letters, keys and accents the costs use; English unless told otherwise. */
     private val language: () -> LanguageProfile = { LanguageProfile.ENGLISH },
+    /**
+     * Opt-in word packs ([WordPacks]): their words are known, so never corrected; never an automatic fix, only an
+     * offer; and a typo of one is offered only when no ordinary word is a candidate at all. Empty changes nothing.
+     */
+    private val packs: () -> WordPacks = { WordPacks.EMPTY },
 ) {
     /** A proposed fix. Only [automatic] ones replace the word on space; others are just suggested. */
     data class Correction(val word: String, val automatic: Boolean)
@@ -87,26 +92,30 @@ class Corrector(
     private var memoOffsets: TouchOffsets? = null
     private var memoOffsetsRevision = 0L
     private var memoLanguage: LanguageProfile? = null
+    private var memoPacks: WordPacks? = null
 
     fun propose(typed: String, touches: List<Touch?>? = null, previous: String? = null, sentenceStart: Boolean = false, afterComma: Boolean = false): Correction? {
         val words = dictionary()
         val offsets = touchOffsets()
         val lang = language()
+        val wordPacks = packs()
         // Touches only help when there is one per letter; otherwise fall back to key centers.
         val aligned = touches?.takeIf { it.size == typed.length }
         val key = MemoKey(typed, aligned?.toList(), previous, sentenceStart, afterComma)
         val remembered = memoLock.withLock {
-            if (memoDictionary !== words || memoOffsets !== offsets || memoOffsetsRevision != (offsets?.revision ?: 0L) || memoLanguage !== lang) {
+            if (memoDictionary !== words || memoOffsets !== offsets || memoOffsetsRevision != (offsets?.revision ?: 0L) || memoLanguage !== lang ||
+                memoPacks !== wordPacks) {
                 memo.clear()
                 memoDictionary = words
                 memoOffsets = offsets
                 memoOffsetsRevision = offsets?.revision ?: 0L
                 memoLanguage = lang
+                memoPacks = wordPacks
             }
             if (memo.containsKey(key)) Remembered(memo[key]) else null
         }
         if (remembered != null) return remembered.answer
-        return computeProposal(typed, compensatedTouches(typed, aligned, offsets), previous?.lowercase(), sentenceStart, afterComma, keysFor(lang))
+        return computeProposal(typed, compensatedTouches(typed, aligned, offsets), previous?.lowercase(), sentenceStart, afterComma, keysFor(lang), wordPacks)
             .also { result -> memoLock.withLock { memo[key] = result } }
     }
 
@@ -145,7 +154,10 @@ class Corrector(
         return built
     }
 
-    private fun computeProposal(typed: String, touches: List<Touch?>?, previous: String?, sentenceStart: Boolean, afterComma: Boolean, keys: Keys): Correction? {
+    private fun computeProposal(
+        typed: String, touches: List<Touch?>?, previous: String?, sentenceStart: Boolean, afterComma: Boolean, keys: Keys,
+        wordPacks: WordPacks = packs(),
+    ): Correction? {
         val word = typed.replace('’', '\'').lowercase()
         if (word.length < 2 || word.any { !it.isLetter() && it != '\'' && it !in keys.language.dropped }) return null
         // Leave acronyms and mid-word capitals ("NASA", "iPhone") alone.
@@ -156,7 +168,7 @@ class Corrector(
         }
         val words = dictionary()
         val known = lexicon()
-        if (isKnown(word) || word in known) return null
+        if (isKnown(word) || word in known || word in wordPacks) return null
         // SCOWL drops 's forms, so possessives and 's contractions of real words ("friend's", "here's",
         // "parents'") are in neither list. Leave them as typed; a weak or unknown stem ("ther's") is still a typo,
         // and so is a swapped apostrophe whose 's form is a dictionary word ("its'" for "it's").
@@ -165,7 +177,7 @@ class Corrector(
             word.endsWith("s'") && word.dropLast(2) + "'s" !in words -> word.dropLast(1)
             else -> null
         }
-        if (!stem.isNullOrEmpty() && (isKnown(stem) || stem in known || (stem in words && !isWeak(stem, words, known)))) return null
+        if (!stem.isNullOrEmpty() && (isKnown(stem) || stem in known || stem in wordPacks || (stem in words && !isWeak(stem, words, known)))) return null
         // Subtitle fragments ("fo", "ot") are in the frequency list but not the lexicon; they stay
         // correctable, and only a much more common word replaces them.
         val weak = word in words && isWeak(word, words, known)
@@ -179,14 +191,21 @@ class Corrector(
             previous?.let { minOf(contextCount(it, candidate) * CONTEXT_WEIGHT, CONTEXT_CAP).toFloat() } ?: 0f
         }
         val ranked = rank(word, touches, searchBudget, words, known, contextFor, contextBound = if (previous != null) CONTEXT_CAP.toFloat() else 0f, keys = keys)
-        if (ranked.isEmpty()) return null
+        // Only when no ordinary word is a candidate at all may a pack word be offered, so a pack never takes a fix
+        // from an everyday word, or the margin an automatic fix needs over its runner-up.
+        if (ranked.firstOrNull()?.let { it.score >= SUGGEST_MIN_SCORE } != true) {
+            return if (weak) null else packOffer(word, touches, searchBudget, keys, wordPacks)
+        }
         val (best, cost, score) = ranked.first()
-        if (score < SUGGEST_MIN_SCORE) return null
         val runnerUp = ranked.getOrNull(1)?.score ?: Float.NEGATIVE_INFINITY
         val beatsTyped = !weak || baseScore(best, words, known) - words.score(word) >= WEAK_MARGIN
         // Dropping letters to reach a much shorter word is how slang turns into nonsense ("zoomer" → "some").
         val lengthOk = word.length - best.count { it != '\'' } <= if (word.length >= 8) 2 else 1
-        val automatic = cost <= autoBudget && score >= AUTO_MIN_SCORE && score - runnerUp >= AUTO_MARGIN && beatsTyped && lengthOk
+        // A pack word that is also in the lists ("warfarin" in SCOWL) is still never applied while its pack is on. A fix
+        // to an ordinary word near a pack word is left as it was (Luke, 2026-11-13): refusing those cost 5 to 10 of the
+        // 153 real typos (docs/word-packs-2026-11-13.md, "Slips into ordinary words").
+        val automatic = cost <= autoBudget && score >= AUTO_MIN_SCORE && score - runnerUp >= AUTO_MARGIN && beatsTyped && lengthOk &&
+            !wordPacks.offerOnly(best)
         if (weak && !automatic) return null
         return Correction(best, automatic)
     }
@@ -219,8 +238,8 @@ class Corrector(
             isKept(word) -> "kept"
             blocked(word) -> "excluded"
             contraction(word, previous?.lowercase(), sentenceStart, afterComma) != null -> "contraction"
-            isKnown(word) || word in known || (word in words && !weak) -> "known-or-learned"
-            !stem.isNullOrEmpty() && (isKnown(stem) || stem in known || (stem in words && !isWeak(stem, words, known))) -> "possessive"
+            isKnown(word) || word in known || word in packs() || (word in words && !weak) -> "known-or-learned"
+            !stem.isNullOrEmpty() && (isKnown(stem) || stem in known || stem in packs() || (stem in words && !isWeak(stem, words, known))) -> "possessive"
             weak -> "weak-word"
             name -> "likely-name"
             else -> null
@@ -317,6 +336,62 @@ class Corrector(
             }
         }
         return top
+    }
+
+    /** Pack words grouped by length for [packOffer], rebuilt when the packs or keys change. */
+    private class PackIndex(val packs: WordPacks, val keys: Keys, val targets: Map<Int, List<Target>>)
+
+    @Volatile private var packIndex: PackIndex? = null
+
+    private fun packTargets(wordPacks: WordPacks, keys: Keys): Map<Int, List<Target>> {
+        // Keyed by the pack list, not the day: a new day's WordPacks holds the same packs and reuses the index.
+        packIndex?.takeIf { it.packs.packs === wordPacks.packs && it.keys === keys }?.let { return it.targets }
+        val built = wordPacks.words().asSequence().sorted()
+            .map { Target(it, RARE_WORD_BASE, keys) }.toList()
+            .groupBy { keys.language.bareLength(it.word) }
+        packIndex = PackIndex(wordPacks, keys, built)
+        return built
+    }
+
+    /** Builds the pack lookup off the main thread when packs are switched on, as [prepare] does for the lists. */
+    fun preparePacks(wordPacks: WordPacks) {
+        if (!wordPacks.isEmpty) packTargets(wordPacks, keysFor(language()))
+    }
+
+    /**
+     * The nearest pack word within [budget], offered and never applied ([Correction.automatic] false). Asked only when
+     * the ordinary scan found no candidate, so it never changes an everyday fix.
+     */
+    private fun packOffer(word: String, touches: List<Touch?>?, budget: Float, keys: Keys, wordPacks: WordPacks): Correction? {
+        if (wordPacks.isEmpty) return null
+        val byLength = packTargets(wordPacks, keys)
+        val bareLength = keys.language.bareLength(word)
+        val maxLengthChange = (budget / MIN_INSERT_OR_DELETE).toInt().coerceAtMost(3)
+        val leastFix = FloatArray(word.length) { i ->
+            val c = word[i]
+            var cheapest = extraCost(word, i, keys)
+            for (other in keys.letters) if (other != c) cheapest = minOf(cheapest, substitution(c, touches?.getOrNull(i), other, keys))
+            cheapest
+        }
+        var best: String? = null
+        var bestCost = budget
+        for (length in (bareLength - maxLengthChange)..(bareLength + maxLengthChange)) {
+            for (target in byLength[length].orEmpty()) {
+                if (target.word == word || !couldStartAs(word, target.word, keys) || blocked(target.word)) continue
+                var bound = 0f
+                for (i in word.indices) {
+                    val bit = keys.bit(word[i])
+                    if (bit != 0L && target.letters and bit == 0L) bound += leastFix[i]
+                }
+                if (bound > bestCost) continue
+                val cost = cost(word, target.word, touches, bestCost, keys)
+                if (cost < bestCost || (cost == bestCost && best == null)) {
+                    best = target.word
+                    bestCost = cost
+                }
+            }
+        }
+        return best?.let { Correction(it, automatic = false) }
     }
 
     private fun isWeak(word: String, words: WordDictionary, known: Lexicon): Boolean =

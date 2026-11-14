@@ -30,6 +30,8 @@ class AdaptiveNgramModel(
     private val excluded: (String) -> Boolean = { false },
     /** What this language counts as a word ([LanguageProfile.wordRule]); the shared rule unless it has marks of its own. */
     private val wordRule: WordRule = WordRule.DEFAULT,
+    /** Opt-in word packs, pinned per field; empty unless the person switched one on, which leaves ranking as it was. */
+    var packs: WordPacks = WordPacks.EMPTY,
 ) {
     private val unigrams = HashMap<String, Int>()
     private val bigrams = HashMap<String, MutableMap<String, Int>>()
@@ -95,6 +97,13 @@ class AdaptiveNgramModel(
             // Do not add editorial counts to learned tables or change dictionary/correction scores.
             val existing = scores[word] ?: return@forEach
             scores[word] = existing + vocabulary.predictionLift(word, words.score(word), previous)
+        }
+
+        // Pack words compete only from three typed letters and never by context, so the next-word slots never see them.
+        packs.candidates(prefix).forEach { (word, _) ->
+            add(word)
+            val existing = scores[word] ?: return@forEach
+            scores[word] = existing + packs.lift(word, words.score(word))
         }
 
         return scores.entries

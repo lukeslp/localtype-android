@@ -1,0 +1,343 @@
+# Public-domain sample for WordPackSavingsTest: nine pages of the Congressional Record of 2026-11-12 (vol. 172, no. 171),
+# from govinfo, read 2026-11-13. "With the exception of copyrighted articles, there are no restrictions on the
+# republication of material from the Congressional Record." (https://www.govinfo.gov/help/crec)
+# https://www.govinfo.gov/content/pkg/CREC-2026-11-12/html/CREC-2026-11-12-pt1-PgS5583-7.htm
+# https://www.govinfo.gov/content/pkg/CREC-2026-11-12/html/CREC-2026-11-12-pt1-PgS5583-9.htm
+# https://www.govinfo.gov/content/pkg/CREC-2026-11-12/html/CREC-2026-11-12-pt1-PgS5584-2.htm
+# https://www.govinfo.gov/content/pkg/CREC-2026-11-12/html/CREC-2026-11-12-pt1-PgS5585.htm
+# https://www.govinfo.gov/content/pkg/CREC-2026-11-12/html/CREC-2026-11-12-pt1-PgS5585-2.htm
+# https://www.govinfo.gov/content/pkg/CREC-2026-11-12/html/CREC-2026-11-12-pt1-PgS5586-3.htm
+# https://www.govinfo.gov/content/pkg/CREC-2026-11-12/html/CREC-2026-11-12-pt1-PgH6202-3.htm
+# https://www.govinfo.gov/content/pkg/CREC-2026-11-12/html/CREC-2026-11-12-pt1-PgH6203-5.htm
+# https://www.govinfo.gov/content/pkg/CREC-2026-11-12/html/CREC-2026-11-12-pt1-PgH6204-3.htm
+# One sentence per line (the savings bootstrap resamples lines).
+End-of-Year Priorities
+Mr.
+GRASSLEY.
+Mr.
+President, with the 2026 midterm elections behind us, Congress must finish its work for this Congress.
+On my agenda for Iowans in the coming weeks, first of all, confirming President Trump's remaining judicial nominees to lifetime appointments on the Federal bench, and that is a responsibility that falls on my shoulders as chairman of the Judiciary Committee.
+And then obviously, we know it costs money to shut the government down.
+It costs taxpayers money to open the government up.
+So keeping the government open beyond the short-term funding bill that expires on December 11 ought to be high on the agenda.
+And then passing the National Defense Authorization Act which we have done for 65 years in a row, and that legislation includes stuff out of my Judiciary Committee that protects kids who are in danger of the things that are online.
+And then enacting a farm bill that contains year-round, nationwide E15, ethanol, and addresses high input costs that farmers face.
+And then passing commonsense permitting reform to unlock the American infrastructure and reduce government redtape, and that permitting bill is the subject of debate right now on the floor of the U.S.
+Senate.
+Then lastly, something that I have been involved in for decades--to emphasize the responsibilities that we have to maintain rural healthcare.
+That would include reauthorizing the Medicare-Dependent and Low-Volume Hospital Programs, the Rural Community Hospital Demonstration Program, and a Medicare payment floor for rural state doctors and clinics.
+As we look to the 120th Congress, I personally congratulated the new Members of the Iowa Federal delegation on their elections.
+I look forward to working with all of those new Members on behalf of the people of Iowa.
+The next Congress has a lot to accomplish, and I am ready to work with these new Members and the Members of both parties to get things done.
+Affordability was front and center in this election and must be the bipartisan focus next year.
+Any serious affordability agenda will need to focus on fiscal sanity and reduce waste, fraud, and abuse in Federal programs.
+Our national debt now stands at levels we have not seen since the end of World War II while Social Security is projected to become insolvent in just 6 years and Medicare shortly thereafter.
+We must find a bipartisan solution to a very real fiscal crisis that has been staring Congress in the face for too long of a time.
+I yield the floor.
+I suggest the absence of a quorum.
+The PRESIDING OFFICER.
+The clerk will call the roll.
+The senior assistant legislative clerk proceeded to call the roll.
+Mr.
+THUNE.
+Mr.
+President, I ask unanimous consent that the order for the quorum call be rescinded.
+The PRESIDING OFFICER.
+Without objection, it is so ordered.
+Bipartisan American Affordability and Jobs Act
+Mr.
+THUNE.
+Mr.
+President, in January of 2026, part of the key sewer lines
+for the customers in the Washington, DC, area collapsed.
+The resulting sewage spill was, the Washington Post reported, ``one of the largest spills of untreated wastewater in U.S. history.
+Enough raw sewage to fill 364 Olympic-sized swimming pools flushed into the Potomac River north of the nation's capital, exacting an ecological toll that scientists are still trying to calculate.'' Why do I bring this up?
+Well, I will tell you, because DC Water had first identified weaknesses in the pipe and proposed repairs a full 7 years earlier--7 years earlier--but had been prevented from starting that by a Federal permitting process that dragged on and on and on until the pipe suffered a catastrophic failure.
+It is an excellent illustration of the need for permitting reform in this country.
+Too often everything from critical repairs to important new energy projects get bogged down in Federal bureaucracy and are delayed for not months but years at a time.
+And the Washington, DC, sewage spill is an outstanding example of the potential consequences.
+Now, it is important to ensure that serious environmental concerns are addressed before projects are undertaken, and it is essential to ensure that the concerns of local stakeholders, in particular local landowners, are listened to and that they have a voice in the approval process.
+But the Federal permitting process has gone way beyond that to include years of senseless delays, often caused by endless litigation from environmental groups or from Agencies that are set on studying a project literally to death.
+We have seen those delays happen on projects with everything from drinking water and irrigation to building affordable energy sources and better roads and bridges.
+And like in the case of the DC sewage spill, these delays can even apply to projects where we are simply replacing something that has been there for many years.
+These delays all add costs, and those costs are ultimately paid by families through things like higher energy costs, higher gas and diesel prices, and higher taxes.
+The legislation that we are considering today would address that.
+The Bipartisan American Affordability and Jobs Act will streamline and reform the permitting process to ensure that projects are approved or rejected in a timely fashion.
+This is particularly good news on the energy front.
+Needless to say, Americans have been dealing with an elevated cost of living since the early days of the Biden administration, and when it comes to affordability, energy prices affect pretty much everything.
+We all know that.
+High energy costs don't just mean higher gas and electric bills, they mean higher costs for almost everything.
+And one of the best ways to keep prices of all kinds down is to expand domestic energy production, everything from oil and gas to solar and wind to hydropower.
+Too often, however, as I said, new energy projects get bogged down in Federal Government bureaucracy and end up in limbo for years.
+Streamlining bureaucracy, by contrast, like the Bipartisan American Affordability and Jobs Act will do, will speed up key projects and bring more jobs and more affordable prices along with it.
+We have talked about what this bill would do for energy projects, but there is another kind of project on a lot of Americans' minds right now, and that is data center construction.
+Communities in my State of South Dakota and around our country are concerned about the movement of data centers into their communities, in particular, about what their construction could mean for energy prices.
+And I am pleased to report that the Bipartisan American Affordability and Jobs Act would enact new protections for local communities.
+For starters, it would require that the data centers shoulder the energy costs associated with their operation and construction, whether that is day-to-day running costs or the cost of additional infrastructure.
+But the legislation doesn't stop there.
+It also provides technical assistance to communities to help them understand and explore the impact a proposed data center would have on their locality--everything from the economic impact to the energy costs and infrastructure requirements that would be associated with the project.
+There are a number of other good elements in this bill.
+I am always particularly invested in what legislation can do to help farmers and ranchers, which is the livelihood of our economy in South Dakota.
+And I am very pleased that this bill will extend Clean Water Act permits for farmers from 5 to 10 years, significantly reducing the frequency with which farmers have to engage with government bureaucracy with that process.
+This legislation will also provide for faster grazing-related reviews which will make a real difference to ranchers.
+If there is one thing Americans across our country said in the election last week, it is that they are hurting economically.
+This bill is one important way that we can help.
+Reforming the permitting process will help advance the kind of projects that will create new jobs, grow our economy, and increase wages, and more American energy development means a more reliable and affordable energy supply for American families.
+I want to thank Chairmen Shelley Moore Capito--and by chairmen, I should say Shelley Moore Capito and Mike Lee for their tremendous work on this legislation.
+This is a bipartisan bill, and President Trump strongly endorsed this legislation on Truth Social earlier this week.
+I look forward to swift Senate passage, and I hope the House will follow suit and get this legislation to the President's desk in the very near future.
+I yield the floor.
+I suggest the absence of a quorum.
+The PRESIDING OFFICER.
+The clerk will call the roll.
+The senior assistant executive clerk proceeded to call the roll.
+Mr.
+BARRASSO.
+Mr.
+President, I ask unanimous consent that the order for the quorum call be rescinded.
+The PRESIDING OFFICER.
+Without objection, it is so ordered.
+The majority whip.
+Legislative Agenda
+Mr.
+BARRASSO.
+Mr.
+President, in just 52 days, the 119th Congress will end, and Senate Republicans are going to make sure that every second counts.
+The American people sent a clear message last Tuesday, and Republicans heard it very clearly.
+We know that we have to work quite hard--and will continue to work--to regain their trust, and we are going to begin by delivering results.
+We are going to do it right here in the U.S.
+Senate.
+The work has already begun.
+Republicans are still in the majority.
+President Trump is still in the White House.
+And in the next 52 days, we have important work to complete.
+We will waste no time.
+We will confirm dozens of conservative Federal judges to the courts.
+We will confirm many qualified nominees to positions in the Federal Government.
+We will pass historic permitting legislation and reform.
+We will fund the government.
+Some of this work is bipartisan.
+Much of it will require long hours.
+Republicans are ready for both.
+We welcome bipartisanship when it serves the national interest.
+Bipartisanship can never come at the expense of conservative values.
+We will never apologize for our conservative convictions.
+So let's begin with the judges.
+In the coming days, we will have two dozen Federal judges to confirm.
+Federal judges, as you know, serve lifetime appointments.
+Their decisions will shape our courts and our country for generations to come.
+There will be judges who will uphold the Constitution--those are the judges who have been nominated--and they will apply the laws as written.
+Under Chairman Grassley, the Senate Judiciary Committee has advanced judges at the fastest pace since Ronald Reagan.
+Now it is time to finish the work.
+If that means long days, we are here to work.
+If it means late nights, we are here to work.
+We will leave no vacancy behind.
+The same commitment applies to nominees across the Federal Government.
+Our committees are working to approve nominees under their jurisdiction.
+We will complete a final nominations package before the end of the year and will get them all confirmed.
+President Trump deserves to have his team in place.
+Senate Republicans will deliver.
+Next, Republicans will deliver to lower costs.
+American families are feeling the pain of high prices.
+They need relief.
+Fixing our country's permitting system is one of the best ways to provide that relief.
+America is ready to build, and we have the ability to build.
+We have the money available to build.
+We need to get Washington, DC, out of the way.
+Many energy projects that would help lower costs remain frozen and have been for years.
+They are waiting for the approval from the Federal Government.
+Even after being approved, lengthy lawsuits can drive up costs, create uncertainty, and cause needed projects not to be constructed.
+Senator Capito of West Virginia and Senator Lee of Utah have worked with their Democrat counterparts in the Senate to write a bipartisan bill designed to make it easier to build.
+Their legislation streamlines environmental reviews.
+It also reins in out-of-control judicial review and abusive lawsuits.
+These are commonsense reforms.
+Building better, faster, cheaper, and smarter is the right path to lower energy costs for American families.
+It is the responsible path both to respond to our Nation's energy needs and to respect the environment.
+That is why this week, 73 Senators voted in favor of cutting through the government redtape that slows down our Nation's progress.
+You get to 73, you are talking about a lot of Republicans who support it and a lot of Democrats who support it.
+And President Trump says he will sign it.
+Congress needs to pass it and do it now.
+But what I hear is that Democrats in the House and Democrats who will be coming to the House in January are not so sure.
+Let me remind the Democrats and specifically the current minority leader in the Democrat House of what even the New York Times had to say in an editorial on November 12, posted today on their website.
+It said:
+The Senate this week is debating a bill on a subject that is more important than it sounds.
+Even the New York Times admits what we are doing here is more important than it sounds.
+They go on to say:
+This bill would make it easier to build solar energy farms, battery storage, power lines and more.
+As a result, it [will] reduce energy prices.
+That is what Republicans and Democrats on this floor have been saying for the last several weeks.
+The status quo is expensive, dirty and unstable.
+The country needs to build a lot of big, new things to make its future cheaper and cleaner.
+There is a lot to this editorial that the House of Representatives and the incoming Democrats ought to pay attention to, which is why it is important for Democrats not just in this body but across the hall in the House to get in line and get this done and get those prices down.
+It is critical, and I am happy to see such bipartisan work being done right here in the U.S.
+Senate.
+Government Funding
+Next, Mr.
+President, with regard to government funding, Republicans are committed to keeping this government open.
+Government funding runs out in less than a month.
+It is the responsibility of Congress to fund the government.
+Republicans want to keep the government open, pay our troops, and protect essential services.
+There are now some Democrats who are threatening to once again shut down the government.
+They intend to do it right before Christmas.
+The last thing this country needs is another painful, chaotic, Democrat- caused government shutdown.
+For families who live paycheck to paycheck, including military families, a government shutdown means more strain, more stress, and more suffering by the American people.
+This has to end.
+I have heard Senator Schumer come to this floor and talk endlessly about chaos.
+Nothing would be more chaotic than a decision by Schumer and the Democrats to once again shut down the government.
+Mr.
+President, the American people sent a clear message last Tuesday.
+Republicans are listening.
+We are committed to regaining their trust, and we will do it by delivering results.
+The Senate has important work to do in these last 52 days.
+Republicans are going to stand strong, united, and energized on behalf of the American people.
+Thank you.
+I yield the floor.
+Mr.
+President, I suggest the absence of a quorum.
+The PRESIDING OFFICER.
+The clerk will call the roll.
+The senior assistant legislative clerk proceeded to call the roll.
+Mr.
+TILLIS.
+Mr.
+President, I ask unanimous consent that the order for the quorum call be rescinded.
+The PRESIDING OFFICER (Mr.
+Hagerty).
+Without objection, it is so ordered.
+Cloture Motion
+The PRESIDING OFFICER.
+Pursuant to rule XXII, the Chair lays before the Senate the pending cloture motion, which the clerk will state.
+The legislative clerk read as follows:
+Cloture Motion
+We, the undersigned Senators, in accordance with the provisions of rule XXII of the Standing Rules of the Senate, do hereby move to bring to a close debate on the nomination of Executive Calendar No. 945, Gregory Carl Cook, of Alabama, to be United States District Judge for the Northern District of Alabama.
+John Thune, Thom Tillis, Roger Marshall, Ted Budd, John Cornyn, Marsha Blackburn, Cindy Hyde-Smith, Bernie Moreno, Mike Rounds, Shelley Moore Capito, John Barrasso, James Lankford, Mike Crapo, John Hoeven, John Boozman, Chuck Grassley, Cynthia M.
+Lummis.
+The PRESIDING OFFICER.
+Under the previous order, the mandatory quorum call under rule XXII has been waived.
+A quorum is present.
+The question is, Is it the sense of the Senate that debate on the nomination of Gregory Carl Cook, of Alabama, to be United States District Judge for the Northern District of Alabama, shall be brought to a close?
+The yeas and nays are mandatory under the rule.
+The clerk will call the roll.
+The senior assistant bill clerk called the roll.
+Mr.
+BARRASSO.
+The following Senators are necessarily absent: the Senator from Texas (Mr.
+Cornyn), the Senator from Utah (Mr.
+Curtis), and the Senator from Iowa (Ms.
+Ernst).
+Mr.
+SCHUMER.
+I announce that the Senator from Delaware (Ms.
+Blunt Rochester), the Senator from Delaware (Mr.
+Coons), the Senator from Nevada (Ms.
+Cortez Masto), the Senator from Illinois (Mr.
+Durbin), the Senator from Colorado (Mr.
+Hickenlooper), the Senator from Virginia (Mr.
+Kaine), the Senator from Arizona (Mr.
+Kelly), the Senator from Maine (Mr.
+King), the Senator from Minnesota (Ms.
+Klobuchar), the Senator from New Mexico (Mr.
+Lujan), the Senator from Connecticut (Mr.
+Murphy), the Senator from Michigan (Mr.
+Peters), the Senator from Nevada (Ms.
+Rosen), the Senator from Vermont (Mr.
+Sanders), the Senator from California (Mr.
+Schiff), and the Senator from New Hampshire (Mrs.
+Shaheen) are necessarily absent.
+I further announce that the Senator from Minnesota (Ms.
+Smith), the Senator from Vermont (Mr.
+Welch), the Senator from Rhode Island (Mr.
+Whitehouse), and the Senator from Oregon (Mr.
+Wyden) are absent on official business.
+The yeas and nays resulted--yeas 50, nays 27, as follows:
+YEAS--50
+Armstrong Banks Barrasso Blackburn Boozman Britt Budd Capito Cassidy Collins Cotton Cramer Crapo Cruz Daines Fischer Graham Grassley Hagerty Hawley Hoeven Husted Hyde-Smith Johnson Justice Kennedy Lankford Lee Lummis Marshall McConnell McCormick Moody Moran Moreno Murkowski Paul Ricketts Risch Rounds Schmitt Scott (FL) Scott (SC) Sheehy Sullivan Thune Tillis Tuberville Wicker Young
+NAYS--27
+Alsobrooks Baldwin Bennet Blumenthal Booker Cantwell Duckworth Fetterman Gallego Gillibrand Hassan Heinrich
+Hirono Kim Markey Merkley Murray Ossoff Padilla Reed Schatz Schumer Slotkin Van Hollen Warner Warnock Warren
+NOT VOTING--23
+Blunt Rochester Coons Cornyn Cortez Masto Curtis Durbin Ernst Hickenlooper Kaine Kelly King Klobuchar Lujan Murphy Peters Rosen Sanders Schiff Shaheen Smith Welch Whitehouse Wyden The PRESIDING OFFICER.
+On this vote, the yeas are 50, the nays are 27.
+The motion is agreed to.
+The motion was agreed to.
+The PRESIDING OFFICER.
+The Senator from Ohio.
+Nomination of Gregory Carl Cook
+Mrs.
+BRITT.
+Mr.
+President, I am proud to speak today in support of Justice Greg Cook of the Alabama Supreme Court to serve as a Federal district judge in the Northern District of Alabama.
+Justice Cook is beyond qualified to serve in this role.
+When you look at his resume, starting from growing up in the Shoals where he cemented core values of faith, family, and freedom, going on into Duke University and then Harvard Law School, and then having a very distinguished career in public service, which includes being a captain of the U.S.
+Air Force--in everything that Greg has done in life, he has done it to the best of his ability.
+He has given it his whole heart, and he has made sure to put the needs of the State and country first.
+Since serving in the Air Force, he became a distinguished partner at one of our State's top law firms where he was elected after that to be an associate justice of the Alabama Supreme Court in 2022.
+And this is actually when I got to know Greg.
+We traveled around the State together on the campaign trail.
+I got to watch him interact with people.
+I got to know he and his wife Kimberly, their love for the Lord, their love for their family, and Greg's love for the law.
+Greg wrote the Alabama civil procedure, ``Rules of Civil Procedure'' book, which is quite thick.
+Greg would take it out around as he talked to what he would hope to be, the people he was able to serve on the Alabama Supreme Court, the citizens of the great State of Alabama.
+And he would always tell them the one thing that they could count on from him is not only his tireless hard work but that he would be boring and predictable.
+And what he meant by that was he was going to follow the law.
+The words that were in that book, that would be what guided him--the Constitution, and knowing that he was not there to create laws, he was there to interpret them.
+More important than his many accolades, I am really proud to call him and his wife friends.
+He truly embodies the very best of the great State of Alabama.
+I have every faith and confidence that he will use everything in his being to make sure that he serves the people of the Northern District and this Nation to the very best of his ability.
+I want to thank President Trump for Justice Cook's nomination, and I want to urge my colleagues to support him in the upcoming vote.
+This is the exact kind of person we want to see on the Federal bench.
+This is a good day for the State of Alabama and a great one for our Nation.
+I yield the floor.
+PROTECTING PUBLIC LANDS FROM DATA CENTERS
+(Ms.
+DEXTER asked and was given permission to address the House for 1 minute and to revise and extend her remarks.) Ms.
+DEXTER.
+Mr.
+Speaker, how many times do Oregonians have to say it?
+Our public lands are not for sale.
+Oregon has some of the most beautiful and pristine public lands in the Nation.
+Last year, Republicans tried to sell our public lands to the highest bidder.
+Oregonians raised hell.
+Now, Interior Secretary Doug Burgum wants to sell off public lands so corporations can build data centers, destroying them for good.
+Oregon has had enough.
+This week, I introduced the Protecting Our Public Lands from Data Centers Act to stop new data centers from being built on Federal public lands.
+We cannot allow billionaires and corporations to destroy these treasured spaces where we take our kids camping, where we cast a line to fish, and where we hike with our families.
+These are places generations of Americans have explored, cared for, and passed down.
+These public lands are treasured and must be protected for generations to come.
+I am fighting to protect every acre.
+Stay loud.
+____________________
+EASING GAS PRICES
+(Ms.
+TOKUDA asked and was given permission to address the House for 1 minute and to revise and extend her remarks.) Ms.
+TOKUDA.
+Mr.
+Speaker, families can't fill their gas tanks with hopes and promises.
+Last week, Americans spoke loud and clear: lower costs, end the war, and put working families first.
+I hear the strain from families in Hawaii and across the country.
+Since this reckless war in Iran began, gas prices have surged.
+In Hawaii, a gallon now averages $5.63, 26 percent higher than last year and more than a dollar above the national average.
+That means harder, impossible choices between getting to work, paying for rent, keeping the lights on, and putting food on the table.
+We must end this war and reopen the Strait of Hormuz, but families need relief now.
+We have good bills before Congress that can ease the pain at the pump.
+Suspending the Federal gas tax would immediately save drivers 18 cents a gallon.
+Mr.
+Speaker, the need is urgent.
+The bills are here.
+Let's act now and give families some room to breathe.
+____________________
+HOLDING CONGRESS ACCOUNTABLE
+(Mr.
+HERNANDEZ asked and was given permission to address the House for 1 minute.) Mr.
+HERNANDEZ.
+Mr.
+Speaker, the American people gave a mandate to this Congress, a mandate to focus on affordability and accountability.
+As Puerto Rico's Representative in Congress, I will fight for our island's priorities within this mandate.
+Let's fix the Medicaid funding gap.
+Let's fix the nutritional assistance funding gap.
+Let's fix the island's energy cost crisis.
+Let's hold the crooks accountable here in Washington and in Puerto Rico as well.
+Mr.
+Speaker, I also welcome the students from Wesleyan Academy who are visiting Washington here today.
+This is their House, and I am here to assist them and assist the people of Puerto Rico as well.
+____________________

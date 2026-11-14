@@ -877,4 +877,34 @@
     <string name="copy_read_action">Read it</string>
     <string name="copy_read_taken">Read from the copy:</string>
     <string name="copy_read_incomplete">Some of it could not be taken in. Try reading the copy again.</string>
+    <!-- Word packs -->
+    <string name="section_word_packs">Word packs</string>
+    <string name="word_packs_intro">Specialist words to switch on when you need them. A pack’s words are never changed when you type them and are suggested from the third letter (drug names from the fifth), never before you start a word. Autocorrect never changes a typo into one; a near miss is only offered. Each pack is for one language.</string>
+    <string name="pack_medical_title">Drug names and medical terms</string>
+    <string name="pack_medical_summary">metformin, lisinopril, tachycardia</string>
+    <string name="pack_medical_body">Drug ingredient and brand names from the National Library of Medicine’s RxNorm (November 2, 2026), ordered by how often Medicare Part D pays for them, and medical words from MedlinePlus health topics: about 7,700 words. Drug names are suggested from the fifth letter and other words from the third, and autocorrect never puts one in: a near miss of a drug name is only offered, so look-alike names such as hydroxyzine and hydralazine can’t swap. Names only, with no doses or advice. No clinician has reviewed it, it may not have the newest drugs, and NLM doesn’t endorse LocalType. The typing log is off while a pack is on.</string>
+    <string name="pack_politics_title">US politics</string>
+    <string name="pack_politics_summary">cloture, filibuster, officeholders’ names</string>
+    <string name="pack_politics_body">Words of the U.S. Senate’s glossary and of offices and elections (cloture, quorum, gerrymandering), and the names of the members of Congress, the President, Vice President, cabinet, Supreme Court and governors as of November 13, 2026, from public-domain and CC0 sources: about 500 words. Offices change hands, so officeholders’ names stop being suggested 120 days after that date, though they’re still never “fixed.” Members-elect of the 2026 election aren’t in it. The typing log is off while a pack is on.</string>
+    <string name="word_packs_import">Import a pack</string>
+    <string name="word_packs_import_hint">A LocalType word pack, or a text file with one word on each line. It’s kept on this phone and switched on; the file you picked isn’t kept.</string>
+    <string name="word_packs_import_none">No words in that file could be used.</string>
+    <string name="word_packs_import_too_large">That file is too large for a pack (the limit is 1 MB).</string>
+    <string name="word_packs_import_unreadable">Couldn’t read a pack from that file.</string>
+    <plurals name="word_packs_imported">
+        <item quantity="one">Imported “%1$s”: %2$d word.</item>
+        <item quantity="other">Imported “%1$s”: %2$d words.</item>
+    </plurals>
+    <plurals name="word_packs_import_skipped">
+        <item quantity="one">%1$d line was left out: repeated, excluded, or not a single word.</item>
+        <item quantity="other">%1$d lines were left out: repeated, excluded, or not a single word.</item>
+    </plurals>
+    <plurals name="word_packs_imported_line">
+        <item quantity="one">Imported: %1$d word (%2$s)</item>
+        <item quantity="other">Imported: %1$d words (%2$s)</item>
+    </plurals>
+    <string name="word_packs_imported_name">Imported pack</string>
+    <string name="word_packs_remove">Remove</string>
+    <string name="word_packs_remove_named">Remove %1$s</string>
+    <string name="word_packs_remove_body">The pack is deleted from this phone. Words from it that you typed and the keyboard learned stay until you forget them.</string>
 </resources>

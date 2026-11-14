@@ -134,6 +134,7 @@ class SettingsActivity : Activity() {
         addTips()
         addLanguages()
         addTyping()
+        addWordPacks()
         // The catalog build keeps Chime in Typing; optional Nano/Gemma controls are full-only.
         if (BuildConfig.INCLUDES_NANO || BuildConfig.INCLUDES_GEMMA) addModels()
         addKeysAndGestures()
@@ -783,6 +784,140 @@ class SettingsActivity : Activity() {
                 KeyboardSettings.passwordManagerSuggestions(this)) {
                 KeyboardSettings.setPasswordManagerSuggestions(this, it)
             }
+        }
+    }
+
+    // Word packs
+
+    private val packStore by lazy { WordPackStore.get(this) }
+    private lateinit var packImport: Button
+    private lateinit var importedPackList: LinearLayout
+    /** Imported packs as last read, for the section's count; filled off the main thread. */
+    private var importedPackRows: List<WordPack> = emptyList()
+
+    /**
+     * Specialist words a person switches on, one switch per pack: the bundled ones, then any imported, each with
+     * Remove. A pack is per language and is used only while typing in it. Nothing here downloads anything.
+     */
+    private fun addWordPacks() {
+        val body = section("packs", R.string.section_word_packs, openByDefault = false) {
+            val ids = WordPackCatalog.BUNDLED.map { it.id } + importedPackRows.map { it.id }
+            onCount(*ids.map { KeyboardSettings.pack(this, it) }.toBooleanArray())
+        }.body
+        body.addView(text(getString(R.string.word_packs_intro), 13f, R.color.on_surface_variant).apply { setPadding(0, dp(4), 0, dp(4)) })
+        WordPackCatalog.BUNDLED.forEach { pack ->
+            addSwitch(body, pack.title, pack.summary, pack.body, KeyboardSettings.pack(this, pack.id)) {
+                KeyboardSettings.setPack(this, pack.id, it)
+            }
+        }
+        divider(body)
+        importedPackList = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        body.addView(importedPackList)
+        packImport = button(getString(R.string.word_packs_import), primary = false).apply { setOnClickListener { choosePack() } }
+        body.addView(packImport, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(48)).apply { topMargin = dp(4) })
+        body.addView(text(getString(R.string.word_packs_import_hint), 13f, R.color.on_surface_variant).apply { setPadding(0, dp(2), 0, 0) })
+        refreshImportedPacks()
+    }
+
+    /** Reads the imported packs off the main thread, then draws one switch and one Remove button for each. */
+    private fun refreshImportedPacks() {
+        val imported = KeyboardSettings.importedPacks(this).keys.toList()
+        packStore.load(imported) { packs ->
+            runOnUiThread {
+                if (isDestroyed) return@runOnUiThread
+                importedPackRows = packs
+                importedPackList.removeAllViews()
+                packs.forEach { pack ->
+                    val language = WordPack.languageOf(pack.language)?.nativeName ?: pack.language
+                    val summary = resources.getQuantityString(R.plurals.word_packs_imported_line, pack.size, pack.size, language)
+                    addSwitch(importedPackList, pack.name, summary, null, KeyboardSettings.pack(this, pack.id)) {
+                        KeyboardSettings.setPack(this, pack.id, it)
+                    }
+                    val remove = button(getString(R.string.word_packs_remove), primary = false).apply {
+                        contentDescription = getString(R.string.word_packs_remove_named, pack.name)
+                        setOnClickListener { removePack(pack) }
+                    }
+                    importedPackList.addView(remove, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(48)))
+                }
+                refreshSections()
+            }
+        }
+    }
+
+    private fun removePack(pack: WordPack) {
+        android.app.AlertDialog.Builder(this)
+            .setTitle(getString(R.string.word_packs_remove_named, pack.name))
+            .setMessage(R.string.word_packs_remove_body)
+            .setPositiveButton(R.string.word_packs_remove) { _, _ ->
+                KeyboardSettings.removeImportedPack(this, pack.id)
+                screenScope.launch {
+                    withContext(Dispatchers.IO) { packStore.remove(pack.id) }
+                    if (!isDestroyed) refreshImportedPacks()
+                }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    /** The system's file picker, for a pack to import: nothing is read until a file is chosen. */
+    private fun choosePack() {
+        startActivityForResult(
+            Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "*/*"
+                putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(DOWNLOADS_URI))
+            },
+            REQUEST_WORD_PACK,
+        )
+    }
+
+    /**
+     * Reads the chosen file as a pack ([WordPack.lenient]: the pack format, or a plain list of words) off the main
+     * thread, keeps it in the keyboard's own storage and switches it on. The file itself is not kept.
+     */
+    private fun importPack(source: Uri) {
+        packImport.isEnabled = false
+        val fileName = runCatching {
+            contentResolver.query(source, arrayOf(android.provider.OpenableColumns.DISPLAY_NAME), null, null, null)?.use {
+                if (it.moveToFirst()) it.getString(0) else null
+            }
+        }.getOrNull().orEmpty().substringBeforeLast('.')
+        val language = KeyboardSettings.language(this).takeIf { it.words } ?: LanguageProfile.ENGLISH
+        screenScope.launch {
+            val today = Math.floorDiv(System.currentTimeMillis(), 86_400_000L)
+            val outcome = withContext(Dispatchers.IO) {
+                val read = runCatching { contentResolver.openInputStream(source)?.use(WordListFile::read) }.getOrNull() ?: WordListFile.Read.Unreadable
+                if (read !is WordListFile.Read.Text) return@withContext read to null
+                val parsed = WordPack.lenient(read.text, fallbackId = fileName.ifEmpty { "pack" }, fallbackLanguage = language.code,
+                    fallbackName = fileName.ifEmpty { getString(R.string.word_packs_imported_name) }, today = today)
+                // The file's own comment lines (its sources) are kept with it, a few at most.
+                val notes = read.text.lineSequence().filter { it.startsWith("# ") && '=' !in it.take(24) && it != WordPack.FORMAT }
+                    .map { it.removePrefix("# ").take(200) }.take(20).toList()
+                read to (parsed to parsed.pack?.let { packStore.save(it, notes + "imported ${WordPack.isoDate(today)}") })
+            }
+            if (isDestroyed) return@launch
+            packImport.isEnabled = true
+            val (read, result) = outcome
+            val message = when {
+                read is WordListFile.Read.TooLarge -> getString(R.string.word_packs_import_too_large)
+                result == null -> getString(R.string.word_packs_import_unreadable)
+                result.second == null -> getString(if (result.first.pack == null) R.string.word_packs_import_none else R.string.word_packs_import_unreadable)
+                else -> {
+                    val pack = result.second!!
+                    KeyboardSettings.addImportedPack(this@SettingsActivity, pack.id, pack.language)
+                    refreshImportedPacks()
+                    val left = result.first.skipped + result.first.overLimit
+                    listOfNotNull(
+                        resources.getQuantityString(R.plurals.word_packs_imported, pack.size, pack.name, pack.size),
+                        if (left > 0) resources.getQuantityString(R.plurals.word_packs_import_skipped, left, left) else null,
+                    ).joinToString(" ")
+                }
+            }
+            android.app.AlertDialog.Builder(this@SettingsActivity)
+                .setTitle(R.string.word_packs_import)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show()
         }
     }
 
@@ -2288,6 +2423,7 @@ class SettingsActivity : Activity() {
         when (requestCode) {
             REQUEST_MODEL_FILE -> importModelFile(uri)
             REQUEST_WORD_LIST -> importWordList(uri)
+            REQUEST_WORD_PACK -> importPack(uri)
             REQUEST_COPY_SAVE -> saveCopy(uri)
             REQUEST_COPY_READ -> readCopy(uri)
             REQUEST_LOG_EXPORT -> PredictionLog.export(this, uri) { ok ->
@@ -2737,6 +2873,7 @@ class SettingsActivity : Activity() {
         const val REQUEST_WORD_LIST = 415
         const val REQUEST_COPY_SAVE = 416
         const val REQUEST_COPY_READ = 417
+        const val REQUEST_WORD_PACK = 418
         /** How long the version line shows "2 more taps" before going back to the version. */
         const val HINT_MS = 2_000L
         private val COPY_DAY = Regex("\\d{4}-\\d{2}-\\d{2}")

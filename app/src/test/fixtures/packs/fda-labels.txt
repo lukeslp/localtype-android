@@ -1,0 +1,178 @@
+# Public-domain sample for WordPackSavingsTest: section text of six FDA drug labels (indications and usage,
+# dosage and administration, warnings; each section capped at 280 words), from openFDA drug/label, read 2026-11-13.
+# License: openFDA content is public domain under CC0 1.0 (https://open.fda.gov/license/).
+# Data provided by the U.S. Food and Drug Administration (https://open.fda.gov). Not medical advice.
+# amlodipine-besylate: https://api.fda.gov/drug/label.json?search=openfda.generic_name.exact%3A%22AMLODIPINE%20BESYLATE%22&limit=1 (set_id: 003dd1ec-16f8-4f96-b6a8-c4689d35892a  id: cc27c9a5-dd2e-4a79-af00-28f51408362a  effective_time: 20260420)
+# atorvastatin-calcium: https://api.fda.gov/drug/label.json?search=openfda.generic_name.exact%3A%22ATORVASTATIN%20CALCIUM%22&limit=1 (set_id: 00afce9b-48c9-487a-a738-e359c005c707  id: 05b0f170-ac97-4a83-b03a-659a4b493ee2  effective_time: 20250828)
+# levothyroxine-sodium: https://api.fda.gov/drug/label.json?search=openfda.generic_name.exact%3A%22LEVOTHYROXINE%20SODIUM%22&limit=1 (set_id: 008de8fd-150f-4022-8ccb-c8bfa94875c7  id: f059a576-bb4b-441d-917e-4338bc3df403  effective_time: 20260324)
+# lisinopril: https://api.fda.gov/drug/label.json?search=openfda.generic_name.exact%3A%22LISINOPRIL%22&limit=1 (set_id: 021831ab-dfeb-40fc-aede-4aa1fbb8d918  id: 03a22769-c7ac-496c-80c4-98f76c371987  effective_time: 20230818)
+# metformin-hydrochloride: https://api.fda.gov/drug/label.json?search=openfda.generic_name.exact%3A%22METFORMIN%20HYDROCHLORIDE%22&limit=1 (set_id: 011de1a5-1ac0-4831-9e8d-26ec79ba2205  id: 19e4bfb8-2ed1-4a6b-adf5-853ad2953362  effective_time: 20240821)
+# sertraline-hydrochloride: https://api.fda.gov/drug/label.json?search=openfda.generic_name.exact%3A%22SERTRALINE%20HYDROCHLORIDE%22&limit=1 (set_id: 00179766-980b-44b0-99d3-1fee2bb27e37  id: 7731d02d-7220-4f43-b230-9d38875f4192  effective_time: 20191101)
+# One sentence per line (the savings bootstrap resamples lines).
+1 INDICATIONS AND USAGE Amlodipine besylate tablets are calcium channel blocker and may be used alone or in combination with other antihypertensive and antianginal agents for the treatment of: •Hypertension ( 1.1 ) о Amlodipine besylate tablets are indicated for the treatment of hypertension, to lower blood pressure.
+Lowering blood pressure reduces the risk of fatal and nonfatal cardiovascular events, primarily strokes and myocardial infarctions. •Coronary Artery Disease ( 1.2 ) о Chronic Stable Angina о Vasospastic Angina (Prinzmetal's or Variant Angina) о Angiographically Documented Coronary Artery Disease in patients without heart failure or an ejection fraction < 40% 1.1 Hypertension Amlodipine besylate tablets are indicated for the treatment of hypertension, to lower blood pressure.
+Lowering blood pressure reduces the risk of fatal and nonfatal cardiovascular events, primarily strokes and myocardial infarctions.
+These benefits have been seen in controlled trials of antihypertensive drugs from a wide variety of pharmacologic classes including amlodipine besylate.
+Control of high blood pressure should be part of comprehensive cardiovascular risk management, including, as appropriate, lipid control, diabetes management, antithrombotic therapy, smoking cessation, exercise, and limited sodium intake.
+Many patients will require more than one drug to achieve blood pressure goals.
+For specific advice on goals and management, see published guidelines, such as those of the National High Blood Pressure Education Program's Joint National Committee on Prevention, Detection, Evaluation, and Treatment of High Blood Pressure (JNC).
+Numerous antihypertensive drugs, from a variety of pharmacologic classes and with different mechanisms of action, have been shown in randomized controlled trials to reduce cardiovascular morbidity and mortality, and it can be concluded that it is blood pressure reduction, and not some other pharmacologic property of the drugs, that is [...]
+2 DOSAGE AND ADMINISTRATION •Adult recommended starting dose: 5 mg once daily with maximum dose 10 mg once daily.
+( 2.1 ) о Small, fragile, or elderly patients, or patients with hepatic insufficiency may be started on 2.5 mg once daily.
+( 2.1 ) •Pediatric starting dose: 2.5 mg to 5 mg once daily.
+( 2.2 ) Important Limitation : Doses in excess of 5 mg daily have not been studied in pediatric patients.
+( 2.2 ) 2.1 Adults The usual initial antihypertensive oral dose of amlodipine besylate tablet is 5 mg once daily and the maximum dose is 10 mg once daily.
+Small, fragile, or elderly patients, or patients with hepatic insufficiency may be started on 2.5 mg once daily and this dose may be used when adding amlodipine besylate tablet to other antihypertensive therapy.
+Adjust dosage according to blood pressure goals.
+In general, wait 7 to 14 days between titration steps.
+Titrate more rapidly, however, if clinically warranted, provided the patient is assessed frequently.
+Angina The recommended dose for chronic stable or vasospastic angina is 5 to 10 mg, with the lower dose suggested in the elderly and in patients with hepatic insufficiency.
+Most patients will require 10 mg for adequate effect.
+Coronary artery disease The recommended dose range for patients with coronary artery disease is 5 to 10 mg once daily.
+In clinical studies, the majority of patients required 10 mg [see CLINICAL STUDIES (14.4) ] . 2.2 Children The effective antihypertensive oral dose in pediatric patients ages 6 to 17 years is 2.5 mg to 5 mg once daily.
+Doses in excess of 5 mg daily have not been studied in pediatric patients [see CLINICAL PHARMACOLOGY [...]
+5 WARNINGS AND PRECAUTIONS Symptomatic hypotension is possible, particularly in patients with severe aortic stenosis.
+However, acute hypotension is unlikely.
+( 5.1 ) Worsening angina and acute myocardial infarction can develop after starting or increasing the dose of amlodipine, particularly in patients with severe obstructive coronary artery disease.
+( 5.2 ) Titrate slowly in patients with severe hepatic impairment.
+( 5.3 ) 5.1 Hypotension Symptomatic hypotension is possible, particularly in patients with severe aortic stenosis.
+Because of the gradual onset of action, acute hypotension is unlikely. 5.2 Increased Angina or Myocardial Infarction Worsening angina and acute myocardial infarction can develop after starting or increasing the dose of amlodipine, particularly in patients with severe obstructive coronary artery disease. 5.3 Patients with Hepatic Failure Because amlodipine besylate is extensively metabolized by the liver and the plasma elimination half-life (t 1/2 ) is 56 hours in patients with impaired hepatic function, titrate slowly when administering amlodipine besylate to patients with severe hepatic impairment.
+1 INDICATIONS AND USAGE Atorvastatin calcium tablets are indicated: To reduce the risk of: Myocardial infarction (MI), stroke, revascularization procedures, and angina in adults with multiple risk factors for coronary heart disease (CHD) but without clinically evident CHD MI and stroke in adults with type 2 diabetes mellitus with multiple risk factors for CHD but without clinically evident CHD Non-fatal MI, fatal and non-fatal stroke, revascularization procedures, hospitalization for congestive heart failure, and angina in adults with clinically evident CHD As an adjunct to diet to reduce low-density lipoprotein cholesterol (LDL-C) in: Adults with primary hyperlipidemia.
+Adults and pediatric patients aged 10 years and older with heterozygous familial hypercholesterolemia (HeFH).
+As an adjunct to other LDL-C-lowering therapies, or alone if such treatments are unavailable, to reduce LDL-C in adults and pediatric patients aged 10 years and older with homozygous familial hypercholesterolemia (HoFH).
+As an adjunct to diet for the treatment of adults with: Primary dysbetalipoproteinemia Hypertriglyceridemia Atorvastatin calcium tablets are an HMG-CoA reductase inhibitor (statin) indicated ( 1 ): To reduce the risk of: Myocardial infarction (MI), stroke, revascularization procedures, and angina in adults with multiple risk factors for coronary heart disease (CHD) but without clinically evident CHD.
+MI and stroke in adults with type 2 diabetes mellitus with multiple risk factors for CHD but without clinically evident CHD.
+Non-fatal MI, fatal and non-fatal stroke, revascularization procedures, hospitalization for congestive heart failure, and angina in adults with clinically evident CHD.
+As an adjunct to diet to reduce low-density lipoprotein (LDL-C) in: Adults with primary hyperlipidemia.
+Adults and pediatric patients aged 10 years and older with heterozygous familial hypercholesterolemia (HeFH).
+As an adjunct to other LDL-C-lowering therapies to reduce LDL-C in [...]
+2 DOSAGE AND ADMINISTRATION Take orally once daily with or without food ( 2.1 ).
+Assess LDL-C when clinically appropriate, as early as 4 weeks after initiating atorvastatin calcium tablets, and adjust dosage if necessary ( 2.1 ).
+Adults ( 2.2 ): Recommended starting dosage is 10 or 20 mg once daily; dosage range is 10 mg to 80 mg once daily.
+Patients requiring LDL-C reduction >45% may start at 40 mg once daily.
+Pediatric Patients Aged 10 Years of Age and Older with HeFH: Recommended starting dosage is 10 mg once daily; dosage range is 10 to 20 mg once daily ( 2.3 ).
+Pediatric Patients Aged 10 Years of Age and Older with HoFH: Recommended starting dosage is 10 to 20 mg once daily; dosage range is 10 to 80 mg once daily ( 2.4 ).
+See full prescribing information for atorvastatin calcium tablets dosage modifications due to drug interactions ( 2.5 ). 2.1 Important Dosage Information Take atorvastatin calcium tablets orally once daily at any time of the day, with or without food.
+Assess LDL-C when clinically appropriate, as early as 4 weeks after initiating atorvastatin calcium tablets, and adjust the dosage if necessary. 2.2 Recommended Dosage in Adult Patients The recommended starting dosage of atorvastatin calcium tablets are 10 mg to 20 mg once daily.
+The dosage range is 10 mg to 80 mg once daily.
+Patients who require reduction in LDL-C greater than 45% may be started at 40 mg once daily. 2.3 Recommended Dosage in Pediatric Patients 10 Years of Age and Older with HeFH The recommended starting dosage of atorvastatin calcium tablets are 10 mg once daily.
+The dosage range is 10 mg [...]
+5 WARNINGS AND PRECAUTIONS Myopathy and Rhabdomyolysis: Risk factors include age 65 years or greater, uncontrolled hypothyroidism, renal impairment, concomitant use with certain other drugs, and higher atorvastatin calcium dosage.
+Discontinue atorvastatin calcium if markedly elevated CK levels occur or myopathy is diagnosed or suspected.
+Temporarily discontinue atorvastatin calcium in patients experiencing an acute or serious condition at high risk of developing renal failure secondary to rhabdomyolysis.
+Inform patients of the risk of myopathy and rhabdomyolysis when starting or increasing atorvastatin calcium dosage.
+Instruct patients to promptly report unexplained muscle pain, tenderness, or weakness, particularly if accompanied by malaise or fever ( 2.5 , 5.1 , 7.1 , 8.5 , 8.6 ).
+Immune-Mediated Necrotizing Myopathy (IMNM): Rare reports of IMNM, an autoimmune myopathy, have been reported with statin use.
+Discontinue atorvastatin calcium if IMNM is suspected ( 5.2 ).
+Hepatic Dysfunction: Increases in serum transaminases have occurred, some persistent.
+Rare reports of fatal and non-fatal hepatic failure have occurred.
+Consider testing liver enzymes before initiating therapy and as clinically indicated thereafter.
+If serious hepatic injury with clinical symptoms and/or hyperbilirubinemia or jaundice occurs, promptly discontinue atorvastatin calcium ( 5.3 ). 5.1 Myopathy and Rhabdomyolysis Atorvastatin calcium may cause myopathy (muscle pain, tenderness, or weakness associated with elevated creatine kinase [CK]) and rhabdomyolysis.
+Acute kidney injury secondary to myoglobinuria and rare fatalities have occurred as a result of rhabdomyolysis in patients treated with statins, including atorvastatin.
+Risk Factors for Myopathy Risk factors for myopathy include age 65 years or greater, uncontrolled hypothyroidism, renal impairment, concomitant use with certain other drugs (including other lipid-lowering therapies), and higher atorvastatin dosage [see Drug Interactions (7.1) and Use in Specific Populations (8.5, 8.6 ) ]. [...]
+1 INDICATIONS AND USAGE Hypothyroidism Levothyroxine sodium tablets are indicated in adult and pediatric patients, including neonates, as a replacement therapy in primary (thyroidal), secondary (pituitary), and tertiary (hypothalamic) congenital or acquired hypothyroidism.
+Pituitary Thyrotropin (Thyroid‑Stimulating Hormone, TSH) Suppression Levothyroxine sodium tablets are indicated in adult and pediatric patients, including neonates, as an adjunct to surgery and radioiodine therapy in the management of thyrotropin-dependent well-differentiated thyroid cancer.
+Limitations of Use Levothyroxine sodium tablets are not indicated for suppression of benign thyroid nodules and nontoxic diffuse goiter in iodine-sufficient patients as there are no clinical benefits and overtreatment with levothyroxine sodium may induce hyperthyroidism [see Warnings and Precautions (5.1) ].
+Levothyroxine sodium tablets are not indicated for treatment of hypothyroidism during the recovery phase of subacute thyroiditis.
+Levothyroxine sodium tablets are a L-thyroxine (T4) indicated in adult and pediatric patients, including neonates, for: Hypothyroidism: As replacement therapy in primary (thyroidal), secondary (pituitary), and tertiary (hypothalamic) congenital or acquired hypothyroidism.
+(1) Pituitary Thyrotropin (Thyroid‑Stimulating Hormone, TSH) Suppression: As an adjunct to surgery and radioiodine therapy in the management of thyrotropin-dependent well-differentiated thyroid cancer.
+(1) Limitations of Use: Not indicated for suppression of benign thyroid nodules and nontoxic diffuse goiter in iodine-sufficient patients Not indicated for treatment of hypothyroidism during the recovery phase of subacute thyroiditis
+2 DOSAGE AND ADMINISTRATION Administer once daily, preferably on an empty stomach, one-half to one hour before breakfast with a full glass of water.
+(2.1) Administer at least 4 hours before or after drugs that are known to interfere with absorption.
+(2.1) Evaluate the need for dose adjustments when regularly administering within one hour of certain foods that may affect absorption.
+(2.1) Advise patients to stop biotin and biotin-containing supplements at least 2 days before assessing TSH and/or T4 levels.
+(2.2) Starting dose depends on a variety of factors, including age, body weight, cardiovascular status, and concomitant medications.
+Peak therapeutic effect may not be attained for 4 to 6 weeks.
+(2.2) See full prescribing information for dosing in specific patient populations.
+(2.3) Adequacy of therapy determined with periodic monitoring of TSH and/or T4 as well as clinical status.
+(2.4) 2.1 Important Administration Instructions Administer levothyroxine sodium tablets as a single daily dose, on an empty stomach, one-half to one hour before breakfast with a full glass of water to avoid choking or gagging [see Adverse Reactions (6) ].
+Administer levothyroxine sodium tablets at least 4 hours before or after drugs known to interfere with levothyroxine sodium absorption [see Drug Interactions (7.1) ].
+Evaluate the need for dosage adjustments when regularly administering within one hour of certain foods that may affect levothyroxine sodium tablets absorption [see Dosage and Administration (2.2 and 2.3) , Drug Interactions (7.9), and Clinical Pharmacology (12.3) ].
+Administer levothyroxine sodium tablets to pediatric patients who cannot swallow intact tablets by crushing the tablet, suspending the freshly crushed tablet in a small amount (5 to 10 mL) of water and immediately administering the suspension by spoon or dropper. [...]
+5 WARNINGS AND PRECAUTIONS Serious risks related to overtreatment or undertreatment with levothyroxine sodium tablets: Titrate the dose of levothyroxine sodium carefully and monitor response to titration.
+(5.1) Cardiac adverse reactions in the elderly and in patients with underlying cardiovascular disease: Initiate levothyroxine sodium at less than the full replacement dose because of the increased risk of cardiac adverse reactions, including atrial fibrillation.
+(2.3 , 5.2 , 8.5) Myxedema coma: Do not use oral thyroid hormone drug products to treat myxedema coma.
+(5.3) Acute adrenal crisis in patients with concomitant adrenal insufficiency: Treat with replacement glucocorticoids prior to initiation of levothyroxine sodium treatment.
+(5.4) Worsening of diabetic control: Therapy in patients with diabetes mellitus may worsen glycemic control and result in increased antidiabetic agent or insulin requirements.
+Carefully monitor glycemic control after starting, changing, or discontinuing thyroid hormone therapy.
+(5.5) Decreased bone mineral density associated with thyroid hormone over-replacement: Over-replacement can increase bone resorption and decrease bone mineral density.
+Give the lowest effective dose.
+(5.6) 5.1 Serious Risks Related to Overtreatment or Undertreatment with Levothyroxine Sodium Tablets Levothyroxine sodium tablets has a narrow therapeutic index.
+Overtreatment or undertreatment with levothyroxine sodium tablets may have negative effects on growth and development, cardiovascular function, bone metabolism, reproductive function, cognitive function, gastrointestinal function, and glucose and lipid metabolism in adult or pediatric patients.
+In pediatric patients with congenital and acquired hypothyroidism, undertreatment may adversely affect cognitive development and linear growth, and overtreatment is associated with craniosynostosis and acceleration of bone age [Use in Specific Populations (8.4) ].
+Titrate the dose of levothyroxine sodium tablets carefully and monitor response to titration to avoid these effects [see Dosage and Administration (2.4)].
+Consider the potential for [...]
+1 INDICATIONS AND USAGE Lisinopril tablet USP is an angiotensin converting enzyme (ACE) inhibitor indicated for: Treatment of hypertension in adults and pediatric patients 6 years of age and older ( 1.1 ) Adjunct therapy for heart failure ( 1.2 ) Treatment of Acute Myocardial Infarction ( 1.3 ) 1.1 Hypertension Lisinopril tablet USP is indicated for the treatment of hypertension in adult patients and pediatric patients 6 years of age and older to lower blood pressure.
+Lowering blood pressure lowers the risk of fatal and non-fatal cardiovascular events, primarily strokes and myocardial infarctions.
+These benefits have been seen in controlled trials of antihypertensive drugs from a wide variety of pharmacologic classes.
+Control of high blood pressure should be part of comprehensive cardiovascular risk management, including, as appropriate, lipid control, diabetes management, antithrombotic therapy, smoking cessation, exercise, and limited sodium intake.
+Many patients will require more than 1 drug to achieve blood pressure goals.
+For specific advice on goals and management, see published guidelines, such as those of the National High Blood Pressure Education Program's Joint National Committee on Prevention, Detection, Evaluation, and Treatment of High Blood Pressure (JNC).
+Numerous antihypertensive drugs, from a variety of pharmacologic classes and with different mechanisms of action, have been shown in randomized controlled trials to reduce cardiovascular morbidity and mortality, and it can be concluded that it is blood pressure reduction, and not some other pharmacologic property of the drugs, that is largely responsible for those benefits.
+The largest and most consistent cardiovascular outcome benefit has been a reduction in the risk of stroke, but reductions in myocardial infarction and cardiovascular mortality also have been seen regularly.
+Elevated systolic or diastolic pressure causes [...]
+2 DOSAGE AND ADMINISTRATION Hypertension: Initial adult dose is 10 mg once daily.
+Titrate up to 40 mg daily based on blood pressure response.
+Initiate patients on diuretics at 5 mg once daily ( 2.1 ) Pediatric patients with glomerular filtration rate > 30 mL/min/1.73m 2 : Initial dose in patients 6 years of age and older is 0.07 mg per kg (up to 5 mg total) once daily ( 2.1 ) Heart Failure: Initiate with 5 mg once daily.
+Increase dose as tolerated to 40 mg daily ( 2.2 ) Acute Myocardial Infarction (MI): Give 5 mg within 24 hours of MI.
+Followed by 5 mg after 24 hours, then 10 mg once daily ( 2.3) Renal Impairment: For patients with creatinine clearance > 10 mL/min and < 30 mL/min, halve usual initial dose.
+For patients with creatinine clearance < 10 mL/min or on hemodialysis, the recommended initial dose is 2.5 mg ( 2.4 ) 2.1 Hypertension Initial Therapy in adults: The recommended initial dose is 10 mg once a day.
+Dosage should be adjusted according to blood pressure response.
+The usual dosage range is 20 mg to 40 mg per day administered in a single daily dose.
+Doses up to 80 mg have been used but do not appear to give greater effect.
+Use with Diuretics in Adults If blood pressure is not controlled with lisinopril alone, a low dose of a diuretic may be added (e.g, hydrochlorothiazide, 12.5 mg).
+After the addition of a diuretic, it may be possible to reduce the dose of lisinopril.
+The recommended starting dose in adult patients with hypertension taking diuretics is 5 mg once per day.
+Pediatric Patients 6 Years of [...]
+5 WARNINGS AND PRECAUTIONS Angioedema: Discontinue lisinopril, provide appropriate therapy and monitor until resolved ( 5.2 ) Renal impairment: Monitor renal function periodically ( 5.3 ) Hypotension: Patients with other heart or renal diseases have increased risk, monitor blood pressure after initiation ( 5.4) Hyperkalemia: Monitor serum potassium periodically ( 5.5 ) Cholestatic jaundice and hepatic failure: Monitor for jaundice or signs of liver failure ( 5.6 ) 5.1 Fetal Toxicity Lisinopril can cause fetal harm when administered to a pregnant woman.
+Use of drugs that act on the renin-angiotensin system during the second and third trimesters of pregnancy reduces fetal renal function and increases fetal and neonatal morbidity and death.
+Resulting oligohydramnios can be associated with fetal lung hypoplasia and skeletal deformations.
+Potential neonatal adverse effects include skull hypoplasia, anuria, hypotension, renal failure, and death.
+When pregnancy is detected, discontinue lisinopril as soon as possible [see USE IN SPECIFIC POPULATIONS ( 8.1 )] . 5.2 Angioedema and Anaphylactoid Reactions Patients taking concomitant mTOR inhibitor (e.g. temsirolimus, sirolimus, everolimus) therapy or a neprilysin inhibitor may be at increased risk for angioedema. [see DRUG INTERACTIONS ( 7.7 , 7.8 )].
+Angioedema Head and Neck Angioedema: Angioedema of the face, extremities, lips, tongue, glottis and/or larynx, including some fatal reactions, have occurred in patients treated with angiotensin converting enzyme inhibitors, including lisinopril, at any time during treatment.
+Patients with involvement of the tongue, glottis or larynx are likely to experience airway obstruction, especially those with a history of airway surgery.
+Lisinopril should be promptly discontinued and appropriate therapy and monitoring should be provided until complete and sustained resolution of signs and symptoms of angioedema has occurred.
+Patients with a history of angioedema [...]
+1 INDICATIONS & USAGE Metformin hydrochloride tablets are indicated as an adjunct to diet and exercise to improve glycemic control in adults and pediatric patients 10 years of age and older with type 2 diabetes mellitus.
+Metformin hydrochloride tablets are biguanide indicated as an adjunct to diet and exercise to improve glycemic control in adults and pediatric patients 10 years of age and older with type 2 diabetes mellitus.
+( 1 )
+2 DOSAGE & ADMINISTRATION Adult Dosage for metformin hydrochloride tablets: Starting dose: 500 mg orally twice a day or 850 mg once a day, with meals ( 2.1 ) Increase the dose in increments of 500 mg weekly or 850 mg every 2 weeks, up to a maximum dose of 2550 mg per day, given in divided doses ( 2.1 ) Doses above 2000 mg may be better tolerated given 3 times a day with meals ( 2.1 ) Pediatric Dosage for metformin hydrochloride tablets: Starting dose: 500 mg orally twice a day, with meals ( 2.2 ) Increase dosage in increments of 500 mg weekly up to a maximum of 2000 mg per day, given in divided doses twice daily ( 2.2 ) Renal Impairment: Prior to initiation, assess renal function with estimated glomerular filtration rate (eGFR) ( 2.3 ) Do not use in patients with eGFR below 30 mL/minute/1.73 m 2 ( 2.3 ) Initiation is not recommended in patients with eGFR between 30 to 45 mL/minute/1.73 m 2 ( 2.3 ) Assess risk/benefit of continuing if eGFR falls below 45 mL/minute/1.73 m 2 ( 2.3 ) Discontinue if eGFR falls below 30 mL/minute/1.73 m 2 ( 2.3 ) 2.1 Adult Dosage Metformin Hydrochloride Tablets The recommended starting dose of metformin hydrochloride tablets are 500 mg orally twice a day or 850 mg once a day, given with meals.
+Increase the dose in increments of 500 mg weekly or 850 mg every 2 weeks on the basis of glycemic control and tolerability, up to a maximum dose of 2550 mg per day, given in divided doses.
+Doses above 2000 mg may be better tolerated given 3 times a [...]
+5 WARNINGS AND PRECAUTIONS Lactic Acidosis: See boxed warning.
+( 5.1 ) Vitamin B 12 Deficiency: Metformin may lower vitamin B12 levels.
+Measure hematological parameters annually and vitamin B12 at 2 to 3 year intervals and manage any abnormalities.
+( 5.2 ) Hypoglycemia with Concomitant Use with Insulin and Insulin Secretagogues: Increased risk of hypoglycemia when used in combination with insulin and/or an insulin secretagogue.
+Lower dose of insulin or insulin secretagogue may be required ( 5.3 ) 5.1 Lactic Acidosis There have been postmarketing cases of metformin-associated lactic acidosis, including fatal cases.
+These cases had a subtle onset and were accompanied by nonspecific symptoms such as malaise, myalgias, abdominal pain, respiratory distress, or increased somnolence; however, hypotension and resistant bradyarrhythmias have occurred with severe acidosis.
+Metformin­ associated lactic acidosis was characterized by elevated blood lactate concentrations (>5 mmol/L), anion gap acidosis (without evidence of ketonuria or ketonemia), and an increased lactate: pyruvate ratio; metformin plasma levels were generally >5 mcg/mL.
+Metformin decreases liver uptake of lactate increasing lactate blood levels which may increase the risk of lactic acidosis, especially in patients at risk.
+If metformin-associated lactic acidosis is suspected, general supportive measures should be instituted promptly in a hospital setting, along with immediate discontinuation of metformin hydrochloride tablets.
+In metformin hydrochloride tablets treated patients with a diagnosis or strong suspicion of lactic acidosis, prompt hemodialysis is recommended to correct the acidosis and remove accumulated metformin (metformin hydrochloride is dialyzable with a clearance of up to 170 mL/min under good hemodynamic conditions).
+Hemodialysis has often resulted in reversal of symptoms and recovery.
+Educate patients and their families about the symptoms of lactic acidosis and, if these symptoms occur, instruct them [...]
+INDICATIONS AND USAGE Major Depressive Disorder – Sertraline hydrochloride is indicated for the treatment of major depressive disorder in adults.
+The efficacy of Sertraline hydrochloride in the treatment of a major depressive episode was established in six to eight week controlled trials of adult outpatients whose diagnoses corresponded most closely to the DSM-III category of major depressive disorder (see Clinical Trials under CLINICAL PHARMACOLOGY ).
+A major depressive episode implies a prominent and relatively persistent depressed or dysphoric mood that usually interferes with daily functioning (nearly every day for at least 2 weeks); it should include at least 4 of the following 8 symptoms: change in appetite, change in sleep, psychomotor agitation or retardation, loss of interest in usual activities or decrease in sexual drive, increased fatigue, feelings of guilt or worthlessness, slowed thinking or impaired concentration, and a suicide attempt or suicidal ideation.
+The antidepressant action of sertraline hydrochloride in hospitalized depressed patients has not been adequately studied.
+The efficacy of sertraline hydrochloride in maintaining an antidepressant response for up to 44 weeks following 8 weeks of open-label acute treatment (52 weeks total) was demonstrated in a placebo-controlled trial.
+The usefulness of the drug in patients receiving sertraline hydrochloride for extended periods should be reevaluated periodically (see Clinical Trials under CLINICAL PHARMACOLOGY ).
+Obsessive-Compulsive Disorder – Sertraline hydrochloride is indicated for the treatment of obsessions and compulsions in patients with obsessive-compulsive disorder (OCD), as defined in the DSM-III-R; i.e., the obsessions or compulsions cause marked distress, are time-consuming, or significantly interfere with social or occupational functioning.
+The efficacy of Sertraline hydrochloride was established in 12-week trials with obsessive-compulsive outpatients having diagnoses of obsessive-compulsive disorder as defined according to DSM-III [...]
+DOSAGE AND ADMINISTRATION Initial Treatment Dosage for Adults Major Depressive Disorder –Sertraline hydrochloride treatment should be administered at a dose of 50 mg once daily.
+While a relationship between dose and effect has not been established for major depressive disorder, OCD, panic disorder, PTSD or social anxiety disorder, patients were dosed in a range of 50-200 mg/day in the clinical trials demonstrating the effectiveness of Sertraline hydrochloride for the treatment of this indication.
+Consequently, a dose of 50 mg, administered once daily, is recommended as the initial therapeutic dose.
+Patients not responding to a 50 mg dose may benefit from dose increases up to a maximum of 200 mg/day.
+Given the 24 hour elimination half-life of sertraline hydrochloride, dose changes should not occur at intervals of less than 1 week.
+Premenstrual Dysphoric Disorder – Sertraline hydrochloride treatment should be initiated with a dose of 50 mg/day, either daily throughout the menstrual cycle or limited to the luteal phase of the menstrual cycle, depending on physician assessment.
+While a relationship between dose and effect has not been established for PMDD, patients were dosed in the range of 50-150 mg/day with dose increases at the onset of each new menstrual cycle (see Clinical Trials under CLINICAL PHARMACOLOGY ).
+Patients not responding to a 50 mg/day dose may benefit from dose increases (at 50 mg increments/ menstrual cycle) up to 150 mg/day when dosing daily throughout the menstrual cycle, or 100 mg/day when dosing during the luteal phase of the menstrual cycle.
+If a 100 mg/day dose has been established with luteal phase dosing, a 50 mg/day titration step for three days should be utilized at the beginning of each luteal phase dosing [...]
+WARNINGS Clinical Worsening and Suicide Risk Patients with major depressive disorder (MDD), both adult and pediatric, may experience worsening of their depression and/or the emergence of suicidal ideation and behavior (suicidality) or unusual changes in behavior, whether or not they are taking antidepressant medications, and this risk may persist until significant remission occurs.
+Suicide is a known risk of depression and certain other psychiatric disorders, and these disorders themselves are the strongest predictors of suicide.
+There has been a long-standing concern, however, that antidepressants may have a role in inducing worsening of depression and the emergence of suicidality in certain patients during the early phases of treatment.
+Pooled analyses of short-term placebo-controlled trials of antidepressant drugs (SSRIs and others) showed that these drugs increase the risk of suicidal thinking and behavior (suicidality) in children, adolescents, and young adults (ages 18-24) with major depressive disorder (MDD) and other psychiatric disorders.
+Short-term studies did not show an increase in the risk of suicidality with antidepressants compared to placebo in adults beyond age 24; there was a reduction with antidepressants compared to placebo in adults aged 65 and older.
+The pooled analyses of placebo-controlled trials in children and adolescents with MDD, obsessive compulsive disorder (OCD), or other psychiatric disorders included a total of 24 short-term trials of 9 antidepressant drugs in over 4400 patients.
+The pooled analyses of placebo-controlled trials in adults with MDD or other psychiatric disorders included a total of 295 short-term trials (median duration of 2 months) of 11 antidepressant drugs in over 77,000 patients.
+There was considerable variation in risk of suicidality among drugs, but a tendency toward an increase in the younger patients for almost all drugs studied. [...]

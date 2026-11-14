@@ -885,4 +885,34 @@
     <string name="copy_read_action">Ler</string>
     <string name="copy_read_taken">Lido da cópia:</string>
     <string name="copy_read_incomplete">Parte da cópia não pôde ser lida. Tente ler a cópia de novo.</string>
+    <!-- Pacotes de palavras -->
+    <string name="section_word_packs">Pacotes de palavras</string>
+    <string name="word_packs_intro">Palavras especializadas para ativar quando precisar. As palavras de um pacote nunca são alteradas quando você as digita e são sugeridas a partir da terceira letra (nomes de medicamentos, a partir da quinta), nunca antes de você começar uma palavra. A correção automática nunca troca um erro de digitação por uma delas; uma palavra parecida só é oferecida. Cada pacote é para um idioma.</string>
+    <string name="pack_medical_title">Medicamentos e termos médicos</string>
+    <string name="pack_medical_summary">metformin, lisinopril, tachycardia</string>
+    <string name="pack_medical_body">Nomes de princípios ativos e marcas de medicamentos do RxNorm da Biblioteca Nacional de Medicina dos EUA (2 de novembro de 2026), ordenados pela frequência com que o Medicare Parte D os paga, e palavras médicas dos tópicos de saúde do MedlinePlus: cerca de 7.700 palavras, em inglês. Nomes de medicamentos são sugeridos a partir da quinta letra e as outras palavras a partir da terceira, e a correção automática nunca coloca nenhuma: um erro perto do nome de um medicamento só é oferecido, então nomes parecidos como hydroxyzine e hydralazine não se trocam. Só nomes, sem doses nem conselhos. Nenhum profissional de saúde o revisou, pode não ter os medicamentos mais novos e a NLM não endossa o LocalType. O registro de digitação fica desligado enquanto houver um pacote ativado.</string>
+    <string name="pack_politics_title">Política dos EUA</string>
+    <string name="pack_politics_summary">cloture, filibuster, nomes de autoridades</string>
+    <string name="pack_politics_body">Palavras do glossário do Senado dos EUA e de cargos e eleições (cloture, quorum, gerrymandering), e os nomes dos membros do Congresso, do presidente, do vice-presidente, do gabinete, da Suprema Corte e dos governadores em 13 de novembro de 2026, de fontes de domínio público e CC0: cerca de 500 palavras, em inglês. Os cargos mudam de mãos, então os nomes deixam de ser sugeridos 120 dias depois dessa data, embora nunca sejam “corrigidos”. Eleitos em 2026 que ainda não tomaram posse não estão incluídos. O registro de digitação fica desligado enquanto houver um pacote ativado.</string>
+    <string name="word_packs_import">Importar um pacote</string>
+    <string name="word_packs_import_hint">Um pacote de palavras do LocalType, ou um arquivo de texto com uma palavra por linha. Ele fica guardado neste telefone e é ativado; o arquivo escolhido não é guardado.</string>
+    <string name="word_packs_import_none">Nenhuma palavra desse arquivo pôde ser usada.</string>
+    <string name="word_packs_import_too_large">Esse arquivo é grande demais para um pacote (o limite é 1 MB).</string>
+    <string name="word_packs_import_unreadable">Não foi possível ler um pacote desse arquivo.</string>
+    <plurals name="word_packs_imported">
+        <item quantity="one">“%1$s” importado: %2$d palavra.</item>
+        <item quantity="other">“%1$s” importado: %2$d palavras.</item>
+    </plurals>
+    <plurals name="word_packs_import_skipped">
+        <item quantity="one">%1$d linha ficou de fora: repetida, excluída ou não é uma só palavra.</item>
+        <item quantity="other">%1$d linhas ficaram de fora: repetidas, excluídas ou não são uma só palavra.</item>
+    </plurals>
+    <plurals name="word_packs_imported_line">
+        <item quantity="one">Importado: %1$d palavra (%2$s)</item>
+        <item quantity="other">Importado: %1$d palavras (%2$s)</item>
+    </plurals>
+    <string name="word_packs_imported_name">Pacote importado</string>
+    <string name="word_packs_remove">Remover</string>
+    <string name="word_packs_remove_named">Remover %1$s</string>
+    <string name="word_packs_remove_body">O pacote é apagado deste telefone. As palavras dele que você digitou e o teclado aprendeu ficam até você esquecê-las.</string>
 </resources>

@@ -1,0 +1,34 @@
+LocalType word packs
+
+Copyright 2026 Luke Steuber for LocalType's selection, scores and office list,
+licensed under the Apache License, Version 2.0. The words themselves come from
+the public-domain and CC0 sources below. Each pack's header names its sources,
+license pages and the day they were read; distribution/source/packs/sources.json
+pins every download by SHA-256, and scripts/build-word-packs.py rebuilds the
+packs from those pins.
+
+pack_medical_en.txt (Drug names and medical terms)
+- RxNorm Current Prescribable Content, release of 2026-11-02, National Library
+  of Medicine. "No license required; public domain."
+  This product uses publicly available data courtesy of the U.S. National
+  Library of Medicine (NLM), National Institutes of Health, Department of
+  Health and Human Services; NLM is not responsible for the product and does
+  not endorse or recommend this or any other product. The pack reflects that
+  release and may not reflect the most current data available from NLM.
+- Medicare Part D Spending by Drug, data year 2024, Centers for Medicare &
+  Medicaid Services, a U.S. government work. Used only to order drug names; no
+  figure from it is in the pack.
+- MedlinePlus health topics of 2026-11-13. Health topic summaries are public
+  domain. Source: MedlinePlus, National Library of Medicine.
+
+pack_politics_en.txt (US politics)
+- The U.S. Senate glossary, a U.S. government work (17 U.S.C. 105); only single
+  words are taken from it.
+- unitedstates/congress-legislators, legislators-current, CC0 1.0.
+- Wikidata, structured data under CC0 1.0.
+- LocalType's own office and procedure words (Apache-2.0).
+
+Names in the packs are facts, not endorsements, and drug names are trademarks of
+their owners where they are brands. The packs carry no doses, definitions or
+medical advice and were not reviewed by a clinician. No source endorses
+LocalType.

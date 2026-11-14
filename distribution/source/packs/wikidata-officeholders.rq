@@ -1,0 +1,13 @@
+SELECT ?pos ?posLabel ?person ?personLabel ?given ?family ?start WHERE {
+  VALUES ?pos { wd:Q1029955 wd:Q1029968 wd:Q11144 wd:Q11147 wd:Q11696 wd:Q11699 wd:Q14213 wd:Q1540336 wd:Q16147601 wd:Q16149111 wd:Q16202700 wd:Q1658460 wd:Q17089908 wd:Q17989863 wd:Q19647220 wd:Q2003296 wd:Q20198851 wd:Q20765611 wd:Q20766109 wd:Q20801644 wd:Q20801646 wd:Q20801647 wd:Q20801651 wd:Q20801652 wd:Q20801656 wd:Q20801659 wd:Q20801664 wd:Q20801667 wd:Q2287650 wd:Q2305968 wd:Q2347975 wd:Q2419581 wd:Q2550683 wd:Q2626318 wd:Q29514575 wd:Q29514606 wd:Q29514674 wd:Q29514964 wd:Q3112719 wd:Q3112727 wd:Q3112728 wd:Q3506352 wd:Q3773741 wd:Q3773745 wd:Q3773752 wd:Q4151335 wd:Q4215834 wd:Q5589655 wd:Q5589668 wd:Q5589680 wd:Q5589682 wd:Q5589687 wd:Q5589688 wd:Q5589724 wd:Q5589725 wd:Q636207 wd:Q642859 wd:Q693032 wd:Q735015 wd:Q878632 wd:Q878942 wd:Q880198 wd:Q887010 wd:Q887090 wd:Q887117 wd:Q887220 wd:Q967737 wd:Q967750 wd:Q967762  }
+  ?person p:P39 ?st .
+  ?st ps:P39 ?pos .
+  ?person wdt:P31 wd:Q5 .
+  ?st pq:P580 ?start .
+  FILTER NOT EXISTS { ?st pq:P582 ?end }
+  FILTER (?start <= "2026-11-13T00:00:00Z"^^xsd:dateTime)
+  FILTER NOT EXISTS { ?person wdt:P570 ?died }
+  OPTIONAL { ?person wdt:P735 ?g . ?g rdfs:label ?given . FILTER(LANG(?given) = "en") }
+  OPTIONAL { ?person wdt:P734 ?f . ?f rdfs:label ?family . FILTER(LANG(?family) = "en") }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}

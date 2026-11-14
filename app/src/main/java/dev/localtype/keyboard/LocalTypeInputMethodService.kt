@@ -58,6 +58,15 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private var sharedVocabulary = CurrentVocabulary.EMPTY
     private var fieldVocabulary = CurrentVocabulary.EMPTY
     /**
+     * The word packs switched on for this field's language ([KeyboardSettings.packsFor]), with the day pinned at field
+     * start. Empty unless the person turned one on, which leaves typing exactly as it was ([WordPacks]).
+     */
+    private var fieldPacks = WordPacks.EMPTY
+    /** The ids [fieldPacks] was asked for at field start, known before the files load, so the typing log stays off. */
+    private var packIds: List<String> = emptyList()
+    private var packRequest = 0
+    private val packStore by lazy { WordPackStore.get(this) }
+    /**
      * The bundled corpus prior (`corpus_prior.bin`), published with this service's first dictionary;
      * null until then, and for the rest of the process if the asset couldn't be read. The process
      * keeps one copy ([processPrior]). It ranks next words and bounded correction candidates;
@@ -637,6 +646,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             isKept = { it in keptWords || localModel.isAddedWord(it) || isProtectedWord(it) },
             touchOffsets = { touchOffsets },
             language = { language },
+            packs = { fieldPacks },
         )
         modelCache = ModelSuggestionCache(PreferenceModelCacheStore(this))
         clipboard = getSystemService(android.content.ClipboardManager::class.java)?.also { it.addPrimaryClipChangedListener(clipListener) }
@@ -777,6 +787,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         neuralEnabled = neuralAllowedHere()
         if (neuralEnabled && !neuralReady) loadNeuralModel()
         openLanguageStores()
+        startFieldPacks()
         corrector.forgetRecentAnswers()
         snapshotClean = false
         modelMutated = false
@@ -1047,6 +1058,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         viewShown = true
         fieldVocabulary = sharedVocabulary.at(Math.floorDiv(System.currentTimeMillis(), 86_400_000L))
         localModel.vocabulary = fieldVocabulary
+        startFieldPacks()
         // A theme change in settings rebuilds the views, which read their colors once.
         val theme = ThemeMode.of(this)
         if (theme != themeMode) {
@@ -1155,8 +1167,9 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         // While the dictionary is still loading the field waits, so the header and O.dict never describe a list the strip didn't use.
         // Only English is logged: the log's replay and its word list are English. British spelling changes the words
         // the strip shows from the ones it ranked, which the log's slot sources can't express, so it isn't logged.
+        // Word packs add words the replay's lists don't have, so a field with any pack switched on isn't logged either.
         val wantsLog = KeyboardSettings.predictionLog(this) && learningAllowed && fieldWantsSuggestions && language.english &&
-            !britishSpelling
+            !britishSpelling && packIds.isEmpty()
         logAllowed = loggedFieldGate.start(wantsLog && blockedStore.words.isEmpty(), dictionaryReady, restarting, learningStore.ready && blockedStore.ready)
         if (logAllowed) openLoggedField(restarting)
         // An uncertain text receipt invalidates correction eligibility, not a finger already
@@ -4074,7 +4087,9 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         val followers = if (ownContext.isNotEmpty()) personalStore.followers(ownContext, NeuralRanking.PERSONAL_POLICY.maxContext) else emptyList()
         val learned = if (ownContext.isNotEmpty()) localModel.learnedFollowers(ownContext.last()) else emptyList()
         val blocked = blockedStore.words + if (profanityAllowed) emptySet() else profanityWords
-        val shared = fieldVocabulary.candidates(prefix, localModel.lastCompletedWord(context)).map { it.first }
+        // A pack word reaches Chime's strip only where the n-gram ranking itself put it in its first three ([WordPacks.reserved]).
+        val shared = fieldVocabulary.candidates(prefix, localModel.lastCompletedWord(context)).map { it.first } +
+            fieldPacks.reserved(prefix, ranked)
         val correction = correctionFor(context, prefix)
         if (correction != null) {
             // Typed word on the left (in quotes, tap to keep it), the correction in the middle, and an
@@ -4516,7 +4531,9 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         if (forms.none { it in keptWords || localModel.isAddedWord(it) }) british(word).let { gb ->
             if (gb != word) return TextRules.applyCase(gb, prefix, sentenceStart, capsLocked())
         }
-        return fieldVocabulary.display(word, prefix, sentenceStart, capsLocked(), forms.any { it in keptWords || localModel.isAddedWord(it) })
+        val protected = forms.any { it in keptWords || localModel.isAddedWord(it) }
+        if (!protected && normalized !in fieldVocabulary) fieldPacks.preferred(normalized)?.let { return TextRules.applyCase(it, prefix, sentenceStart, capsLocked()) }
+        return fieldVocabulary.display(word, prefix, sentenceStart, capsLocked(), protected)
     }
 
     private fun clearLastSlot() {
@@ -4776,7 +4793,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         val wordVerified = typedVerified && (personalWordOwned || sentenceContext != null) && edit.precondition != null &&
             (verifiedWordReceipt != null || edit.replacement.text.isEmpty())
         val afterForeignContext = !WordPersistence.pair(fieldLearnsWords, wordVerified, previous, ownPrevious)
-        val isKept: (String) -> Boolean = { it in keptWords || it in lexicon }
+        // A pack word is a real word once typed, as a lexicon word is; the pack itself never put it in the tables.
+        val isKept: (String) -> Boolean = { it in keptWords || it in lexicon || it in fieldPacks }
         val learned = !afterForeignContext && localModel.learnTypedWord(before, persist = true, isKept = isKept)
         val committed = localModel.activePrefix(before)
         // Even when its pair is blocked, a verified completed word starts the own tail for the next word.
@@ -4823,11 +4841,51 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
      * and the corpus prior once they've loaded. Every rebuild goes through here so none drops the prior.
      */
     /** English starts with its seed phrases and sentence starters; another language starts from nothing but its own typing. */
-    private fun buildLocalModel() = if (language.english) AdaptiveNgramModel(learningStore, dictionary = dictionary, prior = corpusPrior, vocabulary = fieldVocabulary, excluded = ::personallyBlocked)
+    private fun buildLocalModel() = if (language.english) AdaptiveNgramModel(learningStore, dictionary = dictionary, prior = corpusPrior, vocabulary = fieldVocabulary, excluded = ::personallyBlocked,
+            packs = fieldPacks)
         else AdaptiveNgramModel(learningStore, seedPhrases = emptyList(), dictionary = dictionary, sentenceStarters = emptyList(),
             prior = corpusPrior, priorWeights = AdaptiveNgramModel.PriorWeights(weight = language.priorWeight), vocabulary = CurrentVocabulary.EMPTY,
             openingMarks = language.openingMarks, oneLetterWords = language.oneLetterWords, excluded = ::personallyBlocked,
-            wordRule = language.wordRule)
+            wordRule = language.wordRule, packs = fieldPacks)
+
+    /**
+     * Pins the word packs switched on for [language] to today, as a field start pins the shared vocabulary. Packs already
+     * read in this process apply at once; otherwise the field starts without them and they join when their files have
+     * been read off the main thread (with the corrector's offer index built there too). No pack ids, no packs.
+     */
+    private fun startFieldPacks() {
+        val ids = if (language.words) KeyboardSettings.packsFor(this, language) else emptyList()
+        packIds = ids
+        val day = Math.floorDiv(System.currentTimeMillis(), 86_400_000L)
+        val request = ++packRequest
+        val ready = packStore.cached(ids)
+        if (ready != null) {
+            val packs = if (ready == fieldPacks.packs) fieldPacks.at(day) else WordPacks.of(ready, day).also { fresh ->
+                // Already read, but a new set: the corrector's offer index is built off the main thread here too.
+                packStore.background { corrector.preparePacks(fresh) }
+            }
+            usePacks(packs)
+            return
+        }
+        usePacks(WordPacks.EMPTY)
+        packStore.load(ids) { packs ->
+            val loaded = WordPacks.of(packs, day)
+            corrector.preparePacks(loaded)
+            handler.post {
+                if (destroyed || request != packRequest) return@post
+                usePacks(loaded)
+                scheduleRefresh()
+            }
+        }
+    }
+
+    private fun usePacks(packs: WordPacks) {
+        // With no pack on this is always the same EMPTY: nothing is reset, so typing is exactly as before packs.
+        if (packs === fieldPacks) return
+        fieldPacks = packs
+        localModel.packs = packs
+        corrector.forgetRecentAnswers()
+    }
 
     /** Either background load can finish first; the waiting field opens only after both publish. */
     private fun openPendingLoggedField() {
@@ -5020,7 +5078,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         val afterComma = context.dropLast(prefix.length).trimEnd().endsWith(',')
         // In-progress prefixes retain completions; explicit selections are completed spelling requests.
         val completions = !automaticOnly && !explicitSelection &&
-            (dictionary.completions(prefix.lowercase(), 1).isNotEmpty() || fieldVocabulary.candidates(prefix, previous).isNotEmpty())
+            (dictionary.completions(prefix.lowercase(), 1).isNotEmpty() || fieldVocabulary.candidates(prefix, previous).isNotEmpty() ||
+                fieldPacks.candidates(prefix).isNotEmpty())
         val startedAt = SystemClock.elapsedRealtimeNanos()
         val fix = if (automaticOnly) corrector.correct(prefix, touches, previous, sentenceStart, afterComma)
         else corrector.suggestForStrip(prefix, touches, previous, sentenceStart, afterComma, explicitSelection, completions)
@@ -5276,7 +5335,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
 
     private fun accommodationProtected(word: String): Boolean {
         val key = AdaptiveNgramModel.normalize(word)
-        return key in keptWords || localModel.isAddedWord(key) || isProtectedWord(key) || key in fieldVocabulary ||
+        return key in keptWords || localModel.isAddedWord(key) || isProtectedWord(key) || key in fieldVocabulary || key in fieldPacks ||
             (!profanityAllowed && key in profanityWords)
     }
 
@@ -5461,7 +5520,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         val original = edit.prefix
         val key = AdaptiveNgramModel.normalize(original)
         if (!edit.corrected && (original.length < 2 || key in dictionary || key in lexicon ||
-            key in fieldVocabulary || localModel.knows(key) || key in keptWords || key in profanityWords || isProtectedWord(key))) return
+            key in fieldVocabulary || key in fieldPacks || localModel.knows(key) || key in keptWords || key in profanityWords || isProtectedWord(key))) return
         val replacement = if (edit.corrected) edit.replacement.text.dropLast(delimiter.length) else original
         val start = s.selection.end - replacement.length - delimiter.length
         val fullContext = s.before.dropLast(replacement.length + delimiter.length)
@@ -5487,7 +5546,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         val previous = precedingWord ?: AdaptiveNgramModel.START.takeIf { sentenceStart }
         val stem = key.removeSuffix("'s").removeSuffix("s'")
         val spellings = setOf(key, stem)
-        val protected = spellings.filterTo(HashSet()) { localModel.knows(it) || it in profanityWords || it in fieldVocabulary }
+        val protected = spellings.filterTo(HashSet()) { localModel.knows(it) || it in profanityWords || it in fieldVocabulary || it in fieldPacks }
         val input = CorrectionInput(original, fullContext, previous, sentenceStart, fullContext.trimEnd().endsWith(','),
             dictionary, lexicon, protected, spellings.filterTo(HashSet()) { it in keptWords || localModel.isAddedWord(it) || isProtectedWord(it) },
             // Published asset sets are immutable; personal counts and touch offsets are detached.
@@ -5505,7 +5564,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             val range = recentCorrection.repair(correctionIdentity(), current, fix, now) ?: return@evaluateCorrection
             // The reserved validation gate did not pass. This branch stays an offer unless a
             // future frozen policy and this exact editor profile have both qualified.
-            if (answer.lateAutomaticEligible && rangeEditorQualified() && applyRange(range, current, automatic = true)) {
+            // A pack word is offered, never applied ([WordPacks.offerOnly]).
+            if (answer.lateAutomaticEligible && !fieldPacks.offerOnly(fix) && rangeEditorQualified() && applyRange(range, current, automatic = true)) {
                 completeRecentRepair(word, fix)
             } else {
                 if (recentCorrection.pending != word) return@evaluateCorrection
@@ -6488,6 +6548,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
 
     override fun dump(fd: java.io.FileDescriptor, writer: java.io.PrintWriter, args: Array<out String>) {
         writer.println("language=${language.code} offered=${KeyboardSettings.languages(this).joinToString(",") { it.code }} words=${dictionary.size} lexicon=${lexicon.size} prior=${corpusPrior != null} ready=$dictionaryReady")
+        // Pack ids, sizes and digests only; never a word.
+        writer.println("packs asked=${packIds.joinToString(",").ifEmpty { "none" }} loaded=${fieldPacks.describe()} day=${fieldPacks.epochDay}")
         writer.println("swipe enabled=${KeyboardSettings.experimentalSwipe(this)} last_ms=$swipeLastMs start=$swipeStartStatus refused=$swipeRefusals allowed=${swipeAllowedNow()} ready=$dictionaryReady field=$fieldWantsSuggestions learning=$learningAllowed shown=$viewShown")
         val summary = correctionDiagnostics.keyCpuSummary()
         writer.println("LocalType correction counters=${correctionDiagnostics.snapshot()}")

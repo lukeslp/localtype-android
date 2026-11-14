@@ -3,6 +3,8 @@ package dev.localtype.keyboard
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.File
+import java.time.LocalDate
 import kotlin.random.Random
 
 /**
@@ -111,6 +113,24 @@ class CorrectorEvaluationTest {
             samples += TypoCorpus.Sample(word, meant, touches)
         }
         return samples
+    }
+
+    /** Every bundled word pack switched on: its words are known and offered only, and the gates above still hold. */
+    @Test
+    fun `the same thresholds with every word pack on`() {
+        val packs = WordPacks.of(WordPackCatalog.BUNDLED.map { WordPack.strict(File("src/main/assets/${it.asset}").readText()) },
+            LocalDate.parse("2026-11-13").toEpochDay())
+        val packed = Corrector({ TypoCorpus.dictionary }, lexicon = { TypoCorpus.lexicon }, packs = { packs })
+        val real = tally(TypoCorpus.real, packed)
+        val samples = TypoCorpus.simulated(400)
+        val simulated = tally(samples.map { it.typed to it.meant }, packed) { samples[it].touches }
+        val unknown = TypoCorpus.guard.filter { it !in TypoCorpus.dictionary && it !in TypoCorpus.lexicon }
+        val changed = unknown.mapNotNull { word -> packed.correct(word)?.let { "$word→$it" } }
+        println("Every pack on (${packs.describe()}): real ${TypoCorpus.real.size} $real (without packs ${tally(TypoCorpus.real)}); " +
+            "simulated ${samples.size} $simulated; guard words changed $changed")
+        assertTrue("$real", real.fixed >= 134 && real.wrong <= 1)
+        assertTrue("$simulated", simulated.fixed >= 176 && simulated.wrong <= 34)
+        assertTrue("$changed", changed.size <= 3)
     }
 
     @Test

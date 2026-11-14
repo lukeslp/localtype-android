@@ -885,4 +885,34 @@
     <string name="copy_read_action">Leerla</string>
     <string name="copy_read_taken">Leído de la copia:</string>
     <string name="copy_read_incomplete">Parte de la copia no se pudo tomar. Intenta leerla otra vez.</string>
+    <!-- Paquetes de palabras -->
+    <string name="section_word_packs">Paquetes de palabras</string>
+    <string name="word_packs_intro">Palabras especializadas que puedes activar cuando las necesites. Las palabras de un paquete nunca se cambian al escribirlas y se sugieren desde la tercera letra (los nombres de medicamentos, desde la quinta), nunca antes de empezar una palabra. La autocorrección nunca cambia un error de escritura por una de ellas; una palabra parecida solo se ofrece. Cada paquete es para un idioma.</string>
+    <string name="pack_medical_title">Medicamentos y términos médicos</string>
+    <string name="pack_medical_summary">metformin, lisinopril, tachycardia</string>
+    <string name="pack_medical_body">Nombres de principios activos y marcas de medicamentos del RxNorm de la Biblioteca Nacional de Medicina de EE. UU. (2 de noviembre de 2026), ordenados por cuántas veces los paga Medicare Parte D, y palabras médicas de los temas de salud de MedlinePlus: unas 7.700 palabras, en inglés. Los nombres de medicamentos se sugieren desde la quinta letra y las demás palabras desde la tercera, y la autocorrección nunca pone ninguna: un error cerca del nombre de un medicamento solo se ofrece, así que nombres parecidos como hydroxyzine e hydralazine no se intercambian. Solo nombres, sin dosis ni consejos. Ningún profesional clínico lo ha revisado, puede no tener los medicamentos más nuevos y la NLM no respalda LocalType. El registro de escritura se desactiva mientras haya un paquete activado.</string>
+    <string name="pack_politics_title">Política de EE. UU.</string>
+    <string name="pack_politics_summary">cloture, filibuster, nombres de autoridades</string>
+    <string name="pack_politics_body">Palabras del glosario del Senado de EE. UU. y de cargos y elecciones (cloture, quorum, gerrymandering), y los nombres de los miembros del Congreso, el presidente, el vicepresidente, el gabinete, la Corte Suprema y los gobernadores al 13 de noviembre de 2026, de fuentes de dominio público y CC0: unas 500 palabras, en inglés. Los cargos cambian de manos, así que los nombres dejan de sugerirse 120 días después de esa fecha, aunque nunca se “corrigen”. No incluye a los electos en 2026 que aún no asumen. El registro de escritura se desactiva mientras haya un paquete activado.</string>
+    <string name="word_packs_import">Importar un paquete</string>
+    <string name="word_packs_import_hint">Un paquete de palabras de LocalType, o un archivo de texto con una palabra por línea. Se guarda en este teléfono y se activa; el archivo que elegiste no se guarda.</string>
+    <string name="word_packs_import_none">No se pudo usar ninguna palabra de ese archivo.</string>
+    <string name="word_packs_import_too_large">Ese archivo es demasiado grande para un paquete (el límite es 1 MB).</string>
+    <string name="word_packs_import_unreadable">No se pudo leer un paquete de ese archivo.</string>
+    <plurals name="word_packs_imported">
+        <item quantity="one">Se importó “%1$s”: %2$d palabra.</item>
+        <item quantity="other">Se importó “%1$s”: %2$d palabras.</item>
+    </plurals>
+    <plurals name="word_packs_import_skipped">
+        <item quantity="one">Se omitió %1$d línea: repetida, excluida o no es una sola palabra.</item>
+        <item quantity="other">Se omitieron %1$d líneas: repetidas, excluidas o no son una sola palabra.</item>
+    </plurals>
+    <plurals name="word_packs_imported_line">
+        <item quantity="one">Importado: %1$d palabra (%2$s)</item>
+        <item quantity="other">Importado: %1$d palabras (%2$s)</item>
+    </plurals>
+    <string name="word_packs_imported_name">Paquete importado</string>
+    <string name="word_packs_remove">Quitar</string>
+    <string name="word_packs_remove_named">Quitar %1$s</string>
+    <string name="word_packs_remove_body">El paquete se borra de este teléfono. Las palabras suyas que escribiste y que el teclado aprendió se quedan hasta que las olvides.</string>
 </resources>

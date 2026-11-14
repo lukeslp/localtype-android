@@ -1,0 +1,117 @@
+{
+  "observed": "2026-11-13",
+  "raw": "The raw downloads are archived outside the repository, in the layout the file names below give, each checked by its SHA-256 before an extract is rebuilt; only the extracts are in the repository.",
+  "sources": {
+    "rxnorm": {
+      "name": "RxNorm Current Prescribable Content, monthly release of 2026-11-02 (National Library of Medicine)",
+      "file": "rxnorm/RxNorm_full_prescribe_11022026.zip",
+      "sha256": "c742a6c4b2995194aa3479400e08a7c1ad707178bfc80fe9c8cd7afa693ae987",
+      "url": "https://download.nlm.nih.gov/rxnorm/RxNorm_full_prescribe_11022026.zip",
+      "license": "public domain, no license required",
+      "licensePage": "https://www.nlm.nih.gov/research/umls/rxnorm/docs/prescribe.html",
+      "quote": "The National Library of Medicine provides this subset without any licensing restrictions. ... No license required; public domain",
+      "read": "2026-11-13",
+      "used": "RXNCONSO.RRF, source RXNORM, term types IN, PIN and BN, nothing suppressed: ingredient and brand names",
+      "credit": "This product uses publicly available data courtesy of the U.S. National Library of Medicine (NLM), National Institutes of Health, Department of Health and Human Services; NLM is not responsible for the product and does not endorse or recommend this or any other product.",
+      "terms": "https://www.nlm.nih.gov/research/umls/rxnorm/docs/termsofservice.html (credit sentence; no implied endorsement; keep current or say the data may be out of date)"
+    },
+    "cms-part-d": {
+      "name": "Medicare Part D Spending by Drug, data year 2024 (Centers for Medicare & Medicaid Services)",
+      "file": "cms-part-d/DSD_PTD_RY26_P04_V10_DY24_BGM.csv",
+      "sha256": "5dcc9d7bd7d7f88d9f6b24485c06d961ed6d70f9aa6deffa50dd47a6854c2a55",
+      "url": "https://data.cms.gov/sites/default/files/2026-06/98218f98-166c-4723-8438-c344a4ef96a6/DSD_PTD_RY26_P04_V10_DY24_BGM.csv",
+      "license": "US government work (data.cms.gov catalog license field: https://www.usa.gov/government-works)",
+      "licensePage": "https://data.cms.gov/data.json",
+      "read": "2026-11-13",
+      "used": "Tot_Clms_2024 of the overall rows, only to order drug names; no figure from it is in the pack"
+    },
+    "medlineplus": {
+      "name": "MedlinePlus health topics XML of 2026-11-13 (National Library of Medicine)",
+      "file": "medlineplus/mplus_topics_compressed_2026-11-13.zip",
+      "sha256": "0b1ec6d1df215b56e6fe5b78df22cc9f5ee591c0dd6592b9f938b2f40af1bd25",
+      "url": "https://medlineplus.gov/xml/mplus_topics_compressed_2026-11-13.zip",
+      "license": "public domain (health topic summaries); credit requested: Source: MedlinePlus, National Library of Medicine",
+      "licensePage": "https://medlineplus.gov/about/using/usingcontent/",
+      "quote": "Works produced by the federal government are not copyrighted under U.S. law. ... Summaries on health topic pages",
+      "read": "2026-11-13",
+      "used": "English topics: words of titles, also-called names and see-references, and words in two or more topic summaries; no MeSH headings"
+    },
+    "senate-glossary": {
+      "name": "U.S. Senate glossary (senate.gov)",
+      "file": "senate-glossary/glossary.htm",
+      "sha256": "2d83afa864495f841e42a43b00090f7955c097fc27eff86b1f0fb78a705146be",
+      "url": "https://www.senate.gov/about/research-tools/glossary.htm",
+      "license": "US government work (17 U.S.C. 105); single words are not copyrightable (37 CFR 202.1(a)); senate.gov states no other reuse terms",
+      "licensePage": "https://www.copyright.gov/title17/92chap1.html#105",
+      "read": "2026-11-13",
+      "used": "headwords, and lowercase words found in two or more definitions"
+    },
+    "congress-legislators": {
+      "name": "unitedstates/congress-legislators, legislators-current (members of the 119th Congress)",
+      "file": "congress-legislators/legislators-current.json",
+      "sha256": "ae8cb9477c48715df71a7d860854229d799dc90a254d61badc1efb770f892b2c",
+      "url": "https://unitedstates.github.io/congress-legislators/legislators-current.json",
+      "license": "CC0-1.0",
+      "licensePage": "https://github.com/unitedstates/congress-legislators/blob/main/LICENSE",
+      "read": "2026-11-13",
+      "used": "official full, first, last and nickname names",
+      "quote": "CC0 1.0 Universal (LICENSE); last upstream commit 2026-11-12"
+    },
+    "wikidata": {
+      "name": "Wikidata: current human holders of the presidency, vice presidency, cabinet, Supreme Court and state governorships",
+      "file": "wikidata/officeholders.json",
+      "sha256": "3165e31abf453529a45ea0e4879d461538ffc7bc8ce40e1bab839551fa5898f0",
+      "url": "https://query.wikidata.org/sparql (distribution/source/packs/wikidata-officeholders.rq: instance of human, a start date on or before 2026-11-13, no end date, not deceased)",
+      "license": "CC0-1.0",
+      "licensePage": "https://www.wikidata.org/wiki/Wikidata:Licensing",
+      "read": "2026-11-13",
+      "used": "English labels of the people",
+      "quote": "All structured data (i.e. the main, Property, Lexeme, and EntitySchema namespaces) is released into the public domain under Creative Commons Zero."
+    },
+    "offices": {
+      "name": "LocalType's own list of office and procedure words (distribution/source/packs/offices.txt)",
+      "url": "distribution/source/packs/offices.txt",
+      "license": "Apache-2.0",
+      "licensePage": "https://www.apache.org/licenses/LICENSE-2.0",
+      "read": "2026-11-13",
+      "used": "written for LocalType"
+    }
+  },
+  "packs": {
+    "medical": {
+      "name": "Drug names and medical terms",
+      "sources": [
+        "rxnorm",
+        "cms-part-d",
+        "medlineplus"
+      ],
+      "notes": [
+        "Names only, no doses or advice. Not reviewed by a clinician. Look-alike names are offered, never applied.",
+        "RxNorm credit: This product uses publicly available data courtesy of the U.S. National Library of Medicine (NLM), National Institutes of Health, Department of Health and Human Services; NLM is not responsible for the product and does not endorse or recommend this or any other product.",
+        "NLM data as of the RxNorm release above; it may not reflect the most current data available from NLM.",
+        "Source: MedlinePlus, National Library of Medicine."
+      ],
+      "minPrefix": {
+        "drug": 5,
+        "term": 3
+      },
+      "minPrefixWhy": "Luke, 2026-11-13: drug names complete from five typed letters, after ECRI/ISMP's guidance to require the first five letters in drug-name searches; other words from three"
+    },
+    "politics": {
+      "name": "US politics",
+      "sources": [
+        "senate-glossary",
+        "offices",
+        "congress-legislators",
+        "wikidata"
+      ],
+      "notes": [
+        "Officeholders as of the observed date; members-elect of the 2026 election are not in it. Names are facts, not endorsements."
+      ],
+      "minPrefix": {
+        "office": 3,
+        "officeholder": 3
+      }
+    }
+  }
+}

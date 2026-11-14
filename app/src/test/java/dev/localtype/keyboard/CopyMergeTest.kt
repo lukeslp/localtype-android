@@ -267,7 +267,7 @@ class CopyMergeTest {
     fun `every key in the settings file either travels in a copy or is named as staying`() {
         val source = File("src/main/java/dev/localtype/keyboard/KeyboardSettings.kt").readText()
         val keys = Regex("""const val ([A-Z_]+) = "([a-z_]+)"""").findAll(source).map { it.groupValues[1] to it.groupValues[2] }
-            .filter { (name, _) -> name != "PREFS" && name != "GESTURE_PREFIX" }.map { it.second }.toSet()
+            .filter { (name, _) -> name !in setOf("PREFS", "GESTURE_PREFIX", "PACK_PREFIX") }.map { it.second }.toSet()
         assertTrue("found ${keys.size} keys", keys.size >= 55)
         val classed = KeyboardSettings.portableKeys + KeyboardSettings.stayingKeys
         assertEquals("neither travels nor stays", emptySet<String>(), keys - classed)
@@ -275,6 +275,9 @@ class CopyMergeTest {
         // The opt-in log is switched on by hand on each phone, and a model set up there is not set up here.
         assertTrue(KeyboardSettings.stayingKeys.containsAll(listOf("prediction_log", "model_set_up", "learned_generation")))
         assertTrue(KeyboardSettings.portableKeys.containsAll(listOf("gesture_left", "gesture_down", "language_ar", "language_nv")))
+        // A bundled pack's switch travels; the list of imported packs stays, since their files never leave the phone.
+        assertTrue(KeyboardSettings.portableKeys.containsAll(listOf("pack_medical", "pack_politics")))
+        assertTrue("imported_packs" in KeyboardSettings.stayingKeys)
     }
 
     @Test

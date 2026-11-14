@@ -18,6 +18,7 @@ separate terms.
 | Emoji names and inventory | Unicode and the separately licensed Chime vocabulary. `scripts/build-emoji-inventory.py` generates the Unicode inventory. |
 | Top-level domains | The included MPL-2.0 Public Suffix List revision and compatibility exclusions; `scripts/build-tlds.py --check` verifies the packaged list. |
 | Swipe weights | First-party LTSW numeric weights, with the recording-source and derivative notices retained. The app includes its pure Kotlin reader and inference code. The format audit checks the exact payload; it does not rerun training. |
+| Word packs (`pack_medical_en.txt`, `pack_politics_en.txt`) | RxNorm Current Prescribable Content, CMS Part D Spending by Drug and MedlinePlus health topics (public domain); the U.S. Senate glossary (U.S. government work); unitedstates/congress-legislators and Wikidata (CC0). `distribution/source/packs/sources.json` pins each download by SHA-256 and `scripts/build-word-packs.py` rebuilds the packs. |
 | Reviewed vocabulary and known-word lists | The asset inventory and word-list notices distinguish original editorial rows, SCOWL material and FrequencyWords derivatives. |
 
 The generation tools are here for inspection and need separately supplied

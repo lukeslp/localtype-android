@@ -443,5 +443,23 @@
     "notice": "licenses/wordlists-NOTICE.txt",
     "review": "Sources, versions and licence pages recorded in model/licenses.md (Spanish 2026-10-17/18, Portuguese 2026-10-18)",
     "sourceSha256": "093b0bb1b4a15d414d90557ec6c5ecf258196369086f335218cd75941620fb0d"
+  },
+  "pack_medical_en.txt": {
+    "sha256": "fb47ac63ffdaaea36ce2ebcc93c359c8912a6a5a8e84ac2f507fd559670550f4",
+    "status": "reviewed-grant",
+    "license": "LicenseRef-Public-Domain AND Apache-2.0",
+    "source": "RxNorm Current Prescribable Content 2026-11-02 (public domain), CMS Medicare Part D Spending by Drug DY2024 (US government work, ordering only), MedlinePlus health topics 2026-11-13 (public domain summaries); pins in distribution/source/packs/sources.json; scripts/build-word-packs.py",
+    "notice": "licenses/word-packs-NOTICE.txt",
+    "review": "License pages read 2026-11-13 (RxNorm prescribe page, NLM RxNorm terms, MedlinePlus using-content page, data.cms.gov catalog); NLM credit and currency notice in the pack header and notice; opt-in, off by default; drug names complete from five typed letters (Luke, 2026-11-13, after ECRI/ISMP guidance), other words from three",
+    "sourceSha256": "fb47ac63ffdaaea36ce2ebcc93c359c8912a6a5a8e84ac2f507fd559670550f4"
+  },
+  "pack_politics_en.txt": {
+    "sha256": "d181222bbf6ca46164d914b14afdd7dd8c9c768b5fdec9e431b7b85484f217a9",
+    "status": "reviewed-grant",
+    "license": "CC0-1.0 AND LicenseRef-Public-Domain AND Apache-2.0",
+    "source": "U.S. Senate glossary (US government work, single words), unitedstates/congress-legislators legislators-current (CC0), Wikidata officeholders (CC0), LocalType's offices list; pins in distribution/source/packs/sources.json; scripts/build-word-packs.py",
+    "notice": "licenses/word-packs-NOTICE.txt",
+    "review": "License pages read 2026-11-13 (congress-legislators LICENSE, Wikidata:Licensing, senate.gov usage policy, 17 U.S.C. 105); officeholders observed 2026-11-13, fading from completion after 60 days; opt-in, off by default",
+    "sourceSha256": "d181222bbf6ca46164d914b14afdd7dd8c9c768b5fdec9e431b7b85484f217a9"
   }
 }

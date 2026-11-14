@@ -67,6 +67,9 @@ object KeyboardSettings {
     private const val SETUP_COMPLETE = "setup_complete"
     private const val SETUP_STEP = "setup_step"
     private const val TOUR_SEEN = "tour_seen"
+    /** Imported word packs on this phone, as `id:language` entries; their files stay here and never travel in a copy. */
+    private const val IMPORTED_PACKS = "imported_packs"
+    private const val PACK_PREFIX = "pack_"
 
     private fun prefs(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
@@ -244,6 +247,36 @@ object KeyboardSettings {
     fun rememberDomains(context: Context) = prefs(context).getBoolean(REMEMBER_DOMAINS, true)
     fun setRememberDomains(context: Context, on: Boolean) = prefs(context).edit().putBoolean(REMEMBER_DOMAINS, on).apply()
 
+    /**
+     * A word pack's switch (`pack_<id>`). A bundled pack ([WordPackCatalog]) is off for a new or existing installation;
+     * an imported one is switched on when it is imported. Read once per field.
+     */
+    fun packKey(id: String) = PACK_PREFIX + id
+    fun pack(context: Context, id: String) = prefs(context).getBoolean(packKey(id), false)
+    fun setPack(context: Context, id: String, on: Boolean) = prefs(context).edit().putBoolean(packKey(id), on).apply()
+
+    /** Imported packs on this phone: id to language code, in the order they were imported. */
+    fun importedPacks(context: Context): Map<String, String> = prefs(context).getString(IMPORTED_PACKS, "").orEmpty()
+        .split(',').filter { ':' in it }.associate { it.substringBefore(':') to it.substringAfter(':') }
+
+    /** Records an imported pack (replacing one with the same id) and switches it on. */
+    fun addImportedPack(context: Context, id: String, language: String) {
+        val packs = importedPacks(context) - id + (id to language)
+        prefs(context).edit().putString(IMPORTED_PACKS, packs.entries.joinToString(",") { "${it.key}:${it.value}" })
+            .putBoolean(packKey(id), true).apply()
+    }
+
+    fun removeImportedPack(context: Context, id: String) {
+        val packs = importedPacks(context) - id
+        prefs(context).edit().putString(IMPORTED_PACKS, packs.entries.joinToString(",") { "${it.key}:${it.value}" })
+            .remove(packKey(id)).apply()
+    }
+
+    /** Ids of the packs switched on for [language]: its bundled ones first, then its imported ones. */
+    fun packsFor(context: Context, language: LanguageProfile): List<String> =
+        WordPackCatalog.BUNDLED.filter { it.language == language.code }.map { it.id }.filter { pack(context, it) } +
+            importedPacks(context).filter { it.value == language.code }.keys.filter { pack(context, it) }
+
     /** English in the hold-Space chooser, on unless turned off with another language with words on ([LanguageChoice]). */
     fun english(context: Context) = prefs(context).getBoolean(ENGLISH, true)
     fun setEnglish(context: Context, on: Boolean) = setOffered(context, ENGLISH, LanguageProfile.ENGLISH, on)
@@ -355,7 +388,7 @@ object KeyboardSettings {
         BRITISH_SPELLING, COMMON_SYMBOL_HOLDS, EXPERIMENTAL_SWIPE, TWO_FINGER_GESTURES, STEADY_KEYS, AIM_FROM_TOUCHES,
         INACTIVE_GAPS, PASSWORD_MANAGER_SUGGESTIONS, CLEAN_PASTED_LINKS, REMEMBER_DOMAINS, AUTO_UPDATE_CHECK,
         ENGLISH, SPANISH, IPA, PORTUGUESE, HEBREW, WELSH, IRISH, MAORI, HAWAIIAN,
-    ) + LanguageProfile.EXTRA.map(::extraKey)
+    ) + LanguageProfile.EXTRA.map(::extraKey) + WordPackCatalog.BUNDLED.map { packKey(it.id) }
     private val PORTABLE_INTS: Map<String, IntRange> = mapOf(
         BOTTOM_CLEARANCE to 0..48, IGNORE_REPEAT_MS to 0..10_000, KEY_HOLD_MS to 0..10_000, DWELL_MS to 0..10_000,
     )
@@ -369,7 +402,7 @@ object KeyboardSettings {
      */
     private val STAYS: Set<String> = setOf(
         MODEL_SET_UP, LEARNED_GENERATION, PREDICTION_LOG, UPDATE_CHECKED_AT, UPDATE_LATEST_CODE, UPDATE_LATEST_NAME,
-        UPDATE_INSTALLABLE, UPDATE_DISMISSED_CODE, SETUP_COMPLETE, SETUP_STEP, TOUR_SEEN,
+        UPDATE_INSTALLABLE, UPDATE_DISMISSED_CODE, SETUP_COMPLETE, SETUP_STEP, TOUR_SEEN, IMPORTED_PACKS,
     )
     /** Names, codes and comma-separated ids: nothing a setting holds needs more than this. */
     private val PORTABLE_VALUE = Regex("[A-Za-z0-9_,.-]{0,256}")
