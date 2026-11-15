@@ -1,5 +1,5 @@
 {
-  "sourceCommit": "81078e314e3dd2303b2b11c9528e83227001b000",
+  "sourceCommit": "2c7a1e1e6ecc2800980e7eb232f2d591827670c1",
   "files": [
     {
       "path": "LICENSE",
@@ -15,8 +15,8 @@
     },
     {
       "path": "app/build.gradle.kts",
-      "sourceSha256": "201bb09331eb133d50c4e0e1cd3744688a4c4090d2d266b5bf6b61e008631f20",
-      "sha256": "27b4dc09b2b10cfc8026663337f3af1fbafbddffb204625321df05b8f2eb9f8b",
+      "sourceSha256": "589c14797513f4f1c1e1cac8d814ca21762a3aac7ac2d99a5494ebf624258994",
+      "sha256": "967ffd4113646efc98901947d3e1172298c2048eba98541bce724e4e9bfca873",
       "transformed": true
     },
     {
@@ -123,8 +123,8 @@
     },
     {
       "path": "app/src/main/assets/cifg_int8.bin",
-      "sourceSha256": "4099fe04fb2b10597b0e1068f51aa94b9618d4f326abf72a08a6aab88b32ea7a",
-      "sha256": "4099fe04fb2b10597b0e1068f51aa94b9618d4f326abf72a08a6aab88b32ea7a",
+      "sourceSha256": "55795f14a9cb11ee419e8b33bec749199811fc6fbefa1efbb89bdd6e22c39b53",
+      "sha256": "55795f14a9cb11ee419e8b33bec749199811fc6fbefa1efbb89bdd6e22c39b53",
       "transformed": false
     },
     {
@@ -207,8 +207,8 @@
     },
     {
       "path": "app/src/main/assets/licenses/cifg-NOTICE.txt",
-      "sourceSha256": "526d09e8f9c3575d2f662273e829c3d55220d14a7a76f9b0a3fd1ccb52c792f5",
-      "sha256": "526d09e8f9c3575d2f662273e829c3d55220d14a7a76f9b0a3fd1ccb52c792f5",
+      "sourceSha256": "b5558e438e3c1902ddb0d46e268fbda83e0632461bde9ca77370dc1f0d3af284",
+      "sha256": "b5558e438e3c1902ddb0d46e268fbda83e0632461bde9ca77370dc1f0d3af284",
       "transformed": false
     },
     {
@@ -813,8 +813,8 @@
     },
     {
       "path": "app/src/main/java/dev/localtype/keyboard/NeuralAsset.kt",
-      "sourceSha256": "19b658510c6e52280371b60a4c44846e3a19e47765a7468b137b4f8c6f2a83aa",
-      "sha256": "19b658510c6e52280371b60a4c44846e3a19e47765a7468b137b4f8c6f2a83aa",
+      "sourceSha256": "f7a6a6c3242b484c84bcf28d83a89625fc14e34970bbcf6aab31cc1dd0efe44a",
+      "sha256": "f7a6a6c3242b484c84bcf28d83a89625fc14e34970bbcf6aab31cc1dd0efe44a",
       "transformed": false
     },
     {
@@ -2709,8 +2709,8 @@
     },
     {
       "path": "engine/src/commonMain/kotlin/dev/localtype/keyboard/ChimePredictor.kt",
-      "sourceSha256": "db4433d3a0ac784cb5f77ea384420928285e643e779a25f74b7067e6b34c4b0a",
-      "sha256": "db4433d3a0ac784cb5f77ea384420928285e643e779a25f74b7067e6b34c4b0a",
+      "sourceSha256": "4b19a98298d62540dba13055adefa0455464e4c9d902634189c73f611c1b3c2d",
+      "sha256": "4b19a98298d62540dba13055adefa0455464e4c9d902634189c73f611c1b3c2d",
       "transformed": false
     },
     {
@@ -3217,7 +3217,7 @@
     },
     {
       "path": "DATA-SOURCES.md",
-      "sha256": "0eb95007794f74ec2263ee66117c952c4bb30d4925a2c3f33e1f30fb0d3fe663",
+      "sha256": "c98e2021e76bef5237c3e9eb9cffb57294a23df88fe22119acd2b1ff0644326b",
       "template": "DATA-SOURCES.public.md"
     },
     {

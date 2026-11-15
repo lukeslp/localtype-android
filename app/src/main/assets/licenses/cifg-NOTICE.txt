@@ -1,14 +1,16 @@
 LocalType experimental next-word model (cifg_int8.bin)
 
 Luke Steuber trained this model on the corpus-v3 training split from the five sources below,
-plus the Tatoeba English sentences in item 6. The corpus-v3 texts were filtered, normalized,
+plus the Tatoeba English sentences in item 6 and the C4 web sentences in item 7. The corpus-v3 texts were filtered, normalized,
 deduplicated and divided into training, development and test splits; the English vocabulary was
 learned from that training split. The Tatoeba sentences went through the same line rules and an
 exact dedupe against corpus-v3 and the scored evaluation sets, and lines naming Tatoeba's stock
-characters were dropped. A CIFG-LSTM was then trained for 102,195 updates (about 2.6 passes),
+characters were dropped. The C4 sentences were chosen by a filter built from the trainer's own
+text messages; those messages only ranked public sentences, and none of their text is in the
+training text. A CIFG-LSTM was then trained for 102,195 updates (about 2.4 passes),
 selected on human-source development perplexity, and its weights were quantized to int8. NUS SMS,
-Taskmaster-1 and OpenAssistant prompter turns were oversampled eight times; Taskmaster-3, SODA and
-Tatoeba counted once. This file contains model weights and a vocabulary, rather than a copy of
+Taskmaster-1 and OpenAssistant prompter turns were oversampled eight times; Taskmaster-3, SODA,
+Tatoeba and C4 counted once. This file contains model weights and a vocabulary, rather than a copy of
 the source corpus. The source authors have not endorsed LocalType. The sources are provided as-is
 and without warranties under their respective licenses.
 
@@ -69,6 +71,25 @@ and without warranties under their respective licenses.
    have no owner on record. Human-written.
    License: Creative Commons Attribution 2.0 France (CC BY 2.0 FR).
    https://creativecommons.org/licenses/by/2.0/fr/
+
+7. C4, English (allenai/c4, "en"): sentences from two of its 1,024 training files.
+   C4 is the Colossal Clean Crawled Corpus, web pages from Common Crawl's April 2019 crawl,
+   cleaned as described in Raffel et al., "Exploring the Limits of Transfer Learning with a
+   Unified Text-to-Text Transformer", JMLR 21(140), 2020, and prepared for download by the
+   Allen Institute for AI.
+   https://huggingface.co/datasets/allenai/c4
+   Files en/c4-train.00000-of-01024.json.gz, SHA-256
+   8ef8d75b0e045dec4aa5123a671b4564466b0707086a7ed1ba8721626dfffbc9, and
+   en/c4-train.00001-of-01024.json.gz, SHA-256
+   b945059cd1a343cabe311881b7840a6f0363f570e745a0eff0e687e266f6b55d, fetched 2026-11-13.
+   1,000,000 sentences of 3 to 25 words were used, chosen from 10,847,777 after the same line
+   rules and an exact dedupe against the other sources and the scored evaluation sets. The
+   sentences come from public web pages whose authors the dataset does not name; how each page
+   was written is not recorded.
+   License: Open Data Commons Attribution License (ODC-BY) 1.0 for the dataset.
+   https://opendatacommons.org/licenses/by/1-0/
+   The underlying pages are also subject to the Common Crawl terms of use.
+   https://commoncrawl.org/terms-of-use
 
 The vocabulary's emoji tokens come from LocalType's emoji_en.txt, a word-to-emoji list
 written for LocalType. The separate emoji panel uses Unicode and CLDR data; its attribution

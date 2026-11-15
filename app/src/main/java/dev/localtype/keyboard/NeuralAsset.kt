@@ -6,7 +6,7 @@ import java.security.MessageDigest
 /** The single swappable identity of the bundled experimental next-word model. */
 object NeuralAsset {
     const val FILE_NAME = "cifg_int8.bin"
-    const val SHA256 = "4099fe04fb2b10597b0e1068f51aa94b9618d4f326abf72a08a6aab88b32ea7a"
+    const val SHA256 = "55795f14a9cb11ee419e8b33bec749199811fc6fbefa1efbb89bdd6e22c39b53"
 
     /** The caller closes [input] and runs this off the typing thread. Verify before parsing. */
     fun load(input: InputStream): CifgModel {

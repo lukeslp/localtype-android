@@ -24,7 +24,7 @@ class ChimePredictor(blob: ByteArray) {
         const val WORDS = 12
         const val FILE_NAME = "cifg_int8.bin"
         /** The bundled export's SHA-256, as Android's NeuralAsset checks it. */
-        const val SHA256 = "4099fe04fb2b10597b0e1068f51aa94b9618d4f326abf72a08a6aab88b32ea7a"
+        const val SHA256 = "55795f14a9cb11ee419e8b33bec749199811fc6fbefa1efbb89bdd6e22c39b53"
 
         /** Loads [blob] after checking it is the bundled export, or fails with [IllegalArgumentException]. */
         fun verified(blob: ByteArray): ChimePredictor {

@@ -1,12 +1,12 @@
 {
   "cifg_int8.bin": {
-    "sha256": "4099fe04fb2b10597b0e1068f51aa94b9618d4f326abf72a08a6aab88b32ea7a",
+    "sha256": "55795f14a9cb11ee419e8b33bec749199811fc6fbefa1efbb89bdd6e22c39b53",
     "status": "reviewed-grant",
     "license": "CC-BY-SA-4.0",
-    "source": "Chime retrain run chime-s4-f1-tatoeba-full (corpus-v3 plus Tatoeba English); docs/chime-retrain-results-2026-11-13.md",
+    "source": "Chime 2, run chime-s7-g1-c4-filtered-full (corpus-v3 plus Tatoeba English plus 1,000,000 filtered C4 sentences); docs/chime-retrain-results-2026-11-13.md",
     "notice": "licenses/cifg-NOTICE.txt",
-    "review": "Tatoeba CC BY 2.0 FR read on its downloads page 2026-11-13; contributor list in licenses/cifg-tatoeba-contributors.txt; earlier sources as in model/licenses.md",
-    "sourceSha256": "4099fe04fb2b10597b0e1068f51aa94b9618d4f326abf72a08a6aab88b32ea7a"
+    "review": "Tatoeba CC BY 2.0 FR read on its downloads page 2026-11-13; contributor list in licenses/cifg-tatoeba-contributors.txt; C4 (allenai/c4) ODC-BY 1.0 and the Common Crawl terms of use read on its card 2026-11-13 and 2026-11-14, accepted as a source by Luke 2026-11-14; earlier sources as in model/licenses.md",
+    "sourceSha256": "55795f14a9cb11ee419e8b33bec749199811fc6fbefa1efbb89bdd6e22c39b53"
   },
   "corpus_prior.bin": {
     "sha256": "5ea7038a8c99e8fdeb6813bcb57db019933261c8e3e8298b7aff62048c6f4825",
