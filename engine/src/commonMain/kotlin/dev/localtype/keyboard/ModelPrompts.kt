@@ -35,12 +35,20 @@ fun proofreadPrompt(text: String): String = buildString {
 
 /**
  * Cleans a model's proofreading reply and rejects answers that aren't a plausible correction of
- * [original] (explanations, a different length, empty output).
+ * [original] (explanations, a different length, empty output). A one-line original takes the reply's first line; an
+ * original with line breaks takes the whole reply, and only when its lines match the original's one for one.
  */
 fun cleanProofread(original: String, reply: String): String? {
     var text = reply.trim()
     text = text.replace(Regex("^(corrected( text)?|here is the corrected text|proofread( text)?)\\s*:\\s*", RegexOption.IGNORE_CASE), "")
-    text = text.lineSequence().firstOrNull { it.isNotBlank() }?.trim().orEmpty()
+    // Line breaks around the original don't make it multi-line; only ones inside it do.
+    if ('\n' !in original.trim()) {
+        text = text.lineSequence().firstOrNull { it.isNotBlank() }?.trim().orEmpty()
+    } else {
+        // A dropped line would be deleted on Apply, and an extra one is the model explaining itself.
+        text = text.trim()
+        if (text.lines().map { it.isBlank() } != original.trim().lines().map { it.isBlank() }) return null
+    }
     if (text.length >= 2 && text.first() in "\"“'" && text.last() in "\"”'" && !(original.first() in "\"“'")) {
         text = text.substring(1, text.length - 1).trim()
     }

@@ -571,6 +571,10 @@ class KeyboardView(context: Context) : View(context) {
                     // Not a swipe: the held first key goes in now, before the second, as the fingers landed.
                     releasePointer(paired.first, commit = true)
                     if (id == paired.first) {
+                        // That release cleared the one shared hold timer, which was the second finger's: start it again.
+                        pointers[paired.second]?.takeIf {
+                            !it.longPressed && !it.consumed && it.popup == null && !it.sliding && it.gesture?.active != true
+                        }?.let { scheduleLongPress(paired.second, it.key) }
                         invalidate()
                         return true
                     }
@@ -604,7 +608,7 @@ class KeyboardView(context: Context) : View(context) {
         !first.consumed && first.gesture?.let { it.active || it.cancelled } != true &&
         first.downAction != KeyAction.Backspace && second.action != KeyAction.Backspace && when (val action = first.key.action) {
             is KeyAction.Text -> action.value != "'" && action.value != "’"
-            KeyAction.Space -> letterOrigin() != null
+            KeyAction.Space -> !layout.returnsToLetters
             KeyAction.Shift -> true
             else -> false
         }

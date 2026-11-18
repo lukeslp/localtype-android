@@ -55,7 +55,7 @@ class SuggestionPopup(private val context: Context) {
                 // At a large font size a name grows taller than the cell rather than being cut off, and the
                 // vertical padding keeps it clear of the selected tab's bar, which sits 6dp above the bottom.
                 if (words) setPadding(dp(14), dp(10), dp(14), dp(10))
-                minHeight = dp(46)
+                minHeight = dp(48)
                 setTextColor(context.getColor(R.color.kb_on_key))
                 // An emoji tab's background: selected is a key-shaped fill with a bar, not colour alone.
                 background = context.getDrawable(R.drawable.panel_tab_background)
@@ -72,7 +72,7 @@ class SuggestionPopup(private val context: Context) {
         }
         val screenWidth = context.resources.displayMetrics.widthPixels
         val widths = cells.map { cell ->
-            if (!words) return@map dp(46)
+            if (!words) return@map dp(48)
             cell.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
             cell.measuredWidth
         }
@@ -84,8 +84,8 @@ class SuggestionPopup(private val context: Context) {
             }
             for (index in range) {
                 row.addView(cells[index], LinearLayout.LayoutParams(
-                    if (words) LinearLayout.LayoutParams.WRAP_CONTENT else dp(46),
-                    if (words) LinearLayout.LayoutParams.WRAP_CONTENT else dp(46)))
+                    if (words) LinearLayout.LayoutParams.WRAP_CONTENT else dp(48),
+                    if (words) LinearLayout.LayoutParams.WRAP_CONTENT else dp(48)))
             }
             panel.addView(row, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT))
         }
@@ -109,7 +109,7 @@ class SuggestionPopup(private val context: Context) {
         val location = IntArray(2)
         anchor.getLocationInWindow(location)
         val x = (location[0] + anchor.width / 2 - panel.measuredWidth / 2).coerceIn(dp(4), maxOf(dp(4), screenWidth - panel.measuredWidth - dp(4)))
-        // Its bottom stays 2dp above the anchor's top however many rows it has; one row is 54dp, as before.
+        // Its bottom stays 2dp above the anchor's top however many rows it has; one row is 56dp.
         popup.showAtLocation(anchor, Gravity.NO_GRAVITY, x, location[1] - panel.measuredHeight - dp(2))
         TalkBackFocus.moveTo(cells.getOrNull(if (selected in options.indices) selected else 0))
     }

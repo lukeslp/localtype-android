@@ -9,6 +9,8 @@ object WordSpellings {
     /** Room for every added word to keep its capitals ([AddedWords.MAX_WORDS]) beside 512 learned from typing ([trim]). */
     const val MAX_WORDS = 512 + AddedWords.MAX_WORDS
     private val LETTERS = Regex("\\p{L}+(?:['’]\\p{L}+)*")
+    // What [AddedWords] accepts as a word, before lowercasing: hyphens, marks and the non-joiner too ("Wi-Fi").
+    private val ADDED = Regex("\\p{L}[\\p{L}\\p{Mn}\u200C]*(?:['’-]\\p{L}[\\p{L}\\p{Mn}\u200C]*)*['’]?")
 
     sealed interface Change {
         /** Show the word as [display] from now on. */
@@ -38,7 +40,7 @@ object WordSpellings {
     }
 
     /** An added word keeps exactly the spelling typed into Settings, when it has a capital. */
-    fun added(input: String): Change = input.trim().let { if (LETTERS.matches(it) && it != AdaptiveNgramModel.normalize(it)) Change.Record(it) else Change.Unchanged }
+    fun added(input: String): Change = input.trim().let { if (ADDED.matches(it) && it != AdaptiveNgramModel.normalize(it)) Change.Record(it) else Change.Unchanged }
 
     /** [word] shown with the stored spelling of it, or of its stem before 's or ', or null when there is none. */
     fun display(spellings: Map<String, String>, word: String): String? {
@@ -55,7 +57,7 @@ object WordSpellings {
         val out = LinkedHashMap<String, String>()
         text.lineSequence().forEach { line ->
             val parts = line.split('\t')
-            if (parts.size == 2 && parts[1].isNotEmpty() && AdaptiveNgramModel.normalize(parts[1]) == parts[0] && LETTERS.matches(parts[1])) out[parts[0]] = parts[1]
+            if (parts.size == 2 && parts[1].isNotEmpty() && AdaptiveNgramModel.normalize(parts[1]) == parts[0] && ADDED.matches(parts[1])) out[parts[0]] = parts[1]
         }
         while (out.size > MAX_WORDS) out.remove(out.keys.first())
         return out

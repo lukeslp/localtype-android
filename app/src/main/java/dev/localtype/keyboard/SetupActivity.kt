@@ -169,7 +169,6 @@ class SetupActivity : Activity() {
             tryInput = EditText(this).apply {
                 id = R.id.setup_try_input
                 hint = getString(R.string.try_it_hint)
-                contentDescription = getString(R.string.walkthrough_try_field)
                 inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or InputType.TYPE_TEXT_FLAG_MULTI_LINE
                 minLines = 2
                 setTextColor(getColor(R.color.on_surface))
@@ -183,7 +182,6 @@ class SetupActivity : Activity() {
             KeyboardSettings.setTourSeen(this)
             tryInput = EditText(this).apply {
                 hint = getString(R.string.try_it_hint)
-                contentDescription = getString(R.string.walkthrough_try_field)
                 inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or InputType.TYPE_TEXT_FLAG_MULTI_LINE
                 minLines = 2
                 setTextColor(getColor(R.color.on_surface))

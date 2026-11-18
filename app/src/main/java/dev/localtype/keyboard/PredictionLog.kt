@@ -7,6 +7,8 @@ import android.os.Handler
 import android.os.HandlerThread
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
+import java.io.RandomAccessFile
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -223,7 +225,11 @@ object PredictionLog {
 
     // region Worker
 
-    /** The session's sink: one block of records, appended whole or dropped whole. */
+    /**
+     * The session's sink: one block of records, appended whole or dropped whole. A write that fails
+     * (full storage, a file that can't be opened) drops the block and everything after it until the
+     * next snapshot is written, so the file never continues from tables it doesn't hold.
+     */
     private fun write(records: List<LogRecord>) {
         val app = app ?: return
         if (records.isEmpty()) return
@@ -238,17 +244,28 @@ object PredictionLog {
         }
         if (full || stale) return
         var block = PredictionLogCodec.encodeBlock(records)
-        if (snapshot && droppedBlocks > 0) {
-            block += PredictionLogCodec.encodeBlock(listOf(LogRecord.Dropped(droppedBlocks)))
-            droppedBlocks = 0
-        }
+        val counted = snapshot && droppedBlocks > 0
+        if (counted) block += PredictionLogCodec.encodeBlock(listOf(LogRecord.Dropped(droppedBlocks)))
         val bytes = block.toByteArray()
-        if (!file.exists()) createFile(app, file)
-        if (file.length() + bytes.size > MAX_BYTES) {
-            full = true
+        // The file's length before the append, once it is known.
+        var kept = -1L
+        try {
+            if (!file.exists()) createFile(app, file)
+            if (file.length() + bytes.size > MAX_BYTES) {
+                if (counted) droppedBlocks = 0
+                full = true
+                return
+            }
+            kept = file.length()
+            FileOutputStream(file, true).use { it.write(bytes) }
+        } catch (_: IOException) {
+            // Cut a partial append back off, so the next block doesn't join a broken line.
+            if (kept >= 0) runCatching { RandomAccessFile(file, "rw").use { it.setLength(kept) } }
+            if (!snapshot) droppedBlocks++
+            snapWritten = false
             return
         }
-        FileOutputStream(file, true).use { it.write(bytes) }
+        if (counted) droppedBlocks = 0
         if (snapshot) snapWritten = true
     }
 
@@ -272,7 +289,13 @@ object PredictionLog {
             }
         }
         file.parentFile?.mkdirs()
-        file.writeText(PredictionLogCodec.encodeHeader(header))
+        try {
+            file.writeText(PredictionLogCodec.encodeHeader(header))
+        } catch (e: IOException) {
+            // Leave no file without a whole header behind; the next snapshot starts a new one.
+            file.delete()
+            throw e
+        }
         headerChecked = true
         // The file's own creation time feeds the settings status line ("since Sep 20"); it never enters the file.
         prefs.edit().putInt(KEY_FILE, number).putLong(KEY_STARTED, file.lastModified()).remove(KEY_FIELD).remove(KEY_STALE).apply()

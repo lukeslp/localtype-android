@@ -42,6 +42,17 @@ class ContactsTest {
     }
 
     @Test
+    fun `a contact named only by its address or number is offered once, as that detail`() {
+        val mail = Contact("x@example.com", emptyList(), listOf("x@example.com"))
+        val email = ContactBook.Choice("x@example.com", ContactBook.Kind.EMAIL)
+        for (field in ContactBook.Field.values()) assertEquals(listOf(email), ContactBook.choices(mail, field))
+        assertEquals("x@example.com", ContactBook.inserted(ContactBook.choices(mail, ContactBook.Field.TEXT).single(), ""))
+        val number = Contact("555 0142", listOf("555 0142"), emptyList())
+        assertEquals(listOf(ContactBook.Choice("555 0142", ContactBook.Kind.PHONE)), ContactBook.choices(number, ContactBook.Field.PHONE))
+        assertEquals(listOf(ContactBook.Choice("555 0142", ContactBook.Kind.PHONE)), ContactBook.choices(number, ContactBook.Field.TEXT))
+    }
+
+    @Test
     fun `a name is followed by a space, a number or address is not`() {
         val name = ContactBook.Choice("Kai", ContactBook.Kind.NAME)
         assertEquals("Kai ", ContactBook.inserted(name, ""))

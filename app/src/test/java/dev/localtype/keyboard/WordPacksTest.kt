@@ -242,6 +242,11 @@ class WordPacksTest {
         assertEquals("import-medical", headed.id)
         assertEquals("es", headed.language)
         assertEquals("Mis palabras", headed.name)
+        // A header id too long to take the prefix gives way to the file's, so the pack can be read back.
+        val long = WordPack.lenient("# id=cardiology-and-internal-medicine-terms\nzorpquill\n", "my-file", "en", "X", today).pack!!
+        assertEquals("import-my-file", long.id)
+        assertEquals(long.id, WordPack.strict(long.encode(), imported = true).id)
+        assertEquals("import-" + "a".repeat(33), WordPack.lenient("# id=${"a".repeat(33)}\nzorpquill\n", "x", "en", "X", today).pack!!.id)
         // Nothing usable: no pack.
         assertNull(WordPack.lenient("two words\n123\n", "x", "en", "X", today).pack)
         // The bound on entries.

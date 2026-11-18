@@ -186,8 +186,11 @@ object LinkCleaner {
                 bytes.write(value)
                 i += 3
             } else {
-                bytes.write(c.toString().toByteArray(Charsets.UTF_8))
-                i++
+                // By code point: half of a surrogate pair encodes as '?'. A lone half leaves the link alone.
+                val point = text.codePointAt(i)
+                if (point in 0xD800..0xDFFF) return null
+                bytes.write(String(Character.toChars(point)).toByteArray(Charsets.UTF_8))
+                i += Character.charCount(point)
             }
         }
         val decoder = Charsets.UTF_8.newDecoder()

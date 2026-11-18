@@ -15,7 +15,7 @@ import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
 
-/** The panels that can cover the keys: every emoji, Saved text, every tool, the arrow pad, contacts and passwords. */
+/** The panels that can cover the keys: every emoji, Saved text, every tool, the arrow pad, contacts, passwords, Symbols and Text effects. */
 enum class KeyboardPanel { EMOJI, SAVED, TOOLS, ARROWS, CONTACTS, PASSWORDS, SYMBOLS, TEXT_EFFECTS }
 
 /**

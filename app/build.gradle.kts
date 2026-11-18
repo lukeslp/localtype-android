@@ -20,8 +20,8 @@ android {
         applicationId = "dev.localtype.keyboard"
         minSdk = 26
         targetSdk = 35
-        versionCode = 79
-        versionName = "0.5.58"
+        versionCode = 80
+        versionName = "0.5.59"
         testInstrumentationRunner = "dev.localtype.keyboard.ToolsReflowChecks"
         // Phones only. The x86_64 copy of the model runtime's native library was 26 MB that only emulators loaded.
         // Here and not in release {}: benchmark and the verification variant copy release before that block runs.

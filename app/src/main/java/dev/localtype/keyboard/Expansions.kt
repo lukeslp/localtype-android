@@ -2,9 +2,11 @@ package dev.localtype.keyboard
 
 /**
  * What the strip's last slot can offer that is not a word: a saved text for its shortcut, the rest of a
- * remembered host, or the link before the caret without its tracking ([LinkCleaner.atCaret]). Pure. An expansion's text never enters the list of suggested words, so no offer or tap
+ * remembered host, the link before the caret without its tracking ([LinkCleaner.atCaret]), or a symbol
+ * ([Kind.SYMBOL]). Pure. An expansion's text never enters the list of suggested words, so no offer or tap
  * row of the typing log can hold it and it is never learned as a word. Once taken it is text in the field,
- * like a paste; [SavedWords] keeps a saved text's words from becoming a learned previous word.
+ * like a paste. What may be learned after it is decided by `WordPersistence.pair`; [SavedWords] only supplies the
+ * set of saved-text words.
  */
 object Expansions {
     enum class Kind { SHORTCUT, DOMAIN, LINK, SYMBOL }
@@ -114,7 +116,11 @@ object Expansions {
 }
 
 /**
- * Keeps a saved text's words out of the learned pairs. Pure.
+ * The words of the saved texts, and an earlier rule for keeping them out of the learned pairs. Pure.
+ *
+ * Only [of] is called by the keyboard now. The rule in force is `WordPersistence.pair`; [blocks], [inKeys] and
+ * [holds] are kept as a historical pure helper with their tests. The rest of this comment describes that
+ * earlier rule.
  *
  * A saved text can be an address or an account name. Once one is in a field, by its shortcut or from the
  * panel, the word typed next would be learned with the saved text's last word as its previous word, and a

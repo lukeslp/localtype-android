@@ -55,6 +55,9 @@ enum class SpaceBar {
 data class KeyboardLayout(val rows: List<List<Key>>, val rowHeights: List<Float> = List(rows.size) { 1f }) {
     enum class Mode { LETTERS, SYMBOLS, MORE_SYMBOLS, NUMBER, PHONE, DATETIME }
 
+    /** True on the symbols pages, which carry the ABC key; no letters layout or pad has one. */
+    val returnsToLetters: Boolean get() = rows.any { row -> row.any { it.action == KeyAction.ToLetters } }
+
     companion object {
         const val ROW_UNITS = 10f
 
@@ -483,6 +486,7 @@ data class KeyboardLayout(val rows: List<List<Key>>, val rowHeights: List<Float>
             "_" -> "Underscore"
             "/" -> "Slash"
             "\\" -> "Backslash"
+            "|" -> "Vertical bar"
             "&" -> "Ampersand"
             "@" -> "At"
             "#" -> "Hash"

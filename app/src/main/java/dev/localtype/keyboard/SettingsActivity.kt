@@ -179,6 +179,8 @@ class SettingsActivity : Activity() {
         refreshUpdateBanner(announce = false)
         checkForUpdateQuietly()
         refreshSections()
+        // The tour marks itself seen when it opens; coming back from it, the card has done its job.
+        if (KeyboardSettings.tourSeen(this)) tourCard?.let { content.removeView(it); tourCard = null }
         if (BuildConfig.INCLUDES_GEMMA) screenScope.launch {
             val resumed = withContext(Dispatchers.IO) { ModelKitBridge.repairQueuedDownload(this@SettingsActivity) }
             resumed.fold(
@@ -216,10 +218,13 @@ class SettingsActivity : Activity() {
         }
     }
 
+    private var tourCard: View? = null
+
     /** Shown once to someone already set up: the tour of what the keys do not show, or a way to decline it. */
     private fun addTourCard() {
         if (!KeyboardSettings.setupComplete(this) || KeyboardSettings.tourSeen(this)) return
         val card = card()
+        tourCard = card
         card.addView(text(getString(R.string.tour_card_title), 16f, R.color.on_surface, bold = true))
         card.addView(text(getString(R.string.tour_card_body), 14f, R.color.on_surface_variant).apply { setPadding(0, dp(4), 0, dp(10)) })
         card.addView(button(getString(R.string.tour_action), primary = true).apply { setOnClickListener { openTour() } })
@@ -1108,6 +1113,8 @@ class SettingsActivity : Activity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode != REQUEST_MICROPHONE) return
         refreshVoiceState()
+        // An interrupted request answers with no results; that is not a denial.
+        if (grantResults.isEmpty()) return
         val denied = grantResults.firstOrNull() != android.content.pm.PackageManager.PERMISSION_GRANTED
         // After "Don't allow" twice Android stops showing the prompt, and only its own app page can grant it.
         if (denied && !shouldShowRequestPermissionRationale(android.Manifest.permission.RECORD_AUDIO)) {
@@ -1252,7 +1259,13 @@ class SettingsActivity : Activity() {
             dataLanguageButtons += language to button
             row.addView(button, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(48)).apply { marginEnd = dp(8) })
         }
-        group.addView(row, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(8) })
+        // Sideways scrolling: a plain row squeezes later buttons to nothing once the languages outgrow the width.
+        val scroller = android.widget.HorizontalScrollView(this).apply {
+            isHorizontalScrollBarEnabled = false
+            isHorizontalFadingEdgeEnabled = true
+            addView(row, ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        }
+        group.addView(scroller, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(8) })
         parent.addView(group)
         divider(group)
         refreshDataLanguage()
@@ -1626,9 +1639,10 @@ class SettingsActivity : Activity() {
     private fun forgetLearnedWords() {
         // The typing log goes with the learned words, as the privacy text promises.
         val hadLog = PredictionLog.status(this).bytes > 0
-        // Every language's learning goes, whichever languages are on now.
+        // Every language's learning goes, whichever languages are on now. A language never used has no store to
+        // clear, and opening one would leave an empty file behind.
         try {
-            LanguageProfile.WITH_WORDS.forEach { PersonalLearningStore.get(this, it).clear() }
+            LanguageProfile.WITH_WORDS.filter { PersonalLearningStore.exists(this, it) }.forEach { PersonalLearningStore.get(this, it).clear() }
         } catch (_: IllegalStateException) {
             Toast.makeText(this, R.string.personal_learning_forget_failed, Toast.LENGTH_LONG).show()
             return
@@ -2662,7 +2676,7 @@ class SettingsActivity : Activity() {
         val body = text("", 14f, R.color.on_primary_container).apply { setPadding(0, dp(4), 0, dp(10)) }
         card.addView(body)
         card.addView(button(getString(R.string.update_banner_open), primary = true).apply {
-            setOnClickListener { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(ReleaseInfo.PAGE_URL))) }
+            setOnClickListener { openInBrowser(ReleaseInfo.PAGE_URL) }
         }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
         card.addView(button(getString(R.string.update_banner_later), primary = false).apply {
             setOnClickListener {
@@ -2763,12 +2777,13 @@ class SettingsActivity : Activity() {
             card.addView(text(getString(R.string.updates_client_managed), 14f, R.color.on_surface_variant))
             return
         }
-        val openPage = { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(ReleaseInfo.PAGE_URL))) }
+        val openPage = { openInBrowser(ReleaseInfo.PAGE_URL) }
         val action = button(getString(R.string.updates_check), primary = false)
         card.addView(action, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
         addSwitch(card, R.string.auto_update_title, R.string.auto_update_summary, R.string.auto_update_body, KeyboardSettings.autoUpdateCheck(this)) {
             KeyboardSettings.setAutoUpdateCheck(this, it)
-            if (it) checkForUpdateQuietly() else updateBanner?.visibility = View.GONE
+            // The banner follows UpdateBanner.shows alone; Not now puts it away.
+            if (it) checkForUpdateQuietly()
         }
         var newer: ReleaseInfo? = null
         action.setOnClickListener {

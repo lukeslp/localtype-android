@@ -47,9 +47,13 @@ object ContactBook {
     fun nameWords(contacts: List<Contact>): Set<String> =
         contacts.flatMapTo(HashSet()) { contact -> words(contact.name).map { it.lowercase() }.filter { it.length >= 2 } }
 
-    /** What can be inserted for [contact], the field's own kind of detail first. Repeats and blanks are dropped. */
+    /**
+     * What can be inserted for [contact], the field's own kind of detail first. Repeats and blanks are dropped, and
+     * so is a name that is only one of the contact's own numbers or addresses.
+     */
     fun choices(contact: Contact, field: Field): List<Choice> {
-        val name = listOf(Choice(contact.name, Kind.NAME)).filter { it.text.isNotBlank() }
+        val details = (contact.phones + contact.emails).mapTo(HashSet()) { it.trim().lowercase() }
+        val name = listOf(Choice(contact.name, Kind.NAME)).filter { it.text.isNotBlank() && it.text.trim().lowercase() !in details }
         val phones = contact.phones.map { Choice(it.trim(), Kind.PHONE) }.filter { it.text.isNotEmpty() }
         val emails = contact.emails.map { Choice(it.trim(), Kind.EMAIL) }.filter { it.text.isNotEmpty() }
         val ordered = when (field) {

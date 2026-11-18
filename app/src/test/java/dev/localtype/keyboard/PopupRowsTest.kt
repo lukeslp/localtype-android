@@ -27,8 +27,8 @@ class PopupRowsTest {
 
     @Test
     fun whatFitsStaysOneRowAsBefore() {
-        // Six skin tones at 46dp, and two languages with Other keyboards.
-        assertEquals(listOf(0..5), PopupRows.pack(List(6) { 46 }, 411 - 16))
+        // Six skin tones at 48dp, and two languages with Other keyboards.
+        assertEquals(listOf(0..5), PopupRows.pack(List(6) { 48 }, 411 - 16))
         assertEquals(listOf(0..2), PopupRows.pack(listOf(english, espanol, other), 411 - 16))
     }
 

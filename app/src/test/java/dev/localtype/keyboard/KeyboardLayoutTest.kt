@@ -310,6 +310,22 @@ class KeyboardLayoutTest {
     }
 
     @Test
+    fun `the vertical bar is spoken by its plain name`() {
+        assertEquals("Vertical bar", KeyboardLayout.spokenName("|"))
+        val more = KeyboardLayout.build(KeyboardLayout.Mode.MORE_SYMBOLS, showSwitchKey = false)
+        assertEquals("Vertical bar", more.rows.flatten().single { it.action == KeyAction.Text("|") }.spokenLabel)
+    }
+
+    @Test
+    fun `only the symbols pages return to letters`() {
+        for (language in LanguageProfile.ALL) for (mode in KeyboardLayout.Mode.entries) {
+            val layout = KeyboardLayout.build(mode, showSwitchKey = true, language = language)
+            val symbols = mode == KeyboardLayout.Mode.SYMBOLS || mode == KeyboardLayout.Mode.MORE_SYMBOLS
+            assertEquals("${language.code} $mode", symbols, layout.returnsToLetters)
+        }
+    }
+
+    @Test
     fun `a wider space bar takes width from the side keys and the widest drops only the plain comma`() {
         fun bottom(mode: KeyboardLayout.Mode, bar: SpaceBar, inputType: Int = InputType.TYPE_CLASS_TEXT, switchKey: Boolean = false) =
             KeyboardLayout.build(mode, switchKey, inputType = inputType, spaceBar = bar).rows.last()

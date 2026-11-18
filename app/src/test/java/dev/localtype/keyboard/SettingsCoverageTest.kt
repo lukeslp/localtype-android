@@ -21,4 +21,12 @@ class SettingsCoverageTest {
         val missing = setters.filter { "KeyboardSettings.$it(" !in screen }
         assertTrue("no control for $missing", missing.isEmpty())
     }
+
+    @Test
+    fun `web links open only through the guarded helper`() {
+        val screen = File("src/main/java/dev/localtype/keyboard/SettingsActivity.kt").readText()
+        // openInBrowser catches a phone with no browser; a second ACTION_VIEW would bypass that.
+        val views = Regex("""Intent\(Intent\.ACTION_VIEW""").findAll(screen).count()
+        assertTrue("found $views ACTION_VIEW intents", views == 1)
+    }
 }

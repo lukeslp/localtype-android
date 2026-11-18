@@ -33,4 +33,17 @@ class ProofreadingTest {
         assertNull(cleanProofread("what time is it", "This sentence asks for the current time and is grammatically a question that should end with a question mark."))
         assertNull(cleanProofread("what time is it", "   "))
     }
+
+    @Test
+    fun `a selection with line breaks keeps every line or is refused`() {
+        val original = "Please reveiw the attached report before friday.\nThanks"
+        val corrected = "Please review the attached report before Friday.\nThanks"
+        assertEquals(corrected, cleanProofread(original, corrected))
+        assertEquals(corrected, cleanProofread(original, "Corrected text: $corrected\n"))
+        // The first line alone would delete "Thanks" on Apply.
+        assertNull(cleanProofread(original, "Please review the attached report before Friday."))
+        assertNull(cleanProofread(original, "$corrected\n\nI fixed two words."))
+        // One line that only ends in a line break is still one line: the reply's first line is taken.
+        assertEquals("See you Friday.", cleanProofread("see you friday\n", "See you Friday.\n\nI fixed the capital."))
+    }
 }

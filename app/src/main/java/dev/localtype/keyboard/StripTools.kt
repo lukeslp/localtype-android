@@ -137,7 +137,7 @@ object StripTools {
                 !now.proofreading && !now.sensitive && !now.terminal
             // Speaking text out loud reads it: never a password, and nothing in a terminal.
             StripTool.READ_ALOUD -> !now.sensitive && !now.terminal
-            // Reading the text to count or recase it: never a password.
+            // Reading the text to count or recase it: never a password or a terminal.
             StripTool.TEXT_EFFECTS -> !now.sensitive && now.learning && !now.terminal
             StripTool.CHANGE_CASE, StripTool.COUNT -> !now.sensitive && !now.terminal
             // Cleaning a link only removes from it, but it reads the text: never a password or a terminal.

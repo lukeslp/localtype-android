@@ -167,7 +167,7 @@ class WordPack private constructor(
             val lines = text.removePrefix("﻿").lineSequence().toList()
             val header = headers(lines)
             val language = header["language"]?.let(::languageOf) ?: languageOf(fallbackLanguage) ?: LanguageProfile.ENGLISH
-            val given = header["id"]?.lowercase()?.removePrefix(IMPORTED_PREFIX)?.takeIf { ID.matches(it) }
+            val given = header["id"]?.lowercase()?.removePrefix(IMPORTED_PREFIX)?.takeIf { ID.matches(IMPORTED_PREFIX + it) }
             val id = IMPORTED_PREFIX + (given ?: fallbackId.lowercase().filter { it in 'a'..'z' || it in '0'..'9' || it == '-' }
                 .trim('-').take(32).ifEmpty { "pack" })
             val name = header["name"]?.trim()?.takeIf { it.isNotEmpty() }?.take(80) ?: fallbackName.take(80).ifBlank { id }

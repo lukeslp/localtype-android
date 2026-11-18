@@ -53,6 +53,14 @@ class CleanLinkTest {
     }
 
     @Test
+    fun `a character outside the basic plane survives unwrapping, raw or escaped`() {
+        assertEquals("https://example.com/\uD83D\uDE00", clean("https://www.google.com/url?q=https%3A%2F%2Fexample.com%2F\uD83D\uDE00"))
+        assertEquals("https://example.com/\uD83D\uDE00", clean("https://www.google.com/url?q=https%3A%2F%2Fexample.com%2F%F0%9F%98%80"))
+        val half = "https://www.google.com/url?q=https%3A%2F%2Fexample.com%2F\uD83D"
+        assertSame(half, clean(half))
+    }
+
+    @Test
     fun `a wrapper is left alone unless its target is a plain web link`() {
         for (link in listOf(
             "https://www.google.com/url?q=javascript%3Aalert(1)",

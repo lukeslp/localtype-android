@@ -330,7 +330,6 @@
     <string name="walkthrough_enable_body">Open Android’s keyboard settings and turn on LocalType. Android shows its standard warning for all keyboards. LocalType processes what you type on this phone; typing never uses the network. Come back here after enabling it.</string>
     <string name="walkthrough_try_title">Try a few words</string>
     <string name="walkthrough_try_body">LocalType is selected. Tap the field below and try “See you at” followed by a space. The strip offers words as you type. Tap a suggestion to insert it, or keep typing your own.</string>
-    <string name="walkthrough_try_field">Try LocalType here</string>
     <string name="walkthrough_try_note">Autocorrect is separate from word suggestions. Press Delete right after a correction to restore your spelling. You can continue without typing a sample.</string>
     <string name="walkthrough_controls_title">Choose how it helps</string>
     <string name="walkthrough_controls_body">Chime suggests words as you type. It starts on; you can turn it off below or in Settings.\n\nThe sparkle button asks optional Gemini Nano or Gemma for other suggestions. Select a sentence and tap Proofread selection, or hold the sparkle to check the current sentence. Chime itself does not rewrite sentences.</string>

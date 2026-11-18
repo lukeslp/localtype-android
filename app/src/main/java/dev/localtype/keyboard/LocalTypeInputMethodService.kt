@@ -242,6 +242,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     /** The lead button's TalkBack action for what holding it does (save the copy, or proofread), relabelled when that changes. */
     private var leadHoldAction = View.NO_ID
     private var leadHoldLabel = 0
+    /** Each word slot's "More emoji" TalkBack action, or NO_ID while the slot has none. */
+    private val emojiVariantActions = IntArray(CANDIDATE_COUNT) { View.NO_ID }
     private var leadPulse: android.animation.ObjectAnimator? = null
     private var modelOnTap = false
     /** Settings' Sparkle button switch, and whether a model is set up behind it ([SparkleRules]). */
@@ -981,6 +983,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         panelToggles.clear()
         savedTexts?.forgetLastChange()
         emojiPopup.dismiss()
+        languagePopup.dismiss()
         orientation = LinearLayout.VERTICAL
         setBackgroundColor(getColor(R.color.kb_background))
         addView(candidateStrip().also { candidateStripView = it }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(stripHeight.dp)))
@@ -1211,6 +1214,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         resetNeuralSession()
         cancelRecentCorrection()
         emojiPopup.dismiss()
+        languagePopup.dismiss()
         pasteClip = null
         cancelFoundationRequest()
         // The field's view is gone; nothing listens for a field that is not on screen.
@@ -1331,6 +1335,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     override fun onDestroy() {
         getSharedPreferences("keyboard_state", Context.MODE_PRIVATE).unregisterOnSharedPreferenceChangeListener(correctionSettingsListener)
         cancelFoundationRequest()
+        emojiPopup.dismiss()
+        languagePopup.dismiss()
         dictationSession.stop()
         dictation?.close()
         dictation = null
@@ -1449,9 +1455,11 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
                 val plainDelete = selected.isNullOrEmpty() && !selectionActive
                 markEdit(deletedBefore = if (plainDelete) visible else 0, keepsTypedRun = plainDelete)
                 if (plainDelete) typedRun.deleted(before, visible)
-                expectedContext = if (selected.isNullOrEmpty()) before.dropLast(visible) else null
+                expectedContext = if (plainDelete) before.dropLast(visible) else null
                 when {
                     !selected.isNullOrEmpty() -> ic.commitText("", 1)
+                    // A selection the editor reported but won't hand over: the editor deletes its own selection.
+                    !plainDelete -> sendDownUpKeyEvents(KeyEvent.KEYCODE_DEL)
                     ic.getTextBeforeCursor(1, 0).isNullOrEmpty() -> sendDownUpKeyEvents(KeyEvent.KEYCODE_DEL)
                     visible > 0 -> ic.deleteSurroundingText(visible, 0)
                     else -> ic.deleteSurroundingTextInCodePoints(1, 0)
@@ -2314,6 +2322,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
      * anything else keeps the full width. The strip and panels keep the full width. Only the view narrows; its keys
      * stay in key widths, so correction's geometry and the touch offsets are the same on every width.
      */
+    @android.annotation.SuppressLint("RtlHardcoded")
     private fun applyKeyWidth() {
         val view = keyboardView ?: return
         val rail = oneHandedRail ?: return
@@ -2324,13 +2333,14 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         keys.width = if (placement.side == KeyWidthRules.Side.FULL) android.widget.FrameLayout.LayoutParams.MATCH_PARENT
             else dp(placement.widthDp)
         keys.gravity = android.view.Gravity.TOP or when (placement.side) {
-            KeyWidthRules.Side.LEFT -> android.view.Gravity.START
+            // Left and right are sides of the screen, whichever way the system language reads.
+            KeyWidthRules.Side.LEFT -> android.view.Gravity.LEFT
             KeyWidthRules.Side.CENTER -> android.view.Gravity.CENTER_HORIZONTAL
-            else -> android.view.Gravity.END
+            else -> android.view.Gravity.RIGHT
         }
         view.layoutParams = keys
         val railParams = rail.layoutParams as? android.widget.FrameLayout.LayoutParams ?: return
-        railParams.gravity = if (oneHanded == OneHanded.LEFT) android.view.Gravity.END else android.view.Gravity.START
+        railParams.gravity = if (oneHanded == OneHanded.LEFT) android.view.Gravity.RIGHT else android.view.Gravity.LEFT
         rail.layoutParams = railParams
         rail.visibility = if (!placement.rail) View.GONE else if (view.visibility == View.VISIBLE) View.VISIBLE else View.INVISIBLE
         oneHandedSwap?.contentDescription = getString(
@@ -3355,6 +3365,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         stripHeight = height
         candidateStripView?.let { strip -> strip.layoutParams = strip.layoutParams?.apply { this.height = dp(height.dp) } }
         candidateViews.forEach { it.setAutoSizeTextTypeUniformWithConfiguration(StripHeight.MIN_WORD_SP, height.wordSp, 1, TypedValue.COMPLEX_UNIT_SP) }
+        // Sentences already built were sized for the old height; the proofread sentence is sized each time it shows.
+        listOfNotNull(noticeText, headerNotice, proposalSettings).forEach { it.sentenceSize() }
     }
 
     private fun candidateStrip(): LinearLayout = LinearLayout(this).apply {
@@ -3362,6 +3374,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         gravity = Gravity.CENTER_VERTICAL
         setPadding(dp(6), 0, dp(4), 0)
         candidateViews.clear()
+        emojiVariantActions.fill(View.NO_ID)
         slotViews.clear()
 
         leadButton = android.widget.ImageView(context).apply {
@@ -3441,9 +3454,6 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
                 if (index == 1) paint.isFakeBoldText = true
                 setOnClickListener { acceptCandidate(index) }
                 KeyHaptics.onHold(this) { view -> showEmojiVariants(index, view) }
-                androidx.core.view.ViewCompat.addAccessibilityAction(this, getString(R.string.emoji_variants_action)) { view, _ ->
-                    showEmojiVariants(index, view)
-                }
             }
             candidateViews += candidate
             slotViews += candidate
@@ -3837,7 +3847,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             if (pasteClip != null || sparkleShown()) {
                 popup.menu.add(if (pasteClip != null) R.string.paste_description else R.string.model_trigger).setOnMenuItemClickListener { onLeadOriginalTapped(); true }
             }
-            popup.menu.add(R.string.proofread_action).setOnMenuItemClickListener { proofreadSentence(); true }
+            if (toolsField().proofread) popup.menu.add(R.string.proofread_action).setOnMenuItemClickListener { proofreadSentence(); true }
             popup.menu.add(R.string.saved_text).setOnMenuItemClickListener { openSavedPanel(); true }
             popup.show()
             return
@@ -4331,7 +4341,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private fun clipStamp(): Long = clipboard?.primaryClipDescription?.timestamp ?: -1L
 
     /** [mayKeep] is false for a copy marked sensitive or made in a password or incognito field, which holding the chip won't save. */
-    private data class FreshClip(val text: String, val hidePreview: Boolean, val expiresInMs: Long, val mayKeep: Boolean)
+    private data class FreshClip(val text: String, val expiresInMs: Long, val mayKeep: Boolean)
 
     /**
      * Whether the clip with [stamp] (its ClipDescription timestamp) was copied while a password
@@ -4402,12 +4412,13 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         if (fresh && age > CLIP_FRESH_MS) return null
         val text = runCatching { manager.primaryClip?.getItemAt(0)?.coerceToText(this)?.toString() }.getOrNull()
             ?.takeIf { it.isNotBlank() && it.length <= MAX_PASTE_CHARS } ?: return null
-        // Password managers flag copied secrets; never show them. Incognito fields get the chip without a preview.
+        // The chip never shows the clip's text. A copy a password manager flags, or one made in a private field,
+        // can still be pasted but is never kept in Saved text ([FreshClip.mayKeep]).
         val sensitiveClip = description.extras?.getBoolean(CLIP_EXTRA_IS_SENSITIVE, false) == true
         // Copied before this keyboard process started: only the flag is known.
         val fromPrivateField = copyOrigin?.let { it.stamp == stamp && it.privateField } == true
         return FreshClip(
-            text, hidePreview = sensitiveClip || !learningAllowed, expiresInMs = (CLIP_FRESH_MS - age).coerceAtLeast(1_000L),
+            text, expiresInMs = (CLIP_FRESH_MS - age).coerceAtLeast(1_000L),
             mayKeep = !sensitiveClip && !fromPrivateField,
         )
     }
@@ -4595,6 +4606,13 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
                 index == emojiSlot && emojiOptions.size > 1 -> getString(R.string.emoji_description_variants, word)
                 index == emojiSlot -> getString(R.string.emoji_insert_description, word)
                 else -> getString(R.string.suggestion_description, word)
+            }
+            // TalkBack's "More emoji" action, only on a slot whose hold opens the choices.
+            val variants = index == emojiSlot && emojiOptions.size > 1
+            if (index < emojiVariantActions.size && variants != (emojiVariantActions[index] != View.NO_ID)) {
+                if (!variants) ViewCompat.removeAccessibilityAction(view, emojiVariantActions[index])
+                emojiVariantActions[index] = if (!variants) View.NO_ID
+                    else ViewCompat.addAccessibilityAction(view, getString(R.string.emoji_variants_action)) { v, _ -> showEmojiVariants(index, v) }
             }
         }
         // A field with no word slots shows a remembered host in their place.
@@ -4916,6 +4934,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         resetNeuralSession()
         manualFoundationContext = null
         keptWords.clear()
+        // The other languages' kept words are parked here until their language is chosen again.
+        keptByLanguage.values.forEach { it.clear() }
         fieldKeptWords.clear()
         corrector.forgetRecentAnswers()
         // Forget learned words empties the recent emoji too; forgetting one pair leaves them, and this rereads either way.
@@ -5750,7 +5770,6 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         hideCorrectionFeedback()
     }
 
-    /** Explicit developer export: bounded counters and CPU durations, never editor text. */
     // region Experimental letter swipe
 
     private fun cancelSwipeWork() {
@@ -5877,7 +5896,11 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
                 showProposalMessage(getString(R.string.swipe_no_word), autoDismissMs = 2_000)
                 return@decode
             }
-            currentInputConnection?.commitText(SwipeInsertion.text(word, case, ""), 1)
+            val text = SwipeInsertion.text(word, case, "")
+            markEdit(plainAppend = true, appendedCharacters = text.length)
+            // The word is not a recorded append, so nothing typed before it may be resent after a restart.
+            appendLedger.clear()
+            if (currentInputConnection?.commitText(text, 1) != true) editorEdits.uncertain()
             if (shiftState != KeyboardView.ShiftState.LOCKED) setShift(KeyboardView.ShiftState.OFF)
             updateShiftFromEditor()
             scheduleRefresh()
@@ -6546,6 +6569,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             .onFailure { showNotice(NoticeRules.Message.NOT_OPENED) }
     }
 
+    /** Explicit developer export: bounded counters and CPU durations, never editor text. */
     override fun dump(fd: java.io.FileDescriptor, writer: java.io.PrintWriter, args: Array<out String>) {
         writer.println("language=${language.code} offered=${KeyboardSettings.languages(this).joinToString(",") { it.code }} words=${dictionary.size} lexicon=${lexicon.size} prior=${corpusPrior != null} ready=$dictionaryReady")
         // Pack ids, sizes and digests only; never a word.

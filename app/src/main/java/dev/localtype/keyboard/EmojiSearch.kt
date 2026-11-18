@@ -87,7 +87,7 @@ class EmojiSearch(inventory: EmojiInventory, boosts: Map<String, List<String>> =
     }
 
     companion object {
-        /** The query stops growing here; no emoji name or keyword is longer. */
+        /** The query stops growing here. A few names are longer; they are still found by their first words. */
         const val MAX_QUERY_CHARS = 40
 
         private const val EXACT = 0

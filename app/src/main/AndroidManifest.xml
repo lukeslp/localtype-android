@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- LocalType's own network use: the Check for updates button (and in the full distribution, the pinned Gemma
          download, whose job and notification permissions come with modelkit's manifest). The F-Droid distribution
          removes both. -->
@@ -36,11 +37,14 @@
 
     <application
         android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="false">
+        android:usesCleartextTraffic="false"
+        tools:targetApi="s">
 
         <!-- LiteRT-LM's optional GPU libraries (libOpenCL.so, libvndksupport.so) come from modelkit's manifest. -->
 

@@ -338,7 +338,6 @@
     <string name="walkthrough_enable_body">Abre los ajustes de teclado de Android y activa LocalType. Android muestra su advertencia habitual para todos los teclados. LocalType procesa lo que escribes en este teléfono; la escritura nunca usa la red. Vuelve aquí después de activarlo.</string>
     <string name="walkthrough_try_title">Prueba unas palabras</string>
     <string name="walkthrough_try_body">LocalType está seleccionado. Toca el campo de abajo y prueba “See you at” seguido de un espacio. La barra de sugerencias ofrece palabras mientras escribes. Toca una sugerencia para insertarla o sigue escribiendo por tu cuenta.</string>
-    <string name="walkthrough_try_field">Prueba LocalType aquí</string>
     <string name="walkthrough_try_note">La autocorrección es independiente de las sugerencias de palabras. Presiona Borrar justo después de una corrección para recuperar lo que escribiste. Puedes continuar sin escribir una muestra.</string>
     <string name="walkthrough_controls_title">Elige cómo te ayuda</string>
     <string name="walkthrough_controls_body">Chime sugiere palabras mientras escribes. Empieza activado; puedes desactivarlo abajo o en Ajustes.\n\nEl botón del destello pide otras sugerencias a los modelos opcionales Gemini Nano o Gemma. Selecciona una oración y toca Revisar selección o mantén presionado el destello para revisar la oración actual. Chime en sí no reescribe oraciones.</string>

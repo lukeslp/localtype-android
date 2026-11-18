@@ -25,7 +25,6 @@ class PersonalLearningStore private constructor(
     private val file = AtomicFile(base)
     private val marker = File(base.parentFile, "${base.name}.forget")
     private val main = Handler(Looper.getMainLooper())
-    private val worker = Handler(HandlerThread("localtype-personal-learning").apply { start() }.looper)
     private var cache = PersonalLearningState(oneLetterWords = oneLetterWords)
     private val cacheReceipts = LinkedHashMap<Long, Long>()
     private val beforeReady = ArrayList<Action>()
@@ -282,10 +281,12 @@ class PersonalLearningStore private constructor(
     companion object {
         private const val TAG = "LocalTypePersonalLearning"
         private val shared = HashMap<String, PersonalLearningStore>()
+        // One serial thread for every language's store, so opening many stores starts no more threads.
+        private val worker by lazy { Handler(HandlerThread("localtype-personal-learning").apply { start() }.looper) }
 
         private fun fileName(language: LanguageProfile) = if (language.english) "personal_learning.bin" else "personal_learning_${language.code}.bin"
 
-        /** Whether this language has a store open or a file here, without opening one (which starts its thread). */
+        /** Whether this language has a store open or a file here, without opening one. */
         fun exists(context: Context, language: LanguageProfile): Boolean =
             language.code in shared || File(context.noBackupFilesDir, fileName(language)).exists()
 

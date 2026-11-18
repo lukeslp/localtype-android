@@ -42,6 +42,18 @@ class WordSpellingsTest {
         assertEquals(WordSpellings.Change.Unchanged, WordSpellings.added("Local Type"))
     }
 
+    @Test fun `an added word with a hyphen keeps its capitals, and a typed one still says nothing`() {
+        assertEquals(WordSpellings.Change.Record("Wi-Fi"), WordSpellings.added("Wi-Fi"))
+        assertEquals(WordSpellings.Change.Unchanged, WordSpellings.added("wi-fi"))
+        assertEquals(WordSpellings.Change.Unchanged, WordSpellings.added("Wi-Fi 6"))
+        assertEquals(WordSpellings.Change.Unchanged, WordSpellings.added("Wi--Fi"))
+        assertEquals(WordSpellings.Change.Unchanged, change("Wi-Fi"))
+        val spellings = linkedMapOf("wi-fi" to "Wi-Fi")
+        assertEquals(spellings, WordSpellings.decode(WordSpellings.encode(spellings)))
+        assertEquals("Wi-Fi", WordSpellings.display(spellings, "wi-fi"))
+        assertEquals(emptyMap<String, String>(), WordSpellings.decode("wi fi\tWi Fi\nv2\tV2"))
+    }
+
     @Test fun `the file round-trips, drops bad lines and keeps the newest words`() {
         val spellings = linkedMapOf("localtype" to "LocalType", "iphone" to "iPhone")
         assertEquals(spellings, WordSpellings.decode(WordSpellings.encode(spellings)))

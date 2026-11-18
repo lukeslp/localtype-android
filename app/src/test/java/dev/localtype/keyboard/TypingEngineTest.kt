@@ -11,7 +11,8 @@ import java.io.File
 class TypingEngineTest {
     private fun asset(name: String) = File("src/main/assets/$name")
 
-    private fun open(language: LanguageProfile, journal: ByteArray? = null, swears: Boolean = true, offsets: String? = null) = TypingEngine(
+    private fun open(language: LanguageProfile, journal: ByteArray? = null, swears: Boolean = true, offsets: String? = null,
+                     options: TypingEngine.Options = TypingEngine.Options.NONE) = TypingEngine(
         language = language,
         words = asset(language.wordsAsset).readText(),
         swears = asset(language.profanityAsset).readText(),
@@ -22,6 +23,7 @@ class TypingEngineTest {
         suggestSwears = swears,
         emoji = asset("emoji_en.txt").readText(),
         offsets = offsets,
+        options = options,
     )
 
     @Test
@@ -88,6 +90,56 @@ class TypingEngineTest {
         reopened.forget()
         assertEquals(0, reopened.tapSamples)
         assertEquals("", reopened.offsets())
+    }
+
+    @Test
+    fun `tap offsets are readable for aiming, and follow learning and forgetting`() {
+        val engine = open(LanguageProfile.ENGLISH)
+        fun tap(word: String) = word.forEach { engine.typed(it.toString(), 0.2, 0.1) }
+        assertEquals(emptyList<String>(), engine.tapOffsets().map { it.letter })
+        val fresh = engine.tapRevision
+
+        tap("Hello")
+        assertNull(engine.correction("Hello"))
+        assertTrue(engine.learn("Hello"))
+        val learned = engine.tapOffsets()
+        assertEquals(listOf("e", "h", "l", "o"), learned.map { it.letter })
+        assertEquals(listOf(1, 1, 2, 1), learned.map { it.count })
+        for (offset in learned) {
+            assertEquals(0.2f, offset.dx, 1e-4f)
+            assertEquals(0.1f, offset.dy, 1e-4f)
+        }
+        val afterHello = engine.tapRevision
+        assertTrue(afterHello != fresh)
+
+        // A corrected word and a word with a letter that wasn't tapped change nothing a host would read.
+        engine.typed(" ", Double.NaN, Double.NaN)
+        tap("teh")
+        assertEquals("the", engine.correction("Hello teh"))
+        engine.learn("Hello the")
+        engine.resetTrace()
+        tap("c"); engine.typed("a", Double.NaN, Double.NaN); tap("t")
+        assertNull(engine.correction("Hello the cat"))
+        engine.learn("Hello the cat")
+        assertEquals(afterHello, engine.tapRevision)
+        assertEquals(listOf(1, 1, 2, 1), engine.tapOffsets().map { it.count })
+
+        val reopened = open(LanguageProfile.ENGLISH, offsets = engine.offsets())
+        assertEquals(learned.map { listOf(it.letter, it.count, it.dx, it.dy) }, reopened.tapOffsets().map { listOf(it.letter, it.count, it.dx, it.dy) })
+        val beforeForget = reopened.tapRevision
+        reopened.forget()
+        assertEquals(emptyList<String>(), reopened.tapOffsets().map { it.letter })
+        assertTrue(reopened.tapRevision != beforeForget)
+
+        // A key outside a to z comes back as its own one-character string.
+        val spanish = open(LanguageProfile.SPANISH)
+        "niño".forEach { spanish.typed(it.toString(), -0.1, 0.3) }
+        assertNull(spanish.correction("niño"))
+        assertTrue(spanish.learn("niño"))
+        val enye = spanish.tapOffsets().single { it.letter == "ñ" }
+        assertEquals(1, enye.count)
+        assertEquals(-0.1f, enye.dx, 1e-4f)
+        assertEquals(0.3f, enye.dy, 1e-4f)
     }
 
     @Test
@@ -185,5 +237,193 @@ class TypingEngineTest {
         assertEquals("☕", engine.emoji("I need cofee", lookupAs = "coffee")?.emoji)
         assertNull(engine.emoji("coffee is "))
         assertNull(open(LanguageProfile.SPANISH).emoji("café "))
+    }
+
+    @Test
+    fun `no options leaves every answer as it was`() {
+        val plain = open(LanguageProfile.ENGLISH)
+        val empty = open(LanguageProfile.ENGLISH, options = TypingEngine.Options())
+        for (text in listOf("", "I like the col", "i saw teh", "thank ", "We went to the hosp", "my favorite")) {
+            assertEquals(text, plain.suggestions(text), empty.suggestions(text))
+            assertEquals(text, plain.correction(text), empty.correction(text))
+        }
+    }
+
+    @Test
+    fun `the current vocabulary keeps the words and their order, and other languages never read it`() {
+        val vocabulary = TypingEngine.Options(vocabulary = asset(CurrentVocabulary.ASSET).readText(), epochDay = 20_770)
+        val plain = open(LanguageProfile.ENGLISH)
+        val english = open(LanguageProfile.ENGLISH, options = vocabulary)
+        // The same words in the same order; the vocabulary only gives a listed name its capital ("Tehran").
+        for (text in listOf("", "I like the col", "i saw teh", "thank ", "my favorite", "Hello wor")) {
+            assertEquals(text, plain.suggestions(text).map { it.lowercase() }, english.suggestions(text).map { it.lowercase() })
+            assertEquals(text, plain.correction(text), english.correction(text))
+        }
+        assertTrue("Tehran" in english.suggestions("i saw teh"))
+        for (language in listOf(LanguageProfile.SPANISH, LanguageProfile.PORTUGUESE)) {
+            val before = open(language)
+            val after = open(language, options = vocabulary)
+            for (text in listOf("", "muchas ", "yo tamb", "Esp", "nao ")) assertEquals(text, before.suggestions(text), after.suggestions(text))
+        }
+    }
+
+    @Test
+    fun `british spelling changes what is shown, never an added word`() {
+        val options = TypingEngine.Options(british = asset(BritishSpelling.ASSET).readText())
+        val engine = open(LanguageProfile.ENGLISH, options = options)
+        assertTrue("colour" in engine.suggestions("I like the colo"))
+        assertFalse("color" in engine.suggestions("I like the colo"))
+        assertEquals("favourite", engine.correction("my favorit"))
+        // Each word shows once, however many American forms spell it.
+        assertEquals(engine.suggestions("the col").size, engine.suggestions("the col").map { it.lowercase() }.distinct().size)
+        // An added word keeps the spelling the person chose.
+        assertTrue(engine.syncAddedWords(listOf("color")))
+        assertTrue("color" in engine.suggestions("I like the colo"))
+        // Spanish never reads the list.
+        assertEquals(open(LanguageProfile.SPANISH).suggestions("muchas "), open(LanguageProfile.SPANISH, options = options).suggestions("muchas "))
+    }
+
+    @Test
+    fun `a blocked word can be typed but is never suggested, a fix or learned`() {
+        val engine = open(LanguageProfile.ENGLISH, options = TypingEngine.Options(blocked = listOf("Because", "elephant")))
+        assertFalse("because" in engine.suggestions("I left becau").map { it.lowercase() })
+        // The corrector may still find another word; it never lands on the blocked one.
+        assertFalse(engine.correction("I left becuase").equals("because", ignoreCase = true))
+        assertFalse(engine.offer("I left becuase", completionsAvailable = false).equals("because", ignoreCase = true))
+        assertFalse(engine.learn("purple elephant"))
+        engine.accept("purple ", "elephant")
+        assertEquals(0, engine.learnedPairs)
+        assertTrue(engine.blocks("Elephant"))
+        assertFalse(engine.blocks("purple"))
+    }
+
+    @Test
+    fun `a word pack completes its words from enough letters, knows them and never fixes to them by itself`() {
+        val medical = asset("pack_medical_en.txt").readText()
+        val plain = open(LanguageProfile.ENGLISH)
+        val engine = open(LanguageProfile.ENGLISH, options = TypingEngine.Options(packs = listOf(medical), epochDay = 20_770))
+        val drug = WordPack.strict(medical).let { pack -> pack.words.first { pack.entry(it)!!.kind.id == "drug" && it.length >= 8 && it.all(Char::isLetter) } }
+        // Known: typed whole, it is left alone; without the pack the same letters may be "fixed".
+        assertNull(engine.correction("she takes $drug"))
+        // Completed from five letters of a drug name, with the pack's own capitals.
+        val shown = engine.suggestions("she takes ${drug.take(6)}").map { it.lowercase() }
+        assertTrue("$drug in $shown", drug in shown)
+        assertFalse(drug in plain.suggestions("she takes ${drug.take(6)}").map { it.lowercase() })
+        // Never an empty-prefix suggestion, and everyday typing is unchanged.
+        assertEquals(plain.suggestions("thank "), engine.suggestions("thank "))
+        assertEquals(plain.correction("i saw teh"), engine.correction("i saw teh"))
+        // A pack for another language is left out; a damaged one doesn't stop the keyboard.
+        assertEquals(open(LanguageProfile.SPANISH).suggestions("muchas "),
+            open(LanguageProfile.SPANISH, options = TypingEngine.Options(packs = listOf(medical, "not a pack"))).suggestions("muchas "))
+    }
+
+    @Test
+    fun `capitals a person types are learned, shown, saved and forgotten in lowercase`() {
+        val engine = open(LanguageProfile.ENGLISH)
+        assertTrue(engine.syncAddedWords(listOf("zorblax")))
+        assertTrue(engine.learn("I use ZorbLax"))
+        assertTrue("ZorbLax" in engine.suggestions("I use zorb"))
+        // A common word's capital is emphasis, not a spelling; a sentence start explains a capital away.
+        assertTrue(engine.learn("we Will"))
+        assertTrue(engine.learn("Hello"))
+        assertEquals(1, engine.learnedSpellingCount)
+        // Saved and reopened.
+        val reopened = open(LanguageProfile.ENGLISH, journal = engine.journal(), options = TypingEngine.Options(spellings = engine.spellings()))
+        assertTrue("ZorbLax" in reopened.suggestions("I use zorb"))
+        // Caps lock teaches nothing; lowercase mid-sentence forgets.
+        assertTrue(reopened.learn("I use ZORBLAX", capsLock = true))
+        assertTrue("ZorbLax" in reopened.suggestions("I use zorb"))
+        // An added word typed in lowercase keeps its spelling; forgetting everything clears it.
+        reopened.forget()
+        assertEquals(0, reopened.learnedSpellingCount)
+    }
+
+    @Test
+    fun `capitals typed on the keys for an added word show in the strip, beside chime too`() {
+        val engine = open(LanguageProfile.ENGLISH, options = TypingEngine.Options(british = asset(BritishSpelling.ASSET).readText()))
+        assertTrue(engine.syncAddedWords(listOf("zorblax")))
+        "ZorbLax".forEach { engine.typed(it.toString(), 0.0, 0.0) }
+        val text = "I left because I use ZorbLax"
+        assertNull(engine.correction(text))
+        assertTrue(engine.learn(text))
+        engine.resetTrace()
+        "zorb".forEach { engine.typed(it.toString(), 0.0, 0.0) }
+        assertEquals(1, engine.learnedSpellingCount)
+        assertTrue("ZorbLax" in engine.suggestions("$text and zorb"))
+        assertTrue("ZorbLax" in engine.suggestions("$text and zorb", 3, listOf("the", "and", "zoo"), true))
+        assertTrue("ZorbLax" in engine.suggestions("$text and zorb", 3, emptyList(), true))
+    }
+
+    @Test
+    fun `a fix the keyboard made never changes saved capitals, and british spelling never brings a blocked word back`() {
+        val engine = open(LanguageProfile.ENGLISH)
+        assertTrue(engine.syncAddedWords(listOf("zorblax")))
+        assertTrue(engine.learn("I got a ZorbLax"))
+        assertEquals(1, engine.learnedSpellingCount)
+        // The keyboard fixed a typo to "zorblax" in lowercase: that isn't the person spelling it in lowercase.
+        assertTrue(engine.learn("my zorblax", corrected = true))
+        assertTrue("ZorbLax" in engine.suggestions("my zorb"))
+
+        val british = open(LanguageProfile.ENGLISH, options = TypingEngine.Options(british = asset(BritishSpelling.ASSET).readText(), blocked = listOf("colour")))
+        assertFalse(british.suggestions("I like the colo").any { it.equals("colour", ignoreCase = true) })
+    }
+
+    @Test
+    fun `a word added before capitals were kept gets them once, and typing can change them after`() {
+        val old = open(LanguageProfile.ENGLISH)
+        assertTrue(old.syncAddedWords(listOf("localtype")))
+        // The journal has "localtype"; the app's list says "LocalType"; no spelling has been saved yet.
+        val upgraded = open(LanguageProfile.ENGLISH, journal = old.journal())
+        assertTrue(upgraded.syncAddedWords(listOf("LocalType")))
+        assertTrue("LocalType" in upgraded.suggestions("I use localt"))
+        assertFalse(upgraded.syncAddedWords(listOf("LocalType")))
+        // Typed another way, it shows that way, and the next sync leaves it.
+        assertTrue(upgraded.learn("I use LOCALtype"))
+        assertFalse(upgraded.syncAddedWords(listOf("LocalType")))
+        assertTrue("LOCALtype" in upgraded.suggestions("I use localt"))
+    }
+
+    @Test
+    fun `an added word keeps the capitals typed into settings`() {
+        val engine = open(LanguageProfile.ENGLISH)
+        assertTrue(engine.syncAddedWords(listOf("LocalType")))
+        assertTrue("LocalType" in engine.suggestions("I use localt"))
+        assertTrue(engine.syncAddedWords(emptyList()))
+        assertEquals(0, engine.learnedSpellingCount)
+    }
+
+    @Test
+    fun `an uncertain fix is offered, and navajo never fixes by itself`() {
+        val english = open(LanguageProfile.ENGLISH)
+        // A missing possessive apostrophe is never applied, only offered.
+        assertNull(english.correction("my friends"))
+        val navajo = open(LanguageProfile.NAVAJO)
+        assertFalse(navajo.autocorrects)
+        val word = asset("words_nv.txt").readLines().map { it.substringBefore('\t') }.first { it.length >= 6 && it.all(Char::isLetter) }
+        val typo = word.dropLast(1) + (if (word.last() == 'x') 'q' else 'x')
+        assertNull(navajo.correction(typo))
+    }
+
+    @Test
+    fun `every language with words opens, completes and keeps its marks in the trace`() {
+        for (language in LanguageProfile.WITH_WORDS) {
+            val engine = open(language)
+            val word = asset(language.wordsAsset).readLines().map { it.substringBefore('\t') }
+                .first { it.length >= 5 && !it.startsWith("#") && it.all(Char::isLetter) }
+            val shown = engine.suggestions(word.dropLast(2))
+            assertTrue("${language.code}: $word in $shown", shown.isNotEmpty())
+            assertEquals(language.shiftless, engine.shiftless)
+            // Every letter key and every hold joins the word's trace, marks and two-character holds included.
+            for (row in language.keyRows) for (key in row) {
+                engine.resetTrace()
+                engine.typed(key.toString(), 0.0, 0.0)
+                assertTrue("${language.code} $key", engine.typedHere(key.toString()))
+                for (hold in engine.holds(key.toString())) {
+                    engine.resetTrace()
+                    engine.typed(hold, Double.NaN, Double.NaN)
+                    assertTrue("${language.code} hold $hold", engine.typedHere(hold))
+                }
+            }
+        }
     }
 }
