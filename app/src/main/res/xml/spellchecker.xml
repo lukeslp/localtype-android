@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The languages SpellCheckRules.LANGUAGES answers for. A subtype with no label is shown by Android under its
+     locale's own name. -->
+<spell-checker xmlns:android="http://schemas.android.com/apk/res/android"
+    android:label="@string/spell_checker_name">
+    <subtype android:subtypeLocale="en" />
+    <subtype android:subtypeLocale="es" />
+    <subtype android:subtypeLocale="pt" />
+</spell-checker>

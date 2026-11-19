@@ -15,14 +15,18 @@ val keystoreProperties = Properties().apply {
 android {
     namespace = "dev.localtype.keyboard"
     compileSdk = 35
+    // With the verification variant (verification/editor-fixture/verification-variant.gradle) the test APK can be
+    // built against it, so a device check runs beside the released keyboard: -Plocaltype.testBuildType=verification
+    (findProperty("localtype.testBuildType") as String?)?.let { testBuildType = it }
 
     defaultConfig {
         applicationId = "dev.localtype.keyboard"
         minSdk = 26
         targetSdk = 35
-        versionCode = 80
-        versionName = "0.5.59"
-        testInstrumentationRunner = "dev.localtype.keyboard.ToolsReflowChecks"
+        versionCode = 81
+        versionName = "0.5.60"
+        // A device check names its own runner: -Plocaltype.runner=dev.localtype.keyboard.SpellCheckerDeviceChecks
+        testInstrumentationRunner = (findProperty("localtype.runner") as String?) ?: "dev.localtype.keyboard.ToolsReflowChecks"
         // Phones only. The x86_64 copy of the model runtime's native library was 26 MB that only emulators loaded.
         // Here and not in release {}: benchmark and the verification variant copy release before that block runs.
         ndk { abiFilters += "arm64-v8a" }

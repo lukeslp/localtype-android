@@ -33,6 +33,9 @@
             <action android:name="android.intent.action.PROCESS_TEXT" />
             <data android:mimeType="text/plain" />
         </intent>
+        <!-- The spell checker reads Android's user dictionary (Add to dictionary). AOSP shows that provider to every
+             app; this keeps it visible on a phone that does not. -->
+        <provider android:authorities="user_dictionary" />
     </queries>
 
     <application
@@ -99,6 +102,21 @@
             <meta-data
                 android:name="android.view.im"
                 android:resource="@xml/method" />
+        </service>
+
+        <!-- Android's spell checker, answered from the keyboard's word lists and Android's user dictionary. Off until
+             chosen in Android's settings. It runs in the main process and needs no permission, network or model. -->
+        <service
+            android:name=".LocalTypeSpellCheckerService"
+            android:exported="true"
+            android:label="@string/spell_checker_name"
+            android:permission="android.permission.BIND_TEXT_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.textservice.SpellCheckerService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.view.textservice.scs"
+                android:resource="@xml/spellchecker" />
         </service>
     </application>
 </manifest>
