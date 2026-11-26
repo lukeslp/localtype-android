@@ -18,12 +18,15 @@ object Contractions {
         "shes" to "she's",
     )
     private val AMBIGUOUS = mapOf("ill" to "i'll", "id" to "i'd", "lets" to "let's")
+    /** Real words as common as their contraction: "it's" is offered beside "its" and never applied. */
+    private val OFFERED = mapOf("its" to "it's")
     private val CONJUNCTIONS = setOf("and", "but", "so", "then")
 
     /**
      * [word] and [previous] are normalized like dictionary words. Ambiguous forms are offered
      * everywhere, but only applied at a sentence start, after a comma or after a conjunction.
-     * Other real words, including "its", "were", "well", "shell" and "hell", have no entry.
+     * "its" is only ever offered ([OFFERED]). Other real words, including "were", "well", "shell"
+     * and "hell", have no entry.
      */
     fun propose(
         word: String,
@@ -32,6 +35,7 @@ object Contractions {
         afterComma: Boolean = false,
     ): Corrector.Correction? {
         ALWAYS[word]?.let { return Corrector.Correction(it, automatic = true) }
+        OFFERED[word]?.let { return Corrector.Correction(it, automatic = false) }
         val fix = AMBIGUOUS[word] ?: return null
         return Corrector.Correction(fix, automatic = sentenceStart || afterComma || previous in CONJUNCTIONS)
     }

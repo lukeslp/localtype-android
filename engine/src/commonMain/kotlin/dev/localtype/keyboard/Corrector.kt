@@ -168,7 +168,8 @@ class Corrector(
         }
         val words = dictionary()
         val known = lexicon()
-        if (isKnown(word) || word in known || word in wordPacks) return null
+        // An unoffered word ("somethin") is never suggested, but typed on purpose it is a word, not a typo.
+        if (isKnown(word) || word in known || word in wordPacks || word in UnofferedWords.forLanguage(keys.language)) return null
         // SCOWL drops 's forms, so possessives and 's contractions of real words ("friend's", "here's",
         // "parents'") are in neither list. Leave them as typed; a weak or unknown stem ("ther's") is still a typo,
         // and so is a swapped apostrophe whose 's form is a dictionary word ("its'" for "it's").
@@ -238,7 +239,8 @@ class Corrector(
             isKept(word) -> "kept"
             blocked(word) -> "excluded"
             contraction(word, previous?.lowercase(), sentenceStart, afterComma) != null -> "contraction"
-            isKnown(word) || word in known || word in packs() || (word in words && !weak) -> "known-or-learned"
+            isKnown(word) || word in known || word in packs() || (word in words && !weak) ||
+                word in UnofferedWords.forLanguage(language()) -> "known-or-learned"
             !stem.isNullOrEmpty() && (isKnown(stem) || stem in known || stem in packs() || (stem in words && !isWeak(stem, words, known))) -> "possessive"
             weak -> "weak-word"
             name -> "likely-name"
@@ -300,8 +302,9 @@ class Corrector(
             }
             return total
         }
+        val unoffered = UnofferedWords.forLanguage(keys.language)
         fun offer(candidate: String, base: Float, limit: Float) {
-            if (blocked(candidate) || top.any { it.word == candidate }) return
+            if (blocked(candidate) || candidate in unoffered || top.any { it.word == candidate }) return
             val cost = cost(word, candidate, touches, limit, keys)
             if (cost > limit) return
             val scored = Scored(candidate, cost, base + contextFor(candidate) - cost * COST_WEIGHT)

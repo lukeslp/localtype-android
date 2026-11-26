@@ -12,12 +12,11 @@ Spanish to Navajo, are early experiments that start off. Typing runs on the
 phone, every correction can be undone, and the typing log is optional and
 starts off.
 
-LocalType isn't in F-Droid's main catalog yet. The
-[releases](https://github.com/lukeslp/localtype-android/releases) page has two
-signed catalog builds, 0.5.41 and 0.5.42. The source on `main` is newer than
-both, and the `fdroid` build's version in `app/build.gradle.kts` changes only
-when I cut a catalog release. The independent F-Droid repository **LocalType
-releases** is separate from the main catalog.
+LocalType isn't in F-Droid's main catalog yet. Each catalog build is a tag
+named `fdroid-v<version>`, with its signed APK on the
+[releases](https://github.com/lukeslp/localtype-android/releases) page. The
+independent F-Droid repository **LocalType releases** is separate from the main
+catalog.
 
 ## Two builds
 
@@ -27,23 +26,65 @@ the private `modelkit` submodule. It has no native library and no Internet
 permission, and it leaves updates to the app that installed it. Chime, the
 dictionaries, corrections, saved text, emoji and swipe all remain. It asks for
 the microphone only when you first use voice input, and for contacts only when
-you choose Allow in the Contacts tool.
+you tap Allow contacts in the Contacts tool.
 
 The `full` distribution on my
 [download page](https://dr.eamer.dev/downloads/apps/localtype/) adds optional
 Gemini Nano through ML Kit and optional Gemma through LiteRT-LM. ML Kit can send
-Google feature-usage statistics.
+Google feature-usage statistics. The build file also has a `play` flavor: the
+`full` build without its own update check. Like `full`, it needs the private
+`modelkit` module and isn't built from this repository.
 
 Android treats the two as different apps. The `full` build's package is
 `dev.localtype.keyboard` and the `fdroid` build's is
 `dev.localtype.keyboard.fdroid`, so neither installs over the other and an
 F-Droid client can't replace one with the other. You can have both installed.
-Learned words and settings don't carry from one to the other, and each has its
-own version codes. Both are signed with my existing key. No signing keys are in
-this repository.
+Learned words and settings don't carry from one to the other. Both builds take
+their version from `app/build.gradle.kts`, and each has its own version codes.
+Both are signed with my existing key. No signing keys are in this repository.
 
-The two builds on the releases page were made before this split, so their
-package is `dev.localtype.keyboard`.
+The 0.5.41 and 0.5.42 builds on the releases page were made before this
+split, so their package is `dev.localtype.keyboard`. From 0.5.60 the catalog
+build is `dev.localtype.keyboard.fdroid`.
+
+## Verify a download
+
+Both packages, `dev.localtype.keyboard` and `dev.localtype.keyboard.fdroid`,
+are signed with the same key. Its certificate's SHA-256 is:
+
+```
+8732e175659c05916dd81fca5dd6272ff2204ccf075216fbf16a89aef6663ef5
+```
+
+To check an APK before you install it, print its certificate with `apksigner`
+from the Android SDK build tools and compare the `certificate SHA-256 digest`
+line with that value. Put the name of your file in place of `localtype.apk`:
+
+```sh
+apksigner verify --print-certs localtype.apk
+```
+
+A checksum shows the file arrived whole. Compare it with
+[SHA256SUMS.txt](https://dr.eamer.dev/downloads/android/localtype/SHA256SUMS.txt)
+for a file from the download page, or with the `SHA256SUMS` file on the
+release for a file from the releases page:
+
+```sh
+shasum -a 256 localtype.apk    # macOS
+sha256sum localtype.apk        # Linux
+```
+
+Each checksum list sits beside its APK, so it can't show who made the file; the
+certificate does. Android also refuses an update signed with a different key,
+so the check matters most the first time you install.
+
+The F-Droid repository **LocalType releases** signs its index with a key of its
+own. Confirm this fingerprint when your client adds
+`https://dr.eamer.dev/downloads/fdroid/repo`:
+
+```
+496249B0E93D1B4ED15E290320AAA319DA0E68E9FC5E542EE093FC2D06C284F0
+```
 
 ## Licenses and data
 

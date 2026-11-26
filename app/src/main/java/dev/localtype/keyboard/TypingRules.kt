@@ -250,6 +250,17 @@ object TypingRules {
         }
     }
 
+    /**
+     * What TalkBack is told, in English for [SpokenKeyNames], after a double-tap on Shift took it from [before] to
+     * [after], or null. Turning Shift on is said already, as TalkBack rereads the focused key's new name ("Shift,
+     * on"); turning it off went unsaid on a Samsung with TalkBack 17.1 (2026-11-25), so only that is announced.
+     */
+    fun shiftAnnouncement(before: KeyboardView.ShiftState, after: KeyboardView.ShiftState): String? = when {
+        after != KeyboardView.ShiftState.OFF || before == after -> null
+        before == KeyboardView.ShiftState.LOCKED -> "Caps lock, off"
+        else -> "Shift, off"
+    }
+
     fun enterLabel(action: Int?): String = when (action) {
         EditorInfo.IME_ACTION_GO -> "Go"
         EditorInfo.IME_ACTION_SEARCH -> "Search"

@@ -32,6 +32,11 @@ class AdaptiveNgramModel(
     private val wordRule: WordRule = WordRule.DEFAULT,
     /** Opt-in word packs, pinned per field; empty unless the person switched one on, which leaves ranking as it was. */
     var packs: WordPacks = WordPacks.EMPTY,
+    /**
+     * Recognized words never offered ([UnofferedWords]): no source ranks one, learned counts included, unless the person
+     * added it in settings. Empty by default, which leaves ranking as it was.
+     */
+    var unoffered: Set<String> = emptySet(),
 ) {
     private val unigrams = HashMap<String, Int>()
     private val bigrams = HashMap<String, MutableMap<String, Int>>()
@@ -79,6 +84,7 @@ class AdaptiveNgramModel(
 
         fun add(word: String) {
             if (excluded(word)) return
+            if (word in unoffered && !isAddedWord(word)) return
             if (word.length < 2 && word !in oneLetterWords) return
             if (prefix.isNotEmpty() && !words.completesPrefix(word, prefix)) return
             if (scores.containsKey(word)) return
@@ -190,8 +196,12 @@ class AdaptiveNgramModel(
         return bonuses
     }
 
-    /** True for words learned from taps, which spelling correction must respect. */
-    fun knows(word: String): Boolean = unigrams.containsKey(word)
+    /**
+     * True for words learned from taps, which spelling correction must respect. A word the person blocked is not known
+     * while it stays blocked: its learned counts are kept for an unblock, but a typo learned before the block is
+     * corrected again.
+     */
+    fun knows(word: String): Boolean = unigrams.containsKey(word) && !excluded(word)
 
     /** An explicit dictionary spelling remains protected, including missing-apostrophe forms. */
     fun isAddedWord(word: String): Boolean = bigrams[ADDED_WORDS_CONTEXT]?.containsKey(normalize(word)) == true

@@ -20,6 +20,17 @@ class NavajoKeyboardTest {
     private fun key(layout: KeyboardLayout, label: String) = layout.rows.flatten().first { it.label == label }
 
     @Test
+    fun `the glottal stop key is spoken as the glottal stop, and ipa keeps the ejective mark's name`() {
+        // In Navajo ʼ is a letter, the glottal stop, written alone and after t, k, ch, ts and tł for the ejectives.
+        assertEquals("Glottal stop", key(letters(), "ʼ").spokenLabel)
+        assertEquals("Glottal stop", key(letters(numberRow = true), "ʼ").spokenLabel)
+        // The same character on the IPA keyboard is the ejective mark, held on the stress key, and ʔ the glottal stop:
+        // the IPA name is what a hold of ʼ announces there (KeyboardView reads holds through spokenName).
+        assertEquals("ejective", KeyboardLayout.spokenName("ʼ"))
+        assertEquals("glottal stop", KeyboardLayout.spokenName("ʔ"))
+    }
+
+    @Test
     fun `qwerty with a glottal stop key after l, and the marks on the holds`() {
         val keys = letters()
         assertEquals("qwertyuiop".map { it.toString() }, keys.rows[0].map { it.label })

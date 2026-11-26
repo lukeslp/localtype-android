@@ -116,7 +116,11 @@ class ReplayBuild(
 ) {
     /** The device's model as the snapshot left it: [AdaptiveNgramModel.fromTables] with this build's prior and seeds. */
     fun model(tables: AdaptiveNgramModel.Tables, dictionary: WordDictionary): AdaptiveNgramModel =
-        AdaptiveNgramModel.fromTables(tables, dictionary, prior, seedPhrases, sentenceStarters, priorWeights).also { it.vocabulary = vocabulary }
+        AdaptiveNgramModel.fromTables(tables, dictionary, prior, seedPhrases, sentenceStarters, priorWeights).also {
+            it.vocabulary = vocabulary
+            // The device's English ranker never offers these; the log is English only.
+            it.unoffered = UnofferedWords.ENGLISH
+        }
 
     /** One line for the report. */
     val description: String

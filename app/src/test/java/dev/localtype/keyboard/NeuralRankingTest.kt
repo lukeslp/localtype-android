@@ -90,6 +90,32 @@ class NeuralRankingTest {
     }
 
     @Test
+    fun `with swear words off the pinned model offers no token built on a listed swear word`() {
+        val model = File("src/main/assets/${NeuralAsset.FILE_NAME}").inputStream().use(NeuralAsset::load)
+        val swears = File("src/main/assets/words_en_profanity.txt").readLines()
+            .filter { it.isNotBlank() && !it.startsWith("#") }.map { it.substringBefore('\t') }.toSet()
+        // Four letters and up: a shorter word would sit inside too many ordinary ones.
+        val stems = swears.filter { it.length >= 4 }
+        assertTrue("found ${stems.size} listed swear words", stems.size >= 30)
+        val built = (0 until model.vocabSize).map(model::token).filter { token -> stems.any { it in token.lowercase() } }
+        // What both keyboards block with the setting off.
+        val blocked = swears + NeuralRanking.SWEAR_COMPOUNDS
+        val innocent = setOf("cockroach", "cocktail", "cocktails", "cocky", "peacock")
+        assertEquals(innocent, NeuralRanking.eligibleWords(built, "", blocked).toSet())
+        // Every compound is a token that no list names. One that leaves the vocabulary leaves the set too.
+        assertEquals(NeuralRanking.SWEAR_COMPOUNDS, built.toSet() - swears - innocent)
+        for (word in NeuralRanking.SWEAR_COMPOUNDS) {
+            assertTrue(word, CifgModel.isOfferable(word) && !SuggestionWordRules.isExcluded(word))
+            assertEquals(listOf(word, "later", "soon"), rank(listOf(word, "later", "soon", "today"), blocked = swears))
+            assertEquals(listOf("later", "soon", "today"), rank(listOf(word, "later", "soon", "today"), blocked = blocked))
+            assertEquals(listOf("later", "soon", "today"), rank(listOf("later", "soon", "today"), learned = listOf(word to 10), blocked = blocked))
+        }
+        // TypingEngineTest runs the engine the iPhone calls. The Android service cannot run here, so its line is read.
+        val service = File("src/main/java/dev/localtype/keyboard/LocalTypeInputMethodService.kt").readText()
+        assertTrue("val blocked = blockedStore.words + if (profanityAllowed) emptySet() else profanityWords + NeuralRanking.SWEAR_COMPOUNDS\n" in service)
+    }
+
+    @Test
     fun `one verified explicit observation reserves a filtered personal slot with Chime on or off`() {
         val followers = listOf(PersonalFollower("zorp", 1, 1, 1, 1))
         for (neural in listOf(emptyList(), listOf("later", "soon", "today"))) {

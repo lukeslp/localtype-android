@@ -36,6 +36,15 @@ class TypingEngineTest {
     }
 
     @Test
+    fun `its is offered it's in its own case and never changed on space`() {
+        val engine = open(LanguageProfile.ENGLISH)
+        assertNull(engine.correction("I think its"))
+        assertEquals("it's", engine.offer("I think its", completionsAvailable = true))
+        assertEquals("It's", engine.offer("Its", completionsAvailable = true))
+        assertNull(engine.correction("Its"))
+    }
+
+    @Test
     fun `added words are offered, kept from correction, synced to a list and saved`() {
         val engine = open(LanguageProfile.ENGLISH)
         assertTrue(engine.syncAddedWords(listOf("Zorblax", "not a word", "zorblax")))
@@ -199,6 +208,25 @@ class TypingEngineTest {
         val swears = asset("words_en_profanity.txt").readLines().filter { it.isNotBlank() && !it.startsWith("#") }.map { it.substringBefore('\t') }.toSet()
         for (context in listOf("", "what the ", "oh ", "you ")) assertFalse(off.suggestions(context, 6).any { it.lowercase() in swears })
         assertNull(off.correction("shit"))
+    }
+
+    @Test
+    fun `chime's compounds of swear words stay out of the strip when they are off`() {
+        val chime = ChimePredictor.verified(asset(ChimePredictor.FILE_NAME).readBytes())
+        val on = open(LanguageProfile.ENGLISH)
+        val off = open(LanguageProfile.ENGLISH, swears = false)
+        val typed = listOf("this is some shi", "I wrote it in brain")
+        val shown = HashSet<String>()
+        for (text in typed) {
+            val neural = chime.predict(text)
+            val compounds = neural.filter { it in NeuralRanking.SWEAR_COMPOUNDS }
+            assertEquals("$text: $neural", 1, compounds.size)
+            // Neither is in a word list, so only the ranking's blocked words can stop them.
+            assertTrue(compounds.single() in on.suggestions(text, 3, neural).map { it.lowercase() })
+            assertTrue(off.suggestions(text, 3, neural).none { it.lowercase() in NeuralRanking.SWEAR_COMPOUNDS })
+            shown += compounds
+        }
+        assertEquals(NeuralRanking.SWEAR_COMPOUNDS, shown)
     }
 
     @Test

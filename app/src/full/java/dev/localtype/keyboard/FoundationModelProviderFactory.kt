@@ -13,7 +13,8 @@ object FoundationModelProviderFactory {
     @Volatile private var aiCore: AiCoreCompletionProvider? = null
 
     fun create(context: Context): FoundationModelProvider = synchronized(this) {
-        composite ?: CompositeFoundationModelProvider(providers = chatProviders(context)).also { composite = it }
+        composite ?: CompositeFoundationModelProvider(context.applicationContext, aiCoreProvider(context), gemmaProvider(context))
+            .also { composite = it }
     }
 
     /**
@@ -40,46 +41,84 @@ object FoundationModelProviderFactory {
     }
 }
 
+/**
+ * The keyboard's model: Gemini Nano first, then Gemma. Android refuses Nano to a keyboard serving another app on some
+ * phones while its status still says ready; after the first refusal in a process, [ModelFallback] keeps Nano out of
+ * the keyboard's requests and readiness in other apps, so callers wait on Gemma's loading and ask Gemma. In
+ * LocalType's own screens Nano is still asked first.
+ */
 private class CompositeFoundationModelProvider(
-    private val providers: List<FoundationModelProvider>,
+    private val appContext: Context,
+    private val nano: AiCoreCompletionProvider,
+    private val gemma: LiteRtGemmaCompletionProvider,
+    private val fallback: ModelFallback = ModelFallback.keyboard,
 ) : FoundationModelProvider {
     override val label: String = "On-device model"
 
     override suspend fun status(): FoundationModelStatus {
-        // Ask in preference order and stop at the first ready provider, so a ready Gemini Nano
-        // never binds the :model process or starts a Gemma load that would go unused.
-        val seen = ArrayList<FoundationModelStatus>(providers.size)
-        for (provider in providers) {
-            val status = provider.status()
-            if (status == FoundationModelStatus.READY) return FoundationModelStatus.READY
-            seen += status
+        // Ask in preference order and stop at a ready Nano, so a ready Gemini Nano never binds the :model process or
+        // starts a Gemma load that would go unused. Where Nano is refused, Gemma's readiness is the keyboard's.
+        val nanoStatus = if (fallback.asksNano()) nano.status() else null
+        if (nanoStatus == FoundationModelStatus.READY) {
+            fallback.gemmaStatus = null
+            return FoundationModelStatus.READY
         }
-        return when {
-            // A model that is loading will be ready soon; a downloadable one needs the person to act.
-            FoundationModelStatus.INITIALIZING in seen -> FoundationModelStatus.INITIALIZING
-            FoundationModelStatus.SYSTEM_MODEL_DOWNLOADABLE in seen -> FoundationModelStatus.SYSTEM_MODEL_DOWNLOADABLE
-            FoundationModelStatus.MODEL_FILE_MISSING in seen -> FoundationModelStatus.MODEL_FILE_MISSING
-            else -> FoundationModelStatus.UNAVAILABLE
-        }
+        return ModelFallback.combine(nanoStatus, gemmaStatus())
     }
 
-    override suspend fun predict(context: String, limit: Int, avoid: List<String>): List<String> {
-        providers.forEach { provider ->
-            if (provider.status() == FoundationModelStatus.READY) {
-                provider.predict(context, limit, avoid).takeIf { it.isNotEmpty() }?.let { return it }
+    private suspend fun gemmaStatus(): FoundationModelStatus = gemma.status().also { fallback.gemmaStatus = it }
+
+    /** Nano's answer when it is asked and gives one; otherwise Gemma's, if Gemma is ready. */
+    private suspend fun <T : Any> answer(fromNano: suspend () -> ModelFallback.Reply<T>, fromGemma: suspend () -> T?): T? {
+        if (fallback.asksNano() && nano.status() == FoundationModelStatus.READY) {
+            val reply = fromNano()
+            note(fallback.record(reply))
+            if (!ModelFallback.asksGemmaAfter(reply)) return (reply as ModelFallback.Reply.Answered).value
+        }
+        // A Gemma that isn't loaded starts loading here and answers on a later try; the keyboard waits for it.
+        return if (gemmaStatus() == FoundationModelStatus.READY) fromGemma() else null
+    }
+
+    private fun note(note: ModelFallback.Note) {
+        when (note) {
+            ModelFallback.Note.FIRST_REFUSAL -> {
+                // Once per process, and nothing of the request: no text, no prompt.
+                android.util.Log.i(TAG, "Gemini Nano refused to the keyboard outside LocalType (ML Kit BACKGROUND_USE_BLOCKED); Gemma serves other apps")
+                KeyboardSettings.rememberNanoRefusedToKeyboard(appContext, true)
             }
+            // Android let Nano answer the keyboard in another app after all: Settings stops saying it can't.
+            ModelFallback.Note.ANSWERED_IN_OTHER_APP -> KeyboardSettings.rememberNanoRefusedToKeyboard(appContext, false)
+            ModelFallback.Note.NONE -> Unit
         }
-        return emptyList()
     }
 
-    override suspend fun proofread(text: String): String? {
-        providers.forEach { provider ->
-            if (provider.status() == FoundationModelStatus.READY) provider.proofread(text)?.let { return it }
-        }
-        return null
+    override suspend fun predict(context: String, limit: Int, avoid: List<String>): List<String> =
+        answer({ nano.predictReply(context, limit, avoid) }, { gemma.predict(context, limit, avoid).takeIf { it.isNotEmpty() } })
+            .orEmpty()
+
+    override suspend fun proofread(text: String): String? =
+        answer({ nano.proofreadReply(text) }, { gemma.proofread(text) })
+
+    override suspend fun generate(prompt: String): String? = generate(prompt) { it }
+
+    /** A reply [accept] takes: Nano's first, and Gemma's when Nano gives none or none that [accept] takes. */
+    override suspend fun generate(prompt: String, accept: (String) -> String?): String? =
+        answer({ nano.generateReply(prompt).accepting(accept) }, { gemma.generate(prompt)?.let(accept) })
+
+    private fun ModelFallback.Reply<String>.accepting(accept: (String) -> String?): ModelFallback.Reply<String> =
+        if (this is ModelFallback.Reply.Answered) accept(value)?.let { ModelFallback.Reply.Answered(it) } ?: ModelFallback.Reply.Failed else this
+
+    override fun setKeepLoaded(keep: Boolean) {
+        nano.setKeepLoaded(keep)
+        gemma.setKeepLoaded(keep)
     }
 
-    override fun setKeepLoaded(keep: Boolean) = providers.forEach { it.setKeepLoaded(keep) }
+    override fun close() {
+        nano.close()
+        gemma.close()
+    }
 
-    override fun close() = providers.forEach { it.close() }
+    private companion object {
+        const val TAG = "LocalTypeModel"
+    }
 }

@@ -39,4 +39,11 @@ object SetupFlow {
     }
 
     fun previous(step: SetupStep): SetupStep? = SetupStep.entries.getOrNull(step.ordinal - 1)
+
+    /**
+     * Whether the last step offers "Ask Nano/Gemma only when I tap": only a build that carries Gemini Nano or Gemma,
+     * the same test that gives Settings its Extra suggestions and proofreading section. The catalog build has neither.
+     */
+    fun offersModelOnTap(includesNano: Boolean = BuildConfig.INCLUDES_NANO, includesGemma: Boolean = BuildConfig.INCLUDES_GEMMA): Boolean =
+        includesNano || includesGemma
 }

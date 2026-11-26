@@ -17,12 +17,7 @@ object UpdateChecker {
     fun latest(): ReleaseInfo? = if (BuildConfig.DIRECT_UPDATES) fetchLatest() else null
 
     private fun fetchLatest(): ReleaseInfo? = runCatching {
-        val connection = (URL(ReleaseInfo.LATEST_URL).openConnection() as HttpURLConnection).apply {
-            connectTimeout = TIMEOUT_MS
-            readTimeout = TIMEOUT_MS
-            instanceFollowRedirects = false
-            useCaches = false
-        }
+        val connection = open(URL(ReleaseInfo.LATEST_URL))
         try {
             if (connection.responseCode != HttpURLConnection.HTTP_OK) return@runCatching null
             readResponse(connection.inputStream)
@@ -30,6 +25,16 @@ object UpdateChecker {
             connection.disconnect()
         }
     }.getOrNull()
+
+    /** The request before it is sent. It follows no redirect and names the app alone. */
+    internal fun open(url: URL): HttpURLConnection = (url.openConnection() as HttpURLConnection).apply {
+        connectTimeout = TIMEOUT_MS
+        readTimeout = TIMEOUT_MS
+        instanceFollowRedirects = false
+        useCaches = false
+        // Android's own User-Agent names the phone's model and Android build, which the check has no use for.
+        setRequestProperty("User-Agent", USER_AGENT)
+    }
 
     /** Closes the stream after at most the limit plus one byte to distinguish EOF from oversize. */
     internal fun readResponse(input: InputStream): ReleaseInfo? = input.use { stream ->
@@ -58,6 +63,8 @@ object UpdateChecker {
         ReleaseInfo.parse(body)
     }
 
+    /** No version and nothing about the phone. */
+    internal const val USER_AGENT = "LocalType"
     private const val TIMEOUT_MS = 10_000
     private const val MAX_BYTES = 16_384
 }

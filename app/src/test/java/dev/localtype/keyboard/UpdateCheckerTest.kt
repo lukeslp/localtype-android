@@ -1,14 +1,26 @@
 package dev.localtype.keyboard
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.IOException
 import java.io.InputStream
+import java.net.URL
 
 class UpdateCheckerTest {
+    @Test
+    fun `the request names the app and nothing about the phone`() {
+        // Nothing is sent here: opening the connection object only prepares the request.
+        val connection = UpdateChecker.open(URL(ReleaseInfo.LATEST_URL))
+        assertEquals("LocalType", UpdateChecker.USER_AGENT)
+        assertEquals(mapOf("User-Agent" to listOf("LocalType")), connection.requestProperties)
+        assertFalse(connection.instanceFollowRedirects)
+        assertFalse(connection.useCaches)
+    }
+
     @Test
     fun `reads the current feed without needing a content length`() {
         val stream = TrackingStream(FEED.toByteArray(Charsets.UTF_8), chunkSize = 3)
@@ -78,6 +90,22 @@ class UpdateCheckerTest {
         for (body in listOf("", "<html>not found</html>", """{"versionCode":17}""")) {
             val stream = TrackingStream(body.toByteArray(Charsets.UTF_8))
             assertNull(UpdateChecker.readResponse(stream))
+            assertTrue(stream.closed)
+        }
+    }
+
+    @Test
+    fun `a feed with an implausible code or stray characters in the name is closed and gives no release`() {
+        val bodies = listOf(
+            FEED.replace("\"versionCode\": 17", "\"versionCode\": 2147483647"),
+            FEED.replace("\"versionCode\": 17", "\"versionCode\": 0"),
+            FEED.replace("\"versionName\": \"0.4.7\"", "\"versionName\": \"0.4.7\u202E\""),
+            FEED.replace("\"versionName\": \"0.4.7\"", "\"versionName\": \"0.4.7 \\n tap here\""),
+        )
+        for (body in bodies) {
+            assertTrue(body != FEED)
+            val stream = TrackingStream(body.toByteArray(Charsets.UTF_8), chunkSize = 9)
+            assertNull(body, UpdateChecker.readResponse(stream))
             assertTrue(stream.closed)
         }
     }

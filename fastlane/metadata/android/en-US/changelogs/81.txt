@@ -1,0 +1,1 @@
+First release on F-Droid. This build has its own package name, so it installs beside the LocalType download from dr.eamer.dev instead of replacing it, and neither updates the other.

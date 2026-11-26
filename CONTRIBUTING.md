@@ -1,7 +1,7 @@
 # Build and review
 
 Gradle 8.14.3 runs on JDK 21 or 17, the modules compile to Java 17 bytecode with
-no JDK toolchain, and the app builds against Android SDK platform 35. Set
+no JDK toolchain, and the app builds against Android SDK platform 36. Set
 `ANDROID_HOME` to the SDK. Gradle downloads dependencies from Google Maven, Maven
 Central and the Gradle plugin portal. The artifact checksums, the wrapper
 distribution checksum and the app's resolved dependencies are checked in.
@@ -13,9 +13,10 @@ Building downloads no language model or training corpus.
 ```
 
 The unsigned catalog APK is under `app/build/outputs/apk/fdroid/release/`. The
-catalog build needs no keystore and leaves out the optional native runtime. The
-full distribution also needs the separately maintained `modelkit` module, which
-is private and not in this repository. Don't sign a build with a new key to
+catalog build needs no keystore and leaves out the optional native runtime. Its
+release is shrunk with R8 and keeps class and member names
+(`app/proguard-rules.pro`). The full distribution also needs the separately
+maintained `modelkit` module, which is private and not in this repository. Don't sign a build with a new key to
 replace an installed copy: Android updates an app in place only with its
 original signing key.
 
@@ -49,10 +50,10 @@ Local builds alone don't show that F-Droid accepts the app.
 of the five model and statistics files, and `--require-cleared` also fails on
 unresolved asset rights. `python3 scripts/build-tlds.py --check` rebuilds the TLD
 list from the included MPL-2.0 Public Suffix List source and checks that it
-recognizes exactly the shipped set. The recipe's prebuild runs both. It then
-lists the five `.bin` files as exact-path exceptions to F-Droid's binary scan, a
-treatment that still needs maintainer review. No native library or directory is
-exempted, and the audit checks formats without retraining anything.
+recognizes exactly the shipped set. The recipe's prebuild runs both, and the
+recipe lists the five `.bin` files as exact-path exceptions to F-Droid's binary
+scan, which F-Droid's maintainers still have to review. No native library or
+directory is exempted, and the audit checks formats without retraining anything.
 
 For this export I edited a comment in `app/src/main/assets/current_words.txt`;
 every data row is unchanged. `DATA-SOURCES.md` covers where the data comes from.

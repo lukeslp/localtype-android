@@ -66,6 +66,19 @@ object StripTools {
         return saved.mapNotNull { byId[it] }.distinct().take(MAX_PINNED)
     }
 
+    /** Proofread and the rewrites ask Gemini Nano, Gemma or the Model Lab's model; nothing else does. */
+    private val MODEL_TOOLS = setOf(StripTool.PROOFREAD, StripTool.REWRITE_SHORTER, StripTool.REWRITE_FORMAL, StripTool.REWRITE_FRIENDLY)
+
+    /** This build has a model for [MODEL_TOOLS]: the build half of the keyboard's own test for offering them. */
+    val buildHasModels: Boolean get() = BuildConfig.INCLUDES_NANO || BuildConfig.INCLUDES_GEMMA || BuildConfig.MODEL_LAB
+
+    /**
+     * The row as Settings' Reset the tools row names it: [rowOrder] without the tools this build never offers in any
+     * field. The catalog build has no model, so its row never shows Proofread and the summary does not name it.
+     */
+    fun described(saved: List<String>?, models: Boolean = buildHasModels): List<StripTool> =
+        rowOrder(saved).filter { models || it !in MODEL_TOOLS }
+
     /**
      * Holding a tile in the panel: a tool in the row comes out, any other goes in at the end. Null when the row is
      * already full, so the panel can say so.

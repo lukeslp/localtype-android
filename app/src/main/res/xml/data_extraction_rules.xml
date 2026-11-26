@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Android 12 and later: nothing goes to cloud backup or to a phone-to-phone transfer. allowBackup="false"
-     alone does not stop the transfer on every manufacturer's phones for apps that target API 31 or later. -->
+     alone does not stop the transfer on every manufacturer's phones for apps that target API 31 or later.
+     The device_ domains are the same four folders in device-protected storage. LocalType's own code keeps
+     nothing there; they are listed so a library's files cannot leave either. -->
 <data-extraction-rules>
     <cloud-backup>
         <exclude domain="root" path="." />
@@ -8,6 +10,10 @@
         <exclude domain="database" path="." />
         <exclude domain="sharedpref" path="." />
         <exclude domain="external" path="." />
+        <exclude domain="device_root" path="." />
+        <exclude domain="device_file" path="." />
+        <exclude domain="device_database" path="." />
+        <exclude domain="device_sharedpref" path="." />
     </cloud-backup>
     <device-transfer>
         <exclude domain="root" path="." />
@@ -15,5 +21,9 @@
         <exclude domain="database" path="." />
         <exclude domain="sharedpref" path="." />
         <exclude domain="external" path="." />
+        <exclude domain="device_root" path="." />
+        <exclude domain="device_file" path="." />
+        <exclude domain="device_database" path="." />
+        <exclude domain="device_sharedpref" path="." />
     </device-transfer>
 </data-extraction-rules>

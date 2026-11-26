@@ -17,5 +17,12 @@ enum class ThemeMode { SYSTEM, LIGHT, DARK;
     companion object {
         fun of(context: Context): ThemeMode =
             runCatching { valueOf(KeyboardSettings.theme(context)) }.getOrDefault(SYSTEM)
+
+        /**
+         * Whether Android should draw its buttons in the band under the keys (hide keyboard, switch keyboard)
+         * dark, for a light keyboard. [uiMode] is the keyboard's own configuration, with a forced theme applied.
+         */
+        fun darkNavigationIcons(uiMode: Int): Boolean =
+            uiMode and Configuration.UI_MODE_NIGHT_MASK != Configuration.UI_MODE_NIGHT_YES
     }
 }

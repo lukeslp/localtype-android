@@ -64,8 +64,11 @@
             </intent-filter>
         </activity>
 
+        <!-- Setup steps back one screen at a time in onBackPressed, which Android 16 stops calling for an app
+             that targets API 36 unless the activity opts out of the new back handling here. -->
         <activity
             android:name=".SetupActivity"
+            android:enableOnBackInvokedCallback="false"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
@@ -74,6 +77,11 @@
             android:name=".ModelChatActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- Licenses and credits, opened from About: the notices in the assets' licenses folder. -->
+        <activity
+            android:name=".LicensesActivity"
+            android:exported="false" />
 
         <!-- Carries the contacts prompt for the Contacts tool, then closes. -->
         <activity
@@ -103,6 +111,18 @@
                 android:name="android.view.im"
                 android:resource="@xml/method" />
         </service>
+
+        <!-- The cleaned copy of a pasted image (PastedImages), shared only with the field it is pasted into: not
+             exported, and the keyboard grants that app a read through commitContent. No permission, no network. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.pastedimages"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/pasted_images" />
+        </provider>
 
         <!-- Android's spell checker, answered from the keyboard's word lists and Android's user dictionary. Off until
              chosen in Android's settings. It runs in the main process and needs no permission, network or model. -->

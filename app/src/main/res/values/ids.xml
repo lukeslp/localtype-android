@@ -3,6 +3,7 @@
     <item name="key_cursor_left" type="id" />
     <item name="key_cursor_right" type="id" />
     <item name="key_delete_word" type="id" />
+    <item name="key_caps_lock" type="id" />
     <item name="key_alternate_1" type="id" />
     <item name="key_alternate_2" type="id" />
     <item name="key_alternate_3" type="id" />

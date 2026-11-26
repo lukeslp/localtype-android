@@ -1,6 +1,5 @@
 package dev.localtype.keyboard
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
@@ -35,7 +34,7 @@ import kotlinx.coroutines.launch
  * on-device models the keyboard already uses. The conversation stays in this screen's memory, survives
  * a rotation and is gone when the screen closes: nothing is saved, logged, learned or sent anywhere.
  */
-class ModelChatActivity : Activity() {
+class ModelChatActivity : CoveredActivity() {
     /** Carried across a rotation or theme change by onRetainNonConfigurationInstance, never past a closed screen. */
     private class Conversation {
         val lines = ArrayList<ChatLine>()

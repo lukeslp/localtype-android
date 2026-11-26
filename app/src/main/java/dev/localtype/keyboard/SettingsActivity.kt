@@ -1,6 +1,5 @@
 package dev.localtype.keyboard
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -53,7 +52,7 @@ import kotlinx.coroutines.withContext
  * remembers whether it was open. Each setting is one row and one TalkBack stop, with a short summary; its full
  * explanation, word for word, opens from the row's ⓘ button or its Details action.
  */
-class SettingsActivity : Activity() {
+class SettingsActivity : CoveredActivity() {
     private val screenScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private lateinit var content: LinearLayout
     private lateinit var scroll: ScrollView
@@ -127,7 +126,8 @@ class SettingsActivity : Activity() {
         learnedExpanded = savedInstanceState?.getBoolean("learnedExpanded") ?: false
         copyParts = savedInstanceState?.getStringArrayList("copyParts")?.mapNotNull { name -> CopyTransfer.Part.entries.firstOrNull { it.name == name } }?.toSet()
         addHeader()
-        addUpdateBanner()
+        // Only a build that updates from the download page has a banner, or anything that opens that page.
+        if (BuildConfig.DIRECT_UPDATES) addUpdateBanner()
         addTourCard()
         addSetupSteps()
         addTryIt()
@@ -398,7 +398,8 @@ class SettingsActivity : Activity() {
         private fun show() {
             body.visibility = if (open) View.VISIBLE else View.GONE
             chevron.text = if (open) "▴" else "▾"
-            ViewCompat.setStateDescription(heading, getString(if (open) R.string.expanded else R.string.collapsed))
+            // No state description: TalkBack says "expanded" or "collapsed" from the expand and collapse actions
+            // below, and a state description as well made it "collapsed. Collapsed." (TalkBack 17.1, 2026-11-25).
         }
     }
 
@@ -483,12 +484,17 @@ class SettingsActivity : Activity() {
         setOnClickListener { showDetails(title, details) }
     }
 
+    private fun android.app.AlertDialog.Builder.showCovered(): android.app.AlertDialog = create().also { dialog ->
+        cover(dialog)
+        dialog.show()
+    }
+
     private fun showDetails(title: String, details: String) {
         android.app.AlertDialog.Builder(this)
             .setTitle(title)
             .setMessage(details)
             .setPositiveButton(android.R.string.ok, null)
-            .show()
+            .showCovered()
     }
 
     /** A row that opens something: a title, an optional summary, and a › mark. Read by TalkBack as a button. */
@@ -615,8 +621,8 @@ class SettingsActivity : Activity() {
 
     /**
      * Languages as a quick list: English, Spanish and Portuguese with their words, then the IPA keyboard, which
-     * has none. The last language with words can't be turned off. Below them, the hold-Space order and the
-     * language this screen is shown in.
+     * has none. The last language with words can't be turned off. Below them, the hold-Space order, the
+     * language this screen is shown in and a link to ask for another language.
      */
     private fun addLanguages() {
         val body = section("languages", R.string.section_languages, openByDefault = true) {
@@ -658,6 +664,7 @@ class SettingsActivity : Activity() {
         val (row, summary) = addLink(body, getString(R.string.settings_language_title), "") { choosePageLanguage() }
         pageLanguageRow = row
         pageLanguageSummary = summary
+        addLink(body, getString(R.string.languages_ask)) { openInBrowser(ReleaseInfo.SUPPORT_URL) }
         refreshLanguages()
     }
 
@@ -680,7 +687,7 @@ class SettingsActivity : Activity() {
                     dialog.dismiss()
                 }
                 .setNegativeButton(android.R.string.cancel, null)
-                .show()
+                .showCovered()
         }
         parent.addView(text(getString(R.string.currency_body), 13f, R.color.on_surface_variant))
     }
@@ -742,7 +749,7 @@ class SettingsActivity : Activity() {
                 if (SettingsLocale.shown(this) != before) recreate() else refreshLanguages()
             }
             .setNegativeButton(android.R.string.cancel, null)
-            .show()
+            .showCovered()
     }
 
     // Typing
@@ -802,7 +809,8 @@ class SettingsActivity : Activity() {
 
     /**
      * Specialist words a person switches on, one switch per pack: the bundled ones, then any imported, each with
-     * Remove. A pack is per language and is used only while typing in it. Nothing here downloads anything.
+     * Remove. A pack is per language and is used only while typing in it. Nothing here downloads anything; the last
+     * row opens the contact page in the browser, to ask for a pack.
      */
     private fun addWordPacks() {
         val body = section("packs", R.string.section_word_packs, openByDefault = false) {
@@ -821,6 +829,7 @@ class SettingsActivity : Activity() {
         packImport = button(getString(R.string.word_packs_import), primary = false).apply { setOnClickListener { choosePack() } }
         body.addView(packImport, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(48)).apply { topMargin = dp(4) })
         body.addView(text(getString(R.string.word_packs_import_hint), 13f, R.color.on_surface_variant).apply { setPadding(0, dp(2), 0, 0) })
+        addLink(body, getString(R.string.word_packs_ask)) { openInBrowser(ReleaseInfo.SUPPORT_URL) }
         refreshImportedPacks()
     }
 
@@ -861,7 +870,7 @@ class SettingsActivity : Activity() {
                 }
             }
             .setNegativeButton(android.R.string.cancel, null)
-            .show()
+            .showCovered()
     }
 
     /** The system's file picker, for a pack to import: nothing is read until a file is chosen. */
@@ -922,7 +931,7 @@ class SettingsActivity : Activity() {
                 .setTitle(R.string.word_packs_import)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, null)
-                .show()
+                .showCovered()
         }
     }
 
@@ -976,7 +985,7 @@ class SettingsActivity : Activity() {
         }
     }
 
-    private fun toolsRowSummary(): String = StripTools.rowOrder(KeyboardSettings.toolsRow(this))
+    private fun toolsRowSummary(): String = StripTools.described(KeyboardSettings.toolsRow(this))
         .joinToString(", ") { getString(it.label) }.ifEmpty { getString(R.string.tools_row_empty) }
 
     // Touch and timing
@@ -1052,7 +1061,7 @@ class SettingsActivity : Activity() {
                             dialog.dismiss()
                         }
                         .setNegativeButton(android.R.string.cancel, null)
-                        .show()
+                        .showCovered()
                 }
                 line.addView(cell, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply {
                     if (index == 0) marginEnd = dp(8)
@@ -1236,6 +1245,14 @@ class SettingsActivity : Activity() {
         divider(body)
         addRememberedSites(body)
         divider(body)
+        addSwitch(body, R.string.hide_from_capture_title, R.string.hide_from_capture_summary, R.string.hide_from_capture_body, KeyboardSettings.hideFromCapture(this)) {
+            KeyboardSettings.setHideFromCapture(this, it)
+            ScreenCapture.cover(window, it)
+        }
+        divider(body)
+        addSwitch(body, R.string.strip_image_details_title, R.string.strip_image_details_summary, R.string.strip_image_details_body,
+            KeyboardSettings.stripImageDetails(this)) { KeyboardSettings.setStripImageDetails(this, it) }
+        divider(body)
         addMoveCopy(body)
         divider(body)
         addPredictionLog(body)
@@ -1359,7 +1376,7 @@ class SettingsActivity : Activity() {
                             if (!isDestroyed && chosen == dataLanguage) refreshBlockedWords()
                         }
                         refreshBlockedWords()
-                    }.show()
+                    }.showCovered()
             }
         }
         parent.addView(blockedReset)
@@ -1460,8 +1477,13 @@ class SettingsActivity : Activity() {
                         addedInput.error = null
                         refreshAddedWords()
                         refreshLearnedSummary()
-                        Toast.makeText(this@SettingsActivity, getString(R.string.added_words_added,
-                            WordSpellingStore.get(this@SettingsActivity, dataLanguage).display(word.orEmpty()) ?: word), Toast.LENGTH_SHORT).show()
+                        val message = if (KeyboardSettings.hideFromCapture(this@SettingsActivity)) {
+                            getString(R.string.added_words_added_hidden)
+                        } else {
+                            val spelling = WordSpellingStore.get(this@SettingsActivity, dataLanguage).display(word.orEmpty()) ?: word
+                            getString(R.string.added_words_added, spelling)
+                        }
+                        Toast.makeText(this@SettingsActivity, message, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -1529,7 +1551,7 @@ class SettingsActivity : Activity() {
                 .setTitle(R.string.added_words_import)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, null)
-                .show()
+                .showCovered()
         }
     }
 
@@ -1614,6 +1636,26 @@ class SettingsActivity : Activity() {
         subhead(parent, getString(R.string.learned_words_title), getString(R.string.learned_words_body), topMargin = 0)
         learnedSummary = text("", 14f, R.color.on_surface_variant).apply { setPadding(0, dp(2), 0, dp(6)) }
         parent.addView(learnedSummary)
+        // Narrows the pairs by the start of either word, and lists the words found so one can be forgotten
+        // everywhere. Like the Add word box, nothing typed here is learned or logged.
+        learnedFilter = EditText(this).apply {
+            hint = getString(R.string.learned_words_filter)
+            setTextColor(getColor(R.color.on_surface))
+            setHintTextColor(getColor(R.color.on_surface_variant))
+            setSingleLine(true)
+            minHeight = dp(48)
+            visibility = View.GONE
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+            imeOptions = android.view.inputmethod.EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING or
+                android.view.inputmethod.EditorInfo.IME_ACTION_DONE
+            filters = arrayOf(android.text.InputFilter.LengthFilter(80))
+            addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+                override fun afterTextChanged(s: android.text.Editable?) = refreshLearnedSummary()
+            })
+        }
+        parent.addView(learnedFilter, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
         learnedList = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             visibility = View.GONE
@@ -1681,12 +1723,50 @@ class SettingsActivity : Activity() {
             .setMessage(getString(body, holds))
             .setNegativeButton(R.string.prediction_log_confirm_keep, null)
             .setPositiveButton(action) { _, _ -> clear() }
-            .show()
+            .showCovered()
     }
 
     private lateinit var learnedToggle: Button
     private lateinit var learnedList: LinearLayout
+    private lateinit var learnedFilter: EditText
     private var learnedExpanded = false
+
+    /**
+     * Asks before forgetting [word] everywhere in [dataLanguage]: the pairs it is in, its personal phrases and its
+     * saved capitals. An added word keeps its place in Added words, and the question says so.
+     */
+    private fun confirmForgetLearnedWord(word: String, shown: String) {
+        val language = dataLanguage
+        val store = JournalLearningStore.get(this, language)
+        if (!store.ready) return
+        val plan = LearnedWords.forget(store.entries(), word)
+        val body = getString(R.string.learned_words_forget_word_body, shown) +
+            if (plan.keepsSpelling) "\n\n" + getString(R.string.learned_words_forget_word_added, shown) else ""
+        android.app.AlertDialog.Builder(this)
+            .setTitle(getString(R.string.learned_words_forget_word_title, shown))
+            .setMessage(body)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.learned_words_forget_word_action) { _, _ -> forgetLearnedWord(language, word) }
+            .showCovered()
+    }
+
+    /**
+     * The same removals as Remove added word and the pair rows, for one word: the plan is made again from the
+     * pairs held now, since the keyboard may have learned one while the question was open.
+     */
+    private fun forgetLearnedWord(language: LanguageProfile, word: String) {
+        val store = JournalLearningStore.get(this, language)
+        if (!store.ready) return
+        val plan = LearnedWords.forget(store.entries(), word)
+        PersonalLearningStore.get(this, language).removeWord(plan.word)
+        plan.pairs.forEach { (previous, next) -> store.remove(previous, next) }
+        if (!plan.keepsSpelling) WordSpellingStore.get(this, language).change(plan.word, WordSpellings.Change.Forget)
+        // A running keyboard rebuilds its model, so the word stops being suggested in the field it is in.
+        KeyboardSettings.bumpLearnedGeneration(this)
+        refreshAddedWords()
+        refreshLearnedSummary()
+        Toast.makeText(this, R.string.learned_words_word_forgotten, Toast.LENGTH_SHORT).show()
+    }
 
     private lateinit var sitesSummary: TextView
     private lateinit var sitesToggle: Button
@@ -1812,7 +1892,7 @@ class SettingsActivity : Activity() {
                     REQUEST_COPY_SAVE,
                 )
             }
-            .show()
+            .showCovered()
         followTicks(dialog, checks)
     }
 
@@ -1870,7 +1950,7 @@ class SettingsActivity : Activity() {
             .setMessage(message)
             .setPositiveButton(android.R.string.ok, null)
             .setOnDismissListener { onClose?.invoke() }
-            .show()
+            .showCovered()
     }
 
     /** What the copy holds, part by part with counts, each with a tick. Text from the file is shown only when it has the expected shape. */
@@ -1904,11 +1984,13 @@ class SettingsActivity : Activity() {
                         if (CopyTransfer.Part.LEARNED in parts) getString(R.string.copy_count_learned, applied.pairs, applied.sites) else null,
                         if (applied.incomplete) getString(R.string.copy_read_incomplete) else null,
                     )
+                    // A copy can turn Hide LocalType from screen capture on: this screen is marked before the result shows.
+                    ScreenCapture.cover(window, KeyboardSettings.hideFromCapture(this))
                     // The screen is drawn again so every switch and list shows what is now on the phone.
                     copyMessage(lines.joinToString("\n")) { if (!isDestroyed) recreate() }
                 }
             }
-            .show()
+            .showCovered()
         followTicks(dialog, checks)
     }
 
@@ -2013,7 +2095,7 @@ class SettingsActivity : Activity() {
                             Toast.makeText(this@SettingsActivity, R.string.saved_text_cleared, Toast.LENGTH_SHORT).show()
                         }
                     }
-                    .show()
+                    .showCovered()
             }
         }
         parent.addView(savedClear, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(8) })
@@ -2078,7 +2160,7 @@ class SettingsActivity : Activity() {
                     texts.forgetLastChange()
                     refreshSavedSummary()
                 }
-                .show()
+                .showCovered()
         }, LinearLayout.LayoutParams(dp(48), dp(48)))
         return row
     }
@@ -2126,6 +2208,7 @@ class SettingsActivity : Activity() {
         input.setOnEditorActionListener { _, action, _ ->
             if (action == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) { save(); true } else false
         }
+        cover(dialog)
         dialog.show()
     }
 
@@ -2166,6 +2249,7 @@ class SettingsActivity : Activity() {
             learnedSummary.text = getString(R.string.learned_words_loading)
             learnedToggle.visibility = View.GONE
             learnedList.visibility = View.GONE
+            learnedFilter.visibility = View.GONE
             store.whenReady { if (!isDestroyed) refreshLearnedSummary() }
             return
         }
@@ -2174,29 +2258,72 @@ class SettingsActivity : Activity() {
         learnedCount = count
         learnedSummary.text = if (count == 0) getString(R.string.learned_words_empty)
         else resources.getQuantityString(R.plurals.learned_words_count, count, count)
-        showToggle(learnedToggle, count, learnedExpanded)
+        learnedFilter.visibility = if (count > 0) View.VISIBLE else View.GONE
         learnedList.removeAllViews()
         learnedList.visibility = if (count > 0) View.VISIBLE else View.GONE
-        entries.take(if (learnedExpanded) MAX_LEARNED_ROWS else LIST_PREVIEW).forEach { (previous, next, uses) ->
-            val pair = if (previous == AdaptiveNgramModel.START) getString(R.string.learned_words_start, next) else "$previous → $next"
-            val row = LinearLayout(this).apply {
-                orientation = LinearLayout.HORIZONTAL
-                gravity = Gravity.CENTER_VERTICAL
+        val query = learnedFilter.text.toString()
+        if (count > 0 && query.isNotBlank()) {
+            // Searching shows every match up to the cap, open or not: the words first, each with a way to forget
+            // it everywhere, then the pairs that hold them.
+            learnedToggle.visibility = View.GONE
+            val shown = LearnedWords.shown(entries, query, MAX_LEARNED_ROWS)
+            if (shown.matching == 0) {
+                learnedList.addView(text(getString(R.string.learned_words_no_match, query.trim()), 13f, R.color.on_surface_variant))
+            } else {
+                val words = LearnedWords.words(entries, query, MAX_LEARNED_WORD_ROWS)
+                learnedList.addView(text(getString(R.string.learned_words_forget_word_hint), 13f, R.color.on_surface_variant)
+                    .apply { setPadding(0, 0, 0, dp(4)) })
+                words.forEach { learnedList.addView(learnedWordRow(it)) }
+                if (shown.matching > shown.rows.size) learnedList.addView(
+                    text(getString(R.string.learned_words_showing, shown.rows.size, shown.matching), 13f, R.color.on_surface_variant)
+                        .apply { setPadding(0, dp(8), 0, dp(4)) })
+                shown.rows.forEach { (previous, next, uses) -> learnedList.addView(learnedPairRow(store, previous, next, uses)) }
             }
-            row.addView(text(pair, 15f, R.color.on_surface), LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
-            row.addView(text(uses.toString(), 13f, R.color.on_surface_variant).apply { setPadding(dp(8), 0, dp(8), 0) })
-            row.addView(removeButton(getString(R.string.learned_words_forget_one, pair)) {
-                PersonalLearningStore.get(this@SettingsActivity, dataLanguage).removePair(previous, next)
-                store.remove(previous, next)
-                KeyboardSettings.bumpLearnedGeneration(this@SettingsActivity)
-                refreshLearnedSummary()
-            }, LinearLayout.LayoutParams(dp(48), dp(48)))
-            learnedList.addView(row)
-        }
-        if (learnedExpanded && count > MAX_LEARNED_ROWS) {
-            learnedList.addView(text(getString(R.string.learned_words_more, count - MAX_LEARNED_ROWS), 13f, R.color.on_surface_variant))
+        } else {
+            showToggle(learnedToggle, count, learnedExpanded)
+            entries.take(if (learnedExpanded) MAX_LEARNED_ROWS else LIST_PREVIEW).forEach { (previous, next, uses) ->
+                learnedList.addView(learnedPairRow(store, previous, next, uses))
+            }
+            if (learnedExpanded && count > MAX_LEARNED_ROWS) {
+                learnedList.addView(text(getString(R.string.learned_words_more, count - MAX_LEARNED_ROWS), 13f, R.color.on_surface_variant))
+            }
         }
         sections.forEach { it.refresh() }
+    }
+
+    /** One learned pair, its count, and ✕ to forget just that pair. */
+    private fun learnedPairRow(store: JournalLearningStore, previous: String, next: String, uses: Int): View {
+        val pair = if (previous == AdaptiveNgramModel.START) getString(R.string.learned_words_start, next) else "$previous → $next"
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        row.addView(text(pair, 15f, R.color.on_surface), LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+        row.addView(text(uses.toString(), 13f, R.color.on_surface_variant).apply { setPadding(dp(8), 0, dp(8), 0) })
+        row.addView(removeButton(getString(R.string.learned_words_forget_one, pair)) {
+            PersonalLearningStore.get(this@SettingsActivity, dataLanguage).removePair(previous, next)
+            store.remove(previous, next)
+            KeyboardSettings.bumpLearnedGeneration(this@SettingsActivity)
+            refreshLearnedSummary()
+        }, LinearLayout.LayoutParams(dp(48), dp(48)))
+        return row
+    }
+
+    /** One learned word found by the filter, its uses, and Forget word, which names the word to TalkBack. */
+    private fun learnedWordRow(word: LearnedWords.Word): View {
+        val shown = WordSpellingStore.get(this, dataLanguage).display(word.word) ?: word.word
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        row.addView(text(shown, 15f, R.color.on_surface, bold = true), LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+        row.addView(text(word.uses.toString(), 13f, R.color.on_surface_variant).apply { setPadding(dp(8), 0, dp(8), 0) })
+        row.addView(button(getString(R.string.learned_words_forget_word), primary = false).apply {
+            maxLines = 1
+            contentDescription = getString(R.string.learned_words_forget_word_named, shown)
+            setOnClickListener { confirmForgetLearnedWord(word.word, shown) }
+        }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(48)).apply { bottomMargin = dp(4) })
+        return row
     }
 
     // Extra suggestions and proofreading
@@ -2384,7 +2511,7 @@ class SettingsActivity : Activity() {
                     }
                 }
             }
-            .show()
+            .showCovered()
     }
 
     private fun showNetworkPermissionHelp(message: String) {
@@ -2396,7 +2523,7 @@ class SettingsActivity : Activity() {
             .setPositiveButton(R.string.models_network_help_open) { _, _ ->
                 startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null)))
             }
-            .show()
+            .showCovered()
     }
 
     private val progressPoller = object : Runnable {
@@ -2554,7 +2681,9 @@ class SettingsActivity : Activity() {
                 model != null -> listOfNotNull(
                     getString(R.string.models_gemma_ready, model.name, ModelKitBridge.formatBytes(model.sizeBytes)),
                     getString(
-                        if (lastNanoState == FoundationModelStatus.READY) R.string.models_gemma_ready_after_nano
+                        if (lastNanoState == FoundationModelStatus.READY && KeyboardSettings.nanoRefusedToKeyboard(this@SettingsActivity))
+                            R.string.models_gemma_ready_other_apps
+                        else if (lastNanoState == FoundationModelStatus.READY) R.string.models_gemma_ready_after_nano
                         else if (KeyboardSettings.modelOnTap(this@SettingsActivity)) R.string.models_gemma_ready_on_tap
                         else R.string.models_gemma_ready_on_pause,
                     ),
@@ -2608,7 +2737,10 @@ class SettingsActivity : Activity() {
     }
 
     private fun nanoMessage(state: FoundationModelStatus): String = when (state) {
-        FoundationModelStatus.READY -> getString(R.string.models_nano_ready)
+        // Ready here, and refused to the keyboard in other apps once that has been seen ([ModelFallback]).
+        FoundationModelStatus.READY -> getString(
+            if (KeyboardSettings.nanoRefusedToKeyboard(this)) R.string.models_nano_ready_keyboard_refused else R.string.models_nano_ready,
+        )
         FoundationModelStatus.SYSTEM_MODEL_DOWNLOADABLE -> getString(R.string.models_nano_downloadable)
         FoundationModelStatus.INITIALIZING -> getString(R.string.models_nano_downloading)
         FoundationModelStatus.NOT_SUPPORTED -> withGemmaHint(getString(R.string.models_nano_not_supported))
@@ -2642,18 +2774,27 @@ class SettingsActivity : Activity() {
             getString(R.string.about_summary, info.versionName)
         }.body
         addUpdates(body)
-        addLink(body, getString(R.string.about_release_notes)) { openInBrowser(ReleaseInfo.CHANGELOG_URL) }
+        addLink(body, getString(R.string.about_release_notes)) { openInBrowser(ReleaseInfo.releaseNotesUrl(BuildConfig.FLAVOR)) }
         divider(body)
         addLink(body, getString(R.string.walkthrough_reopen)) {
             startActivity(Intent(this@SettingsActivity, SetupActivity::class.java).putExtra(SetupActivity.REPLAY, true))
         }
         addLink(body, getString(R.string.tour_action)) { openTour() }
         addLink(body, getString(R.string.privacy_title)) { showDetails(getString(R.string.privacy_title), getString(R.string.privacy_body)) }
+        // The notices the bundled data's licenses ask the app to show, and the libraries' own.
+        addLink(body, getString(R.string.licenses_title), getString(R.string.licenses_summary)) {
+            startActivity(Intent(this@SettingsActivity, LicensesActivity::class.java))
+        }
         divider(body)
         // Each opens in the browser only when tapped; settings itself fetches nothing for them.
-        addLink(body, getString(R.string.about_download_page), getString(R.string.about_download_page_summary)) { openInBrowser(ReleaseInfo.PAGE_URL) }
+        // The download page is the full build's own. Not in the Google Play build: the page offers the app as a file to
+        // install, which Play does not allow an app to point to. Not in the catalog build: the page offers a different app.
+        if (BuildConfig.DIRECT_UPDATES) addLink(body, getString(R.string.about_download_page), getString(R.string.about_download_page_summary)) { openInBrowser(ReleaseInfo.PAGE_URL) }
         addLink(body, getString(R.string.about_support), getString(R.string.about_support_summary)) { openInBrowser(ReleaseInfo.SUPPORT_URL) }
         addLink(body, getString(R.string.about_bluesky), getString(R.string.about_bluesky_summary)) { openInBrowser(ReleaseInfo.BLUESKY_URL) }
+        addLink(body, getString(R.string.about_chime), getString(R.string.about_chime_summary)) { openInBrowser(ReleaseInfo.CHIME_URL) }
+        // LocalLauncher's page is on the download site too, so the same builds leave it out.
+        if (BuildConfig.DIRECT_UPDATES) addLink(body, getString(R.string.about_launcher), getString(R.string.about_launcher_summary)) { openInBrowser(ReleaseInfo.LAUNCHER_URL) }
         addLink(body, getString(R.string.about_website), getString(R.string.about_website_summary)) { openInBrowser(ReleaseInfo.SITE_URL) }
     }
 
@@ -2877,6 +3018,8 @@ class SettingsActivity : Activity() {
         )
         const val REQUEST_MODEL_FILE = 410
         const val MAX_LEARNED_ROWS = 150
+        /** Words the Learned words filter lists at most, above the pairs it finds. */
+        const val MAX_LEARNED_WORD_ROWS = 20
         /** Rows a list shows before Show all. */
         const val LIST_PREVIEW = 3
         /** Rows the Added words list draws at most; a longer list is searched from the Add word box. */

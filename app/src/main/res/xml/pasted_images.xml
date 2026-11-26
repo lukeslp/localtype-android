@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The one folder FileProvider shares: the cleaned copy of a pasted image (PastedImageCache), in the app's cache,
+     which Android never backs up. Nothing else in the app is reachable through it. -->
+<paths>
+    <cache-path name="pasted" path="pasted_images/" />
+</paths>

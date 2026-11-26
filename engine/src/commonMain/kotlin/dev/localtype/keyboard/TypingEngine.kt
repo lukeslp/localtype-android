@@ -105,6 +105,8 @@ class TypingEngine(
     private val learned = MemoryLearningStore(journal?.let { LearnedPairJournal.decode(it).state.entries() }.orEmpty())
     private val swearWords: Set<String> = swears.orEmpty().lineSequence()
         .filter { it.isNotBlank() && !it.startsWith("#") }.map { it.substringBefore('\t') }.toSet()
+    /** What the ranking with Chime's words leaves out: nothing, or with Suggest swear words off the list and Chime's own compounds. */
+    private val rankingSwears: Set<String> = if (suggestSwears) emptySet() else swearWords + NeuralRanking.SWEAR_COMPOUNDS
     private val dictionary: WordDictionary = WordDictionary.parse(
         (words.lineSequence() + modern.orEmpty().lineSequence() + (if (suggestSwears) swears.orEmpty().lineSequence() else emptySequence())),
         language,
@@ -119,7 +121,7 @@ class TypingEngine(
     /** The ranker over the learned pairs, rebuilt when Added words changes them other than by typing. */
     private fun buildModel(): AdaptiveNgramModel =
         if (language.english) AdaptiveNgramModel(learned, dictionary = dictionary, prior = corpusPrior, vocabulary = vocabulary,
-            excluded = ::isBlocked, packs = wordPacks)
+            excluded = ::isBlocked, packs = wordPacks, unoffered = UnofferedWords.ENGLISH)
         else AdaptiveNgramModel(learned, seedPhrases = emptyList(), dictionary = dictionary, sentenceStarters = emptyList(),
             prior = corpusPrior, priorWeights = AdaptiveNgramModel.PriorWeights(weight = language.priorWeight),
             openingMarks = language.openingMarks, oneLetterWords = language.oneLetterWords, excluded = ::isBlocked,
@@ -130,7 +132,8 @@ class TypingEngine(
         lexicon = { known },
         contextCount = { previous, word -> model.pairCount(previous, word) },
         blocked = { isBlocked(it) || (!suggestSwears && it in swearWords) },
-        isKept = { model.isAddedWord(it) },
+        // As on Android, a blocked word counts as neither learned (the model's knows) nor added, so its fix comes back.
+        isKept = { model.isAddedWord(it) && !isBlocked(it) },
         touchOffsets = { touchOffsets },
         language = { language },
         packs = { wordPacks },
@@ -184,7 +187,7 @@ class TypingEngine(
         // for this place: then the same ranking runs with no neural words, as on Android.
         val words = if (neural == null && followers.isEmpty()) ranked.filter { offerable(it) } else {
             val learned = model.lastCompletedWord(beforeCursor.dropLast(prefix.length))?.let { model.learnedFollowers(it) }.orEmpty()
-            val choices = NeuralRanking.rankWithSources(neural.orEmpty(), ranked, learned, prefix, if (suggestSwears) emptySet() else swearWords, limit,
+            val choices = NeuralRanking.rankWithSources(neural.orEmpty(), ranked, learned, prefix, rankingSwears, limit,
                 added = model.addedWords(prefix), followers = followers, language = language,
                 common = { model.dictionary.score(it) >= NeuralRanking.COMMON_SCORE })
             // The slot's word when a phrase typed here has it. The learned pairs may hold the same word with a higher

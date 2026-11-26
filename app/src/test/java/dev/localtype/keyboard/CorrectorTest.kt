@@ -163,10 +163,29 @@ class CorrectorTest {
 
     @Test
     fun `other real words never receive missing apostrophe fixes`() {
-        for (typed in listOf("its", "were", "well", "shell", "hell")) {
+        for (typed in listOf("were", "well", "shell", "hell")) {
             assertNull(typed, app.propose(typed, sentenceStart = true))
             assertNull(typed, app.propose(typed, previous = "and", afterComma = true))
         }
+    }
+
+    @Test
+    fun `its offers it's beside it and never applies it`() {
+        for (context in listOf(Triple<String?, Boolean, Boolean>(null, false, false), Triple(null, true, false),
+            Triple("and", false, true), Triple("think", false, false))) {
+            val (previous, start, comma) = context
+            assertEquals("$context", Corrector.Correction("it's", automatic = false), app.propose("its", previous = previous, sentenceStart = start, afterComma = comma))
+            assertNull("$context", app.correct("its", previous = previous, sentenceStart = start, afterComma = comma))
+            assertEquals("$context", "it's", app.suggest("its", previous = previous, sentenceStart = start, afterComma = comma))
+        }
+        // Shown in the strip even while "itself" completes the letters, as the other contractions are.
+        assertEquals("it's", app.suggestForStrip("its", completionsAvailable = true))
+        assertEquals("It's", TypingRules.applyCase("it's", "Its", sentenceStart = false))
+        assertEquals("it's", TypingRules.applyCase("it's", "its", sentenceStart = false))
+        // A tap on the quoted "its" keeps the word, and with it the offer goes until the kept words are cleared.
+        val kept = Corrector({ TypoCorpus.dictionary }, isKept = { it == "its" }, lexicon = { TypoCorpus.lexicon })
+        assertNull(kept.propose("its"))
+        assertNull(app.propose("it's"))
     }
 
     @Test

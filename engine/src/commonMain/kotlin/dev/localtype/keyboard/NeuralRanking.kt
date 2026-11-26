@@ -70,7 +70,8 @@ object NeuralRanking {
         @Suppress("NAME_SHADOWING") val learned = if (backing) backedLearned(learned, neuralWords, common) else learned
         @Suppress("NAME_SHADOWING") val followers = if (backing) backedFollowers(followers, neuralWords, common) else followers
         val eligibleLearned = eligibleWords(learned.map { it.first }, prefix, blocked, language).toSet()
-        val explicit = if (prefix.isNotEmpty()) eligibleWords(added, prefix, blocked, language).firstOrNull { it !in neuralTopThree } else null
+        // A word the person added in settings is theirs to complete, even one the keyboard never offers by itself.
+        val explicit = if (prefix.isNotEmpty()) eligibleWords(added, prefix, blocked, language, unoffered = emptySet()).firstOrNull { it !in neuralTopThree } else null
         val personal = explicit ?: learned.asSequence()
             .map { AdaptiveNgramModel.normalize(it.first) to it.second }
             .filter { (word, count) -> count >= 2 && word in eligibleLearned && word !in neuralTopThree }
@@ -131,12 +132,25 @@ object NeuralRanking {
     /** A dictionary score from which a word counts as common here: about the 200 commonest English words ("guy" is 76). */
     const val COMMON_SCORE = 76
 
-    /** The same normalization and filters used in [rank], also for the strip's source labels. */
-    fun eligibleWords(source: List<String>, prefix: String, blocked: Set<String>, language: LanguageProfile = LanguageProfile.ENGLISH): List<String> {
+    /**
+     * Swear compounds in Chime's vocabulary that are in none of the keyboard's word lists, so the swear list does not
+     * name them. Both keyboards add them to the blocked words while Suggest swear words is off. NeuralRankingTest
+     * checks the bundled vocabulary for others.
+     */
+    val SWEAR_COMPOUNDS: Set<String> = setOf("brainfuck", "shitz")
+
+    /**
+     * The same normalization and filters used in [rank], also for the strip's source labels. [unoffered] words
+     * ([UnofferedWords]) are left out of Chime's words and the learned ones alike.
+     */
+    fun eligibleWords(
+        source: List<String>, prefix: String, blocked: Set<String>, language: LanguageProfile = LanguageProfile.ENGLISH,
+        unoffered: Set<String> = UnofferedWords.forLanguage(language),
+    ): List<String> {
         val normalizedPrefix = AdaptiveNgramModel.normalize(prefix)
         val forbidden = blocked.mapTo(HashSet()) { AdaptiveNgramModel.normalize(it) }
         return source.asSequence().map(AdaptiveNgramModel::normalize)
-            .filter { CifgModel.isOfferable(it, language.oneLetterWords) && it.startsWith(normalizedPrefix) && it !in forbidden }
+            .filter { CifgModel.isOfferable(it, language.oneLetterWords) && it.startsWith(normalizedPrefix) && it !in forbidden && it !in unoffered }
             .filterNot { SuggestionWordRules.isExcluded(it, language) }.distinct().toList()
     }
 }

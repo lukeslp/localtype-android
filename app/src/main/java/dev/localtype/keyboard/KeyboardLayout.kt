@@ -235,7 +235,9 @@ data class KeyboardLayout(val rows: List<List<Key>>, val rowHeights: List<Float>
                 val unit = ROW_UNITS / language.columns
                 val homePad = (language.columns - home.length) / 2f * unit
                 val bottomPad = (language.columns - bottom.length) / 2f * unit
-                fun letter(c: Char, alternates: List<String>) = char(c.toString(), alternates).let { if (unit == 1f) it else it.copy(width = unit) }
+                fun letter(c: Char, alternates: List<String>) = char(c.toString(), alternates)
+                    .let { if (unit == 1f) it else it.copy(width = unit) }
+                    .let { key -> LETTER_NAMES[c]?.takeIf { language.words }?.let { key.copy(spokenLabel = it) } ?: key }
                 fun holds(c: Char, digit: List<String> = emptyList()): List<String> {
                     val accents = LetterAccents.holds(language, c, digit)
                     val shortcut = if (c in TOP_ROW_SYMBOL_HOLDS) digit.firstOrNull() ?: TOP_ROW_SYMBOL_HOLDS[c] else COMMON_SYMBOL_HOLDS[c]
@@ -404,6 +406,14 @@ data class KeyboardLayout(val rows: List<List<Key>>, val rowHeights: List<Float>
         /** Length, the syllable break and the brackets of a transcription. */
         private val PERIOD_HOLDS_IPA = listOf("ː", "ˑ", "|", "‖", "‿", "/", "[", "]", "?", "!", ",")
 
+        /**
+         * A written language's name for a letter key whose character the IPA chart names otherwise. Navajo writes its
+         * glottal stop with ʼ (U+02BC), alone and after t, k, ch, ts and tł for the ejectives, so its key is the
+         * glottal stop. On the IPA keyboard the same character is the ejective mark on the stress key's hold
+         * ([IPA_NAMES]), and ʔ is the glottal stop.
+         */
+        private val LETTER_NAMES: Map<Char, String> = mapOf('ʼ' to "Glottal stop")
+
         /** What TalkBack says for each IPA symbol: its IPA name, so "type schwa" rather than an unreadable glyph. */
         private val IPA_NAMES: Map<String, String> = mapOf(
             "ə" to "schwa", "ɚ" to "rhotacized schwa", "ɘ" to "reversed e", "ɜ" to "reversed open e", "ɝ" to "rhotacized reversed open e",
@@ -508,8 +518,53 @@ data class KeyboardLayout(val rows: List<List<Key>>, val rowHeights: List<Float>
             "$" -> "Dollar sign"
             "£" -> "Pound sign"
             "ʻ" -> "ʻOkina"
-            "ʼ" -> "Glottal stop"
             "°" -> "Degree sign"
+            // Every other symbol a page or a hold types (November 25, 2026). A bare glyph is read by TalkBack's own
+            // table when it has one and by the voice when it doesn't, and inside a hold's "type ½" always by the voice.
+            ".edu" -> "Dot edu"
+            ".me" -> "Dot me"
+            "`" -> "Grave accent"
+            "~" -> "Tilde"
+            "{" -> "Left brace"
+            "}" -> "Right brace"
+            "[" -> "Left bracket"
+            "]" -> "Right bracket"
+            "«" -> "Left angle quote"
+            "»" -> "Right angle quote"
+            "–" -> "En dash"
+            "—" -> "Em dash"
+            "…" -> "Ellipsis"
+            "·" -> "Middle dot"
+            "•" -> "Bullet"
+            "¶" -> "Paragraph sign"
+            "€" -> "Euro sign"
+            "¥" -> "Yen sign"
+            "¢" -> "Cent sign"
+            "©" -> "Copyright sign"
+            "®" -> "Registered sign"
+            "™" -> "Trademark sign"
+            "✓" -> "Check mark"
+            "¹" -> "Superscript one"
+            "²" -> "Superscript two"
+            "³" -> "Superscript three"
+            "⁴" -> "Superscript four"
+            "½" -> "One half"
+            "⅓" -> "One third"
+            "⅔" -> "Two thirds"
+            "¼" -> "One quarter"
+            "¾" -> "Three quarters"
+            "⅛" -> "One eighth"
+            "⅜" -> "Three eighths"
+            "⅝" -> "Five eighths"
+            "⅞" -> "Seven eighths"
+            "‰" -> "Per mille sign"
+            "×" -> "Multiplication sign"
+            "÷" -> "Division sign"
+            "√" -> "Square root"
+            "π" -> "Pi"
+            "∆" -> "Delta"
+            "∞" -> "Infinity"
+            "∅" -> "Empty set"
             else -> IPA_NAMES[value] ?: value
         }
     }

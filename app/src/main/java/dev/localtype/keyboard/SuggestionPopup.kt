@@ -111,6 +111,8 @@ class SuggestionPopup(private val context: Context) {
         val x = (location[0] + anchor.width / 2 - panel.measuredWidth / 2).coerceIn(dp(4), maxOf(dp(4), screenWidth - panel.measuredWidth - dp(4)))
         // Its bottom stays 2dp above the anchor's top however many rows it has; one row is 56dp.
         popup.showAtLocation(anchor, Gravity.NO_GRAVITY, x, location[1] - panel.measuredHeight - dp(2))
+        // Its own window: marked before its first frame when LocalType is hidden from screen capture.
+        ScreenCapture.cover(popup, KeyboardSettings.hideFromCapture(context))
         TalkBackFocus.moveTo(cells.getOrNull(if (selected in options.indices) selected else 0))
     }
 

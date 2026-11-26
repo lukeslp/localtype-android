@@ -66,4 +66,19 @@ class SetupFlowTest {
         assertEquals(SetupStep.TOUR, SetupFlow.previous(SetupStep.CONTROLS))
         assertEquals(SetupStep.TRY, SetupFlow.previous(SetupStep.TOUR))
     }
+
+    @Test fun `the last step asks about Nano and Gemma only in a build that has one of them`() {
+        assertFalse(SetupFlow.offersModelOnTap(includesNano = false, includesGemma = false))
+        assertTrue(SetupFlow.offersModelOnTap(includesNano = true, includesGemma = false))
+        assertTrue(SetupFlow.offersModelOnTap(includesNano = false, includesGemma = true))
+        // The switch and its sentence are drawn only behind that test, so the catalog build's last step has neither.
+        val setup = java.io.File("src/main/java/dev/localtype/keyboard/SetupActivity.kt").readText()
+        val gate = setup.indexOf("if (SetupFlow.offersModelOnTap()) {")
+        assertTrue("SetupActivity no longer asks SetupFlow.offersModelOnTap()", gate >= 0)
+        val block = setup.substring(gate, setup.indexOf("\n            }\n", gate))
+        for (name in listOf("R.string.model_on_tap_title", "R.string.model_on_tap_body", "KeyboardSettings.setModelOnTap")) {
+            assertEquals(name, 1, Regex(Regex.escape(name)).findAll(setup).count())
+            assertTrue("$name is outside the gate", name in block)
+        }
+    }
 }

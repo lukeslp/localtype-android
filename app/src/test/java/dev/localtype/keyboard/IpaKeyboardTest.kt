@@ -67,6 +67,17 @@ class IpaKeyboardTest {
     }
 
     @Test
+    fun `the ejective mark and the glottal stop have different names`() {
+        // Both are on this keyboard: ʔ on q's hold and ʼ, the ejective mark, on the stress key's hold. Navajo's ʼ key
+        // is named the glottal stop on its own layout only (NavajoKeyboardTest).
+        val keys = letters()
+        assertTrue("ʔ" in keys.key("q").alternates)
+        assertTrue("ʼ" in keys.rows.last().first { it.label == "ˈ" }.alternates)
+        assertEquals("glottal stop", KeyboardLayout.spokenName("ʔ"))
+        assertEquals("ejective", KeyboardLayout.spokenName("ʼ"))
+    }
+
+    @Test
     fun `the second symbols page has the chart's diacritics and tone`() {
         fun page(mode: KeyboardLayout.Mode, language: LanguageProfile) =
             KeyboardLayout.build(mode, showSwitchKey = false, language = language, spaceLabel = "IPA")

@@ -14,8 +14,9 @@ import kotlin.math.abs
  * Parity between [CifgModel] and the Python export it reads. The golden files hold what
  * `model/export.py` computes in float64 from the same int8 weights: the context ids, the top-10
  * ids and logits over the whole vocabulary, and the top-6 offerable words without and with the
- * typed prefix. The tiny random model under `src/test/fixtures` runs every time; the real model
- * runs when the model-data volume is mounted, from `<root>/kotlin/smoke-10min-v2` (written by
+ * typed prefix. The tiny random model under `src/test/fixtures` runs every time, and so does the
+ * bundled model, on the fixed contexts of its own export (`cifg_bundled_golden.tsv`). A larger
+ * export runs when the model-data volume is mounted, from `<root>/kotlin/smoke-10min-v2` (written by
  * `export.py --name smoke-10min-v2 --bin-only --out …`), or from `LOCALTYPE_CIFG_EXPORT`.
  */
 class CifgModelTest {
@@ -32,6 +33,22 @@ class CifgModelTest {
     fun `the tiny model matches its Python golden file`() {
         val worst = checkGolden(tiny, File(FIXTURES, "cifg_tiny_golden.tsv"))
         println("tiny model: largest top-10 logit difference from Python ${"%.2e".format(worst)}")
+    }
+
+    /**
+     * The file the keyboard ships, against the first 28 lines of its own export's `cifg_golden.tsv`: the header and
+     * the 20 contexts of `export.FIXED_CONTEXTS`. The export's other 100 rows are cut from corpus lines and stay out
+     * of the repository. A new bundled model needs these lines from its own export.
+     */
+    @Test
+    fun `the bundled model matches the golden rows from its own export`() {
+        val golden = File(FIXTURES, "cifg_bundled_golden.tsv")
+        assertEquals("the golden's model", listOf(NeuralAsset.FILE_NAME, NeuralAsset.SHA256), CifgGolden.header(golden)["model"])
+        assertEquals("fixed contexts", 20, CifgGolden.rows(golden, "C").size)
+        // NeuralAsset.load refuses any file but the one with that SHA-256.
+        val model = File("src/main/assets/${NeuralAsset.FILE_NAME}").inputStream().use(NeuralAsset::load)
+        val worst = checkGolden(model, golden)
+        println("bundled model: largest top-10 logit difference from Python ${"%.2e".format(worst)}")
     }
 
     @Test

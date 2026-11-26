@@ -84,6 +84,14 @@ object CursorGestures {
      * How many UTF-16 units before the caret [words] whole words take up. A word goes with the punctuation and
      * spaces after it, and leaves the space before it, so what remains is ready to type after.
      */
+    /**
+     * How much TalkBack's Delete previous word removes: one word as a slide measures it ([wordsLength]) from [before],
+     * the text read before the caret, or nothing when that read failed or text is selected (Delete acts on a
+     * selection itself).
+     */
+    fun wordDeletion(before: String?, selected: Boolean): Int =
+        if (before == null || selected) 0 else wordsLength(before, 1)
+
     fun wordsLength(before: String, words: Int): Int {
         var i = before.length
         fun codePoint() = Character.codePointBefore(before, i)

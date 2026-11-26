@@ -50,6 +50,15 @@ class KeyboardView(context: Context) : View(context) {
 
         /** The delete slide ended: remove what it covered when [commit], otherwise leave the text alone. */
         fun onDeleteSlideEnd(commit: Boolean) {}
+
+        /**
+         * TalkBack's Delete previous word on the Delete key. No press came before it, so it can't wait for one to show
+         * in the text as a slide does; the service measures the word from a fresh read.
+         */
+        fun onDeleteWord() {
+            onDeleteSlide(1)
+            onDeleteSlideEnd(true)
+        }
         /** Whether a press on a letter may become a swipe ([SwipeStart.Accepted]) or, refused, why. */
         fun onSwipeStart(): SwipeStart = SwipeStart.Off
         fun onSwipe(path: SwipePath) {}
@@ -91,6 +100,16 @@ class KeyboardView(context: Context) : View(context) {
             accessibility.invalidateRoot()
         }
 
+    /**
+     * Puts an English key name ("Comma", "Shift, on", "Space, Español") into the phone's language for TalkBack. The
+     * service sets it to [SpokenKeyNames.resolve]; left alone, names stay in English.
+     */
+    var speak: (String) -> String = { it }
+        set(value) {
+            field = value
+            accessibility.invalidateRoot()
+        }
+
     var enterLabel: String = "↵"
         set(value) {
             if (field == value) return
@@ -112,6 +131,9 @@ class KeyboardView(context: Context) : View(context) {
             field = value
             invalidate()
         }
+
+    /** Hide LocalType from screen capture: the hold popup is a window of its own and is marked per show ([ScreenCapture]). */
+    var hideFromCapture: Boolean = false
 
     /** Ignore the narrow painted row gaps, plus a band below the suggestion strip; off by default. */
     var inactiveGaps: Boolean = false
@@ -910,18 +932,26 @@ class KeyboardView(context: Context) : View(context) {
             getLocationInWindow(location)
             if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) reachableTop = -location[1].toFloat()
             window.showAtLocation(this@KeyboardView, android.view.Gravity.NO_GRAVITY, location[0] + originX.toInt(), location[1] + originY.toInt())
-            content.contentDescription = options.joinToString(" ")
-            announceForAccessibility(options.first())
+            ScreenCapture.cover(window, hideFromCapture)
+            content.contentDescription = options.joinToString(" ") { spokenOption(it) }
+            announceForAccessibility(spokenOption(options.first()))
         }
 
-        /** Picks the option under the finger; returns true when the highlight moved. */
+        /**
+         * Picks the option under the finger; returns true when the highlight moved. TalkBack's double-tap and hold
+         * passes the finger through to this popup, so with touch exploration on each newly highlighted choice is
+         * said; before 2026-11-25 only the first was, and sliding to é was silent.
+         */
         fun select(x: Float, y: Float): Boolean {
             val index = PopupGeometry.indexAt(x, y, placement, originY, columns, rows, cellWidth, cellHeight, options.size, reachableTop)
             if (index == selectedIndex) return false
             selectedIndex = index
             content.invalidate()
+            options.getOrNull(index)?.let { if (exploring()) announceForAccessibility(spokenOption(it)) }
             return true
         }
+
+        private fun spokenOption(option: String) = speak(KeyboardLayout.spokenName(option))
 
         fun selected(): String? = options.getOrNull(selectedIndex)
 
@@ -979,6 +1009,10 @@ class KeyboardView(context: Context) : View(context) {
     override fun dispatchHoverEvent(event: MotionEvent): Boolean =
         accessibility.dispatchHoverEvent(event) || super.dispatchHoverEvent(event)
 
+    /** TalkBack's touch exploration is on (only then does a sliding finger's choice need saying). */
+    private fun exploring(): Boolean =
+        context.getSystemService(android.view.accessibility.AccessibilityManager::class.java)?.isTouchExplorationEnabled == true
+
     private fun flatKeys(): List<Pair<Key, RectF>> = layout.rows.flatMapIndexed { r, row ->
         row.mapIndexedNotNull { k, key -> if (key.isSpacer) null else bounds.getOrNull(r)?.getOrNull(k)?.let { key to it } }
     }
@@ -1003,15 +1037,19 @@ class KeyboardView(context: Context) : View(context) {
             node.contentDescription = spokenLabel(key)
             node.className = "android.inputmethodservice.Keyboard\$Key"
             node.setBoundsInParent(android.graphics.Rect(rect.left.toInt(), rect.top.toInt(), rect.right.toInt(), rect.bottom.toInt()))
+            // A keyboard key, so TalkBack's lift-to-type acts on the key a finger lifts from (Android 10 and later;
+            // a no-op before). Without it TalkBack logged "Lift-to-type node:FALSE" on every key and only a double-tap typed.
+            node.isTextEntryKey = true
             // Accessibility keeps the full stable cell; direct touch alone has the optional inactive margins.
             node.addAction(AccessibilityNodeInfoCompat.ACTION_CLICK)
             node.isClickable = true
-            // What a hold types (a number's symbol, a letter's first accent), announced as the hold action.
+            // What a hold types (a number's symbol, a letter's first accent), announced as the hold action. TalkBack's
+            // double-tap and hold reaches the key as a real hold, which opens the popup with this choice first.
             key.alternates.firstOrNull()?.let { alternate ->
                 node.addAction(
                     AccessibilityNodeInfoCompat.AccessibilityActionCompat(
                         AccessibilityNodeInfoCompat.ACTION_LONG_CLICK,
-                        context.getString(R.string.key_hold_action, KeyboardLayout.spokenName(casedAlternate(alternate))),
+                        context.getString(R.string.key_hold_action, speak(KeyboardLayout.spokenName(casedAlternate(alternate)))),
                     ),
                 )
                 node.isLongClickable = true
@@ -1021,7 +1059,7 @@ class KeyboardView(context: Context) : View(context) {
             key.alternates.drop(1).forEachIndexed { index, alternate ->
                 ALTERNATE_ACTIONS.getOrNull(index)?.let { id ->
                     node.addAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat(id,
-                        context.getString(R.string.key_hold_action, KeyboardLayout.spokenName(casedAlternate(alternate)))))
+                        context.getString(R.string.key_hold_action, speak(KeyboardLayout.spokenName(casedAlternate(alternate))))))
                 }
             }
             // A slide is not available under touch exploration, so its moves are actions on the same keys.
@@ -1041,29 +1079,37 @@ class KeyboardView(context: Context) : View(context) {
             if (key.action == KeyAction.Space) listener?.twoFingerActions()?.forEach { (swipe, label) ->
                 node.addAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat(gestureActionId(swipe), label))
             }
-            // Two shift taps inside the caps-lock window are too fast for TalkBack gestures, so holding Shift locks it.
+            // Two shift taps inside the caps-lock window are too fast for TalkBack gestures, so caps lock is an action in
+            // TalkBack's actions menu. It was the hold action until 2026-11-25, but in a keyboard TalkBack's double-tap
+            // and hold reaches the key as a plain touch, so the hint "double-tap and hold to turn on caps lock" only
+            // toggled Shift.
             if (key.action == KeyAction.Shift) {
                 node.addAction(
                     AccessibilityNodeInfoCompat.AccessibilityActionCompat(
-                        AccessibilityNodeInfoCompat.ACTION_LONG_CLICK,
+                        R.id.key_caps_lock,
                         context.getString(if (shiftState == ShiftState.LOCKED) R.string.caps_lock_off_action else R.string.caps_lock_on_action),
                     ),
                 )
-                node.isLongClickable = true
             }
         }
 
         override fun onPerformActionForVirtualView(virtualViewId: Int, action: Int, arguments: Bundle?): Boolean {
             val key = flatKeys().getOrNull(virtualViewId)?.first ?: return false
             when (action) {
-                AccessibilityNodeInfoCompat.ACTION_CLICK -> listener?.onKey(key.action)
-                AccessibilityNodeInfoCompat.ACTION_LONG_CLICK -> {
+                AccessibilityNodeInfoCompat.ACTION_CLICK -> {
+                    val before = shiftState
+                    listener?.onKey(key.action)
+                    // TalkBack says "Shift, on" as the focused key's name changes, but nothing as it goes back to "Shift".
+                    if (key.action == KeyAction.Shift) TypingRules.shiftAnnouncement(before, shiftState)?.let { announceForAccessibility(speak(it)) }
+                }
+                R.id.key_caps_lock, AccessibilityNodeInfoCompat.ACTION_LONG_CLICK -> {
                     if (key.action == KeyAction.Shift) {
                         listener?.onCapsLock()
                         // Redrawing the key alone may not be spoken for the focused node.
-                        announceForAccessibility(if (shiftState == ShiftState.LOCKED) "Caps lock, on" else "Caps lock, off")
+                        announceForAccessibility(speak(if (shiftState == ShiftState.LOCKED) "Caps lock, on" else "Caps lock, off"))
                         return true
                     }
+                    if (action == R.id.key_caps_lock) return false
                     if (key.action == KeyAction.Space && listener?.languageChooserOffered() == true) {
                         listener?.onLongPressSpace()
                         return true
@@ -1073,10 +1119,7 @@ class KeyboardView(context: Context) : View(context) {
                 }
                 R.id.key_cursor_left -> listener?.onCursorSlide(-1)
                 R.id.key_cursor_right -> listener?.onCursorSlide(1)
-                R.id.key_delete_word -> {
-                    listener?.onDeleteSlide(1)
-                    listener?.onDeleteSlideEnd(true)
-                }
+                R.id.key_delete_word -> listener?.onDeleteWord()
                 R.id.key_gesture_left -> listener?.onTwoFingerSwipe(TwoFingerSwipe.LEFT)
                 R.id.key_gesture_right -> listener?.onTwoFingerSwipe(TwoFingerSwipe.RIGHT)
                 R.id.key_gesture_up -> listener?.onTwoFingerSwipe(TwoFingerSwipe.UP)
@@ -1097,7 +1140,7 @@ class KeyboardView(context: Context) : View(context) {
             TwoFingerSwipe.DOWN -> R.id.key_gesture_down
         }
 
-        private fun spokenLabel(key: Key): String = when {
+        private fun spokenLabel(key: Key): String = speak(when {
             key.action == KeyAction.Enter -> enterLabel.takeUnless { it == "↵" } ?: "Return"
             key.action == KeyAction.Shift -> when (shiftState) {
                 ShiftState.OFF -> "Shift"
@@ -1107,7 +1150,7 @@ class KeyboardView(context: Context) : View(context) {
             key.action is KeyAction.Text && shiftState != ShiftState.OFF && key.label.length == 1 && key.label[0].isLetter() ->
                 "Capital ${key.label.uppercase()}"
             else -> key.spokenLabel
-        }
+        })
     }
 
     private companion object {

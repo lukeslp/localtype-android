@@ -21,10 +21,12 @@ app/src/main/assets/licenses/:
   FrequencyWords/OpenSubtitles-derived Spanish and Portuguese lists, CC BY-SA 4.0.
 - corpus_prior_es.bin and corpus_prior_pt.bin: Leipzig corpus word-pair statistics,
   CC BY 4.0; see corpus-prior-es-NOTICE.txt and corpus-prior-pt-NOTICE.txt.
-- words_he*.txt: FrequencyWords/OpenSubtitles-derived Hebrew lists, CC BY-SA 4.0.
-- words_cy*.txt, words_ga*.txt, words_mi*.txt: counted from the Welsh, Irish and
-  Maori Wikipedia dumps of 2026-11-01, CC BY-SA 4.0; see wordlists-NOTICE.txt.
-- words_haw*.txt: from dohliam/hawaiian-corpus, CC0 1.0.
+- words_he*.txt and words_known_he.txt: FrequencyWords/OpenSubtitles-derived
+  Hebrew lists, CC BY-SA 4.0.
+- words_cy*.txt, words_known_cy.txt, words_ga*.txt, words_known_ga.txt,
+  words_mi*.txt, words_known_mi.txt: counted from the Welsh, Irish and Maori
+  Wikipedia dumps of 2026-11-01, CC BY-SA 4.0; see wordlists-NOTICE.txt.
+- words_haw*.txt and words_known_haw.txt: from dohliam/hawaiian-corpus, CC0 1.0.
 - words_ar*.txt and words_known_ar.txt: FrequencyWords/OpenSubtitles-derived
   Arabic lists, CC BY-SA 4.0.
 - words_fa*.txt and words_known_fa.txt: Persian lists from FrequencyWords/

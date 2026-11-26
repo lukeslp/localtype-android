@@ -1,0 +1,39 @@
+Software built into LocalType for Android
+
+LocalType's own code is Copyright 2026 Luke Steuber and licensed under the
+Apache License, Version 2.0. Its text is Apache-2.0 in this list.
+
+Every build of the app also contains the libraries below. Each is licensed under
+the Apache License, Version 2.0. Under each name are the Maven groups the build
+takes it from.
+
+AndroidX libraries, from The Android Open Source Project
+  androidx.annotation
+  androidx.arch.core
+  androidx.autofill
+  androidx.collection
+  androidx.concurrent
+  androidx.core
+  androidx.customview
+  androidx.interpolator
+  androidx.lifecycle
+  androidx.profileinstaller
+  androidx.recyclerview
+  androidx.startup
+  androidx.tracing
+  androidx.versionedparcelable
+
+Kotlin standard library, from JetBrains and the Kotlin contributors
+  org.jetbrains.kotlin
+
+kotlinx.coroutines, from JetBrains and its contributors
+  org.jetbrains.kotlinx
+
+JetBrains annotations, from JetBrains
+  org.jetbrains
+
+ListenableFuture, from the Guava authors
+  com.google.guava
+
+The catalog build has only these. A build with the optional models lists what
+they add in a second notice.

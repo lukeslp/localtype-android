@@ -1,6 +1,5 @@
 package dev.localtype.keyboard
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.database.ContentObserver
@@ -25,7 +24,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 
 /** First app launch walks through Android setup, a real typing field, then reversible controls. */
-class SetupActivity : Activity() {
+class SetupActivity : CoveredActivity() {
     private lateinit var content: LinearLayout
     private lateinit var progress: TextView
     private lateinit var heading: TextView
@@ -208,15 +207,18 @@ class SetupActivity : Activity() {
                 isChecked = KeyboardSettings.neuralPredictions(this@SetupActivity)
                 setOnCheckedChangeListener { _, checked -> KeyboardSettings.setNeuralPredictions(this@SetupActivity, checked) }
             }, row())
-            actions.addView(Switch(this).apply {
-                text = getString(R.string.model_on_tap_title)
-                textSize = 17f
-                setTextColor(getColor(R.color.on_surface))
-                minHeight = dp(48)
-                isChecked = KeyboardSettings.modelOnTap(this@SetupActivity)
-                setOnCheckedChangeListener { _, checked -> KeyboardSettings.setModelOnTap(this@SetupActivity, checked) }
-            }, row().apply { topMargin = dp(8) })
-            actions.addView(label(getString(R.string.model_on_tap_body), 15f, R.color.on_surface_variant))
+            // The catalog build has neither model, so it has nothing to ask about here.
+            if (SetupFlow.offersModelOnTap()) {
+                actions.addView(Switch(this).apply {
+                    text = getString(R.string.model_on_tap_title)
+                    textSize = 17f
+                    setTextColor(getColor(R.color.on_surface))
+                    minHeight = dp(48)
+                    isChecked = KeyboardSettings.modelOnTap(this@SetupActivity)
+                    setOnCheckedChangeListener { _, checked -> KeyboardSettings.setModelOnTap(this@SetupActivity, checked) }
+                }, row().apply { topMargin = dp(8) })
+                actions.addView(label(getString(R.string.model_on_tap_body), 15f, R.color.on_surface_variant))
+            }
             actions.addView(label(getString(R.string.walkthrough_privacy_body), 15f, R.color.on_surface_variant))
         }
         val primary = when {

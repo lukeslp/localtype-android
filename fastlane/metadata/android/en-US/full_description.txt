@@ -1,21 +1,26 @@
 <p>LocalType is an Android keyboard with word predictions and corrections that run on your device. Chime, its small English prediction model, is included. Typing needs no account or model download.</p>
 
+<p>LocalType is beta software in active development. It changes often, and some features are still early.</p>
+
 <ul>
 <li>Correct clear typos and undo a correction when it is wrong.</li>
 <li>Choose word suggestions, save useful text and manage learned word pairs.</li>
+<li>Give saved text a shortcut word or phrase, and it is offered when you type it.</li>
 <li>Add your own words one at a time or import a word list, and block words you never want suggested.</li>
-<li>Open a row of tools above the keys: the clipboard, emoji, voice input, undo, an arrow pad, symbols and more.</li>
+<li>Switch on a word pack for drug names and medical terms or for US politics; both start off.</li>
+<li>Use LocalType as the phone's spell checker in other apps, in English, Spanish and Portuguese.</li>
+<li>Open a row of tools above the keys: the clipboard, emoji, voice input, undo, an arrow pad, named symbols, text effects and more.</li>
 <li>Reach accents, IPA symbols, emoji and optional common symbols by holding keys or opening their panels.</li>
 <li>Choose British spelling and currency symbols separately.</li>
 <li>Adjust the space bar, suggestion bar, one-handed mode, number row and cursor sliding.</li>
-<li>Turn on touch and timing options for a tremor or limited reach, and use every key with TalkBack.</li>
+<li>Turn on touch and timing options for a tremor or limited reach. Every key and its held choices are labeled for TalkBack.</li>
+<li>Move your settings and words to another phone in one file you save and read yourself.</li>
 </ul>
 
-<p>English is the main language. Spanish, Portuguese, Galician, Hebrew, Arabic, Persian, Welsh, Irish, Scottish Gaelic, Māori, Hawaiian and swipe typing are early experiments and start off. Navajo is a very early experiment that corrects nothing automatically. A dedicated IPA layout is also available. These features still need wider testing.</p>
+<p>English is the main language. Spanish, Portuguese, Galician, Hebrew, Arabic, Persian, Welsh, Irish, Scottish Gaelic, Māori, Hawaiian and swipe typing are early experiments and start off. Navajo is a very early experiment that corrects nothing automatically. A dedicated IPA layout is also available. Settings and setup are translated into Spanish and Portuguese; the translation is machine-made and not yet checked by a native speaker. These features still need wider testing.</p>
 
-<p>The F-Droid distribution has no Internet permission. It keeps Chime and the local typing tools, and leaves updates to your installing client. The separate full distribution's optional Gemini Nano and Gemma features are not included.</p>
+<p>This F-Droid build is a separate app from the direct download on dr.eamer.dev: both can be installed, and neither updates the other. It includes Chime's next-word prediction. It leaves out Proofread, the rewrite tools (Shorter, More formal and Friendlier) and the extra suggestions from a larger on-device model (Gemini Nano or Gemma). It has no Internet permission, and its updates come through F-Droid.</p>
 
 <p>Typing logs are optional and start off. Password fields do not teach predictions. You can inspect or clear learned words and pairs. Voice input uses Android's on-device recognizer when available, or can switch to another enabled voice keyboard; that other keyboard has its own privacy behavior. The microphone permission is requested the first time you use voice input.</p>
 
-<p>The Contacts tool can insert a name, number or address once you allow it. Contacts stay on the phone, in memory only, and are never learned or sent.</p>
-
+<p>The Contacts tool can insert a name, number or address once you allow it. Contacts stay on the phone, in memory only, and are never learned or sent. As a spell checker, LocalType reads the text other apps ask it to check and keeps none of it.</p>

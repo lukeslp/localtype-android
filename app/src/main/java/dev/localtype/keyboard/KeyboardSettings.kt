@@ -19,6 +19,7 @@ object KeyboardSettings {
     private const val KEEP_MODEL_LOADED = "keep_model_loaded"
     const val SPARKLE_BUTTON = "sparkle_button"
     const val MODEL_SET_UP = "model_set_up"
+    private const val NANO_REFUSED_TO_KEYBOARD = "nano_refused_to_keyboard"
     private const val TRIPLE_SPACE_PROOFREAD = "triple_space_proofread"
     private const val LEARNED_GENERATION = "learned_generation"
     private const val PREDICTION_LOG = "prediction_log"
@@ -43,9 +44,11 @@ object KeyboardSettings {
     private const val STEADY_KEYS = "steady_keys"
     private const val AIM_FROM_TOUCHES = "aim_from_touches"
     const val INACTIVE_GAPS = "inactive_gaps"
+    const val HIDE_FROM_CAPTURE = "hide_from_capture"
     private const val GESTURE_PREFIX = "gesture_"
     private const val PASSWORD_MANAGER_SUGGESTIONS = "password_manager_suggestions"
     private const val CLEAN_PASTED_LINKS = "clean_pasted_links"
+    private const val STRIP_IMAGE_DETAILS = "strip_image_details"
     private const val REMEMBER_DOMAINS = "remember_domains"
     const val ENGLISH = "language_english"
     const val SPANISH = "language_spanish"
@@ -137,6 +140,16 @@ object KeyboardSettings {
         if (!prefs(context).contains(MODEL_SET_UP) || modelSetUp(context) != setUp) prefs(context).edit().putBoolean(MODEL_SET_UP, setUp).apply()
     }
 
+    /**
+     * Whether Android has refused Gemini Nano to the keyboard in another app on this phone ([ModelFallback]), for the
+     * line Settings shows. Not a choice: the keyboard writes it at the first refusal, and clears it if Nano later
+     * answers the keyboard in another app.
+     */
+    fun nanoRefusedToKeyboard(context: Context) = prefs(context).getBoolean(NANO_REFUSED_TO_KEYBOARD, false)
+    fun rememberNanoRefusedToKeyboard(context: Context, refused: Boolean) {
+        if (nanoRefusedToKeyboard(context) != refused) prefs(context).edit().putBoolean(NANO_REFUSED_TO_KEYBOARD, refused).apply()
+    }
+
     /** Explicit sentence review; double-space punctuation works independently of this choice. */
     fun tripleSpaceProofread(context: Context) = prefs(context).getBoolean(TRIPLE_SPACE_PROOFREAD, false)
     fun setTripleSpaceProofread(context: Context, on: Boolean) = prefs(context).edit().putBoolean(TRIPLE_SPACE_PROOFREAD, on).apply()
@@ -221,6 +234,10 @@ object KeyboardSettings {
     fun inactiveGaps(context: Context) = prefs(context).getBoolean(INACTIVE_GAPS, false)
     fun setInactiveGaps(context: Context, on: Boolean) = prefs(context).edit().putBoolean(INACTIVE_GAPS, on).apply()
 
+    /** Hide LocalType from screen capture ([ScreenCapture]): off unless the person turns it on. */
+    fun hideFromCapture(context: Context) = prefs(context).getBoolean(HIDE_FROM_CAPTURE, false)
+    fun setHideFromCapture(context: Context, on: Boolean) = prefs(context).edit().putBoolean(HIDE_FROM_CAPTURE, on).apply()
+
     /** English letter swipe prototype; a new or existing installation starts off. */
     fun experimentalSwipe(context: Context) = prefs(context).getBoolean(EXPERIMENTAL_SWIPE, false)
     fun setExperimentalSwipe(context: Context, on: Boolean) = prefs(context).edit().putBoolean(EXPERIMENTAL_SWIPE, on).apply()
@@ -242,6 +259,13 @@ object KeyboardSettings {
     /** Tracking parameters come off links pasted through the keyboard, on by default. Read once per field. */
     fun cleanPastedLinks(context: Context) = prefs(context).getBoolean(CLEAN_PASTED_LINKS, true)
     fun setCleanPastedLinks(context: Context, on: Boolean) = prefs(context).edit().putBoolean(CLEAN_PASTED_LINKS, on).apply()
+
+    /**
+     * Location, camera and other details come off an image pasted with the paste chip ([ImageMetadata]), on by
+     * default; a saved off choice wins. Read at each paste.
+     */
+    fun stripImageDetails(context: Context) = prefs(context).getBoolean(STRIP_IMAGE_DETAILS, true)
+    fun setStripImageDetails(context: Context, on: Boolean) = prefs(context).edit().putBoolean(STRIP_IMAGE_DETAILS, on).apply()
 
     /** Hosts of addresses typed in full are remembered and offered, on by default. Read once per field. */
     fun rememberDomains(context: Context) = prefs(context).getBoolean(REMEMBER_DOMAINS, true)
@@ -386,7 +410,8 @@ object KeyboardSettings {
         AUTOCORRECT, WEB_AUTOCORRECT, AUTO_CAPITALIZE, PROFANITY, EMOJI, NEURAL_PREDICTIONS, NUMBER_ROW, VIBRATE_ON_KEY_PRESS,
         MODEL_ON_TAP, KEEP_MODEL_LOADED, SPARKLE_BUTTON, TRIPLE_SPACE_PROOFREAD, VOICE_INPUT, SLIDE_GESTURES, KEY_SHAPES,
         BRITISH_SPELLING, COMMON_SYMBOL_HOLDS, EXPERIMENTAL_SWIPE, TWO_FINGER_GESTURES, STEADY_KEYS, AIM_FROM_TOUCHES,
-        INACTIVE_GAPS, PASSWORD_MANAGER_SUGGESTIONS, CLEAN_PASTED_LINKS, REMEMBER_DOMAINS, AUTO_UPDATE_CHECK,
+        INACTIVE_GAPS, HIDE_FROM_CAPTURE, PASSWORD_MANAGER_SUGGESTIONS, CLEAN_PASTED_LINKS, REMEMBER_DOMAINS, AUTO_UPDATE_CHECK,
+        STRIP_IMAGE_DETAILS,
         ENGLISH, SPANISH, IPA, PORTUGUESE, HEBREW, WELSH, IRISH, MAORI, HAWAIIAN,
     ) + LanguageProfile.EXTRA.map(::extraKey) + WordPackCatalog.BUNDLED.map { packKey(it.id) }
     private val PORTABLE_INTS: Map<String, IntRange> = mapOf(
@@ -401,7 +426,7 @@ object KeyboardSettings {
      * install, what the update check last saw, and the typing log's switch, which is turned on by hand on each phone.
      */
     private val STAYS: Set<String> = setOf(
-        MODEL_SET_UP, LEARNED_GENERATION, PREDICTION_LOG, UPDATE_CHECKED_AT, UPDATE_LATEST_CODE, UPDATE_LATEST_NAME,
+        MODEL_SET_UP, NANO_REFUSED_TO_KEYBOARD, LEARNED_GENERATION, PREDICTION_LOG, UPDATE_CHECKED_AT, UPDATE_LATEST_CODE, UPDATE_LATEST_NAME,
         UPDATE_INSTALLABLE, UPDATE_DISMISSED_CODE, SETUP_COMPLETE, SETUP_STEP, TOUR_SEEN, IMPORTED_PACKS,
     )
     /** Names, codes and comma-separated ids: nothing a setting holds needs more than this. */

@@ -14,7 +14,7 @@ val keystoreProperties = Properties().apply {
 
 android {
     namespace = "dev.localtype.keyboard"
-    compileSdk = 35
+    compileSdk = 36
     // With the verification variant (verification/editor-fixture/verification-variant.gradle) the test APK can be
     // built against it, so a device check runs beside the released keyboard: -Plocaltype.testBuildType=verification
     (findProperty("localtype.testBuildType") as String?)?.let { testBuildType = it }
@@ -22,9 +22,10 @@ android {
     defaultConfig {
         applicationId = "dev.localtype.keyboard"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 81
-        versionName = "0.5.60"
+        // Google Play accepts new apps and updates only at API 36.
+        targetSdk = 36
+        versionCode = 86
+        versionName = "0.5.65"
         // A device check names its own runner: -Plocaltype.runner=dev.localtype.keyboard.SpellCheckerDeviceChecks
         testInstrumentationRunner = (findProperty("localtype.runner") as String?) ?: "dev.localtype.keyboard.ToolsReflowChecks"
         // Phones only. The x86_64 copy of the model runtime's native library was 26 MB that only emulators loaded.
@@ -32,7 +33,7 @@ android {
         ndk { abiFilters += "arm64-v8a" }
     }
 
-    // Only the full distribution packages ML Kit and Gemma (modelkit, LiteRT-LM); the F-Droid one has no
+    // Only full and play package ML Kit and Gemma (modelkit, LiteRT-LM); the F-Droid one has no
     // Nano/Gemma integration or network use. Bundled Chime remains. F-Droid clients own updates.
     // The two are different apps to Android: full keeps the issued identity, and the catalog build has
     // its own application ID, so no repository client can replace one with the other in either direction.
@@ -49,14 +50,32 @@ android {
         create("fdroid") {
             dimension = "distribution"
             applicationId = "dev.localtype.keyboard.fdroid"
-            // Private catalog candidate approved November 6. Full keeps its issued identity.
-            versionCode = 63
-            versionName = "0.5.42"
+            // The catalog build shares defaultConfig's version: its own package has its own version-code line,
+            // so it no longer needs a pinned name and code (0.5.42 (63) until November 20, 2026).
             buildConfigField("boolean", "INCLUDES_NANO", "false")
             buildConfigField("boolean", "INCLUDES_GEMMA", "false")
             buildConfigField("boolean", "DIRECT_UPDATES", "false")
             buildConfigField("boolean", "MODEL_LAB", "false")
         }
+        // Google Play: the full app under the same application ID, with the app's own update check and its
+        // download-page link turned off, because Play requires that only Play updates an app it delivers.
+        // It shares full's sources and manifest (sourceSets below) and adds only its own privacy wording.
+        create("play") {
+            dimension = "distribution"
+            buildConfigField("boolean", "INCLUDES_NANO", "true")
+            buildConfigField("boolean", "INCLUDES_GEMMA", "true")
+            buildConfigField("boolean", "DIRECT_UPDATES", "false")
+            buildConfigField("boolean", "MODEL_LAB", "false")
+        }
+    }
+
+    sourceSets {
+        getByName("play") {
+            java.srcDir("src/full/java")
+            assets.srcDir("src/full/assets")
+            manifest.srcFile("src/full/AndroidManifest.xml")
+        }
+        getByName("testPlay") { java.srcDir("src/testFull/java") }
     }
 
     signingConfigs {
@@ -78,8 +97,10 @@ android {
             matchingFallbacks += "release"
         }
         release {
-            // No shrinking: the model runtime loads native code by reflection.
+            // No shrinking for full and play: the model runtime loads native code by reflection. The catalog build
+            // (fdroid) has no model runtime, and androidComponents below turns R8 on for its release alone.
             isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             // Release candidates are built from their final prospective public Git commit.
             vcsInfo.include = true
             if (keystoreProperties.isNotEmpty()) signingConfig = signingConfigs.getByName("release")
@@ -118,6 +139,14 @@ android {
 kotlin {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
+}
+
+// R8 for fdroidRelease only (docs/fdroid-r8-trial-2026-11-20.md). The DSL sets minification per build type, so the
+// variant API sets it for this one variant; full, play and every other build type stay unshrunk.
+androidComponents {
+    beforeVariants(selector().withFlavor("distribution" to "fdroid").withBuildType("release")) { variant ->
+        variant.isMinifyEnabled = true
     }
 }
 
@@ -206,7 +235,10 @@ tasks.withType<Test>().configureEach {
 
 dependencies {
     implementation(project(":engine"))
-    if (findProject(":modelkit") != null) add("fullImplementation", project(":modelkit"))
+    if (findProject(":modelkit") != null) {
+        add("fullImplementation", project(":modelkit"))
+        add("playImplementation", project(":modelkit"))
+    }
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
     implementation("androidx.customview:customview:1.1.0")
     implementation("androidx.core:core:1.13.1")
@@ -218,6 +250,7 @@ dependencies {
     // On-device language models, in the full distribution only: Gemini Nano through AICore, and Gemma (LiteRT-LM)
     // through :modelkit. The F-Droid distribution carries neither.
     add("fullImplementation", "com.google.mlkit:genai-prompt:1.0.0-beta4")
+    add("playImplementation", "com.google.mlkit:genai-prompt:1.0.0-beta4")
 
     testImplementation("junit:junit:4.13.2")
 }

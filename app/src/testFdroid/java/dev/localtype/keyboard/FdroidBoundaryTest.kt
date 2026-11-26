@@ -32,4 +32,12 @@ class FdroidBoundaryTest {
         assertEquals(FoundationModelStatus.NOT_SUPPORTED, runBlocking { FoundationModelProviderFactory.create(context).status() })
         assertFalse(ModelKitBridge.sharingOffered(99))
     }
+
+    @Test fun `catalog build names no Nano, Gemma or Proofread in setup and the tools row summary`() {
+        // Setup's last step drops "Ask Nano/Gemma only when I tap", and Reset the tools row lists only what the row shows.
+        assertFalse(SetupFlow.offersModelOnTap())
+        assertFalse(StripTools.buildHasModels)
+        assertFalse(StripTool.PROOFREAD in StripTools.described(null))
+        assertEquals(StripTools.ROW_ORDER - StripTool.PROOFREAD, StripTools.described(null))
+    }
 }

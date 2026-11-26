@@ -19,6 +19,23 @@ class CharacterToolsTest {
         assertEquals(PlainSymbols.entries.size, PlainSymbols.entries.map { it.text }.distinct().size)
     }
 
+    @Test fun catalogFindsLogicAndSetSignsByTheirNamesInEachLanguage() {
+        val expected = mapOf(
+            "for all" to "∀", "exists" to "∃", "not exists" to "∄", "negation" to "¬", "and" to "∧", "disjunction" to "∨",
+            "implies" to "⇒", "if and only if" to "⇔", "iff" to "↔", "element of" to "∈", "not in set" to "∉", "subset" to "⊂",
+            "subset or equal" to "⊆", "union" to "∪", "intersection" to "∩", "empty set" to "∅", "tautology" to "⊤",
+            "contradiction" to "⊥", "turnstile" to "⊢", "entails" to "⊨",
+            "para todo" to "∀", "existe" to "∃", "conjunción" to "∧", "implica" to "⇒", "conjunto vazio" to "∅", "não existe" to "∄",
+        )
+        expected.forEach { (query, symbol) -> assertTrue("$query → $symbol", PlainSymbols.search(query).any { it.text == symbol }) }
+        // The arrow already in the catalog is found for an implication too, and is still listed once.
+        assertTrue(PlainSymbols.search("implies").any { it.text == "→" })
+        assertEquals(1, PlainSymbols.entries.count { it.text == "→" })
+        // Its English name reads first, so TalkBack says "∀ · for all", not a list of search words.
+        assertTrue(PlainSymbols.entries.single { it.text == "∀" }.name("en").startsWith("for all"))
+        assertTrue(PlainSymbols.entries.single { it.text == "∃" }.name("es").startsWith("existe"))
+    }
+
     @Test fun catalogNeverAddsPresentationSelectorsToTextEntries() {
         for (entry in PlainSymbols.entries) {
             if (entry.kind == PlainSymbols.Kind.TEXT) assertFalse(entry.text.any { it == '\uFE0E' || it == '\uFE0F' })

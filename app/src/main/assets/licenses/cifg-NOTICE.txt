@@ -66,9 +66,9 @@ and without warranties under their respective licenses.
    Tatoeba is a collaborative collection of example sentences maintained by Association Tatoeba.
    English export eng_sentences.tsv.bz2, downloaded 2026-11-14 02:59 UTC, SHA-256
    1a2d75ac07aa5d035bff4e2bf053139dfd3b1f1645f6fd3d76fc852cc9ef6020.
-   1,340,659 sentences were used, written by the 6,686 Tatoeba contributors listed by username,
-   with their sentence counts, in cifg-tatoeba-contributors.txt alongside this notice; 43,803 more
-   have no owner on record. Human-written.
+   1,340,659 sentences were used: 1,296,856 written by the 6,686 Tatoeba contributors listed by
+   username, with their sentence counts, in cifg-tatoeba-contributors.txt alongside this notice,
+   and 43,803 with no owner on record. Human-written.
    License: Creative Commons Attribution 2.0 France (CC BY 2.0 FR).
    https://creativecommons.org/licenses/by/2.0/fr/
 
@@ -91,6 +91,16 @@ and without warranties under their respective licenses.
    The underlying pages are also subject to the Common Crawl terms of use.
    https://commoncrawl.org/terms-of-use
 
+Vocabulary selection also used LocalType's words_en.txt, a word-frequency list derived from
+hermitdave/FrequencyWords (OpenSubtitles 2018 English), https://github.com/hermitdave/FrequencyWords,
+licensed under Creative Commons Attribution-ShareAlike 4.0 International. It shaped which words
+are in the vocabulary; it is not training text. Its own notice is wordlists-NOTICE.txt alongside
+this one.
+
 The vocabulary's emoji tokens come from LocalType's emoji_en.txt, a word-to-emoji list
 written for LocalType. The separate emoji panel uses Unicode and CLDR data; its attribution
 and license terms are in Unicode-LICENSE.txt.
+
+The weights and vocabulary in cifg_int8.bin are licensed under the Creative Commons
+Attribution-ShareAlike 4.0 International license (CC BY-SA 4.0). A copy is included in
+CC-BY-SA-4.0.txt alongside this notice.

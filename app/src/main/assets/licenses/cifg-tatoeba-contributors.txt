@@ -1,5 +1,5 @@
 # Tatoeba contributors whose English sentences trained this model (https://tatoeba.org, CC BY 2.0 FR).
-# 1,340,659 sentences from 6,686 named contributors; 43,803 more have no owner on record.
+# 1,296,856 sentences from 6,686 named contributors; 43,803 more have no owner on record (1,340,659 in all).
 # From Tatoeba's detailed English export, SHA-256 afec98e4c44a72f8fc709ce4d672fd3ab7f9ca731402f5d35e384b0b21b207c5.
 # username	sentences
 CK	374626

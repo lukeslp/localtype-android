@@ -28,6 +28,12 @@ interface FoundationModelProvider : AutoCloseable {
      */
     suspend fun generate(prompt: String): String? = null
 
+    /**
+     * A reply to [prompt] that [accept] takes, as [accept] returns it, or null. The keyboard's rewrites use it, so that
+     * a model whose reply [accept] refuses can leave the request to the next model.
+     */
+    suspend fun generate(prompt: String, accept: (String) -> String?): String? = generate(prompt)?.let(accept)
+
     /** Keep the model in memory instead of unloading it after a few idle minutes. */
     fun setKeepLoaded(keep: Boolean) = Unit
 

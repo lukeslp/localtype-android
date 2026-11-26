@@ -22,6 +22,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +30,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
@@ -52,6 +54,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     /** Laid out on the language's keys; replaced with its store on every switch. */
     private var touchOffsets = TouchOffsets()
     private lateinit var foundationModel: FoundationModelProvider
+    /** What Android has said about Gemini Nano for the keyboard in this process; the composite shares it. */
+    private val modelFallback = ModelFallback.keyboard
     @Volatile private var dictionary = WordDictionary.EMPTY
     /** For [NeuralRanking]: one of the language's commonest words, whose place in the personal slot needs Chime's backing. */
     private val commonWord: (String) -> Boolean = { dictionary.score(it) >= NeuralRanking.COMMON_SCORE }
@@ -153,6 +157,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private val correctionSettingsListener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == "bottom_clearance") handler.post { keyboardRoot?.let { ViewCompat.requestApplyInsets(it) } }
         if (key == KeyboardSettings.INACTIVE_GAPS) handler.post { keyboardView?.inactiveGaps = KeyboardSettings.inactiveGaps(this) }
+        if (key == KeyboardSettings.HIDE_FROM_CAPTURE) handler.post { if (!destroyed) applyScreenCapture() }
         // Spanish turned off in settings while it was in use goes back to English; on, the space bar names the language.
         if (key == KeyboardSettings.SPANISH || key == KeyboardSettings.PORTUGUESE || key == KeyboardSettings.HEBREW ||
             key == KeyboardSettings.WELSH || key == KeyboardSettings.IRISH || key == KeyboardSettings.MAORI ||
@@ -257,6 +262,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private var modelRunning = false
     private var showingModelWords = false
     private var pasteClip: FreshClip? = null
+    /** An image on the clipboard the paste chip offers when there's no text to ([freshClipImage]). */
+    private var pasteImage: FreshImage? = null
     /** A proofreading proposal on screen, replacing the suggestions until applied or dismissed. */
     private data class ProofreadProposal(val request: ProofreadRequest, val corrected: String) {
         val original get() = request.original
@@ -381,6 +388,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private var contactsQuery = ""
     /** Private for now: this field learns and logs nothing until a new field starts. A restart of it keeps that. */
     private var privateNow = false
+    /** Whether the keyboard's windows are marked secure right now ([applyScreenCapture]); printed by dumpsys. */
+    private var hiddenFromCapture = false
     /** The identity of the field Private for now was turned on in, so hiding the keyboard there does not end it. */
     private var privateField: String? = null
     /** Read aloud's speech engine, started on its first use and kept for the service. */
@@ -631,6 +640,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     override fun onCreate() {
         super.onCreate()
         getSharedPreferences("keyboard_state", Context.MODE_PRIVATE).registerOnSharedPreferenceChangeListener(correctionSettingsListener)
+        // Before the keyboard's window is first shown, so no frame of it is ever captured unmarked.
+        applyScreenCapture()
         themeMode = ThemeMode.of(this)
         if (PasswordsTile.available(Build.VERSION.SDK_INT)) inlineAutofill = InlineAutofill(this, ::dp, ::attachInlineChips, ::inlineChipTapped)
         language = KeyboardSettings.language(this)
@@ -639,19 +650,21 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         foundationModel = FoundationModelProviderFactory.create(this)
         // Swear words are never "corrected" into other words, even when they aren't suggested. While
         // they're switched off they aren't offered as fixes either, though most are still in the lexicon.
+        // A blocked word is neither learned (the model's knows) nor kept nor added here, so blocking a typo brings its fix back.
         corrector = Corrector(
             dictionary = { dictionary },
-            isKnown = { localModel.knows(it) || it in keptWords || it in profanityWords || it in fieldVocabulary },
+            isKnown = { localModel.knows(it) || isKeptWord(it) || it in profanityWords || it in fieldVocabulary },
             lexicon = { lexicon },
             contextCount = { previous, word -> localModel.pairCount(previous, word) },
             blocked = { personallyBlocked(it) || (publishedWithProfanity == false && it in profanityWords) },
-            isKept = { it in keptWords || localModel.isAddedWord(it) || isProtectedWord(it) },
+            isKept = { isKeptWord(it) || (localModel.isAddedWord(it) && !personallyBlocked(it)) || isProtectedWord(it) },
             touchOffsets = { touchOffsets },
             language = { language },
             packs = { fieldPacks },
         )
         modelCache = ModelSuggestionCache(PreferenceModelCacheStore(this))
         clipboard = getSystemService(android.content.ClipboardManager::class.java)?.also { it.addPrimaryClipChangedListener(clipListener) }
+        expirePastedImages()
         loadDictionary(KeyboardSettings.profanity(this))
         awaitLearnedBaseline()
         loadEmojiInventory()
@@ -986,10 +999,18 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         languagePopup.dismiss()
         orientation = LinearLayout.VERTICAL
         setBackgroundColor(getColor(R.color.kb_background))
-        addView(candidateStrip().also { candidateStripView = it }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(stripHeight.dp)))
+        // Nothing in the keyboard takes input focus. TalkBack's double-tap gave a strip button input focus, and when
+        // that button went (a correction row taking the strip, 2026-11-25) the focus passed to a suggestion, which
+        // TalkBack followed with its own focus. TalkBack's focus and actions don't need input focus.
+        descendantFocusability = android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS
+        // TalkBack names a window by its title, and the keyboard's had none: it was called whatever pane or button
+        // came first ("Ask Gemini Nano or Gemma for suggestions", "Symbols").
+        window?.window?.setTitle(getString(R.string.keyboard_window_title))
+        addView(candidateStrip().also { candidateStripView = it },LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(stripHeight.dp)))
         keyArea = KeyArea(context).also { area ->
             keyboardView = KeyboardView(this@LocalTypeInputMethodService).also { view ->
                 view.listener = this@LocalTypeInputMethodService
+                view.speak = ::spokenKeyName
                 view.setPadding(0, 0, 0, dp(4))
                 area.addView(view, android.widget.FrameLayout.LayoutParams(android.widget.FrameLayout.LayoutParams.MATCH_PARENT, android.widget.FrameLayout.LayoutParams.WRAP_CONTENT))
             }
@@ -1028,6 +1049,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         inputViewStarts++
         if (restarting) inputViewRestarts++
         cancelSwipeWork()
+        dropImagePaste(tell = true)
         ownedSpacing.reset()
         super.onStartInputView(info, restarting)
         closeTools()
@@ -1068,6 +1090,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             themeMode = theme
             themed = null
             setInputView(onCreateInputView())
+            applyNavigationIcons()
         }
         val inputType = info.inputType
         selectionActive = info.initialSelStart >= 0 && info.initialSelEnd >= 0 && info.initialSelStart != info.initialSelEnd
@@ -1100,6 +1123,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         modelOnTap = KeyboardSettings.modelOnTap(this)
         readSparkle(recheck = true)
         tripleSpaceProofread = KeyboardSettings.tripleSpaceProofread(this)
+        // Android lets Gemini Nano answer only the app in front, which the keyboard is only in LocalType's own screens.
+        modelFallback.servingOwnApp = info.packageName == packageName
         val keepLoaded = KeyboardSettings.keepModelLoaded(this)
         foundationModel.setKeepLoaded(keepLoaded)
         if (keepLoaded && foundationAllowed) {
@@ -1126,6 +1151,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         keyboardView?.keyShapes = KeyboardSettings.keyShapes(this)
         keyboardView?.motor = KeyboardSettings.motor(this)
         keyboardView?.inactiveGaps = KeyboardSettings.inactiveGaps(this)
+        applyScreenCapture()
         // Read at each touch, so it follows the offsets as they learn and the language's own set.
         keyboardView?.aimShift = { key ->
             key.label.singleOrNull()?.lowercaseChar()?.let { letter ->
@@ -1216,6 +1242,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         emojiPopup.dismiss()
         languagePopup.dismiss()
         pasteClip = null
+        pasteImage = null
+        dropImagePaste(tell = false)
         cancelFoundationRequest()
         // The field's view is gone; nothing listens for a field that is not on screen.
         stopDictationNow(commit = false)
@@ -1890,11 +1918,37 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private fun fieldLayer(): KeyboardLayout.Mode =
         TypingRules.layerAfterSymbol(currentInputEditorInfo?.inputType ?: InputType.TYPE_CLASS_TEXT)
 
-    private fun setMode(newMode: KeyboardLayout.Mode) {
+    /**
+     * Shows [newMode]'s keys. With [announce], a change TalkBack can't see is said: ?123, ABC, the second symbols
+     * page, a pad, or a space taking a symbols page back to letters ([TalkBackRules.layerShown]), only while the
+     * keys are showing (not under a panel).
+     */
+    private fun setMode(newMode: KeyboardLayout.Mode, announce: Boolean = true) {
+        val before = mode
         mode = newMode
         applyLayout()
         if (newMode == KeyboardLayout.Mode.LETTERS) updateShiftFromEditor()
+        if (announce && keyboardView?.isShown == true) {
+            TalkBackRules.layerShown(before, newMode, diacritics = !language.words)?.let { announceKeys(it) }
+        }
     }
+
+    private fun announceKeys(layer: TalkBackRules.Layer) {
+        keyboardView?.announceForAccessibility(getString(TalkBackRules.announcement(layer)))
+    }
+
+    /**
+     * After emoji search or a tool's search takes the keys back as letters, TalkBack's focus moves to the query
+     * first ([TalkBackFocus.moveTo] posts it), then this says which keys are under it, queued behind the query's name
+     * rather than cut off by it.
+     */
+    private fun announceKeysAfterFocus() {
+        handler.post { if (keyboardView?.isShown == true) announceKeys(TalkBackRules.layer(mode, diacritics = !language.words)) }
+    }
+
+    /** An English key name in the phone's language ([SpokenKeyNames]). */
+    private fun spokenKeyName(english: String): String =
+        SpokenKeyNames.resolve(english, ::getString) { id, arg -> getString(id, arg) }
 
     private fun applyLayout(preserveTouches: Boolean = false) {
         val view = keyboardView ?: return
@@ -2180,11 +2234,16 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         scheduleRefresh()
     }
 
-    /** The handle points the way the row opens, and TalkBack hears whether it's open. */
+    /**
+     * The handle points the way the row opens, and TalkBack hears whether it's open, or, over a panel, that it closes
+     * the panel ([TalkBackRules.toolsHandle]).
+     */
     private fun updateToolsHandle() {
         val handle = toolsHandle ?: return
         handle.rotation = if (toolsOpen) 180f else 0f
-        ViewCompat.setStateDescription(handle, getString(if (toolsOpen) R.string.tools_open else R.string.tools_closed))
+        val (name, state) = TalkBackRules.toolsHandle(panelOpen = panel != null, toolsOpen = toolsOpen)
+        handle.contentDescription = getString(name)
+        ViewCompat.setStateDescription(handle, state?.let(::getString))
     }
 
     /**
@@ -2708,6 +2767,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private fun privateForNow() {
         if (privateNow) return showGestureNotice(getString(R.string.tool_private_already))
         privateNow = true
+        // An image still being cleaned was tapped before this: it is not pasted into a field now private.
+        dropImagePaste(tell = true)
         privateField = fieldIdentity
         learningAllowed = false
         personalLearning.reset(PersonalContextTrace.ResetReason.FIELD)
@@ -2858,6 +2919,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         updateLead()
         updateVoiceButton()
         toolsHandle?.isSelected = panel == KeyboardPanel.TOOLS
+        updateToolsHandle()
     }
 
     /**
@@ -2994,6 +3056,10 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             NoticeRules.Message.NOT_OPENED -> R.string.passwords_not_opened
             NoticeRules.Message.EFFECT_SOURCE_CHANGED -> R.string.text_effects_source_changed
             NoticeRules.Message.COPY_FAILED -> R.string.local_tool_copy_failed
+            NoticeRules.Message.IMAGE_NOT_TAKEN -> R.string.image_not_taken
+            NoticeRules.Message.IMAGE_NOT_CLEANED -> R.string.image_not_cleaned
+            NoticeRules.Message.IMAGE_FAILED -> R.string.image_paste_failed
+            NoticeRules.Message.IMAGE_PASTED_CLEAN -> R.string.image_pasted_clean
         }, language.nativeName)
         val place = NoticeRules.place(panel)
         when (place) {
@@ -3143,14 +3209,15 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         emojiPanelRoot?.visibility = View.GONE
         keyArea?.pinnedHeight = 0
         setKeysVisible(true)
-        setMode(KeyboardLayout.Mode.LETTERS)
+        setMode(KeyboardLayout.Mode.LETTERS, announce = false)
         setShift(KeyboardView.ShiftState.OFF)
         keyboardView?.enterLabel = enterLabel(currentInputEditorInfo)
         header.removeAllViews()
         header.addView(emoji.searchBar, android.widget.FrameLayout.LayoutParams(android.widget.FrameLayout.LayoutParams.MATCH_PARENT, android.widget.FrameLayout.LayoutParams.MATCH_PARENT))
         emoji.showSearch(initial, emojiBoosts)
-        // 🔍 went with the tabs: TalkBack's focus goes to the query instead of nowhere.
+        // 🔍 went with the tabs: TalkBack's focus goes to the query instead of nowhere, and the letters under it are said.
         TalkBackFocus.moveTo(emoji.queryView)
+        announceKeysAfterFocus()
     }
 
     /**
@@ -3275,7 +3342,11 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private fun copyTextEffect(text: String) {
         if (panel != KeyboardPanel.TEXT_EFFECTS || localInputKind != null || !effectsAllowed()) return
         val clipboard = getSystemService(android.content.ClipboardManager::class.java) ?: return
-        runCatching { clipboard.setPrimaryClip(android.content.ClipData.newPlainText(getString(R.string.text_effects_title), text)) }
+        val clip = android.content.ClipData.newPlainText(getString(R.string.text_effects_title), text)
+        // Android 13 and later preview a copy in a window of their own, which the keyboard cannot mark; a clip
+        // flagged sensitive is previewed without its text. The keyboard then keeps no recent copy of it either.
+        if (hiddenFromCapture) clip.description.extras = android.os.PersistableBundle().apply { putBoolean(CLIP_EXTRA_IS_SENSITIVE, true) }
+        runCatching { clipboard.setPrimaryClip(clip) }
             .onSuccess { effectsPanelRoot?.announceForAccessibility(getString(R.string.local_tool_copied)) }
             .onFailure { showNotice(NoticeRules.Message.COPY_FAILED) }
     }
@@ -3295,7 +3366,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         panelRootOf(kind)?.visibility = View.GONE
         setKeysVisible(true)
         // The pinned panel height remains fixed while the ordinary keys collect a local draft/query.
-        setMode(KeyboardLayout.Mode.LETTERS); setShift(KeyboardView.ShiftState.OFF)
+        setMode(KeyboardLayout.Mode.LETTERS, announce = false); setShift(KeyboardView.ShiftState.OFF)
         val ui = CharacterToolViews(this)
         val query = ui.text("").apply {
             maxLines = 1; ellipsize = android.text.TextUtils.TruncateAt.START
@@ -3311,6 +3382,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         updateCharacterToolQuery()
         keyboardView?.enterLabel = getString(R.string.local_tool_done)
         TalkBackFocus.moveTo(query)
+        announceKeysAfterFocus()
     }
 
     private fun updateCharacterToolQuery() {
@@ -3601,6 +3673,13 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             // Selected while the Tools panel is open, as the emoji button was for its panel.
             background = getDrawable(R.drawable.panel_tab_background)
             contentDescription = getString(R.string.tools_title)
+            // Selected draws the open Tools panel; TalkBack hears the handle's name and state instead of "selected".
+            ViewCompat.setAccessibilityDelegate(this, object : androidx.core.view.AccessibilityDelegateCompat() {
+                override fun onInitializeAccessibilityNodeInfo(host: View, info: androidx.core.view.accessibility.AccessibilityNodeInfoCompat) {
+                    super.onInitializeAccessibilityNodeInfo(host, info)
+                    info.isSelected = false
+                }
+            })
             setOnClickListener { onToolsHandle() }
             // Holding is a shortcut to every tool, never the only way: More in the row opens the same panel.
             KeyHaptics.onHold(this) { openToolsPanel(); true }
@@ -3641,30 +3720,30 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         showProposalMessage(getString(if (rewrite == null) R.string.proofread_working else R.string.rewrite_working))
         proofreadJob = uiScope.launch {
             try {
-                var status = withContext(Dispatchers.Default) { foundationModel.status() }
-                val deadline = SystemClock.uptimeMillis() + MANUAL_LOAD_WAIT_MS
-                while (status == FoundationModelStatus.INITIALIZING && SystemClock.uptimeMillis() < deadline) {
-                    kotlinx.coroutines.delay(1_000)
-                    status = withContext(Dispatchers.Default) { foundationModel.status() }
-                }
-                val corrected = if (status == FoundationModelStatus.READY) {
+                // Waits while the model loads; when Android refuses Gemini Nano here, waits for Gemma and asks it instead.
+                var toldLoading = false
+                val outcome = askKeyboardModel(
+                    onLoading = { gemma ->
+                        toldLoading = gemma && viewShown
+                        if (toldLoading) showProposalMessage(getString(R.string.model_gemma_loading))
+                    },
+                    // Loaded: back to what the row said while the model works.
+                    onLoaded = {
+                        if (toldLoading && viewShown) showProposalMessage(getString(if (rewrite == null) R.string.proofread_working else R.string.rewrite_working))
+                    },
+                ) {
                     // The native worker cannot cancel queued work. Discard a cancelled/stale answer on return.
                     withContext(NonCancellable + Dispatchers.Default) {
                         if (rewrite == null) foundationModel.proofread(request.original) else rewriteWith(rewrite, request.original)
                     }
-                } else null
+                }
                 if (!viewShown || !request.matches(editorEdits.generation, readEditorSnapshot(ProofreadRequest.LIMIT))) {
                     dismissProposal()
                     return@launch
                 }
+                val corrected = outcome.answer
                 when {
-                    status == FoundationModelStatus.INITIALIZING -> showProposalMessage(
-                        getString(R.string.model_still_loading), autoDismissMs = 3_000)
-                    status != FoundationModelStatus.READY -> {
-                        showProposalMessage(getString(if (rewrite == null) R.string.proofread_setup else R.string.rewrite_setup))
-                        proposalSettings?.visibility = View.VISIBLE
-                    }
-                    corrected == null -> showProposalMessage(getString(R.string.proofread_unavailable), autoDismissMs = 3_000)
+                    corrected == null -> showModelFailure(outcome.failure ?: ModelFallback.Failure.NO_ANSWER, rewrite != null)
                     corrected == request.original -> showProposalMessage(getString(
                         if (rewrite == null) R.string.proofread_no_changes else R.string.rewrite_no_changes), autoDismissMs = 1_500)
                     else -> showProposal(ProofreadProposal(request, corrected))
@@ -3683,16 +3762,51 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     }
 
     /**
-     * A rewrite from the first ready on-device model, Gemini Nano before Gemma as for the model chat, read by
-     * [Rewriting.clean]; null when none answers with a plausible one.
+     * A rewrite from the keyboard's model, Gemini Nano before Gemma (Gemma alone where Android refuses Nano to the
+     * keyboard), read by [Rewriting.clean]; null when none answers with a plausible one.
      */
-    private suspend fun rewriteWith(style: RewriteStyle, text: String): String? {
-        val prompt = Rewriting.prompt(style, text)
-        FoundationModelProviderFactory.chatProviders(this).forEach { provider ->
-            if (provider.status() != FoundationModelStatus.READY) return@forEach
-            provider.generate(prompt)?.let { Rewriting.clean(text, it, style) }?.let { return it }
+    private suspend fun rewriteWith(style: RewriteStyle, text: String): String? =
+        foundationModel.generate(Rewriting.prompt(style, text)) { Rewriting.clean(text, it, style) }
+
+    /**
+     * Asks the keyboard's model with [ask] for a tap or a proofread: waits while it loads (at most
+     * [MANUAL_LOAD_WAIT_MS] a wait), and when Android refuses Gemini Nano to the keyboard, waits for Gemma and asks once
+     * more ([ModelFallback.request]). [onLoading] and [onLoaded] run on the main thread when a wait starts and ends.
+     */
+    private suspend fun <T : Any> askKeyboardModel(
+        onLoading: (gemma: Boolean) -> Unit = {},
+        onLoaded: () -> Unit = {},
+        ask: suspend () -> T?,
+    ): ModelFallback.Outcome<T> =
+        modelFallback.request(
+            status = { withContext(Dispatchers.Default) { foundationModel.status() } },
+            ask = ask,
+            loadWaitMs = MANUAL_LOAD_WAIT_MS,
+            clock = SystemClock::uptimeMillis,
+            pause = { kotlinx.coroutines.delay(it) },
+            onLoading = onLoading,
+            onLoaded = onLoaded,
+        )
+
+    /** The proofread row's message for a request that ended without an answer, saying why where that's known. */
+    private fun showModelFailure(failure: ModelFallback.Failure, rewrite: Boolean) {
+        val message = when (failure) {
+            ModelFallback.Failure.STILL_LOADING -> R.string.model_still_loading
+            ModelFallback.Failure.GEMMA_STILL_LOADING -> R.string.model_gemma_still_loading
+            ModelFallback.Failure.NO_ANSWER -> R.string.proofread_unavailable
+            ModelFallback.Failure.GEMMA_NO_ANSWER -> R.string.model_gemma_no_answer
+            ModelFallback.Failure.GEMMA_FAILED -> R.string.model_gemma_failed
+            ModelFallback.Failure.NANO_REFUSED_NO_GEMMA -> R.string.model_nano_refused_no_gemma
+            ModelFallback.Failure.SET_UP -> if (rewrite) R.string.rewrite_setup else R.string.proofread_setup
         }
-        return null
+        // Setting up a model is the way on, so those two keep the row's Settings button and stay until dismissed.
+        val setUp = failure == ModelFallback.Failure.SET_UP || failure == ModelFallback.Failure.NANO_REFUSED_NO_GEMMA
+        if (setUp) {
+            showProposalMessage(getString(message))
+            proposalSettings?.visibility = View.VISIBLE
+        } else {
+            showProposalMessage(getString(message), autoDismissMs = 3_000)
+        }
     }
 
     /** Swaps the suggestion slots (and their dividers) for the proposal row, or back. */
@@ -3819,6 +3933,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     }
 
     private fun onLeadOriginalTapped() {
+        if (pasteClip == null && pasteImage != null) return pasteClipImage(fresh = true)
         if (pasteClip != null) {
             // The system clipboard may have changed since this chip was drawn.
             val clip = freshClipText() ?: run { pasteClip = null; scheduleRefresh(); return }
@@ -3844,14 +3959,16 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private fun onLeadHeld() {
         if (recentCorrection.hasUndo(SystemClock.uptimeMillis())) {
             val popup = android.widget.PopupMenu(this, leadButton)
-            if (pasteClip != null || sparkleShown()) {
-                popup.menu.add(if (pasteClip != null) R.string.paste_description else R.string.model_trigger).setOnMenuItemClickListener { onLeadOriginalTapped(); true }
+            if (pasteClip != null || pasteImage != null || sparkleShown()) {
+                val label = if (pasteClip != null) R.string.paste_description else if (pasteImage != null) R.string.paste_image_description else R.string.model_trigger
+                popup.menu.add(label).setOnMenuItemClickListener { onLeadOriginalTapped(); true }
             }
             if (toolsField().proofread) popup.menu.add(R.string.proofread_action).setOnMenuItemClickListener { proofreadSentence(); true }
             popup.menu.add(R.string.saved_text).setOnMenuItemClickListener { openSavedPanel(); true }
             popup.show()
             return
         }
+        if (pasteClip == null && pasteImage != null) return
         val clip = pasteClip ?: return proofreadSentence()
         if (!clip.mayKeep) return showProposalMessage(getString(R.string.saved_text_private_copy), autoDismissMs = PRIVATE_COPY_NOTE_MS)
         SavedTextStore.open(this) { texts ->
@@ -3865,6 +3982,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         val button = leadButton ?: return
         val label = if (recentCorrection.hasUndo(SystemClock.uptimeMillis())) R.string.correction_more_actions
             else if (pasteClip != null) R.string.saved_text_save_copy
+            // An image is never kept in Saved text, and holding its chip proofreads nothing.
+            else if (pasteImage != null) View.NO_ID
             // Where holding does not proofread (an address bar, a web box without suggestions), there is no hold action.
             else if (fieldWantsSuggestions && foundationAllowed && TypingRules.proofreadsOnHold(currentInputEditorInfo?.inputType ?: 0)) R.string.proofread_action
             else View.NO_ID
@@ -4004,7 +4123,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         swipeChoices?.let { choice ->
             if (choice.expires > SystemClock.uptimeMillis() && editorSnapshot() == choice.receipt) {
                 cancelFoundationRequest()
-                expansion = null; expansionSlot = -1; emojiSlot = -1; pasteClip = null
+                expansion = null; expansionSlot = -1; emojiSlot = -1; pasteClip = null; pasteImage = null
                 setSlots(choice.words, literal = -1)
                 candidateViews.forEachIndexed { i, view -> choice.words.getOrNull(i)?.let {
                     view.contentDescription = getString(R.string.swipe_alternative, it)
@@ -4039,9 +4158,10 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         val prefix = localModel.activePrefix(context)
         // Something freshly copied and nothing typed yet: the left control becomes a paste chip.
         pasteClip = if (prefix.isEmpty()) freshClipText() else null
-        pasteClip?.let {
+        pasteImage = if (prefix.isEmpty() && pasteClip == null) freshClipImage() else null
+        (pasteClip?.expiresInMs ?: pasteImage?.expiresInMs)?.let {
             handler.removeCallbacks(refreshRunnable)
-            handler.postDelayed(refreshRunnable, it.expiresInMs)
+            handler.postDelayed(refreshRunnable, it)
         }
         if (!suggestionsEnabled) {
             // No words here; an address bar or a mail field can still be offered a remembered host.
@@ -4096,7 +4216,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         val ownContext = if (fieldLearnsWords) personalLearning.context(context.dropLast(prefix.length)) else emptyList()
         val followers = if (ownContext.isNotEmpty()) personalStore.followers(ownContext, NeuralRanking.PERSONAL_POLICY.maxContext) else emptyList()
         val learned = if (ownContext.isNotEmpty()) localModel.learnedFollowers(ownContext.last()) else emptyList()
-        val blocked = blockedStore.words + if (profanityAllowed) emptySet() else profanityWords
+        // With swear words off, Chime's own compounds of them go with the list: they are in no word list of the keyboard's.
+        val blocked = blockedStore.words + if (profanityAllowed) emptySet() else profanityWords + NeuralRanking.SWEAR_COMPOUNDS
         // A pack word reaches Chime's strip only where the n-gram ranking itself put it in its first three ([WordPacks.reserved]).
         val shared = fieldVocabulary.candidates(prefix, localModel.lastCompletedWord(context)).map { it.first } +
             fieldPacks.reserved(prefix, ranked)
@@ -4190,6 +4311,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             toolRow?.visibility == View.VISIBLE -> null to null
             recentCorrection.hasUndo(SystemClock.uptimeMillis()) && !proofreading && proposal == null -> R.drawable.ic_regenerate to R.string.correction_undo
             pasteClip != null -> R.drawable.ic_paste to pasteDescription()
+            // Its own picture, so an image on offer is not mistaken for copied text.
+            pasteImage != null -> R.drawable.ic_paste_image to R.string.paste_image_description
             !sparkleShown() -> null to null
             modelRunning -> R.drawable.ic_generating to R.string.model_generating
             showingModelWords -> R.drawable.ic_regenerate to R.string.model_showing
@@ -4280,29 +4403,27 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         setModelRunning(true)
         foundationJob = uiScope.launch {
             try {
-                var status = withContext(Dispatchers.Default) { foundationModel.status() }
-                val deadline = SystemClock.uptimeMillis() + MANUAL_LOAD_WAIT_MS
-                while (status == FoundationModelStatus.INITIALIZING && SystemClock.uptimeMillis() < deadline) {
-                    kotlinx.coroutines.delay(1_000)
-                    status = withContext(Dispatchers.Default) { foundationModel.status() }
+                // As for proofreading: where Android refuses Gemini Nano to the keyboard, the tap waits for Gemma.
+                val outcome = askKeyboardModel {
+                    withTimeoutOrNull(ModelRequestGate.REQUEST_TIMEOUT_MS) {
+                        withContext(Dispatchers.Default) { foundationModel.predict(contextBeforeWord, ModelSuggestionCache.MAX_WORDS, avoid) }
+                    }?.takeIf { it.isNotEmpty() }
                 }
-                if (status != FoundationModelStatus.READY) {
-                    val message = when {
-                        status == FoundationModelStatus.INITIALIZING -> R.string.model_still_loading
-                        neuralEnabled && neuralReady && shownNeuralWords.isNotEmpty() -> R.string.model_unavailable_chime
-                        else -> R.string.model_unavailable
-                    }
-                    showManualModelMessage(getString(message), context, generation)
-                    return@launch
-                }
-                val words = withTimeoutOrNull(ModelRequestGate.REQUEST_TIMEOUT_MS) {
-                    withContext(Dispatchers.Default) { foundationModel.predict(contextBeforeWord, ModelSuggestionCache.MAX_WORDS, avoid) }
-                }.orEmpty()
+                val words = outcome.answer.orEmpty()
                 // As for automatic answers: a Forget learned words since the tap drops this one.
                 syncLearnedState()
                 if (generation != cacheGeneration) return@launch
                 if (words.isEmpty()) {
-                    showManualModelMessage(getString(R.string.model_no_words), context, generation)
+                    val message = when (outcome.failure) {
+                        ModelFallback.Failure.STILL_LOADING -> R.string.model_still_loading
+                        ModelFallback.Failure.GEMMA_STILL_LOADING -> R.string.model_gemma_still_loading
+                        ModelFallback.Failure.GEMMA_FAILED -> R.string.model_gemma_failed
+                        ModelFallback.Failure.NANO_REFUSED_NO_GEMMA -> R.string.model_nano_refused_no_gemma
+                        ModelFallback.Failure.SET_UP ->
+                            if (neuralEnabled && neuralReady && shownNeuralWords.isNotEmpty()) R.string.model_unavailable_chime else R.string.model_unavailable
+                        ModelFallback.Failure.NO_ANSWER, ModelFallback.Failure.GEMMA_NO_ANSWER, null -> R.string.model_no_words
+                    }
+                    showManualModelMessage(getString(message), context, generation)
                     return@launch
                 }
                 if (neuralEnabled) manualFoundationContext = contextBeforeWord
@@ -4362,7 +4483,11 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         val description = manager.primaryClipDescription
         val isText = description != null && (description.hasMimeType(android.content.ClipDescription.MIMETYPE_TEXT_PLAIN) ||
             description.hasMimeType(android.content.ClipDescription.MIMETYPE_TEXT_HTML))
-        val text = if (isText) runCatching { manager.primaryClip?.getItemAt(0)?.coerceToText(this)?.toString() }.getOrNull() else null
+        val clip = if (isText) runCatching { manager.primaryClip }.getOrNull() else null
+        // The description and the clip are two reads. A copy made between them would pair its text with the
+        // older copy's flags; that copy's own callback follows and records it whole, so this one does nothing.
+        if (description != null && clip != null && clip.description?.timestamp != description.timestamp) return
+        val text = runCatching { clip?.getItemAt(0)?.coerceToText(this)?.toString() }.getOrNull()
         copyOrigin = null
         if (description == null || (isText && text.isNullOrEmpty())) {
             // Emptied: by a password manager after a while, by Android after an hour, or unreadable while locked.
@@ -4405,12 +4530,15 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         if (!description.hasMimeType(android.content.ClipDescription.MIMETYPE_TEXT_PLAIN) &&
             !description.hasMimeType(android.content.ClipDescription.MIMETYPE_TEXT_HTML)
         ) return null
-        val stamp = clipStamp()
+        val stamp = description.timestamp
         if (fresh && stamp == pastedClipStamp) return null
         val age = System.currentTimeMillis() - description.timestamp
         // The paste chip offers only a fresh copy; a paste the person asks for takes whatever the clipboard holds.
         if (fresh && age > CLIP_FRESH_MS) return null
-        val text = runCatching { manager.primaryClip?.getItemAt(0)?.coerceToText(this)?.toString() }.getOrNull()
+        val clip = runCatching { manager.primaryClip }.getOrNull() ?: return null
+        // A copy made between the two reads has its own flags and origin: offer nothing until the next refresh reads it whole.
+        if (clip.description?.timestamp != description.timestamp) return null
+        val text = runCatching { clip.getItemAt(0)?.coerceToText(this)?.toString() }.getOrNull()
             ?.takeIf { it.isNotBlank() && it.length <= MAX_PASTE_CHARS } ?: return null
         // The chip never shows the clip's text. A copy a password manager flags, or one made in a private field,
         // can still be pasted but is never kept in Saved text ([FreshClip.mayKeep]).
@@ -4421,6 +4549,173 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             text, expiresInMs = (CLIP_FRESH_MS - age).coerceAtLeast(1_000L),
             mayKeep = !sensitiveClip && !fromPrivateField,
         )
+    }
+
+    // Pasting an image (ImagePasteRules, ImageMetadata, PastedImages; docs/image-paste-2026-11-25.md)
+
+    /** An image clip the chip offers: only its description has been read, never the image. */
+    private data class FreshImage(val stamp: Long, val expiresInMs: Long)
+
+    private var imagePasteJob: Job? = null
+
+    /**
+     * Gives up a paste whose image is still being cleaned. It belongs to the field session it was tapped in: a new
+     * one can be another box with the same identity (two on one web page), and a field can turn private meanwhile.
+     * [tell] says so in the strip, once the field has started, since the chip won't come back for that copy.
+     */
+    private fun dropImagePaste(tell: Boolean) {
+        val job = imagePasteJob ?: return
+        imagePasteJob = null
+        if (!job.isActive) return
+        job.cancel()
+        if (tell) handler.post { if (!destroyed) showNotice(NoticeRules.Message.IMAGE_FAILED) }
+    }
+
+    /** What [ImagePasteRules.offer] says about the clip now on the clipboard and this field, from descriptions only. */
+    private fun imageOffer(description: android.content.ClipDescription): ImagePasteRules.Offer {
+        val types = (0 until description.mimeTypeCount).map { description.getMimeType(it) }
+        val field = currentInputEditorInfo?.takeIf { currentInputStarted }
+        val privateField = inputIsSensitive || !learningAllowed ||
+            (field != null && (TypingRules.isSensitive(field.inputType) || !TypingRules.allowsLearning(field.imeOptions, field.inputType)))
+        return ImagePasteRules.offer(
+            types, field?.let { androidx.core.view.inputmethod.EditorInfoCompat.getContentMimeTypes(it) }, privateField,
+            flagged = description.extras?.getBoolean(CLIP_EXTRA_IS_SENSITIVE, false) == true,
+            copiedInPrivateField = copyOrigin?.let { it.stamp == description.timestamp && it.privateField } == true,
+        )
+    }
+
+    /** Whether the clipboard holds an image rather than text, from its description. */
+    private fun clipHoldsImage(): Boolean {
+        val description = clipboard?.primaryClipDescription ?: return false
+        return imageOffer(description) != ImagePasteRules.Offer.NOT_IMAGE
+    }
+
+    /** An image copied in the last couple of minutes, not pasted yet, that this field takes. */
+    private fun freshClipImage(): FreshImage? {
+        val description = clipboard?.primaryClipDescription ?: return null
+        if (imageOffer(description) != ImagePasteRules.Offer.OFFER) return null
+        val stamp = description.timestamp
+        if (stamp == pastedClipStamp) return null
+        val age = System.currentTimeMillis() - stamp
+        if (age > CLIP_FRESH_MS) return null
+        return FreshImage(stamp, expiresInMs = (CLIP_FRESH_MS - age).coerceAtLeast(1_000L))
+    }
+
+    /**
+     * The chip's paste of an image, or the paste gesture's ([fresh] false: however old). The image is read only
+     * now, once; with Remove details on, a cleaned copy is written off the main thread and that goes in, and a
+     * copy that can't be cleaned is not pasted at all. With it off, the copied image's own address goes in.
+     */
+    private fun pasteClipImage(fresh: Boolean) {
+        val manager = clipboard ?: return
+        val description = manager.primaryClipDescription ?: return
+        when (imageOffer(description)) {
+            ImagePasteRules.Offer.NOT_IMAGE -> return
+            ImagePasteRules.Offer.PRIVATE -> return showGestureNotice(getString(R.string.gesture_nothing_to_paste))
+            ImagePasteRules.Offer.NOT_TAKEN -> return showNotice(NoticeRules.Message.IMAGE_NOT_TAKEN)
+            ImagePasteRules.Offer.OFFER -> Unit
+        }
+        val stamp = description.timestamp
+        if (fresh && stamp == pastedClipStamp) return
+        val clip = runCatching { manager.primaryClip }.getOrNull()
+        // A copy made between the two reads has its own flags: paste nothing until the strip reads it whole.
+        if (clip == null || clip.description?.timestamp != stamp) { pasteImage = null; scheduleRefresh(); return }
+        val uri = clip.getItemAt(0)?.uri?.takeIf { it.scheme == android.content.ContentResolver.SCHEME_CONTENT }
+            ?: return showNotice(NoticeRules.Message.IMAGE_FAILED)
+        val types = (0 until description.mimeTypeCount).map { description.getMimeType(it) }
+        // Offered once: whatever happens next, the chip doesn't come back for this copy.
+        pastedClipStamp = stamp
+        pasteImage = null
+        updateLead()
+        imagePasteJob?.cancel()
+        if (!KeyboardSettings.stripImageDetails(this)) {
+            val type = ImagePasteRules.commitType(types, currentInputEditorInfo?.let { androidx.core.view.inputmethod.EditorInfoCompat.getContentMimeTypes(it) })
+                ?: return showNotice(NoticeRules.Message.IMAGE_NOT_TAKEN)
+            if (!commitImage(uri, type)) showNotice(NoticeRules.Message.IMAGE_FAILED)
+            return
+        }
+        val field = fieldIdentity
+        val context = applicationContext
+        imagePasteJob = uiScope.launch {
+            val outcome = withContext(Dispatchers.IO) { PastedImages.clean(context, uri) { isActive } }
+            // A new field, even one with the same identity (two boxes on one web page), cancels this job, so reaching
+            // here means the field that was tapped in is still the one being typed in. It may have turned private.
+            val stillHere = !destroyed && field == fieldIdentity && currentInputStarted && currentInputConnection != null &&
+                !inputIsSensitive && learningAllowed
+            when (outcome) {
+                is PastedImages.Ready -> {
+                    val accepted = currentInputEditorInfo?.let { androidx.core.view.inputmethod.EditorInfoCompat.getContentMimeTypes(it) }
+                    when {
+                        !stillHere -> withContext(NonCancellable + Dispatchers.IO) { outcome.file.delete() }
+                        // The bytes decide the type: a clip that called a PNG a JPEG goes in as what it is, if the field takes it.
+                        !ImagePasteRules.accepts(accepted, outcome.mime) -> {
+                            withContext(NonCancellable + Dispatchers.IO) { outcome.file.delete() }
+                            showNotice(NoticeRules.Message.IMAGE_NOT_TAKEN)
+                        }
+                        !commitImage(outcome.uri, outcome.mime) -> {
+                            withContext(NonCancellable + Dispatchers.IO) { outcome.file.delete() }
+                            showNotice(NoticeRules.Message.IMAGE_FAILED)
+                        }
+                        else -> {
+                            if (outcome.removed > 0) showNotice(NoticeRules.Message.IMAGE_PASTED_CLEAN)
+                            // The app that took it may still be loading it: the copy stays until the next image or the hour.
+                            handler.removeCallbacks(expireImagesRunnable)
+                            handler.postDelayed(expireImagesRunnable, PastedImageCache.MAX_AGE_MS + 1_000L)
+                        }
+                    }
+                }
+                PastedImages.NotCleaned -> if (stillHere) showNotice(NoticeRules.Message.IMAGE_NOT_CLEANED)
+                PastedImages.Failed -> if (stillHere) showNotice(NoticeRules.Message.IMAGE_FAILED)
+            }
+        }
+    }
+
+    /**
+     * Sends [uri] to the field as rich content with a read grant the field asks for when it loads it
+     * (INPUT_CONTENT_GRANT_READ_URI_PERMISSION). Like a paste, nothing is learned or logged from it.
+     */
+    private fun commitImage(uri: android.net.Uri, mime: String): Boolean {
+        val ic = currentInputConnection ?: return false
+        val editor = currentInputEditorInfo ?: return false
+        drainPendingKeys()
+        personalWordOwned = false
+        personalLearning.reset(PersonalContextTrace.ResetReason.PASTE)
+        syncLearnedState()
+        hideNotice()
+        markEdit()
+        revisitTrace(CorrectionDiagnostics.Revisit.INSERT)
+        lastAutocorrect = null
+        autoSpaced = false
+        KeyHaptics.perform(keyArea, android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+        val info = androidx.core.view.inputmethod.InputContentInfoCompat(
+            uri, android.content.ClipDescription(getString(R.string.paste_image_description), arrayOf(mime)), null,
+        )
+        val sent = runCatching {
+            androidx.core.view.inputmethod.InputConnectionCompat.commitContent(
+                ic, editor, info, androidx.core.view.inputmethod.InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION, null,
+            )
+        }.getOrDefault(false)
+        updateShiftFromEditor()
+        scheduleRefresh()
+        return sent
+    }
+
+    private val expireImagesRunnable = Runnable { expirePastedImages() }
+
+    /** Deletes cleaned copies an hour old; the handler's clock stops in deep sleep, so each new keyboard also checks. */
+    private fun expirePastedImages() {
+        val context = applicationContext
+        uiScope.launch {
+            // A copy younger than the hour is checked again when its hour is up: a keyboard that starts while one
+            // is kept would otherwise leave it until the next image or the next start.
+            val due = withContext(Dispatchers.IO) {
+                val cache = PastedImages.cache(context)
+                cache.expire(System.currentTimeMillis())
+                cache.dueIn(System.currentTimeMillis())
+            }
+            handler.removeCallbacks(expireImagesRunnable)
+            if (due != null && !destroyed) handler.postDelayed(expireImagesRunnable, due + 1_000L)
+        }
     }
 
     /**
@@ -4525,13 +4820,18 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private fun showCandidates(ranked: List<String>, context: String = "") {
         val prefix = localModel.activePrefix(context)
         // With swear words off, nothing from any source (learned pairs, model, cache) suggests one.
-        val allowed = ranked.filter { !personallyBlocked(it) && (profanityAllowed || it.lowercase() !in profanityWords) }
+        val allowed = ranked.filter { !personallyBlocked(it) && (profanityAllowed || it.lowercase() !in profanityWords) && offeredWord(it) }
         // Shift may be off after a line break even in a sentence-caps field, so check the text too.
         val capsField = TypingRules.capitalizesSentences(currentInputEditorInfo?.inputType ?: 0, autoCapitalize)
         val sentenceStart = shiftState != KeyboardView.ShiftState.OFF ||
             (capsField && prefix.isEmpty() && localModel.isSentenceStart(context))
         val words = TypingRules.arrangeForStrip(BritishSpelling.distinct(allowed.map(::british)).map { displayCandidate(it, prefix, sentenceStart) }.filterNot(::personallyBlocked))
         setSlots(withEmoji(words, context, prefix), literal = -1)
+    }
+
+    /** Not one the keyboard never offers by itself ([UnofferedWords]), unless the person added it in settings. */
+    private fun offeredWord(word: String): Boolean = AdaptiveNgramModel.normalize(word).let {
+        it !in UnofferedWords.forLanguage(language) || localModel.isAddedWord(it)
     }
 
     private fun displayCandidate(word: String, prefix: String, sentenceStart: Boolean): String {
@@ -4600,6 +4900,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             }
             view.text = if (expands) offer!!.label else if (index == literal && word.isNotEmpty()) "“$word”" else word
             view.isEnabled = word.isNotEmpty() || expands
+            view.importantForAccessibility = TalkBackRules.slotImportance(word.isNotEmpty() || expands)
             view.contentDescription = when {
                 expands -> expansionDescription(offer!!)
                 word.isEmpty() -> null
@@ -4634,6 +4935,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         candidateViews.getOrNull(expansionSlot)?.let { view ->
             view.text = ""
             view.isEnabled = false
+            view.importantForAccessibility = TalkBackRules.slotImportance(false)
             view.contentDescription = null
         }
         expansionSlot = -1
@@ -4649,9 +4951,13 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         Expansions.Kind.SYMBOL -> getString(R.string.expansion_symbol_description, offer.text, symbolName(offer.text))
     }
 
-    /** A sign's Unicode name in lowercase ("copyright sign"), for TalkBack; the sign itself when Android has none. */
+    /**
+     * A sign's name for TalkBack: the key name the keyboard gives it ("One half"), in the phone's language where
+     * there is one, else its Unicode name in lowercase ("rightwards arrow"), else the sign itself.
+     */
     private fun symbolName(symbol: String): String =
-        runCatching { Character.getName(symbol.codePointAt(0)) }.getOrNull()?.lowercase() ?: symbol
+        KeyboardLayout.spokenName(symbol).takeIf { it != symbol }?.let(::spokenKeyName)
+            ?: runCatching { Character.getName(symbol.codePointAt(0)) }.getOrNull()?.lowercase() ?: symbol
 
     /** A saved text's shortcut, or a word of a contact's name: correction never changes either. */
     private fun isProtectedWord(word: String): Boolean =
@@ -4860,7 +5166,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
      */
     /** English starts with its seed phrases and sentence starters; another language starts from nothing but its own typing. */
     private fun buildLocalModel() = if (language.english) AdaptiveNgramModel(learningStore, dictionary = dictionary, prior = corpusPrior, vocabulary = fieldVocabulary, excluded = ::personallyBlocked,
-            packs = fieldPacks)
+            packs = fieldPacks, unoffered = UnofferedWords.ENGLISH)
         else AdaptiveNgramModel(learningStore, seedPhrases = emptyList(), dictionary = dictionary, sentenceStarters = emptyList(),
             prior = corpusPrior, priorWeights = AdaptiveNgramModel.PriorWeights(weight = language.priorWeight), vocabulary = CurrentVocabulary.EMPTY,
             openingMarks = language.openingMarks, oneLetterWords = language.oneLetterWords, excluded = ::personallyBlocked,
@@ -5087,7 +5393,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     private fun correctionFor(context: String, prefix: String, automaticOnly: Boolean = false, explicitSelection: Boolean = false): String? {
         if (!blockedStore.ready || !autocorrectEnabled || !suggestionsEnabled || (!automaticOnly && mode != KeyboardLayout.Mode.LETTERS)) return null
         if (DomainTyping.protected(context, currentInputConnection?.getTextAfterCursor(MAX_CONTEXT_CHARS, 0)?.toString())) return null
-        if (prefix.length < 2 || prefix.lowercase() in keptWords || isProtectedWord(prefix)) return null
+        if (prefix.length < 2 || isKeptWord(prefix.lowercase()) || isProtectedWord(prefix)) return null
         // A word the person came back to edit is theirs: still suggest, never replace on a boundary.
         // Ordinary web boxes follow the explicit web-autocorrect setting.
         if (automaticOnly && (trace.revisited || !trace.hasTouchesFor(prefix) || !fieldAllowsAutocorrect || compatibilityEditorRestarted)) return null
@@ -5165,7 +5471,8 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         pendingPeriodPersonalContext = emptyList()
         if (!suggestionsEnabled || compatibilityEditorRestarted) return false
         if (pending.original != pending.corrected && (!autocorrectEnabled || !fieldAllowsAutocorrect ||
-            pending.original.lowercase() in keptWords || localModel.isAddedWord(pending.original) || isProtectedWord(pending.original))) return false
+            isKeptWord(pending.original.lowercase()) || (localModel.isAddedWord(pending.original) && !personallyBlocked(pending.original)) ||
+            isProtectedWord(pending.original))) return false
         val edit = pending.edit(editorEdits.generation, editorSnapshot(), delimiter) ?: return false
         val applied = applyWordReplacement(edit.replacement, fallback = delimiter, precondition = edit.precondition)
         if (applied == edit.replacement) {
@@ -5335,6 +5642,9 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         if (persist && word.drop(1).any { it.isUpperCase() }) spellings().change(word, WordSpellings.added(word), localModel::isAddedWord)
         corrector.forgetRecentAnswers()
     }
+
+    /** Kept by Undo or a tap on the quoted word, and not blocked since: blocking a kept typo lets it be corrected again. */
+    private fun isKeptWord(key: String): Boolean = key in keptWords && !personallyBlocked(key)
 
     private fun blockedLoadFailed(): Boolean = this::blockedStore.isInitialized && !blockedStore.ready && blockedStore.failed
 
@@ -5873,7 +6183,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             if (destroyed || !request.matches(swipeSerial, swipeAllowedNow(), editorSnapshot())) return@decode
             // Words run together in an address or a password, as decoded: no capital I there.
             val capitalizeI = swipeCapitalizesI() && !swipeSpacing.joined
-            val words = candidates.filter { !personallyBlocked(it) && (profanityAllowed || it !in profanityWords) }
+            val words = candidates.filter { !personallyBlocked(it) && (profanityAllowed || it !in profanityWords) && offeredWord(it) }
                 .map { SwipeInsertion.word(it, capitalizeI) }.distinct().take(3)
             if (words.isEmpty() || duration > 2_000) {
                 cancelSwipeWork()
@@ -5891,7 +6201,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             swipeLastMs = duration
             if (destroyed || serial != swipeSerial || !swipeAllowedNow()) return@decode
             swipeBlind = false
-            val word = candidates.firstOrNull { !personallyBlocked(it) && (profanityAllowed || it !in profanityWords) }
+            val word = candidates.firstOrNull { !personallyBlocked(it) && (profanityAllowed || it !in profanityWords) && offeredWord(it) }
             if (word == null || duration > 2_000) {
                 showProposalMessage(getString(R.string.swipe_no_word), autoDismissMs = 2_000)
                 return@decode
@@ -6029,6 +6339,29 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
             if (viewShown) scheduleRefresh()
             return
         }
+        deleteBeforeCaret(slide.before, slide.length)
+    }
+
+    /**
+     * TalkBack's Delete previous word. A slide waits for its press's deletion to show in the text before it measures
+     * anything ([onDeleteSlide]); with no press first that wait never ended, so the action did nothing (2026-11-25).
+     * This measures the word from one fresh read instead and removes it the way a finished slide does.
+     */
+    override fun onDeleteWord() {
+        val ic = currentInputConnection ?: return
+        if (!slideAllowed(KeyAction.Backspace)) return
+        drainPendingKeys()
+        cancelDeleteSlide()
+        val selection = observedSelection()
+        val before = ic.getTextBeforeCursor(DELETE_SLIDE_CHARS, 0)?.toString()
+        val length = CursorGestures.wordDeletion(before, hasEditorSelection() || (selection != null && selection.start != selection.end))
+        if (before == null || length == 0) return
+        deleteBeforeCaret(before, length)
+    }
+
+    /** Removes the last [length] characters of [before], the text just before the caret, as one edit. */
+    private fun deleteBeforeCaret(before: String, length: Int) {
+        val ic = currentInputConnection ?: return
         recentCorrection.cancel()
         correctionOffer = null
         autoSpaced = false
@@ -6037,9 +6370,9 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         pendingPeriodPersonalContext = emptyList()
         personalLearning.reset(PersonalContextTrace.ResetReason.CURSOR)
         personalWordOwned = false
-        markEdit(deletedBefore = slide.length)
-        expectedContext = slide.before.dropLast(slide.length)
-        ic.deleteSurroundingText(slide.length, 0)
+        markEdit(deletedBefore = length)
+        expectedContext = before.dropLast(length)
+        ic.deleteSurroundingText(length, 0)
         // Whatever word is left at the caret was typed before this; adding to it is editing, not typing it fresh.
         revisitTrace(CorrectionDiagnostics.Revisit.SELECTION_DELETE)
         updateShiftFromEditor()
@@ -6222,6 +6555,7 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
 
     /** The paste chip's paste, of whatever the clipboard holds now, however old. */
     private fun gesturePaste() {
+        if (clipHoldsImage()) return pasteClipImage(fresh = false)
         val clip = freshClipText(fresh = false) ?: return showGestureNotice(getString(R.string.gesture_nothing_to_paste))
         val stamp = clipStamp()
         if (insertPasted(clip.text) != VerifiedWordTransaction.Insertion.REJECTED) {
@@ -6301,6 +6635,17 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     override fun onWindowShown() {
         windowsShown++
         super.onWindowShown()
+        applyNavigationIcons()
+    }
+
+    /**
+     * Android draws its hide and switch buttons in the band under the keys, light by default, which left them
+     * nearly invisible on the light keyboard. Match them to the keyboard's own theme, forced or not.
+     */
+    private fun applyNavigationIcons() {
+        val win = window?.window ?: return
+        WindowCompat.getInsetsController(win, win.decorView).isAppearanceLightNavigationBars =
+            ThemeMode.darkNavigationIcons(resources.configuration.uiMode)
     }
 
     /** The editor has finished for good, whether or not its view was showing. */
@@ -6570,6 +6915,20 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
     }
 
     /** Explicit developer export: bounded counters and CPU durations, never editor text. */
+    /**
+     * Hide LocalType from screen capture ([ScreenCapture]): marks the keyboard's window, which holds the keys, the
+     * strip, every panel and a password manager's chips, and tells the keys so their hold popup, a window of its
+     * own, is marked when it shows. The suggestion popup reads the setting itself. The menu from holding the lead
+     * button is a platform popup with no way to mark it; it lists action names only. Applied when the service
+     * starts, at each field, and at once when the setting changes, on the window while it is showing.
+     */
+    private fun applyScreenCapture() {
+        val hide = KeyboardSettings.hideFromCapture(this)
+        hiddenFromCapture = hide
+        ScreenCapture.cover(window?.window, hide)
+        keyboardView?.hideFromCapture = hide
+    }
+
     override fun dump(fd: java.io.FileDescriptor, writer: java.io.PrintWriter, args: Array<out String>) {
         writer.println("language=${language.code} offered=${KeyboardSettings.languages(this).joinToString(",") { it.code }} words=${dictionary.size} lexicon=${lexicon.size} prior=${corpusPrior != null} ready=$dictionaryReady")
         // Pack ids, sizes and digests only; never a word.
@@ -6582,10 +6941,19 @@ class LocalTypeInputMethodService : InputMethodService(), KeyboardView.Listener 
         writer.println("held_keys replayed=$heldKeysReplayed resent=$heldKeysResent sent=$heldKeysSent dropped=$heldKeysDropped held=${pendingKeys.size}")
         writer.println("oneHanded mode=$oneHanded rail=${oneHandedRail?.visibility == View.VISIBLE}")
         writer.println("window fullscreen=$isFullscreenMode heightDp=${resources.configuration.screenHeightDp} widthDp=${resources.configuration.screenWidthDp} keysDp=${keyPlacement?.widthDp ?: -1} keysAt=${keyPlacement?.side ?: "none"} wideKeys=$wideKeys")
+        val windowFlags = window?.window?.attributes?.flags ?: 0
+        writer.println("capture hidden=$hiddenFromCapture windowSecure=${ScreenCapture.flags(windowFlags, true) == windowFlags}")
         writer.println("input_view starts=$inputViewStarts restarts=$inputViewRestarts finishes=$inputViewFinishes finishing=$finishingInputViews windowShown=$windowsShown windowHidden=$windowsHidden explicitHides=$explicitHideRequests visible=$isInputViewShown restartBlocked=$compatibilityEditorRestarted boundaryRecoveries=$restartBoundaryRecoveries")
         writer.println("contacts allowed=${ContactsReader.granted(this)} read=${contacts?.size ?: -1} names=${contactNames.size}")
         writer.println("voice route=$voiceRoute offered=$voiceOffered listening=${dictationSession.listening} inserted=${dictationSession.inserted} lastEnd=$dictationLastEnd")
         writer.println("notices shown=$noticesShown place=$noticePlace showing=${notice != null}")
+        // Why an image is or isn't on offer, from the clip's description alone: never its address or contents.
+        val imageClip = clipboard?.primaryClipDescription
+        val imageTypes = currentInputEditorInfo?.takeIf { currentInputStarted }?.let { androidx.core.view.inputmethod.EditorInfoCompat.getContentMimeTypes(it) }
+        writer.println("images chip=${pasteImage != null} textChip=${pasteClip != null} offer=${imageClip?.let { imageOffer(it) } ?: "none"} " +
+            "ageS=${imageClip?.let { (System.currentTimeMillis() - it.timestamp) / 1000 } ?: -1} pasted=${imageClip?.timestamp == pastedClipStamp} " +
+            "fieldTakes=${imageTypes?.count { ImagePasteRules.matches(it, "image/*") } ?: 0} of ${imageTypes?.size ?: 0}")
+        writer.println("model nanoRefusals=${modelFallback.refusals} ownApp=${modelFallback.servingOwnApp} asksNano=${modelFallback.asksNano()} gemma=${modelFallback.gemmaStatus}")
         // Counts and the last swipe's direction and action only; never text.
         writer.println("gestures enabled=$twoFingerGestures watching=${twoFingerAllowed()} ${keyboardView?.twoFingerCounts} run=$gesturesRun refused=$gesturesRefused last=$gestureLast undo=${gestureUndo != null}")
         // Counts only. The chips are drawn by Android in another process; the keyboard has nothing of theirs to print.

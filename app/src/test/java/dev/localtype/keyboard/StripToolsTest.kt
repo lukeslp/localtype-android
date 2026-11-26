@@ -145,6 +145,22 @@ class StripToolsTest {
     }
 
     @Test
+    fun `settings names the row without the model tools in a build that has no model`() {
+        val rewrites = listOf(StripTool.REWRITE_SHORTER, StripTool.REWRITE_FORMAL, StripTool.REWRITE_FRIENDLY)
+        val saved = listOf("clipboard", "proofread", "rewrite_shorter", "emoji", "rewrite_formal", "rewrite_friendly", "undo")
+        assertEquals(StripTools.ROW_ORDER, StripTools.described(null, models = true))
+        assertEquals(StripTools.ROW_ORDER - StripTool.PROOFREAD, StripTools.described(null, models = false))
+        assertEquals(StripTools.rowOrder(saved), StripTools.described(saved, models = true))
+        assertEquals(listOf(StripTool.CLIPBOARD, StripTool.EMOJI, StripTool.UNDO), StripTools.described(saved, models = false))
+        // Those are exactly the tools a field offers only where proofreading is.
+        val noModel = StripTools.Field(voice = true, proofread = false, passwords = true)
+        assertEquals(StripTool.entries.filter { !StripTools.offered(it, noModel) }, listOf(StripTool.PROOFREAD) + rewrites)
+        // Reset the tools row's summary goes through it.
+        val screen = java.io.File("src/main/java/dev/localtype/keyboard/SettingsActivity.kt").readText()
+        assertTrue(Regex("""fun toolsRowSummary\(\): String = StripTools\.described\(""").containsMatchIn(screen))
+    }
+
+    @Test
     fun `new keyboard views drop every panel built for the old ones`() {
         // A panel root kept across a rotation stays inside the old key area, so the new one shows an empty panel.
         val service = java.io.File("src/main/java/dev/localtype/keyboard/LocalTypeInputMethodService.kt").readText()

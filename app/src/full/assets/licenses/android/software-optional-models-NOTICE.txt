@@ -1,0 +1,93 @@
+Software added for the optional models
+
+This build of LocalType can use Gemini Nano and Gemma for extra suggestions and
+proofreading. That adds the libraries below to the ones in software-NOTICE. Under
+each name are the Maven groups the build takes it from.
+
+LiteRT-LM's native library, and Google's ML Kit, Play services and data transport
+libraries, contain third-party components with notices of their own. Those
+notices are in the libraries as Google publishes them and are not yet reproduced
+on this screen.
+
+Licensed under the Apache License, Version 2.0 (Apache-2.0 in this list):
+
+LiteRT-LM, from Google
+  com.google.ai.edge.litertlm
+
+More AndroidX libraries, from The Android Open Source Project
+  androidx.activity
+  androidx.appcompat
+  androidx.cursoradapter
+  androidx.drawerlayout
+  androidx.emoji2
+  androidx.fragment
+  androidx.loader
+  androidx.resourceinspection
+  androidx.savedstate
+  androidx.vectordrawable
+  androidx.viewpager
+
+Guava and the annotations it uses, from the Guava, Error Prone, J2ObjC and
+FindBugs (JSR-305) authors
+  com.google.guava
+  com.google.errorprone
+  com.google.j2objc
+  com.google.code.findbugs
+
+Gson, from Google
+  com.google.code.gson
+
+Firebase components and encoders, and the data transport library, from Google
+  com.google.firebase
+  com.google.android.datatransport
+
+javax.inject, from the JSR-330 expert group
+  javax.inject
+
+Kotlin reflection and more of kotlinx.coroutines, from JetBrains
+  org.jetbrains.kotlin
+  org.jetbrains.kotlinx
+
+Provided by Google under the ML Kit Terms of Service
+(https://developers.google.com/ml-kit/terms), not an open-source license:
+
+ML Kit GenAI Prompt API and ML Kit common
+  com.google.mlkit
+
+Provided by Google under the Android Software Development Kit License
+(https://developer.android.com/studio/terms.html), not an open-source license:
+
+Google Play services base, basement and tasks, and ML Kit's GenAI schema
+  com.google.android.gms
+  com.google.mlkit
+
+Dedicated to the public domain under CC0 1.0
+(https://creativecommons.org/publicdomain/zero/1.0/):
+
+Reactive Streams
+  org.reactivestreams
+
+Licensed under the MIT License:
+
+Checker Framework qualifiers
+  org.checkerframework
+
+Copyright 2004-present by the Checker Framework developers
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
